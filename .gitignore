@@ -1,0 +1,9 @@
+omega/_version.py
+*parsetab.py
+build/*
+dist/*
+*.egg-info/*
+*.pyc
+*.egg
+*.swp
+

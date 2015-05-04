@@ -1,6 +1,6 @@
-import pip
 from setuptools import setup
-import sys
+# inline:
+# from omega.logic import lexyacc
 
 
 name = 'omega'
@@ -27,10 +27,12 @@ tests_require = ['nose >= 1.3.4']
 if __name__ == '__main__':
     with open(VERSION_FILE, 'w') as f:
         f.write(s)
-    if 'egg_info' not in sys.argv:
-        pip.main(['install'] + install_requires)
+    try:
         from omega.logic import lexyacc
         lexyacc._rewrite_tables(outputdir='./omega/logic/')
+    except ImportError:
+        print('WARNING: `omega` could not cache parser tables '
+              '(ignore this if running only for "egg_info").')
     setup(
         name=name,
         version=version,

@@ -20,6 +20,7 @@ install_requires = [
     'dd >= 0.0.4',
     'ply >= 3.4',
     'networkx >= 1.9.1']
+# TODO: mv the bitblaster to `omega` to avoid circular dependencies
 tests_require = ['nose >= 1.3.4']
 
 

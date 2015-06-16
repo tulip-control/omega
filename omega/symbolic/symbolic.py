@@ -344,8 +344,12 @@ def _prime_and_order_table(t, suffix="'"):
         primed = var + suffix
         pbits = [bit + suffix for bit in bits]
         k = j + 1
-        dvars[var] = dict(level=j, len=m, bitnames=bits)
-        dvars[primed] = dict(level=k, len=m, bitnames=pbits)
+        # copy attr
+        dvars[var] = dict(d)
+        dvars[primed] = dict(d)
+        # update attr
+        dvars[var].update(level=j, len=m, bitnames=bits)
+        dvars[primed].update(level=k, len=m, bitnames=pbits)
     return dvars
 
 

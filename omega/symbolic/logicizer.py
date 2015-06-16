@@ -42,26 +42,25 @@ def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
     # convert to logic
     init = _init_from_ts(g.initial_nodes, nodevar, dvars, ignore_initial)
     tmp_init, nodepred = _node_var_trans(g, nodevar, dvars)
+    sys_tran = list()
+    env_tran = list()
     if g.owner == 'sys':
         sys_init = init + tmp_init
         sys_tran = _sys_trans(g, nodevar, dvars)
-        sys_tran += nodepred
+        sys_tran.extend(nodepred)
         env_init = list()
         if receptive:
             env_tran = _env_trans_from_sys_ts(g, nodevar, dvars)
-        else:
-            env_tran = list()
     elif g.owner == 'env':
         sys_init = list()
-        sys_tran = list()
         env_init = init + tmp_init
         env_tran = nodepred + _env_trans(g, nodevar, dvars)
     a = Automaton()
     a.vars = t
-    a.init['env'] += env_init
-    a.init['sys'] += sys_init
-    a.action['env'] += env_tran
-    a.action['sys'] += sys_tran
+    a.init['env'].extend(env_init)
+    a.init['sys'].extend(sys_init)
+    a.action['env'].extend(env_tran)
+    a.action['sys'].extend(sys_tran)
     return a
 
 

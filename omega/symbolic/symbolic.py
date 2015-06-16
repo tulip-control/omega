@@ -58,8 +58,12 @@ class Automaton(object):
 
       - uvars
       - upvars
+      - ubvars
       - evars
       - epvars
+      - ebvars
+      - uevars
+      - uepvars
       - prime: `dict` that maps each unprimed to a primed var
       - unprime: `dict` that maps eacn primed to an unprimed var
 
@@ -68,6 +72,7 @@ class Automaton(object):
     u = universally quantified
     e = existentially quantified
     p = primed (absence means unprimed)
+    b = both primed and unprimed
 
 
     Reference
@@ -90,8 +95,12 @@ class Automaton(object):
         # subsets of vars: auto-populated
         self.uvars = set()  # unprimed env
         self.upvars = set()  # primed env
+        self.ubvars = set()  # both primed and unprimed env
         self.evars = set()  # unprimed sys
         self.epvars = set()  # primed sys
+        self.ebvars = set()  # both primed and unprimed env
+        self.uevars = set()  # all unprimed vars
+        self.uepvars = set()  # all primed vars
         # future: hidden, node vars
         # map between primed and unprimed
         self.prime = dict()
@@ -269,6 +278,10 @@ def _bitvector_to_bdd(aut, bdd=None):
     a.upvars = partition['upvars']
     a.evars = partition['evars']
     a.epvars = partition['epvars']
+    a.ubvars = set(a.uvars).union(a.upvars)
+    a.ebvars = set(a.evars).union(a.epvars)
+    a.uevars = set(a.uvars).union(a.evars)
+    a.uepvars = set(a.upvars).union(a.epvars)
     # priming
     a.prime = prime
     a.unprime = {v: k for k, v in prime.iteritems()}

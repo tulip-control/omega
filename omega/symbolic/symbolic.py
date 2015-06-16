@@ -337,7 +337,6 @@ def _prime_and_order_table(t, suffix="'"):
         j = 2 * i
         dtype = d['type']
         if dtype == 'int':
-            a, b = d['dom']
             bits = d['bitnames']
         elif dtype == 'bool':
             bits = [var]

@@ -60,8 +60,8 @@ class Automaton(object):
       - upvars
       - evars
       - epvars
-      - prime_vars: `dict` that maps each unprimed to a primed var
-      - unprime_vars: `dict` that maps eacn primed to an unprimed var
+      - prime: `dict` that maps each unprimed to a primed var
+      - unprime: `dict` that maps eacn primed to an unprimed var
 
     Prefix meaning:
 

@@ -210,7 +210,7 @@ def _env_trans(g, nodevar, dvars):
             r = _to_action(t, dvars)
             sys.append(r)
         # avoid sys winning env by blocking all edges
-        post.append(conj_neg(sys))
+        # post.append(conj_neg(sys))
         env_trans.append('({pre}) -> ({post})'.format(
             pre=pre, post=disj(post)))
     s = conj(env_trans, sep='\n')

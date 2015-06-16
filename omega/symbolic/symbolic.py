@@ -330,6 +330,24 @@ def _partition_vars(ordvars, uvars, suffix="'"):
 
 
 def _prime_and_order_table(t, suffix="'"):
+    """Return ordered table of primed and unprimed variables.
+
+    The table maps each (integer or Boolean) variable to
+    a `dict` of attributes (same as `t`).
+    The attributes include `"bitnames"`.
+
+    The following attributes are added:
+
+      - level: index among ordered prime and unprimed integers
+      - len: number of values the variable can take
+
+    @param t: table of unprimed variables as `str`
+    @type t: `dict`
+    @param suffix: primed var = unprimed var + suffix
+    @type suffix: `str`
+
+    @rtype: `dict` from `str` to `dict`
+    """
     ordvars = natsort.natsorted(t)
     dvars = dict()
     for i, var in enumerate(ordvars):

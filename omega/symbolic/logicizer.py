@@ -12,7 +12,8 @@ from omega.logic.syntax import disj, conj, conj_neg
 logger = logging.getLogger(__name__)
 
 
-def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
+def graph_to_logic(g, nodevar, ignore_initial,
+                   receptive=False, self_loops=False):
     """Flatten labeled graph to temporal logic formulae.
 
     @param g: `TransitionSystem`
@@ -28,6 +29,7 @@ def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
     @type ignore_initial: `bool`
     @param receptive: if `True`, then add assumptions to
         ensure receptiveness at each node.
+    @param self_loops: if `True`, then add all self-loops
 
     @return: temporal formulae representing `g`.
     @rtype: `Automaton`
@@ -47,6 +49,8 @@ def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
     if g.owner == 'sys':
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
+        if self_loops:
+            r = '({r}) | ((X {var}) = {var})'.format(r=r, var=nodevar)
         sys_tran.append(r)
         sys_tran.extend(nodepred)
         env_init = list()
@@ -57,6 +61,8 @@ def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
         sys_init = list()
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars)
+        if self_loops:
+            r = '({r}) | ((X {var}) = {var})'.format(r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
     a = Automaton()

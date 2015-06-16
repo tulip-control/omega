@@ -1,0 +1,33 @@
+/* details: FOL to BDDs or Slugs */
+
+digraph g {
+	fol [label="QfFOL with “next”\n (infix str)",
+		style=filled, fillcolor=chartreuse2];
+	bv [label="AST\n (bitvector.Nodes)",
+		style=filled, fillcolor=orange];
+	slugsin [label="PL\n (slugsin: prefix,\n memory buffers)",
+		style=filled, fillcolor=chartreuse2];
+	Nodes [label="AST\n (bdd.Nodes)",
+		style=filled, fillcolor=orange];
+	BDDNodes [label="bdd.BDDNodes",
+		style=filled, fillcolor=orange];
+	DebugNodes [label="bdd.DebugNodes",
+		style=filled, fillcolor=orange];
+	infix [label="infix str",
+		style=filled, fillcolor=chartreuse2];
+	debug [label="readable infix\n (expanded memory buffers)",
+		style=filled, fillcolor=chartreuse2];
+	bdd [label="BDDs"];
+	slugs [label="Slugs"];
+	
+	fol -> bv [label="logic.lexyacc.Parser (PLY)"];
+	bv -> slugsin [label="flatten (bitblast)", style="dashed"];
+	slugsin -> slugs [label="feed as input to"];
+	slugsin -> Nodes [label="symbolic.bdd.Parser\n (custom)"];
+	Nodes -> BDDNodes [label="subclass"];
+	Nodes -> DebugNodes [label="subclass"];
+	Nodes -> infix [label="flatten", style="dashed"];
+	BDDNodes -> bdd [label="flatten", style="dashed"];
+	DebugNodes -> debug [label="flatten", style="dashed"];
+	infix -> debug [style="dotted", dir=none, label="similar"];
+}

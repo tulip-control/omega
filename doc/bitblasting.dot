@@ -1,0 +1,14 @@
+digraph g {
+	a [label="simple symbol table\n var → dom or 'bool'"];
+	b [label="detailed symbol table\n (but w/o bitnames etc.)"];
+	c [label="bitblasted symbol table\n integer vars → bitnames etc."];
+	d [label="integers → bits\n primed integers → primed bits"];
+	e [label="bits"];
+	f [label="order of BDD levels"];
+	
+	a -> b [label="logicizer.graph_to_logic"];
+	b -> c [label="bitvector.bitblast_table"];
+	c -> d [label="symbolic._prime_and_order_table"];
+	c -> e [label="bitvector.list_bits"];
+	e -> f [label="_pick_var_order\n _partition_vars"];
+}

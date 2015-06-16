@@ -1,0 +1,14 @@
+/* from first-order logic, to propositional, to BDDs */
+
+digraph g {
+	a [label="full QfFOLTL\n (past + future)"];
+	b [label="future QfFOLTL"];
+	c [label="QfFOL with “next”\n (symbolic.Automaton attributes:\n init, action, win)"];
+	d [label="PL\n (SlugsIn)"];
+	e [label="BDD\n (dd.bdd.BDD)"];
+	
+	a -> b [label="logic.past"];
+	b -> c [label="gr1.ltl_to_automaton"];
+	c -> d [label="bitvector"];
+	d -> e [label="symbolic.bdd"];
+}

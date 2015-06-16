@@ -6,4 +6,5 @@ dist/*
 *.pyc
 *.egg
 *.swp
+*.svg
 

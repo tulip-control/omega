@@ -431,4 +431,5 @@ def _extract_partition(dbits, ubits):
 
 
 def _join(c):
+    """Return `str` with one element of `c` per line."""
     return '\n'.join(str(x) for x in c)

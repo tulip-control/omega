@@ -116,7 +116,7 @@ def _node_var_trans(g, nodevar, dvars):
     for u, d in g.nodes_iter(data=True):
         pre = _assign(nodevar, u, dvars)
         r = _to_action(d, dvars)
-        if not r:
+        if r == 'True':
             continue
         # initial node vars
         init.append('!({pre}) || ({r})'.format(pre=pre, r=r))

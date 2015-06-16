@@ -46,15 +46,19 @@ def graph_to_logic(g, nodevar, ignore_initial, receptive=False):
     env_tran = list()
     if g.owner == 'sys':
         sys_init = init + tmp_init
-        sys_tran = _sys_trans(g, nodevar, dvars)
+        r = _sys_trans(g, nodevar, dvars)
+        sys_tran.append(r)
         sys_tran.extend(nodepred)
         env_init = list()
         if receptive:
-            env_tran = _env_trans_from_sys_ts(g, nodevar, dvars)
+            r = _env_trans_from_sys_ts(g, nodevar, dvars)
+            env_tran.append(r)
     elif g.owner == 'env':
         sys_init = list()
         env_init = init + tmp_init
-        env_tran = nodepred + _env_trans(g, nodevar, dvars)
+        r = _env_trans(g, nodevar, dvars)
+        env_tran.append(r)
+        env_tran.extend(nodepred)
     a = Automaton()
     a.vars = t
     a.init['env'].extend(env_init)
@@ -143,7 +147,8 @@ def _sys_trans(g, nodevar, dvars):
             post.append(r)
         c = '({pre}) -> ({post})'.format(pre=pre, post=disj(post))
         sys_trans.append(c)
-    return sys_trans
+    s = conj(sys_trans, sep='\n')
+    return s
 
 
 def _env_trans_from_sys_ts(g, nodevar, dvars):
@@ -167,7 +172,8 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
         post = disj(c)
         pre = _assign(nodevar, u, dvars)
         env_trans.append('(({pre}) -> ({post}))'.format(pre=pre, post=post))
-    return env_trans
+    s = conj(env_trans, sep='\n')
+    return s
 
 
 def _env_trans(g, nodevar, dvars):
@@ -207,7 +213,8 @@ def _env_trans(g, nodevar, dvars):
         post.append(conj_neg(sys))
         env_trans.append('({pre}) -> ({post})'.format(
             pre=pre, post=disj(post)))
-    return env_trans
+    s = conj(env_trans, sep='\n')
+    return s
 
 
 def _to_action(d, dvars):

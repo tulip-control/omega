@@ -9,8 +9,8 @@ from omega.logic import transformation as tx
 parser = lexyacc.Parser()
 
 
-def str_to_grspec(f):
-    """Return `GRSpec` from LTL formula `f` as `str`.
+def ltl_to_automaton(f):
+    """Return `Automaton` from LTL formula `f` as `str`.
 
     Formula `f` must be in the form:
 

@@ -2,8 +2,8 @@
 import logging
 from dd import bdd as _bdd
 import networkx as nx
-import openpromela.bdd
 from omega.logic import bitvector as bv
+from omega.symbolic import bdd as bddizer
 from nose import tools as nt
 
 
@@ -221,7 +221,7 @@ def _evaluate_result(result, memory):
     bits = list()
     for bit in result:
         s = '$ {n} {mem} {bit}'.format(n=n, mem=mem, bit=bit)
-        u = openpromela.bdd.add_expr(s, bdd)
+        u = bddizer.add_expr(s, bdd)
         bits.append(u)
     bits = [b == 1 for b in bits]
     # print([int(b) for b in bits])
@@ -480,7 +480,7 @@ def test_mixed_fol_bitblasted():
 
 
 def test_prefix_parser():
-    parser = openpromela.bdd.Parser()
+    parser = bddizer.Parser()
     nodes = parser.nodes
     # &, !
     e = '& x ! y'
@@ -540,7 +540,7 @@ def test_prefix_parser():
 
 def test_flatten_memory_nodes():
     # buffer
-    nodes = openpromela.bdd.DebugNodes()
+    nodes = bddizer.DebugNodes()
     x = nodes.Var('x')
     mem = [x, x, x]
     b = nodes.Buffer(mem)

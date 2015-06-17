@@ -27,7 +27,10 @@ class Automaton(object):
       - action: transition relation
       - win: winning condition
 
-    Call the method `build` to generate the below.
+    Each of `init, action, win` is a `dict(env=list(), sys=list())`.
+    The lists contain formulae, as strings when populating the attributes.
+    Call the method `build` to convert the formulae to BDD nodes,
+    and generate the below.
 
 
     User-defined attributes

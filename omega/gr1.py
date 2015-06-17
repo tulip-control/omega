@@ -17,10 +17,10 @@ def ltl_to_automaton(f):
       A -> G
 
     where each of A, G is a conjunction of terms: `B`, `[]C`, `[]<>B`.
-    For more details on `B, C`, see [split_gr1].
+    For more details on `B, C`, see `split_gr1`.
 
     @type f: `str`
-    @rtype: [GRSpec]
+    @rtype: `symbolic.Automaton`
     """
     t = parser.parse(f)
     assert t.operator == '->'
@@ -127,6 +127,7 @@ def split_gr1(f):
 
 
 def has_operator(u, g, operators):
+    """Return `True` if AST `u` contains any `operators`."""
     try:
         if u.operator in operators:
             return u.operator

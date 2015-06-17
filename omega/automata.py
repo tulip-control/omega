@@ -69,9 +69,7 @@ class Automaton(_SystemGraph):
     Attributes
     ==========
 
-    Besides initial nodes
-    (from [`LabeledDiGraph`] - to be split and renamed),
-    an [`Automaton`] has the attributes:
+    Besides `initial_nodes` an [`Automaton`] has the attributes:
 
       - `"universal_nodes"` is a subset of nodes.
         Remaining nodes are existentially quantified.

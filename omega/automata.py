@@ -19,7 +19,7 @@ class _SystemGraph(nx.MultiDiGraph):
         super(_SystemGraph, self).__init__()
         self.initial_nodes = set()
 
-    def is_consistent(self):
+    def assert_consistent(self):
         """Return `True` if attributes are conformant."""
         assert self.initial_nodes.issubset(self)
 
@@ -232,9 +232,9 @@ class Automaton(_SystemGraph):
             raise ValueError('unknown acceptance: {s}'.format(s=acceptance))
         return a
 
-    def is_consistent(self):
+    def assert_consistent(self):
         """Return `True` if conformant to conventions."""
-        super(Automaton, self).is_consistent()
+        super(Automaton, self).asert_consistent()
         a = self.acceptance
         s = self.accepting_sets
 
@@ -340,10 +340,10 @@ class TransitionSystem(_SystemGraph):
             g.add_edge(u, v, label=label, **d)
         return nx.to_pydot(g)
 
-    def is_consistent(self):
+    def assert_consistent(self):
         """Return `True` if attributes are conformant."""
         # TODO: check type consistency of formulae
-        super(TransitionSystem, self).is_consistent()
+        super(TransitionSystem, self).assert_consistent()
         assert self.owner in {'env', 'sys'}
         assert set(self.env_vars).issubset(self.vars)
         for u, d in self.nodes_iter(data=True):

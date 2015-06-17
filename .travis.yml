@@ -1,0 +1,17 @@
+language: python
+
+python:
+  - 2.7
+
+install:
+  - pip install --upgrade pip setuptools
+  - pip install coveralls
+  - pip install .
+
+script:
+  - cd tests/
+  - nosetests --with-coverage --cover-package=omega
+
+after_success:
+  - coveralls
+

@@ -3,14 +3,14 @@ import logging
 from dd import bdd as _bdd
 import networkx as nx
 import openpromela.bdd
-from openpromela import bitvector as bv
+from omega.logic import bitvector as bv
 from nose import tools as nt
 
 
 logger = logging.getLogger(__name__)
 logging.getLogger('tulip.ltl_parser_log').setLevel(logging.WARNING)
 h = logging.StreamHandler()
-log = logging.getLogger('openpromela.bitvector')
+log = logging.getLogger('omega.logic.bitvector')
 log.setLevel(logging.WARNING)
 log.addHandler(h)
 logging.getLogger('astutils').setLevel('ERROR')

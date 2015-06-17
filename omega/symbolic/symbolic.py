@@ -8,10 +8,10 @@ from itertools import chain
 import logging
 import pprint
 import dd.bdd
-from omega.logic import syntax
 import natsort
-from openpromela import bdd as _bdd
-from openpromela import bitvector
+from omega.logic import syntax
+from omega.symbolic import bdd as _bdd
+from omega.logic import bitvector
 
 
 logger = logging.getLogger(__name__)

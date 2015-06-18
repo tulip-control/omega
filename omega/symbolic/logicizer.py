@@ -34,7 +34,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
     @return: temporal formulae representing `g`.
     @rtype: `Automaton`
     """
-    assert g.is_consistent()
+    assert g.assert_consistent()
     assert len(g) > 0
     t = _vars_to_symbol_table(g, nodevar)
     # add primed copies -- same `dict` value

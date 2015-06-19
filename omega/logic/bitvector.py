@@ -81,7 +81,7 @@ def bitblast_table(table):
             continue
         # int var
         # saturating semantics ?
-        if dtype != 'saturating':
+        if dtype not in ('saturating', 'int'):
             continue
         dmin, dmax = dom
         safety[owner].append(

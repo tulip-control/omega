@@ -111,7 +111,7 @@ SYS WIN
 y = 3
 ```
 
-Humans are not intended to define variables in this way, because it is cumbersome. Instead, [convert](#Converting-labeled-graphs-to symbolic-automata) a semi-symbolic automaton, or use `logicizer._vars_to_symbol_table`.
+Humans are not intended to define variables in this way, because it is cumbersome. Instead, [convert](#Converting-labeled-graphs-to symbolic-automata) a semi-symbolic automaton, or use `bitvector.make_table`.
 
 By indexing formulae by player, an `Automaton` can serve also as a multi-player game structure.
 

@@ -188,7 +188,22 @@ class Automaton(object):
         aut = _bitvector_to_bdd(aut, bdd)
         return aut
 
-    def assert_consistent(self):
+    def assert_consistent(self, built=False):
+        """Raise `AssertionError` if not well-formed.
+
+        @param built: if `True`, then assert `build` has been called.
+        """
+        # check attributes
+        for d in (self.init, self.action, self.win):
+            for k, v in d.iteritems():
+                for u in v:
+                    if built:
+                        assert u in self.bdd, u
+                    else:
+                        assert isinstance(u, basestring)
+        # bdd initialized ?
+        if built:
+            assert self.bdd.ordering is not None
 
     def update(self, attr, d):
         """Add formulae from `dict` `d`."""

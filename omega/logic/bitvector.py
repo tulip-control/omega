@@ -323,7 +323,7 @@ class Nodes(_Nodes):
             # must be integer variable
             bits = var_to_twos_complement(name, t)
             bits = ["{b}{prime}".format(
-                b=b, prime="'" if b[0].isalpha() and prime else '')
+                b=b, prime="'" if not b[0].isdigit() and prime else '')
                 for b in bits]
             return bits
 

@@ -189,9 +189,6 @@ class Automaton(object):
         return aut
 
     def assert_consistent(self):
-        # is i/o partition ?
-        assert not self.env_vars.intersection(self.sys_vars)
-        assert set(self.vars) == self.sys_vars.union(self.env_vars)
 
     def update(self, attr, d):
         """Add formulae from `dict` `d`."""

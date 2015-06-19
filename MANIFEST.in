@@ -1,2 +1,3 @@
 include tests/*.py
+include doc/*.md
 include README.md

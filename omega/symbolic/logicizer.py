@@ -60,7 +60,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
     elif g.owner == 'env':
         sys_init = list()
         env_init = init + tmp_init
-        r = _env_trans(g, nodevar, dvars)
+        r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
             r = '({r}) | ((X {var}) = {var})'.format(r=r, var=nodevar)
         env_tran.append(r)
@@ -182,7 +182,7 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
     return s
 
 
-def _env_trans(g, nodevar, dvars):
+def _env_trans(g, nodevar, dvars, self_loops):
     """Convert environment transitions to safety formula.
 
     @type g: `networkx.MultiDigraph`
@@ -196,11 +196,12 @@ def _env_trans(g, nodevar, dvars):
         # no successors ?
         if not g.succ.get(u):
             env_trans.append('{pre} -> X(False)'.format(pre=pre))
-            warnings.warn(
-                'Environment dead-end found.\n'
-                'If sys can force env to dead-end,\n'
-                'then GR(1) assumption becomes False,\n'
-                'and spec trivially True.')
+            if not self_loops:
+                warnings.warn(
+                    'Environment dead-end found.\n'
+                    'If sys can force env to dead-end,\n'
+                    'then GR(1) assumption becomes False,\n'
+                    'and spec trivially True.')
             continue
         post = list()
         sys = list()

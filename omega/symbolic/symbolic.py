@@ -401,7 +401,7 @@ def _prime_and_order_table(t, suffix="'"):
         d = t[var]
         j = 2 * i
         dtype = d['type']
-        if dtype == 'int':
+        if dtype in ('int', 'saturating'):
             bits = d['bitnames']
         elif dtype == 'bool':
             bits = [var]

@@ -480,12 +480,15 @@ def _prime_and_order_table(t, suffix="'"):
 def _extract_partition(dbits, ubits):
     """Return partition, given both primed and unprimed bits.
 
-    @param all_bits: `BDD.ordering` that maps each bit to a level
-    @type all_bits: `dict`
+    @param dbits: `BDD.vars` that maps each bit to an identifier.
+        The identifier may be its name, level, or index.
+        It depends on how quantification works for the manager used.
+    @type dbits: `dict`
     @param ubits: universally quantified unprimed bits
     @type ubits: `set`
 
-    @rtype: `dict`
+    @return: priming and partition, containing levels
+    @rtype: `tuple(dict, dict)`
     """
     suffix = "'"
     diff = set(ubits).difference(dbits)

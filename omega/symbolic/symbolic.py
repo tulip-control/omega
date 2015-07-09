@@ -143,32 +143,32 @@ class Automaton(object):
             '']
         if self.init['env']:
             c.extend([
-                'ENV INIT',
+                'ENV INIT:',
                 '{env_init}',
                 ''])
         if self.action['env']:
             c.extend([
-                'ENV ACTION',
+                'ENV ACTION:',
                 '{env_action}',
                 ''])
         if self.win['env']:
             c.extend([
-                'ENV WIN',
+                'ENV WIN:',
                 '{env_win}',
                 ''])
         if self.init['sys']:
             c.extend([
-                'SYS INIT',
+                'SYS INIT:',
                 '{sys_init}',
                 ''])
         if self.action['sys']:
             c.extend([
-                'SYS ACTION',
+                'SYS ACTION:',
                 '{sys_action}',
                 ''])
         if self.win['sys']:
             c.extend([
-                'SYS WIN',
+                'SYS WIN:',
                 '{sys_win}',
                 ''])
         return '\n'.join(c).format(

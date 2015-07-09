@@ -272,8 +272,8 @@ def _bitblast(aut):
     aut.update('init', init)
     aut.update('action', safety)
     # conjoin to avoid it later over BDD nodes
-    _conj_owner(aut, 'env')
-    _conj_owner(aut, 'sys')
+    _conj_owner(aut, 'env', 'infix')
+    _conj_owner(aut, 'sys', 'infix')
     a = Automaton()
     a.vars = t
     # TODO: replace GR(1) syntax check
@@ -283,9 +283,32 @@ def _bitblast(aut):
     return a
 
 
-def _conj_owner(aut, owner):
-    aut.init[owner] = [syntax.conj(aut.init[owner])]
-    aut.action[owner] = [syntax.conj(aut.action[owner])]
+def _conj_owner(aut, owner, as_what):
+    """Conjoin the lists in the attributes of `owner`.
+
+    @param as_what: `'bdd' or 'prefix' or 'infix'`
+    """
+    # get
+    init = aut.init[owner]
+    action = aut.action[owner]
+    # compute
+    if as_what == 'prefix':
+        init = syntax.conj_prefix(init)
+        action = syntax.conj_prefix(action)
+    elif as_what == 'infix':
+        init = syntax.conj(init)
+        action = syntax.conj(action)
+    elif as_what == 'bdd':
+        def f(x, y):
+            return aut.bdd.apply('and', x, y)
+        init = syntax.recurse_binary(f, init)
+        action = syntax.recurse_binary(f, action)
+    else:
+        raise Exception(
+            'unknown as_what="{s}"'.format(s=as_what))
+    # set
+    aut.init[owner] = [init]
+    aut.action[owner] = [action]
 
 
 def _bitblast_owner(aut, a, owner, t):

@@ -221,6 +221,14 @@ class Automaton(object):
         r['env'].extend(d['env'])
         r['sys'].extend(d['sys'])
 
+    def conjoin(self, as_what):
+        """Conjoin attributes.
+
+        @param as_what: `'bdd' or 'prefix' or 'infix'`
+        """
+        _conj_owner(self, 'env', as_what)
+        _conj_owner(self, 'sys', as_what)
+
     def add_expr(self, e):
         """Add first-order formula."""
         # the bitblaster understands priming

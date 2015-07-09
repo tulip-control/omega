@@ -127,6 +127,12 @@ class Automaton(object):
         a.acceptance = self.acceptance
         return a
 
+    def __del__(self):
+        for attr in (self.init, self.action, self.win):
+            for s in ('env', 'sys'):
+                for u in attr[s]:
+                    del u
+
     def __str__(self):
         c = [
             'Symbolic automaton:',

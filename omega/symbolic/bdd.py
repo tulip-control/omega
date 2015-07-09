@@ -200,7 +200,7 @@ class BDDNodes(Nodes):
 
     class Var(Nodes.Var):
         def flatten(self, bdd, *arg, **kw):
-            u = bdd.add_ast(self)
+            u = bdd.var(self.value)
             # print 'add var: ', self.value, u
             return u
 

@@ -10,9 +10,13 @@ def disj(iterable, sep=''):
 
 
 def _associative_op(iterable, op, sep):
-    """Apply associative binary operator `op`, using `sep` as separator."""
+    """Apply associative binary operator `op`.
+
+    @param sep: separator
+    """
     if op not in {'&', '|'}:
-        raise Exception('operator "{op}" not supported.'.format(op=op))
+        raise Exception(
+            'operator "{op}" not supported.'.format(op=op))
     true = 'True'
     false = 'False'
     if op == '&':
@@ -98,9 +102,11 @@ def _prefix_linear(s, op, false, true):
 
 def conj_intersection(s, r, paren=True):
     if paren:
-        return ' && '.join('({x})'.format(x=x) for x in s if x in r)
+        return ' && '.join(
+            '({x})'.format(x=x) for x in s if x in r)
     else:
-        return ' && '.join('{x}'.format(x=x) for x in s if x in r)
+        return ' && '.join(
+            '{x}'.format(x=x) for x in s if x in r)
 
 
 def conj_neg(s, paren=True):

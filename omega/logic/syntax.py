@@ -71,6 +71,31 @@ def linear_conj(s, op='&&'):
     return b.join('({x})'.format(x=x) for x in s if x != '')
 
 
+def disj_prefix(iterable, op='|', false='0', true='1'):
+    return _prefix_linear(iterable, op, false, true)
+
+
+def conj_prefix(iterable, op='&', false='0', true='1'):
+    false, true = true, false
+    return _prefix_linear(iterable, op, false, true)
+
+
+# TODO: recursive version
+def _prefix_linear(s, op, false, true):
+    if not s:
+        return false
+    u = s[0]
+    for v in s[1:]:
+        # controlling value ?
+        if u == true:
+            break
+        if v == true:
+            u = true
+            break
+        u = op + ' ' + u + ' ' + v
+    return u
+
+
 def conj_intersection(s, r, paren=True):
     if paren:
         return ' && '.join('({x})'.format(x=x) for x in s if x in r)

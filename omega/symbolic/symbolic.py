@@ -26,6 +26,8 @@ class Automaton(object):
       - init: initial condition
       - action: transition relation
       - win: winning condition
+      - acceptance: `str` that describes `win`,
+          for example `'Streett(1)'`
 
     Each of `init, action, win` is a `dict(env=list(), sys=list())`.
     The lists contain formulae, as strings when populating the attributes.
@@ -112,6 +114,7 @@ class Automaton(object):
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())
         self.win = dict(env=list(), sys=list())  # GF
+        self.acceptance = 'Streett(1)'
         # aux
         self.bdd = dd.BDD()  # init only to help static analysis
 
@@ -121,6 +124,7 @@ class Automaton(object):
         a.init = copy.deepcopy(self.init)
         a.action = copy.deepcopy(self.action)
         a.win = copy.deepcopy(self.win)
+        a.acceptance = self.acceptance
         return a
 
     def __str__(self):

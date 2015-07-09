@@ -210,8 +210,10 @@ class BDDNodes(Nodes):
             assert self.value in ('0', '1'), self.value
             u = int(self.value)
             if u == 0:
-                u = -1
-            return u
+                r = bdd.False
+            else:
+                r = bdd.True
+            return r
 
 
 parser = Parser(nodes=BDDNodes())

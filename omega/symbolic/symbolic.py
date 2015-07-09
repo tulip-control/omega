@@ -309,7 +309,7 @@ def _bitvector_to_bdd(aut, bdd=None):
                 if d['owner'] == 'env')
     # use fresh `BDD` ?
     if bdd is None:
-        ordbits = _pick_var_order(dbits)
+        ordbits = _pick_var_order(dbits, ubits)
         order, prime, partition = _partition_vars(ordbits, ubits)
         bdd = dd.bdd.BDD(order)
     else:
@@ -353,11 +353,29 @@ def _to_bdd(a, b, bdd):
         b.append(u)
 
 
-def _pick_var_order(dvars):
-    """Order the variables in `dvars`."""
-    # fix an order for unprimed vars or bits
-    ordvars = natsort.natsorted(dvars)
-    return ordvars
+def _pick_var_order_eu(bits, ubits):
+    ebits = set(bits).difference(ubits)
+    u = natsort.natsorted(ubits)
+    e = natsort.natsorted(ebits)
+    return e + u
+
+
+def _pick_var_order(bits, ubits):
+    """Sort the `bits` in natural order.
+
+    Two separate orders are constructed:
+
+        - for `ubits`
+        - for the rest of `bits`
+
+    and concatenated in that order.
+    """
+    array_bits = {b for b, d in bits.iteritems() if d.get('array')}
+    other = set(bits).difference(array_bits)
+    top = natsort.natsorted(other)
+    bottom = natsort.natsorted(array_bits)
+    r = top + bottom
+    return r
 
 
 def _partition_vars(ordvars, uvars, suffix="'"):

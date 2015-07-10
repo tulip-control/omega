@@ -322,6 +322,15 @@ def _bitblast_owner(aut, a, owner, t):
     a.win[owner] = map(f, aut.win[owner])
 
 
+# at least 4 use cases:
+#
+# 1. build `dd.bdd.BDD` from scratch (so levels too)
+# 2. use a `dd.bdd.BDD` loaded from a `dddmp` file,
+#    so extract the levels, because they exist already
+# 3. build `dd.cudd.BDD` from scratch
+#    (simplest if it tells you the indices)
+# 4. use a `dd.cudd.BDD` that already exists,
+#    e.g., add counters to build a transducer.
 def _bitvector_to_bdd(aut, bdd=None, add=True):
     """Return `Automaton` with BDD formulae.
 

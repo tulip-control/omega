@@ -335,6 +335,8 @@ def _bitvector_to_bdd(aut, bdd=None):
         ordbits = _pick_var_order(dbits, ubits)
         order, prime, partition = _partition_vars(ordbits, ubits)
         bdd = aut.bdd
+        for var, level in order.iteritems():
+            bdd.add_var(var, level)
     else:
         # check no missing vars,
         # including primed

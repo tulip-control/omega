@@ -14,14 +14,17 @@ log.setLevel('ERROR')
 def test_partition_vars():
     v = ['a', 'b', 'c']
     uv = ['a']
-    d, u2p, uvars, upvars, evars, epvars = symbolic._partition_vars(v, uv)
-    order = {'a': 0, "a'": 1, 'b': 2, "b'": 3, 'c': 4, "c'": 5}
+    d, prime, partition = symbolic._partition_vars(v, uv)
+    order = {"a": 0, "a'": 1, "b": 2, "b'": 3, "c": 4, "c'": 5}
+    prime_ = {k: k + "'" for k in v}
+    partition_ = dict(
+        uvars={"a"},
+        upvars={"a'"},
+        evars={"b", "c"},
+        epvars={"b'", "c'"})
     assert d == order, d
-    assert u2p == {0: 1, 2: 3, 4: 5}, u2p
-    assert uvars == {0}, uvars
-    assert upvars == {1}, upvars
-    assert evars == {2, 4}, evars
-    assert epvars == {3, 5}, epvars
+    assert prime == prime_, (prime, prime_)
+    assert partition == partition_, (partition, partition_)
 
 
 def test_bdd_nodes():

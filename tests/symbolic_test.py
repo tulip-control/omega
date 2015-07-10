@@ -28,8 +28,7 @@ def test_partition_vars():
 
 
 def test_bdd_nodes():
-    parser = PrefixParser()
-    parser._ast = make_bdd_nodes()
+    parser = sym_bdd.parser
     order = {'x': 0, 'y': 1, 'z': 2}
     # x & y
     bdd = dd.bdd.BDD(order)

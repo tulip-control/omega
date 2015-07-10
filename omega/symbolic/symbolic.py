@@ -334,7 +334,7 @@ def _bitvector_to_bdd(aut, bdd=None):
     if bdd is None:
         ordbits = _pick_var_order(dbits, ubits)
         order, prime, partition = _partition_vars(ordbits, ubits)
-        bdd = dd.bdd.BDD(order)
+        bdd = aut.bdd
     else:
         # check no missing vars,
         # including primed

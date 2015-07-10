@@ -185,7 +185,7 @@ class Automaton(object):
                  action=self.action, win=self.win)
         return repr(d)
 
-    def build(self, bdd=None):
+    def build(self, bdd=None, add=True):
         """Return `Automaton` with formulae as BDD nodes.
 
         Bitblast variables, interleaved order,
@@ -193,9 +193,10 @@ class Automaton(object):
 
         @param bdd: use this `BDD`, instead of a fresh one
         @type bdd: `dd.bdd.BDD`
+        @param add: insert any missing variables as new to `bdd`
         """
         aut = _bitblast(self)
-        aut = _bitvector_to_bdd(aut, bdd)
+        aut = _bitvector_to_bdd(aut, bdd, add)
         return aut
 
     def assert_consistent(self, built=False):
@@ -320,7 +321,7 @@ def _bitblast_owner(aut, a, owner, t):
     a.win[owner] = map(f, aut.win[owner])
 
 
-def _bitvector_to_bdd(aut, bdd=None):
+def _bitvector_to_bdd(aut, bdd=None, add=True):
     """Return `Automaton` with BDD formulae.
 
     @type aut: `Automaton`
@@ -343,7 +344,11 @@ def _bitvector_to_bdd(aut, bdd=None):
         pbits, _, _ = _partition_vars(dbits, ubits)
         bdd_bits = bdd.vars
         missing = set(pbits).difference(bdd_bits)
-        assert not missing, (missing, pbits, bdd_bits)
+        if add:
+            for bit in missing:
+                bdd.add_var(bit)
+        else:
+            assert not missing, (missing, pbits, bdd_bits)
         # extract order and partition
         prime, partition = _extract_partition(bdd.vars, ubits)
     # bundle as:

@@ -497,7 +497,7 @@ def _extract_partition(dbits, ubits):
     upvars = set()
     evars = set()
     epvars = set()
-    for bit, i in dbits.iteritems():
+    for bit in dbits:
         primed = bit.endswith(suffix)
         if primed:
             s = bit[:-1]

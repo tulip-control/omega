@@ -51,23 +51,28 @@ def bitblast_table(table):
     t = dict()
     init = {'env': list(), 'sys': list()}
     safety = {'env': list(), 'sys': list()}
+    keys = {'type', 'owner', 'dom', 'signed',
+            'width', 'bitnames', 'init'}
     for var, d in table.iteritems():
         dtype = d['type']
         owner = d['owner']
+        b = dict(d)  # cp other keys
+        for k in keys:
+            b.pop(k, None)
         if dtype in ('boolean', 'bool'):
-            b = dict(type='bool', owner=owner)
+            b.update(type='bool', owner=owner)
         elif dtype in ('saturating', 'modwrap', 'int'):
             dom = d['dom']
             assert len(dom) == 2, dom
             signed, width = dom_to_width(dom)
-            b = dict(type='int', owner=owner,
+            b.update(type='int', owner=owner,
                      signed=signed, width=width,
                      dom=dom)
         else:
             raise Exception(
                 'unknown type: "{dtype}"'.format(dtype=dtype))
         if dtype == 'int':
-            print('warning: "int" found as type '
+            print('WARNING: "int" found as type '
                   '(instead of "saturating")')
         t[var] = b
         # initial value
@@ -158,6 +163,8 @@ def list_bits(dvars):
     @rtype: `dict` of `dict`
     """
     dout = dict()
+    keys = {'type', 'owner', 'dom', 'signed',
+            'width', 'bitnames', 'init'}
     for var, d in dvars.iteritems():
         dtype = d['type']
         if dtype == 'int':
@@ -169,8 +176,13 @@ def list_bits(dvars):
                 'unknown type "{t}"'.format(t=dtype))
         owner = d['owner']
         assert owner in {'env', 'sys'}, owner
+        dcp = dict(d)  # cp other keys
+        for k in keys:
+            dcp.pop(k, None)
         for bit in c:
-            dout[bit] = dict(type='bool', owner=owner)
+            dbit = dict(dcp)
+            dbit.update(type='bool', owner=owner)
+            dout[bit] = dbit
     return dout
 
 

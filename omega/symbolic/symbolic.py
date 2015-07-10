@@ -181,6 +181,7 @@ class Automaton(object):
                 sys_win=_join(self.win['sys']))
 
     def dumps(self):
+        """Return `repr` of a `dict` with the attributes."""
         d = dict(vars=self.vars, init=self.init,
                  action=self.action, win=self.win)
         return repr(d)

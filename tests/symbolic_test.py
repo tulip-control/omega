@@ -1,6 +1,7 @@
 import logging
+import dd.bdd
 from omega.logic import bitvector as bv
-from omega.symbolic import bdd as _bdd
+from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import symbolic
 
 

@@ -530,13 +530,25 @@ def _extract_partition(dbits, ubits):
     epj = map(dbits.get, epvars)
     partition = dict(uvars=uj, upvars=upj,
                      evars=ej, epvars=epj)
+    return prime, partition
+
+
+def assert_primed_adjacent(prime, bdd):
+    """Raise `AssertionError` if not neighbors.
+
+    @param prime: map each unprimed to a primed var.
+    @type prime: `dict(str: str)`
+    @type bdd: `BDD`
+    """
     # check adjacency of unprimed-primed pairs
     for x, y in prime.iteritems():
-        assert abs(x - y) == 1, (
-            'The variables: {c} are not adjacent.\n'
+        i = bdd.level_of_var(x)
+        j = bdd.level_of_var(y)
+        assert abs(i - j) == 1, (
+            'Variables "{x}" (level {i}) and '
+            '"{y}" (level {j}) are not adjacent.\n'
             'Primed and unprimed vars must be adjacent in '
-            'the given BDD.').format(c=(x, y))
-    return prime, partition
+            'the given BDD.').format(x=x, y=y, i=i, j=j)
 
 
 def _join(c):

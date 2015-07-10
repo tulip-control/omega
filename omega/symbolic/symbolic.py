@@ -368,18 +368,46 @@ def _bitvector_to_bdd(aut, bdd=None, add=True):
     a.prime = prime
     a.unprime = {v: k for k, v in prime.iteritems()}
     # slugsin -> BDD
-    for owner in ('env', 'sys'):
-        _to_bdd(aut.init[owner], a.init[owner], bdd)
-        _to_bdd(aut.action[owner], a.action[owner], bdd)
-        _to_bdd(aut.win[owner], a.win[owner], bdd)
-    # bdd.collect_garbage()
+    # add long attributes first,
+    # to improve  effectiveness of reordering.
+    # better if each attr is one formula.
+    from_sections = _make_section_map(aut)
+    to_sections = _make_section_map(a)
+    lengths = {
+        k: _section_len(v)
+        for k, v in from_sections.iteritems()}
+    sort = sorted(
+        from_sections,
+        key=lengths.__getitem__,
+        reverse=True)
+    for section in sort:
+        p = from_sections[section]
+        q = to_sections[section]
+        _to_bdd(p, q, bdd)
     return a
 
 
+def _make_section_map(aut):
+    """Return `dict` of `Automaton` attributes."""
+    sections = dict(
+        env_init=aut.init['env'],
+        env_action=aut.action['env'],
+        env_win=aut.win['env'],
+        sys_init=aut.init['sys'],
+        sys_action=aut.action['sys'],
+        sys_win=aut.win['sys'])
+    return sections
+
+
+def _section_len(formulae):
+    """Return sum of `len` of `str` in `formulae`."""
+    return sum(len(s) for s in formulae)
+
+
 def _to_bdd(a, b, bdd):
+    """For each element of `a`, append a `bdd` node to `b`."""
     for s in a:
         u = _bdd.add_expr(s, bdd)
-        # bdd.incref(u)
         b.append(u)
 
 

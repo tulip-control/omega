@@ -24,17 +24,6 @@ def test_partition_vars():
     assert epvars == {3, 5}, epvars
 
 
-def slugsin_parser(s, t):
-    """Helper that converts prefix to infix syntax for readability."""
-    slugs_table = t.to_slugs()
-    ltl_parser = bv.Parser()
-    p = ltl_parser.parse(s)
-    bv.add_bitnames(slugs_table)
-    s = p.flatten(t=slugs_table)
-    slugsin_parser = _bdd.PrefixParser()
-    print(slugsin_parser.parse(s))
-
-
 def test_bdd_nodes():
     parser = PrefixParser()
     parser._ast = make_bdd_nodes()
@@ -54,3 +43,14 @@ def test_bdd_nodes():
     u = t.flatten(bdd=bdd)
     v = bdd.add_expr('(x & y) | ! z')
     assert u == v, (u, v)
+
+
+def slugsin_parser(s, t):
+    """Helper that converts prefix to infix syntax for readability."""
+    slugs_table = t.to_slugs()
+    ltl_parser = bv.Parser()
+    p = ltl_parser.parse(s)
+    bv.add_bitnames(slugs_table)
+    s = p.flatten(t=slugs_table)
+    slugsin_parser = sym_bdd.Parser()
+    print(slugsin_parser.parse(s))

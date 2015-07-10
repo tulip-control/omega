@@ -339,11 +339,11 @@ def _bitvector_to_bdd(aut, bdd=None):
         # check no missing vars,
         # including primed
         pbits, _, _ = _partition_vars(dbits, ubits)
-        bdd_bits = bdd.ordering
+        bdd_bits = bdd.vars
         missing = set(pbits).difference(bdd_bits)
         assert not missing, (missing, pbits, bdd_bits)
         # extract order and partition
-        prime, partition = _extract_partition(bdd.ordering, ubits)
+        prime, partition = _extract_partition(bdd.vars, ubits)
     # bundle as:
     a = Automaton()
     a.bdd = bdd

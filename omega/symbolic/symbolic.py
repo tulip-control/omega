@@ -419,19 +419,19 @@ def _partition_vars(ordvars, uvars, suffix="'"):
     for i, var in enumerate(ordvars):
         j = 2 * i
         primed = var + suffix
+        logger.debug('{var} at {j}, {pvar} at {jp}'.format(
+            var=var, pvar=primed, j=j, jp=j + 1))
         d[var] = j
         d[primed] = j + 1
-        prime[j] = j + 1
+        prime[var] = primed
     evars = {var for var in ordvars if var not in uvars}
-    uj = map(d.get, uvars)
-    ej = map(d.get, evars)
-    upj = map(prime.get, uj)
-    epj = map(prime.get, ej)
+    upvars = map(prime.get, uvars)
+    epvars = map(prime.get, evars)
     # bundle
-    c = [uj, upj, ej, epj]
-    uj, upj, ej, epj = map(set, c)
-    partition = dict(uvars=uj, upvars=upj,
-                     evars=ej, epvars=epj)
+    c = [uvars, upvars, evars, epvars]
+    uvars, upvars, evars, epvars = map(set, c)
+    partition = dict(uvars=uvars, upvars=upvars,
+                     evars=evars, epvars=epvars)
     return d, prime, partition
 
 
@@ -521,15 +521,9 @@ def _extract_partition(dbits, ubits):
         if pbit not in dbits:
             continue
         # primed bit
-        uj = dbits[bit]
-        pj = dbits[pbit]
-        prime[uj] = pj
-    uj = map(dbits.get, uvars)
-    upj = map(dbits.get, upvars)
-    ej = map(dbits.get, evars)
-    epj = map(dbits.get, epvars)
-    partition = dict(uvars=uj, upvars=upj,
-                     evars=ej, epvars=epj)
+        prime[bit] = pbit
+    partition = dict(uvars=uvars, upvars=upvars,
+                     evars=evars, epvars=epvars)
     return prime, partition
 
 

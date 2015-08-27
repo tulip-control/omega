@@ -128,10 +128,9 @@ class Automaton(object):
         return a
 
     def __del__(self):
-        for attr in (self.init, self.action, self.win):
-            for s in ('env', 'sys'):
-                for u in attr[s]:
-                    del u
+        del self.init
+        del self.action
+        del self.win
 
     def __str__(self):
         c = [

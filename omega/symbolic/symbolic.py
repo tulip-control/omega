@@ -373,7 +373,20 @@ def _bitvector_to_bdd(aut, bdd=None, add=True):
         missing = set(pbits).difference(bdd_bits)
         if add:
             for bit in missing:
-                bdd.add_var(bit)
+                logger.debug('add missing bit "{b}"'.format(b=bit))
+                if bit.endswith("'"):
+                    unprimed_bit = bit[:-1]
+                else:
+                    unprimed_bit = bit
+                level = dbits[unprimed_bit].get('level')
+                if level is None:
+                    bdd.add_var(bit)
+                else:
+                    logger.debug('at level: {level}'.format(level=level))
+                    try:
+                        bdd.insert_var(bit, level)
+                    except:
+                        bdd.add_var(bit)
         else:
             assert not missing, (missing, pbits, bdd_bits)
         # extract order and partition

@@ -116,7 +116,7 @@ class Automaton(object):
         self.win = dict(env=list(), sys=list())  # GF
         self.acceptance = 'Streett(1)'
         # aux
-        self.bdd = dd.BDD()  # init only to help static analysis
+        self.bdd = dd.bdd.BDD()  # init only to help static analysis
 
     def __copy__(self):
         a = Automaton()

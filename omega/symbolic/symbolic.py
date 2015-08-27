@@ -11,7 +11,7 @@ import dd.bdd
 import natsort
 from omega.logic import syntax
 from omega.symbolic import bdd as _bdd
-from omega.logic import bitvector
+from omega.logic import bitvector as bv
 
 
 logger = logging.getLogger(__name__)
@@ -236,7 +236,7 @@ class Automaton(object):
         # the prefix parser treats primed bits as fresh
         # so suffice it for t to contain unprimed only
         t = self.vars
-        s = bitvector.bitblast(e, t)
+        s = bv.bitblast(e, t)
         u = _bdd.add_expr(s, self.bdd)
         return u
 
@@ -269,7 +269,7 @@ def _bitblast(aut):
     @type aut: `Automaton`
     """
     aut = copy.copy(aut)
-    t, init, safety = bitvector.bitblast_table(aut.vars)
+    t, init, safety = bv.bitblast_table(aut.vars)
     aut.update('init', init)
     aut.update('action', safety)
     # conjoin to avoid it later over BDD nodes
@@ -315,7 +315,7 @@ def _conj_owner(aut, owner, as_what):
 def _bitblast_owner(aut, a, owner, t):
     """Bitblast init, action, win of `owner`."""
     def f(x):
-        return bitvector.bitblast(x, t)
+        return bv.bitblast(x, t)
     a.init[owner] = map(f, aut.init[owner])
     a.action[owner] = map(f, aut.action[owner])
     a.win[owner] = map(f, aut.win[owner])
@@ -337,7 +337,7 @@ def _bitvector_to_bdd(aut, bdd=None, add=True):
     @type bdd: `dd.bdd.BDD`
     """
     dvars = aut.vars
-    dbits = bitvector.list_bits(dvars)
+    dbits = bv.list_bits(dvars)
     ubits = set(b for b, d in dbits.iteritems()
                 if d['owner'] == 'env')
     # use fresh `BDD` ?

@@ -110,7 +110,7 @@ class Parser(object):
 
 
 class Nodes(_Nodes):
-    """AST that that evaluates memory buffers."""
+    """AST that evaluates memory buffers."""
 
     # difference with slugs parser:
     # cyclic references are possible, but assumed absent

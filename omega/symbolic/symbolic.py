@@ -241,6 +241,24 @@ class Automaton(object):
         return u
 
 
+def cofactor(f, var, value, bdd, table):
+    """Cofactor integer variable."""
+    assert var in table, var
+    var_bits = bv.var_to_twos_complement(var, table)
+    int_bits = bv.int_to_twos_complement(value)
+    p, q = bv.equalize_width(var_bits, int_bits)
+    values = dict()
+    for u, v in zip(p, q):
+        # primed ?
+        if u.isdigit():
+            assert u == v, (u, v)
+        else:
+            values[u] = bool(int(v))
+    # take cofactor
+    h = bdd.cofactor(f, values)
+    return h
+
+
 def fill_blanks(aut, as_bdd=False):
     """Add `"True"` to empty attributes `init`, `action`, `win`.
 

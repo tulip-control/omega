@@ -88,9 +88,18 @@ def bitblast_table(table):
         # saturating semantics ?
         if dtype not in ('saturating', 'int'):
             continue
-        dmin, dmax = dom
-        safety[owner].append(
-            '({min} <= {x}) & ({x} <= {max})'.format(
+        # still included, for use with counters
+        # during transducer construction,
+        # because closure not taken for the counters
+        init[owner].append(
+             '({min} <= {x}) & ({x} <= {max})'.format(
+                 min=dmin, max=dmax, x=var))
+        # prime needed to enforce limits now, not one step later,
+        # otherwise env can violate limits, if that will force
+        # sys to lose in the next time step.
+        safety[owner].append((
+            '({min} <= {x}) & ({x} <= {max}) & '
+            '({min} <= X({x}) ) & ( X({x}) <= {max})').format(
                 min=dmin, max=dmax, x=var))
     _check_data_types(t)
     _add_bitnames(t)

@@ -553,5 +553,17 @@ def test_flatten_memory_nodes():
     assert f == 'reg[1]', f
 
 
+def test_make_table():
+    d = dict(x=(0, 2), y='bool', w='bool', z=(-2, 5))
+    env_vars = {'x', 'y'}
+    t = bv.make_table(d, env_vars)
+    t_ = dict(
+        x=dict(type='saturating', owner='env', dom=(0, 2)),
+        y=dict(type='bool', owner='env', dom=None),
+        z=dict(type='saturating', owner='sys', dom=(-2, 5)),
+        w=dict(type='bool', owner='sys', dom=None))
+    assert t == t_, (t, t_)
+
+
 if __name__ == '__main__':
     test_ite()

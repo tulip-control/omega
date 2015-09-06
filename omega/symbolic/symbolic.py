@@ -222,6 +222,25 @@ class Automaton(object):
         return u
 
 
+def fill_blanks(aut, as_bdd=False):
+    """Add `"True"` to empty attributes `init`, `action`, `win`.
+
+    @param as_bdd: if `True`, then represent `"True"` as `1`
+    """
+    if as_bdd:
+        true = aut.bdd.True
+    else:
+        true = 'True'
+    for d in (aut.init, aut.action, aut.win):
+        for k, v in d.iteritems():
+            if not v:
+                d[k] = [true]
+    # post-condition
+    for d in (aut.init, aut.action, aut.win):
+        for k in d:
+            assert len(d[k]) > 0
+
+
 def _bitblast(aut):
     """Return `Automaton` with bitvector formulae.
 

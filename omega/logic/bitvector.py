@@ -2,7 +2,7 @@
 
 This module translates Boolean formulas that can
 contain arithmetic expressions involving signed integers
-to bitvector propositinal formulas.
+to bitvector propositional formulas.
 
 Reference
 =========

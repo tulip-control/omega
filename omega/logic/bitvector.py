@@ -805,7 +805,7 @@ def ite_function(a, b, c, start):
     assert isinstance(a, basestring)
     assert isinstance(b, list)
     assert isinstance(c, list)
-    assert len(b) == len(c)
+    assert len(b) == len(c), (b, c)
     m = list()
     m.append(a)
     for p, q in zip(b, c):

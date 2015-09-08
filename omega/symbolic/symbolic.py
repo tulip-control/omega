@@ -29,7 +29,8 @@ class Automaton(object):
       - acceptance: `str` that describes `win`,
           for example `'Streett(1)'`
 
-    Each of `init, action, win` is a `dict(env=list(), sys=list())`.
+    Each of `init, action` is a `dict(env=list(), sys=list())`,
+    and `win` is a `{'<>[]': list(), '[]<>': list()}`
     The lists contain formulae, as strings when populating the attributes.
     Call the method `build` to convert the formulae to BDD nodes,
     and generate the below.
@@ -113,7 +114,7 @@ class Automaton(object):
         # formulae
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())
-        self.win = dict(env=list(), sys=list())  # GF
+        self.win = {'<>[]': list(), '[]<>': list()}
         self.acceptance = 'Streett(1)'
         # aux
         self.bdd = dd.bdd.BDD()  # init only to help static analysis
@@ -150,11 +151,6 @@ class Automaton(object):
                 'ENV ACTION:',
                 '{env_action}',
                 ''])
-        if self.win['env']:
-            c.extend([
-                'ENV WIN:',
-                '{env_win}',
-                ''])
         if self.init['sys']:
             c.extend([
                 'SYS INIT:',
@@ -165,19 +161,24 @@ class Automaton(object):
                 'SYS ACTION:',
                 '{sys_action}',
                 ''])
-        if self.win['sys']:
+        if self.win['<>[]']:
             c.extend([
-                'SYS WIN:',
-                '{sys_win}',
+                '<>[] (persistence):',
+                '{fg}',
+                ''])
+        if self.win['[]<>']:
+            c.extend([
+                '[]<> (recurrence):',
+                '{gf}',
                 ''])
         return '\n'.join(c).format(
                 dvars=pprint.pformat(self.vars),
                 env_init=_join(self.init['env']),
                 env_action=_join(self.action['env']),
-                env_win=_join(self.win['env']),
+                fg=_join(self.win['<>[]']),
                 sys_init=_join(self.init['sys']),
                 sys_action=_join(self.action['sys']),
-                sys_win=_join(self.win['sys']))
+                gf=_join(self.win['[]<>']))
 
     def dumps(self):
         """Return `repr` of a `dict` with the attributes."""
@@ -219,8 +220,14 @@ class Automaton(object):
     def update(self, attr, d):
         """Add formulae from `dict` `d`."""
         r = getattr(self, attr)
-        r['env'].extend(d['env'])
-        r['sys'].extend(d['sys'])
+        if attr in ('init', 'action'):
+            r['env'].extend(d['env'])
+            r['sys'].extend(d['sys'])
+        elif attr == 'win':
+            r['<>[]'].extend(d['<>[]'])
+            r['[]<>'].extend(d['[]<>'])
+        else:
+            raise Exception('unknown attr "{a}"'.format(a=attr))
 
     def conjoin(self, as_what):
         """Conjoin attributes.
@@ -259,19 +266,28 @@ def cofactor(f, var, value, bdd, table):
     return h
 
 
-def fill_blanks(aut, as_bdd=False):
+def fill_blanks(aut, as_bdd=False, rabin=False):
     """Add `"True"` to empty attributes `init`, `action`, `win`.
 
     @param as_bdd: if `True`, then represent `"True"` as `1`
     """
     if as_bdd:
         true = aut.bdd.True
+        false = aut.bdd.False
     else:
         true = 'True'
-    for d in (aut.init, aut.action, aut.win):
+        false = 'False'
+    for d in (aut.init, aut.action):
         for k, v in d.iteritems():
             if not v:
                 d[k] = [true]
+    if not aut.win['<>[]']:
+        if rabin:
+            aut.win['<>[]'] = [true]
+        else:
+            aut.win['<>[]'] = [false]
+    if not aut.win['[]<>']:
+        aut.win['[]<>'] = [true]
     # post-condition
     for d in (aut.init, aut.action, aut.win):
         for k in d:
@@ -334,9 +350,14 @@ def _bitblast_owner(aut, a, owner, t):
     """Bitblast init, action, win of `owner`."""
     def f(x):
         return bv.bitblast(x, t)
+    assert owner in ('env', 'sys'), owner
     a.init[owner] = map(f, aut.init[owner])
     a.action[owner] = map(f, aut.action[owner])
-    a.win[owner] = map(f, aut.win[owner])
+    if owner == 'env':
+        s = '<>[]'
+    else:
+        s = '[]<>'
+    a.win[s] = map(f, aut.win[s])
 
 
 # at least 4 use cases:
@@ -432,10 +453,10 @@ def _make_section_map(aut):
     sections = dict(
         env_init=aut.init['env'],
         env_action=aut.action['env'],
-        env_win=aut.win['env'],
         sys_init=aut.init['sys'],
-        sys_action=aut.action['sys'],
-        sys_win=aut.win['sys'])
+        sys_action=aut.action['sys'])
+    sections['<>[]'] = aut.win['<>[]']
+    sections['[]<>'] = aut.win['[]<>']
     return sections
 
 

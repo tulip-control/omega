@@ -302,7 +302,8 @@ class Nodes(_Nodes):
             if mem is None:
                 return ite_connective(x, y, z)
             else:
-                r, ite_mem = ite_function(x, y, z, start=len(mem))
+                p, q = equalize_width(y, z)
+                r, ite_mem = ite_function(x, p, q, start=len(mem))
                 mem.extend(ite_mem)
                 return r
 

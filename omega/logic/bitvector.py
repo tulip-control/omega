@@ -41,13 +41,13 @@ def bitblast_table(table):
     `table` is a `dict` that maps each variable
     to a `dict` with attributes:
 
-      - "type": `in ('boolean', 'bool',
-                     'saturating', 'modwrap', 'int')`
+      - "type": `in ('bool', 'saturating', 'modwrap', 'int')`
       - "owner": `in ('env', 'sys')`
       - "dom": `tuple([min, max])` where `min, max` are `int`
         used only if "type" is an integer
       - "init" (optional)
     """
+    data_types = {'bool', 'int', 'saturating', 'modwrap'}
     t = dict()
     init = {'env': list(), 'sys': list()}
     safety = {'env': list(), 'sys': list()}
@@ -56,10 +56,11 @@ def bitblast_table(table):
     for var, d in table.iteritems():
         dtype = d['type']
         owner = d['owner']
+        assert dtype in data_types, (var, dtype)
         b = dict(d)  # cp other keys
         for k in keys:
             b.pop(k, None)
-        if dtype in ('boolean', 'bool'):
+        if dtype == 'bool':
             b.update(type='bool', owner=owner)
         elif dtype in ('saturating', 'modwrap', 'int'):
             dom = d['dom']
@@ -82,9 +83,10 @@ def bitblast_table(table):
             c = _init_to_logic(var, d)
             init[owner].append(c)
         # ranged bitfield safety constraints
-        if dtype == 'boolean':
+        if dtype == 'bool':
             continue
         # int var
+        assert dtype in ('int', 'saturating', 'modwrap')
         # saturating semantics ?
         if dtype not in ('saturating', 'int'):
             continue

@@ -87,8 +87,14 @@ def bitblast_table(table):
             continue
         # int var
         assert dtype in ('int', 'saturating', 'modwrap')
+        dmin, dmax = dom
         # saturating semantics ?
         if dtype not in ('saturating', 'int'):
+            # must range between powers of two
+            v = abs(dmin) + 1
+            assert not (v & (v - 1)), (var, dmin)
+            v = abs(dmax) + 1
+            assert not (v & (v - 1)), (var, dmax)
             continue
         # still included, for use with counters
         # during transducer construction,

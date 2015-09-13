@@ -5,15 +5,22 @@
 About
 =====
 
-A package for automata-theoretic and symbolic algorithms that manipulate omega-regular languages.
+A package of symbolic algorithms for omega-regular languages.
 It contains:
 
-- synthesis algorithm that solves GR(1) games
-- parser of temporal logic
-- translation from past to future LTL, using temporal testers
-- classes for enumerated and semi-symbolic automata and transition systems
-- class for symbolic automata that includes compiling methods that take care for initializing and maintaining the underlying BDDs via bitblasting of first-order temporal logic
-- flattening of semi-symbolic transition systems to LTL
+- Synthesis algorithms for:
+  - generalized Streett(1) games (known as GR(1))
+  - generalized Rabin(1) games (known as counter-strategies, not to be confused with [arXiv:1003.1684](http://arxiv.org/abs/1003.1684v2#))
+  - detection of trivial realizability in GR(1) games.
+- Parser of [linear temporal logic](http://dx.doi.org/10.1109/SFCS.1977.32) (LTL).
+- Translation from past to future LTL, using [temporal testers](doi.org/10.1007/978-3-540-69850-0_11).
+- Bitblaster of first-order temporal logic (integers -> bits).
+- Symbolic automata that include:
+  - methods that compile to, and maintain, the underlying binary decision diagrams (BDDs)
+  - functions for generatining primed variables, and BDD orderings.
+- Semi-symbolic automata (and "transition systems").
+- Flattening of semi-symbolic transition systems to LTL.
+- Enumeration / plotting of BDDs representing sets and (transition) relations.
 
 User documentation can be found in [`doc/doc.md`](https://github.com/johnyf/omega/blob/master/doc/doc.md).
 
@@ -32,6 +39,10 @@ or
 ```
 python setup.py install
 ```
+
+The package and its dependencies are pure Python.
+
+For solving demanding games, install the [Cython](https://en.wikipedia.org/wiki/Cython) module `dd.cudd`, which links to [CUDD](http://vlsi.colorado.edu/~fabio/CUDD). Instructions are available [at `dd`](https://github.com/johnyf/dd#cython-bindings).
 
 
 License

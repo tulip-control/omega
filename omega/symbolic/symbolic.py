@@ -213,9 +213,12 @@ class Automaton(object):
                         assert u in self.bdd, u
                     else:
                         assert isinstance(u, basestring)
+        if not built:
+            return
         # bdd initialized ?
-        if built:
-            assert self.bdd.ordering is not None
+        assert self.bdd.vars is not None
+        if self.vars:
+            assert self.uevars
 
     def update(self, attr, d):
         """Add formulae from `dict` `d`."""

@@ -18,7 +18,7 @@ s = (
     "version = '{version}'\n").format(version=version)
 install_requires = [
     'dd >= 0.1.3',
-    'ply >= 3.4',
+    'ply >= 3.6',
     'natsort >= 3.5.3',
     'networkx >= 1.9.1']
 tests_require = ['nose >= 1.3.4']

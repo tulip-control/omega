@@ -13,7 +13,7 @@ It contains:
   - generalized Rabin(1) games (known as counter-strategies, not to be confused with [arXiv:1003.1684](http://arxiv.org/abs/1003.1684v2#))
   - detection of trivial realizability in GR(1) games.
 - Parser of [linear temporal logic](http://dx.doi.org/10.1109/SFCS.1977.32) (LTL).
-- Translation from past to future LTL, using [temporal testers](doi.org/10.1007/978-3-540-69850-0_11).
+- Translation from past to future LTL, using [temporal testers](http://doi.org/10.1007/978-3-540-69850-0_11).
 - Bitblaster of first-order temporal logic (integers -> bits).
 - Symbolic automata that include:
   - methods that compile to, and maintain, the underlying binary decision diagrams (BDDs)

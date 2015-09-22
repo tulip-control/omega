@@ -18,7 +18,7 @@ These are enumerated graphs with node and edge labels.
 A label can be a formula (as string). A formula describes a set, thus this representation is called “semi-symbolic”.
 For convenience, there are two flavors:
 
-- `automata.Automaton`: describes a language of (in)finite trees (sequences). This represents an [alternating automaton](doi.org/10.1007/3-540-60915-6_6) with the desired acceptance condition (Buchi, Rabin, Streett, Muller, parity, etc.), variables as alphabet, and formulae as guards labeling edges. A set of `universal_nodes` marks those nodes where path quantification is universal.
+- `automata.Automaton`: describes a language of (in)finite trees (sequences). This represents an [alternating automaton](http://doi.org/10.1007/3-540-60915-6_6) with the desired acceptance condition (Buchi, Rabin, Streett, Muller, parity, etc.), variables as alphabet, and formulae as guards labeling edges. A set of `universal_nodes` marks those nodes where path quantification is universal.
 
 - `automata.TransitionSystem`: describes a transition relation of a discrete system. Nodes can be labeled with state predicates (formulae over unprimed variables), and edges with [actions](http://dx.doi.org/10.1145/177492.177726) (formulae over primed variables). Some variables can be universally quantified (inputs), the rest existentially (outputs). A transition system can be viewed as an automaton with trivial acceptance condition (e.g., Buchi with all nodes accepting). It can also be viewed as a [Kripke structure](https://en.wikipedia.org/wiki/Kripke_structure_%28model_checking%29), or -when an environment is present- as a [contracted](https://en.wikipedia.org/wiki/Edge_contraction) description of a bipartite [game graph](http://dx.doi.org/10.1016/0168-0072(93)90036-D).
 
@@ -111,7 +111,7 @@ SYS WIN
 y = 3
 ```
 
-Humans are not intended to define variables in this way, because it is cumbersome. Instead, [convert](#Converting-labeled-graphs-to symbolic-automata) a semi-symbolic automaton, or use `bitvector.make_table`.
+Humans are not intended to define variables in this way, because it is cumbersome. Instead, [convert](#Converting-labeled-graphs-to-symbolic-automata) a semi-symbolic automaton, or use `bitvector.make_table`.
 
 By indexing formulae by player, an `Automaton` can serve also as a multi-player game structure.
 

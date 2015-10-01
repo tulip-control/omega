@@ -35,7 +35,7 @@ def bitblast(f, t):
     return tree.flatten(t=t)
 
 
-def bitblast_table(table):
+def bitblast_table(table, players=None):
     """Return table of variables for bitvectors.
 
     `table` is a `dict` that maps each variable
@@ -47,15 +47,18 @@ def bitblast_table(table):
         used only if "type" is an integer
       - "init" (optional)
     """
+    if players is None:
+        players = {'env', 'sys'}
     data_types = {'bool', 'int', 'saturating', 'modwrap'}
     t = dict()
-    init = {'env': list(), 'sys': list()}
-    safety = {'env': list(), 'sys': list()}
+    init = {k: list() for k in players}
+    safety = {k: list() for k in players}
     keys = {'type', 'owner', 'dom', 'signed',
             'width', 'bitnames', 'init'}
     for var, d in table.iteritems():
         dtype = d['type']
         owner = d['owner']
+        assert owner in players, (owner, players)
         assert dtype in data_types, (var, dtype)
         b = dict(d)  # cp other keys
         for k in keys:
@@ -169,7 +172,7 @@ def _check_data_types(t):
             'unknown type: "{dtype}"'.format(dtype=d['type']))
 
 
-def list_bits(dvars):
+def list_bits(dvars, players=None):
     """Return symbol table of bits (comprising bitfields).
 
     For symbol table definition, see `bitblast_table`.
@@ -179,6 +182,8 @@ def list_bits(dvars):
     @return: symbol table of bits
     @rtype: `dict` of `dict`
     """
+    if players is None:
+        players = {'env', 'sys'}
     dout = dict()
     keys = {'type', 'owner', 'dom', 'signed',
             'width', 'bitnames', 'init'}
@@ -192,7 +197,7 @@ def list_bits(dvars):
             raise Exception(
                 'unknown type "{t}"'.format(t=dtype))
         owner = d['owner']
-        assert owner in {'env', 'sys'}, owner
+        assert owner in players, (owner, players)
         dcp = dict(d)  # cp other keys
         for k in keys:
             dcp.pop(k, None)

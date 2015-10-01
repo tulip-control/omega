@@ -31,11 +31,11 @@ def attractor(env_action, sys_action, target, aut,
     # ancestors
     bdd = aut.bdd
     q = target
-    qold = bdd.False
+    qold = None
     while q != qold:
+        qold = q
         pred = ue_preimage(env_action, sys_action, q, aut,
                            evars=evars, moore=moore)
-        qold = q
         q = bdd.apply('or', qold, pred)
         if inside is not None:
             q = aut.bdd.apply('and', q, inside)
@@ -52,14 +52,15 @@ def trap(env_action, sys_action, safe, aut,
     @rtype: BDD node
     """
     logger.info('++ cinv')
-    q = aut.bdd.True  # if unless is not None, then q = safe is wrong
+    bdd = aut.bdd
+    q = bdd.True  # if unless is not None, then q = safe is wrong
     qold = None
     while q != qold:
         qold = q
-        q = ue_preimage(env_action, sys_action, q, aut, evars=evars)
-        q = aut.bdd.apply('and', safe, q)
+        pre = ue_preimage(env_action, sys_action, q, aut, evars=evars)
+        q = bdd.apply('and', safe, pre)
         if unless is not None:
-            q = aut.bdd.apply('or', q, unless)
+            q = bdd.apply('or', q, unless)
     logger.info('-- cinv')
     return q
 

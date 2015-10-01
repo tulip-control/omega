@@ -10,7 +10,7 @@ import pprint
 import dd.bdd
 import natsort
 from omega.logic import syntax
-from omega.symbolic import bdd as _bdd
+from omega.symbolic import bdd as sym_bdd
 from omega.logic import bitvector as bv
 
 
@@ -247,7 +247,7 @@ class Automaton(object):
         # so suffice it for t to contain unprimed only
         t = self.vars
         s = bv.bitblast(e, t)
-        u = _bdd.add_expr(s, self.bdd)
+        u = sym_bdd.add_expr(s, self.bdd)
         return u
 
 
@@ -471,7 +471,7 @@ def _section_len(formulae):
 def _to_bdd(a, b, bdd):
     """For each element of `a`, append a `bdd` node to `b`."""
     for s in a:
-        u = _bdd.add_expr(s, bdd)
+        u = sym_bdd.add_expr(s, bdd)
         b.append(u)
 
 

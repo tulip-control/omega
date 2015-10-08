@@ -8,7 +8,7 @@ parser = past.Parser()
 
 def test_flatten_previous_var():
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     x = past.Nodes.Var('x')
     s = past._flatten_previous('--X', x, testers, context)
     assert s == 'x_prev1', s
@@ -28,7 +28,7 @@ def test_flatten_previous_var():
 
 def test_flatten_previous_boolean():
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     x = past.Nodes.Var('x')
     y = past.Nodes.Var('y')
     previous_x = past.Nodes.Unary('--X', x)
@@ -74,7 +74,7 @@ def test_flatten_previous_arithmetic():
 
 def test_flatten_previous_boolean_expr():
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     # "-X (x & y)"
     x = past.Nodes.Var('x')
     y = past.Nodes.Var('y')
@@ -122,7 +122,7 @@ def test_flatten_previous_arithmetic_expr():
 
 def test_flatten_nested_previous():
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     # "-X (q & -X (3 = -X (p + 3)))"
     p = past.Nodes.Var('p')
     q = past.Nodes.Var('q')
@@ -181,7 +181,7 @@ def test_flatten_nested_previous():
 
 def test_flatten_since():
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     p = past.Nodes.Var('p')
     q = past.Nodes.Var('q')
     since = past.Nodes.Binary('S', p, q)
@@ -260,7 +260,7 @@ def test_parser_multi_previous():
     s = 'a..'
     tree = parser.parse(s)
     testers = dict()
-    r = tree.flatten(testers=testers, context='boolean')
+    r = tree.flatten(testers=testers, context='bool')
     assert r == 'a_prev2', r
     assert len(testers) == 1, testers
 
@@ -271,18 +271,18 @@ def test_context_checks():
     tree = parser.parse(s)
     tree.flatten(testers=dict, context='arithmetic')
     with assert_raises(AssertionError):
-        tree.flatten(testers=dict, context='boolean')
+        tree.flatten(testers=dict, context='bool')
     # arithmetic
     s = 'p & q'
     tree = parser.parse(s)
-    tree.flatten(testers=dict, context='boolean')
+    tree.flatten(testers=dict, context='bool')
     with assert_raises(AssertionError):
         tree.flatten(testers=dict, context='arithmetic')
     # nested
     s = 'a & (b + 3)'
     tree = parser.parse(s)
     with assert_raises(AssertionError):
-        tree.flatten(testers=dict, context='boolean')
+        tree.flatten(testers=dict, context='bool')
 
 
 if __name__ == '__main__':

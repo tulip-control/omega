@@ -438,7 +438,7 @@ def test_ite():
 
 def test_init_to_logic():
     # bool
-    d = dict(type='boolean', init='False')
+    d = dict(type='bool', init='False')
     c = bv._init_to_logic('x', d)
     assert c == 'x <-> False', c
     # number

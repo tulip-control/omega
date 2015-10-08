@@ -152,7 +152,7 @@ class Automaton(_SystemGraph):
     """
 
     def __init__(self, acceptance='Buchi', dvars=None,
-                 universal_nodes=None, guards='boolean'):
+                 universal_nodes=None, guards='bool'):
         super(Automaton, self).__init__()
         if universal_nodes is None:
             universal_nodes = set()
@@ -375,7 +375,7 @@ def _dumps_nodes(g):
 
 def _check_value(v, dom):
     """Assert that value `v` is in domain `dom`."""
-    if dom in ('bool', 'boolean'):
+    if dom == 'bool':
         assert v in (0, 1, False, True)
     elif isinstance(dom, tuple):
         assert dom[0] <= v <= dom[1]

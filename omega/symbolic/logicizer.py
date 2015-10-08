@@ -255,7 +255,7 @@ def _assign(k, v, dvars):
         s = '{k} = {v}'.format(k=k, v=v)
     elif isinstance(dom, (set, list)):
         s = '{k} = "{v}"'.format(k=k, v=v)
-    elif dom in {'bool', 'boolean'}:
+    elif dom == 'bool':
         s = '{k} <-> {v}'.format(k=k, v=v)
     else:
         raise Exception('domain is: {dom}'.format(dom=dom))

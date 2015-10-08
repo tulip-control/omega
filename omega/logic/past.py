@@ -43,7 +43,7 @@ class Nodes(_Nodes):
             # ite both function and connective
             if self.operator == 'ite':
                 x, y, z = self.operands
-                a = x.flatten(context='boolean', *arg, **kw)
+                a = x.flatten(context='bool', *arg, **kw)
                 b = y.flatten(context=context, *arg, **kw)
                 c = z.flatten(context=context, *arg, **kw)
                 return ''.join([
@@ -63,7 +63,7 @@ class Nodes(_Nodes):
                 x = self.operands[0]
                 return _flatten_previous(self.operator, x, *arg, **kw)
             if self.operator != 'X':
-                assert c == 'boolean', (c, self.operator)
+                assert c == 'bool', (c, self.operator)
             if self.operator == '-[]':
                 x = Nodes.Bool('True')
                 y = Nodes.Unary('!', self.operands[0])
@@ -79,7 +79,7 @@ class Nodes(_Nodes):
         def flatten(self, *arg, **kw):
             # type checking
             c = kw.get('context')
-            assert c == 'boolean', c
+            assert c == 'bool', c
             # recurse
             if self.operator == 'S':
                 return _flatten_since(
@@ -90,7 +90,7 @@ class Nodes(_Nodes):
         def flatten(self, *arg, **kw):
             # type checking
             c = kw.get('context')
-            assert c == 'boolean', (c, str(self))
+            assert c == 'bool', (c, str(self))
             # change context
             kw['context'] = 'arithmetic'
             # recurse
@@ -147,7 +147,7 @@ def _flatten_previous(op, x, testers, context,
         return x.flatten(testers=testers, context=context,
                          previous=previous, strong=strong, *arg, **kw)
     # create tester here
-    assert context == 'boolean', context
+    assert context == 'bool', context
     assert len(x) > 1, 'operand is an operator'
     expr = x.flatten(testers=testers, context=context, *arg, **kw)
     # bottom-up counting is safe
@@ -165,7 +165,7 @@ def _flatten_previous(op, x, testers, context,
 def _make_tester_for_previous(var, expr, context, strong):
     """Return temporal tester for "previous"."""
     # select operator
-    if context == 'boolean':
+    if context == 'bool':
         op = '<->'
         # strong "previous" operator "--X" ?
         if strong:
@@ -189,7 +189,7 @@ def _make_tester_for_previous(var, expr, context, strong):
 
 def _flatten_since(operands, testers, context, *arg, **kw):
     """Translate expression with "since" as main operator."""
-    assert context == 'boolean', context
+    assert context == 'bool', context
     x, y = operands
     p = x.flatten(testers=testers, context=context, *arg, **kw)
     q = y.flatten(testers=testers, context=context, *arg, **kw)
@@ -242,7 +242,7 @@ def translate(s, t, free_init=None, debug=False):
     """
     tree = parser.parse(s)
     testers = dict()
-    context = 'boolean'
+    context = 'bool'
     r = tree.flatten(testers=testers, context=context,
                      free_init=free_init)
     if debug:

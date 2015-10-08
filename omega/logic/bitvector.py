@@ -120,7 +120,7 @@ def bitblast_table(table, players=None):
 
 def _init_to_logic(var, d):
     """Return logic formulae for initial condition."""
-    if d['type'] == 'boolean':
+    if d['type'] == 'bool':
         op = '<->'
     else:
         op = '='

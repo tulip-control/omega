@@ -122,7 +122,7 @@ def _print_enumeration(u, bdd, t, care_set, care_bits, full):
         'enumeration of BDD node {u} with care set {c}\n'.format(
             u=u, c=care_set))
     s = (
-        'contains {n} elements:\n\n{e}\n').format(
+        'contains {n} expressions:\n\n{e}\n').format(
             e=e,
             n=len(c))
     print(s)

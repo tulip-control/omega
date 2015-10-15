@@ -4,6 +4,7 @@ Integers are decoded from binary to decimal.
 """
 import logging
 from dd import bdd as _bdd
+import natsort
 import networkx as nx
 from omega.logic.syntax import linear_conj as conj
 from omega.symbolic import symbolic
@@ -105,9 +106,13 @@ def _print_enumeration(u, bdd, t, care_set, care_bits, full):
     """Print first-order models."""
     c = _enumerate_bdd(u, bdd, t, care_set, care_bits, full)
     r = list()
+    keys = natsort.natsorted(t)
     for product in c:
         w = list()
-        for x, i in product.iteritems():
+        for x in keys:
+            if x not in product:
+                continue
+            i = product[x]
             s = '({x} = {i})'.format(x=x, i=i)
             w.append(s)
         s = ' & '.join(w)

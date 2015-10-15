@@ -20,8 +20,8 @@ def dump_relation(
     if fname is None:
         fname = 'edges.pdf'
     g = relation_to_graph(u, aut, care_source, care_target)
-    pd = _nx_to_pydot(g)
-    pd.write_pdf(fname, prog='dot')
+    h, umap = _format_nx(g)
+    pd = nx.to_pydot(h)
 
 
 def relation_to_graph(
@@ -321,7 +321,7 @@ def _care_bits(u, aut):
     return care_bits
 
 
-def _nx_to_pydot(g):
+def _format_nx(g):
     """Return graph ready to be dumped.
 
     @type g: `networkx.DiGraph`
@@ -339,5 +339,4 @@ def _nx_to_pydot(g):
         us = umap[u]
         vs = umap[v]
         h.add_edge(us, vs)
-    pd = nx.to_pydot(h)
-    return pd
+    return h, umap

@@ -22,6 +22,7 @@ def dump_relation(
     g = relation_to_graph(u, aut, care_source, care_target)
     h, umap = _format_nx(g)
     pd = nx.to_pydot(h)
+    pd.set_overlap(False)
     pd.write_pdf(fname, prog='neato')
 
 

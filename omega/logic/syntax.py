@@ -107,18 +107,18 @@ def _prefix_linear(s, op, false, true):
 
 def conj_intersection(s, r, paren=True):
     if paren:
-        return ' && '.join(
+        return conj(
             '({x})'.format(x=x) for x in s if x in r)
     else:
-        return ' && '.join(
+        return conj(
             '{x}'.format(x=x) for x in s if x in r)
 
 
 def conj_neg(s, paren=True):
     if paren:
-        return ' && '.join('!({x})'.format(x=x) for x in s)
+        return conj('!({x})'.format(x=x) for x in s)
     else:
-        return ' && '.join('!{x}'.format(x=x) for x in s)
+        return conj('!{x}'.format(x=x) for x in s)
 
 
 def recurse_binary(f, x, bdd=None):

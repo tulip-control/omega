@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import networkx as nx
 from omega.logic import lexyacc
 from omega.symbolic import symbolic
+from omega.logic import syntax
 from omega.logic import transformation as tx
 
 
@@ -117,9 +118,9 @@ def split_gr1(f):
                 'in "{f}" formula. parts:\n {d}').format(
                     op=op, f=part, d=d))
     # conjoin (except for progress)
-    init = ' & '.join(u.flatten() for u in reversed(d['init']))
+    init = syntax.conj(u.flatten() for u in reversed(d['init']))
     d['init'] = [init]
-    safe = ' & '.join(u.flatten() for u in reversed(d['G']))
+    safe = syntax.conj(u.flatten() for u in reversed(d['G']))
     d['G'] = [safe]
     # flatten individual progress formulae
     d['GF'] = [u.flatten() for u in d['GF']]

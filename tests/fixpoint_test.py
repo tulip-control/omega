@@ -10,7 +10,7 @@ def test_descendants():
     symbolic.fill_blanks(a)
     aut = a.build()
     source = aut.add_expr('pc = 0')
-    constrain = aut.bdd.True
+    constrain = aut.bdd.true
     v = fx.descendants(source, constrain, aut)
     assert v == aut.bdd.add_expr('pc_0 ^ pc_1'), aut.bdd.to_expr(v)
 
@@ -76,10 +76,10 @@ def test_ue_preimage():
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     u = fx.ue_preimage(env_action, sys_action, target, aut)
-    assert u == aut.bdd.False, aut.bdd.to_expr(u)
+    assert u == aut.bdd.false, aut.bdd.to_expr(u)
     u = fx.ue_preimage(env_action, sys_action, target, aut,
                        evars=aut.uepvars)
-    assert u == aut.bdd.True, aut.bdd.to_expr(u)
+    assert u == aut.bdd.true, aut.bdd.to_expr(u)
 
 
 if __name__ == '__main__':

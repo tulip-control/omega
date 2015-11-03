@@ -24,7 +24,7 @@ def test_streett_trivial_loop():
     assert len(a.win['<>[]']) == 1
     assert len(a.win['[]<>']) == 1
     z, yij, xijk = gr1.solve_streett_game(a)
-    assert z == a.bdd.True, z
+    assert z == a.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, a)
     assert isinstance(t, symbolic.Automaton), t
@@ -62,7 +62,7 @@ def test_rabin_trivial_loop():
     assert len(a.win['<>[]']) == 1
     assert len(a.win['[]<>']) == 1
     zk, yki, xkijr = gr1.solve_rabin_game(a)
-    assert zk[-1] == a.bdd.True, zk
+    assert zk[-1] == a.bdd.true, zk
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, a)
     assert isinstance(t, symbolic.Automaton), t
@@ -107,7 +107,7 @@ def test_streett_deadend():
     aut = a.build()
     z, _, _ = gr1.solve_streett_game(aut)
     win_set = z
-    assert win_set == aut.bdd.False, win_set
+    assert win_set == aut.bdd.false, win_set
 
 
 def test_rabin_deadend():
@@ -119,7 +119,7 @@ def test_rabin_deadend():
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.False, win_set
+    assert win_set == aut.bdd.false, win_set
 
 
 def test_streett_always_x():
@@ -131,7 +131,7 @@ def test_streett_always_x():
     # solve
     aut = a.build()
     z, yij, xijk = gr1.solve_streett_game(aut)
-    assert z == aut.bdd.True, z
+    assert z == aut.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     # init
@@ -175,7 +175,7 @@ def test_rabin_always_x():
     aut = a.build()
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, win_set
+    assert win_set == aut.bdd.true, win_set
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     # init
@@ -227,7 +227,7 @@ def test_streett_counter():
     # solve
     aut = a.build()
     z, yij, xijk = gr1.solve_streett_game(aut)
-    assert z == aut.bdd.True, z
+    assert z == aut.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     (init,) = t.init['sys']
@@ -253,7 +253,7 @@ def test_rabin_counter():
     aut = a.build()
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
@@ -281,7 +281,7 @@ def test_rabin_persistence():
     aut = a.build()
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     # tranducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
@@ -301,7 +301,7 @@ def test_rabin_persistence():
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.False, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.false, aut.bdd.to_expr(win_set)
 
 
 def test_rabin_persistence_2():
@@ -314,7 +314,7 @@ def test_rabin_persistence_2():
     aut = a.build()
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
@@ -347,7 +347,7 @@ def test_streett_with_safety_assumption():
     # solve
     aut = a.build()
     z, yij, xijk = gr1.solve_streett_game(aut)
-    assert z == aut.bdd.True, z
+    assert z == aut.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut, t)
@@ -398,7 +398,7 @@ def test_rabin_with_safety_assumption():
     aut = a.build()
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == t.bdd.False, t.bdd.to_expr(win_set)
+    assert win_set == t.bdd.false, t.bdd.to_expr(win_set)
     with assert_raises(AssertionError):
         gr1.make_rabin_transducer(zk, yki, xkijr, aut)
 
@@ -438,7 +438,7 @@ def test_streett_with_liveness_assumption():
     sys_action = aut.action['sys'][0]
     sys_action = _bdd.copy_bdd(sys_action, aut.bdd, t.bdd)
     u = t.bdd.apply('->', action, sys_action)
-    assert u == t.bdd.True, u
+    assert u == t.bdd.true, u
     assert action == action_, (action, action_, pprint.pprint(sat))
     #
     # test complement
@@ -468,7 +468,7 @@ def test_streett_2_goals():
     aut = a.build()
     # solve
     z, yij, xijk = gr1.solve_streett_game(aut)
-    assert z == aut.bdd.True, aut.bdd.to_expr(z)
+    assert z == aut.bdd.true, aut.bdd.to_expr(z)
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut, t)
@@ -493,7 +493,7 @@ def test_rabin_goal():
     # solve
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.False, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.false, aut.bdd.to_expr(win_set)
 
 
 def test_rabin_2_goals():
@@ -506,28 +506,28 @@ def test_rabin_2_goals():
     # solve
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     #
     # unrealizable
     a.win['<>[]'] = ['! y']
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.False, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.false, aut.bdd.to_expr(win_set)
     #
     # realizable again
     a.win['<>[]'] = ['y']
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.True, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     #
     # unrealizable
     a.win['[]<>'] = ['x -> y', '!y']
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
-    assert win_set == aut.bdd.False, aut.bdd.to_expr(win_set)
+    assert win_set == aut.bdd.false, aut.bdd.to_expr(win_set)
 
 
 def test_trivial_winning_set():
@@ -536,7 +536,7 @@ def test_trivial_winning_set():
     a.win['<>[]'] = ['!x']
     symbolic.fill_blanks(a)
     triv, aut = gr1.trivial_winning_set(a)
-    assert triv == aut.bdd.True, aut.bdd.to_expr(triv)
+    assert triv == aut.bdd.true, aut.bdd.to_expr(triv)
 
 
 def action_refined(aut_a, aut_b, owner='sys'):
@@ -553,7 +553,7 @@ def action_refined(aut_a, aut_b, owner='sys'):
     else:
         a_cp = a
     refined = bdd_b.apply('->', b, a_cp)
-    return refined == bdd_b.True
+    return refined == bdd_b.true
 
 
 def print_fol_bdd(u, bdd, table):

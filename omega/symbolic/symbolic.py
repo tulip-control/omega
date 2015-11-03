@@ -275,8 +275,8 @@ def fill_blanks(aut, as_bdd=False, rabin=False):
     @param as_bdd: if `True`, then represent `"True"` as `1`
     """
     if as_bdd:
-        true = aut.bdd.True
-        false = aut.bdd.False
+        true = aut.bdd.true
+        false = aut.bdd.false
     else:
         true = 'True'
         false = 'False'

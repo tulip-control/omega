@@ -210,9 +210,9 @@ class BDDNodes(Nodes):
             assert self.value in ('0', '1'), self.value
             u = int(self.value)
             if u == 0:
-                r = bdd.False
+                r = bdd.false
             else:
-                r = bdd.True
+                r = bdd.true
             return r
 
 

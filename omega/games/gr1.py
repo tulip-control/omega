@@ -45,7 +45,7 @@ def solve_streett_game(aut, rank=1):
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
     bdd = aut.bdd
-    z = bdd.True
+    z = bdd.true
     zold = None
     while z != zold:
         zold = z
@@ -66,7 +66,7 @@ def _attractor_under_assumptions(z, goal, aut):
     sys_action = aut.action['sys'][0]
     xjk = list()
     yj = list()
-    y = bdd.False
+    y = bdd.false
     yold = None
     cox_z = fx.ue_preimage(env_action, sys_action, z, aut)
     g = bdd.apply('and', goal, cox_z)
@@ -92,7 +92,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     to represent the counter of recurrence goals.
     """
     aut.assert_consistent(built=True)
-    assert z != aut.bdd.False, 'empty winning set'
+    assert z != aut.bdd.false, 'empty winning set'
     # add goal counter var
     c = '_goal'
     dvars = copy.deepcopy(aut.vars)
@@ -116,7 +116,7 @@ def make_streett_transducer(z, yij, xijk, aut):
      env_action, sys_action, holds, goals) = r
     # compute strategy from iterates
     # \rho_1: switch goals
-    rho_1 = bdd.False
+    rho_1 = bdd.false
     for i, goal in enumerate(goals):
         ip = (i + 1) % len(goals)
         s = "({c} = {i}) & ({c}' = {ip})".format(c=c, i=i, ip=ip)
@@ -126,11 +126,11 @@ def make_streett_transducer(z, yij, xijk, aut):
     zp = _bdd.rename(z, bdd, t.prime)
     rho_1 = bdd.apply('and', rho_1, zp)
     # \rho_2: descent in basin
-    rho_2 = bdd.False
+    rho_2 = bdd.false
     for i, yj in enumerate(yij):
         s = "({c} = {i}) & ({c}' = {i})".format(c=c, i=i)
         count = t.add_expr(s)
-        rho_2j = bdd.False
+        rho_2j = bdd.false
         basin = yj[0]
         for y in yj[1:]:
             next_basin = _bdd.rename(basin, bdd, t.prime)
@@ -141,12 +141,12 @@ def make_streett_transducer(z, yij, xijk, aut):
         u = bdd.apply('and', rho_2j, count)
         rho_2 = bdd.apply('or', rho_2, u)
     # \rho_3: persistence holds
-    rho_3 = bdd.False
+    rho_3 = bdd.false
     for i, xjk in enumerate(xijk):
         s = "({c} = {i}) & ({c}' = {i})".format(c=c, i=i)
         count = t.add_expr(s)
-        rho_3j = bdd.False
-        used = bdd.False
+        rho_3j = bdd.false
+        used = bdd.false
         for xk in xjk:
             assert len(xk) == len(holds), xk
             for x, hold in zip(xk, holds):
@@ -182,7 +182,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \forall \exists init semantics
     real = bdd.quantify(init, t.evars, forall=False)
     real = bdd.quantify(real, t.uvars, forall=True)
-    assert real == t.bdd.True, 'cannot init in winning set'
+    assert real == t.bdd.true, 'cannot init in winning set'
     return t
 
 
@@ -199,7 +199,7 @@ def solve_rabin_game(aut, rank=1):
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
     bdd = aut.bdd
-    z = bdd.False
+    z = bdd.false
     zold = None
     zk = list()
     yki = list()
@@ -227,7 +227,7 @@ def _cycle_inside(z, hold, aut):
     cox_z = fx.ue_preimage(env_action, sys_action,
                            z, aut, moore=True)
     g = bdd.apply('or', cox_z, hold)
-    y = bdd.True
+    y = bdd.true
     yold = None
     while y != yold:
         yold = y
@@ -247,7 +247,7 @@ def _attractor_inside(inside, goal, aut, moore=False):
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]
     xr = list()
-    x = bdd.False
+    x = bdd.false
     xold = None
     while x != xold:
         xold = x
@@ -265,7 +265,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     """Return O/I transducer for Rabin(1) game."""
     aut.assert_consistent(built=True)
     win_set = zk[-1]
-    assert win_set != aut.bdd.False, 'empty winning set'
+    assert win_set != aut.bdd.false, 'empty winning set'
     dvars = dict(aut.vars)
     n_holds = len(aut.win['<>[]'])
     n_goals = len(aut.win['[]<>'])
@@ -297,7 +297,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     s = "({c}' = {c}) & ({w}' = {none})".format(
         c=c, w=w, none=n_holds)
     count = t.add_expr(s)
-    rho_1 = bdd.False
+    rho_1 = bdd.false
     basin = zk[0]
     for z in zk[1:]:
         trans = _moore_trans(basin, t)
@@ -306,10 +306,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         u = bdd.apply('and', u, count)
         rho_1 = bdd.apply('or', rho_1, u)
         basin = z
-    rho_2 = bdd.False
-    rho_3 = bdd.False
-    rho_4 = bdd.False
-    basin = bdd.False
+    rho_2 = bdd.false
+    rho_3 = bdd.false
+    rho_4 = bdd.false
+    basin = bdd.false
     for z, yi, xijr in zip(zk, yki, xkijr):
         cox_basin = fx.ue_preimage(env_action, sys_action,
                                    basin, t, moore=True)
@@ -320,7 +320,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             c=c, w=w, none=n_holds)
         count = t.add_expr(s)
         u = bdd.apply('and', rim, count)
-        v = bdd.False
+        v = bdd.false
         for i, y in enumerate(yi):
             s = "{w}' = {i}".format(w=w, i=i)
             count = t.add_expr(s)
@@ -337,7 +337,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                 c=c, w=w, none=n_holds)
         count = t.add_expr(s)
         u = bdd.apply('and', rim, count)
-        v = bdd.False
+        v = bdd.false
         for i, xjr in enumerate(xijr):
             for j, (xr, goal) in enumerate(zip(xjr, goals)):
                 s = (
@@ -345,7 +345,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                     " ({w} = {i})").format(c=c, w=w, i=i, j=j)
                 count = t.add_expr(s)
                 x_basin = xr[0]
-                p = bdd.False
+                p = bdd.false
                 for x in xr[1:]:
                     trans = _moore_trans(x_basin, t)
                     q = bdd.apply('and', trans, -x_basin)
@@ -358,7 +358,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         u = bdd.apply('and', u, v)
         rho_3 = bdd.apply('or', rho_3, u)
         # rho_4: advance to next recurrence goal
-        u = bdd.False
+        u = bdd.false
         for j, goal in enumerate(goals):
             jp = (j + 1) % len(goals)
             s = "({c} = {j}) & ({c}' = {jp})".format(
@@ -373,7 +373,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         count = t.add_expr(s)
         u = bdd.apply('and', u, count)
         u = bdd.apply('and', u, rim)
-        v = bdd.False
+        v = bdd.false
         for i, y in enumerate(yi):
             s = "{w} = {i}".format(w=w, i=i)
             count = t.add_expr(s)
@@ -409,12 +409,12 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     v = bdd.apply('->', env_init, win_set_)
     u = bdd.apply('and', u, v)
     init = u
-    assert init != t.bdd.False, 'no init in winning set'
+    assert init != t.bdd.false, 'no init in winning set'
     t.init['sys'] = [init]
     # \exists \forall init semantics
     real = bdd.quantify(init, t.uvars, forall=True)
     real = bdd.quantify(real, t.evars, forall=False)
-    assert real == t.bdd.True, 'cannot init in winning set'
+    assert real == t.bdd.true, 'cannot init in winning set'
     return t
 
 

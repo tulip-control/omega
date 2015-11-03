@@ -53,7 +53,7 @@ def trap(env_action, sys_action, safe, aut,
     """
     logger.info('++ cinv')
     bdd = aut.bdd
-    q = bdd.True  # if unless is not None, then q = safe is wrong
+    q = bdd.true  # if unless is not None, then q = safe is wrong
     qold = None
     while q != qold:
         qold = q

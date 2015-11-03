@@ -22,6 +22,15 @@ install_requires = [
     'natsort >= 3.5.3',
     'networkx >= 1.9.1']
 tests_require = ['nose >= 1.3.4']
+classifiers = [
+    'Development Status :: 2 - Pre-Alpha',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Topic :: Scientific/Engineering']
 
 
 if __name__ == '__main__':
@@ -46,4 +55,5 @@ if __name__ == '__main__':
         tests_require=tests_require,
         packages=[name, 'omega.games', 'omega.logic', 'omega.symbolic'],
         package_dir={name: name},
+        classifiers=classifiers,
         keywords=['logic'])

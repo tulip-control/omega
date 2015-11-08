@@ -4,7 +4,6 @@ import networkx as nx
 from omega.logic import lexyacc
 from omega.logic.ast import Nodes
 from omega.symbolic import symbolic
-from omega.logic import syntax
 from omega.logic import transformation as tx
 
 

@@ -179,7 +179,7 @@ def split_gr1_old(f):
             Q.extend(u.operands)
         else:
             b.append(u)
-    d = {'init': list(), 'G': list(), 'GF': list()}
+    d = dict(init=list(), G=list(), GF=list())
     for u in b:
         # terminal ?
         if not g.succ.get(u):
@@ -204,7 +204,7 @@ def split_gr1_old(f):
             d['G'].append(v)
     # assert only admissible temporal operators
     ops = {'G', 'F', 'U', 'V', 'R'}
-    operators = {'G': ops}
+    operators = dict(G=ops)
     ops = set(ops)
     ops.add('X')
     operators.update(init=ops, GF=ops)

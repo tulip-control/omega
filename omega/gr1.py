@@ -118,13 +118,17 @@ def split_gr1(f):
                 'in "{f}" formula. parts:\n {d}').format(
                     op=op, f=part, d=d))
     # conjoin (except for progress)
-    init = syntax.conj(u.flatten() for u in reversed(d['init']))
+    init = conj(u.flatten() for u in reversed(d['init']))
     d['init'] = [init]
-    safe = syntax.conj(u.flatten() for u in reversed(d['G']))
+    safe = conj(u.flatten() for u in reversed(d['G']))
     d['G'] = [safe]
     # flatten individual progress formulae
     d['GF'] = [u.flatten() for u in d['GF']]
     return d
+
+
+def conj(x):
+    return syntax.conj(x)
 
 
 def has_operator(u, g, operators):

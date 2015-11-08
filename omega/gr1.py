@@ -128,7 +128,7 @@ def split_gr1(f):
 
 
 def conj(x):
-    return syntax.conj(x)
+    return ' & '.join(x)
 
 
 def has_operator(u, g, operators):

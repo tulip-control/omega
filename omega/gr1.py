@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import networkx as nx
 from omega.logic import lexyacc
+from omega.logic.ast import Nodes
 from omega.symbolic import symbolic
 from omega.logic import syntax
 from omega.logic import transformation as tx
@@ -38,7 +39,7 @@ def ltl_to_automaton(f):
     return a
 
 
-def split_gr1(f):
+def split_gr1(s):
     """Return `dict` of GR(1) subformulae.
 
     The formula `f` is assumed to be a conjunction of expressions
@@ -54,6 +55,106 @@ def split_gr1(f):
     @return: conjunctions of formulae A, B as `str`, grouped by keys:
         `'init', 'G', 'GF'`
     @rtype: `dict` of `str`: `list` of `str`
+    """
+    u = parser.parse(s)
+    init = _split_gr1(u, 'init')
+    action = _split_gr1(u, 'action')
+    gf = list()
+    _split_gr1(u, 'win', gf=gf)
+    win = [v.flatten() for v in gf]
+    d = dict(init=[init.flatten()],
+             G=[action.flatten()],
+             GF=win)
+    _assert_admissible_operators(d)
+    return d
+
+
+def _split_gr1(u, context, gf=None):
+    # terminal ?
+    if hasattr(u, 'value'):
+        if context == 'init':
+            return u
+        else:
+            return Nodes.Bool('True')
+    # operator
+    if u.operator == '&':
+        v, w = u.operands
+        p = _split_gr1(v, context, gf)
+        q = _split_gr1(w, context, gf)
+        return Nodes.Binary('&', p, q)
+    assert u.operator != '&', u.operator
+    if context == 'init':
+        if u.operator == 'G':
+            return Nodes.Bool('True')
+        else:
+            return u
+    if u.operator != 'G':
+        return Nodes.Bool('True')
+    assert u.operator == 'G'
+    (v,) = u.operands
+    # terminal ?
+    if hasattr(v, 'value'):
+        if context == 'action':
+            return v
+        else:
+            return Nodes.Bool('True')
+    assert hasattr(v, 'operator'), v
+    if context == 'action':
+        # GF ?
+        if v.operator == 'F':
+            return Nodes.Bool('True')
+        return v
+    elif context == 'win':
+        if v.operator != 'F':
+            return
+        assert v.operator == 'F'
+        (w,) = v.operands
+        gf.append(w)
+
+
+def _assert_admissible_operators(d):
+    action_ops = {'G', 'F', 'U', 'V', 'R'}
+    init_ops = set(action_ops)
+    init_ops.add('X')
+    operators = dict(init=init_ops, G=action_ops, GF=init_ops)
+    for part, f in d.items():
+        ops = operators[part]
+        for s in f:
+            op = has_operator(s, ops)
+            if op is None:
+                continue
+            raise AssertionError((
+                'found inadmissible operator "{op}" '
+                'in "{p}" formla. Parts:\n {d}').format(
+                    op=op, p=part, d=d))
+
+
+def has_operator(s, operators):
+    u = parser.parse(s)
+    return _has_operator(u, operators)
+
+
+def _has_operator(u, operators):
+    # terminal ?
+    if hasattr(u, 'value'):
+        return None
+    # operator
+    assert hasattr(u, 'operator')
+    if u.operator in operators:
+        return u.operator
+    for v in u.operands:
+        op = _has_operator(v, operators)
+        if op is not None:
+            return op
+    return None
+
+
+def split_gr1_old(f):
+    """Earlier implementation of `split_gr1`.
+
+    Does not preserve formula structure.
+    Instead, it arranges conjunction operators as a
+    binary tree.
     """
     # TODO: preprocess by applying syntactic identities: [][] = [] etc
     try:
@@ -131,7 +232,7 @@ def conj(x):
     return ' & '.join(x)
 
 
-def has_operator(u, g, operators):
+def has_operator_old(u, g, operators):
     """Return `True` if AST `u` contains any `operators`."""
     try:
         if u.operator in operators:

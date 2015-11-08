@@ -216,7 +216,7 @@ def split_gr1_old(f):
                 continue
             raise AssertionError((
                 'found inadmissible operator "{op}" '
-                'in "{f}" formula. parts:\n {d}').format(
+                'in "{f}" formula. Parts:\n {d}').format(
                     op=op, f=part, d=d))
     # conjoin (except for progress)
     init = conj(u.flatten() for u in reversed(d['init']))

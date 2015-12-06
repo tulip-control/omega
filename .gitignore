@@ -1,4 +1,6 @@
 .coverage
+.DS_Store
+._.DS_Store
 *.txt
 omega/_version.py
 *parsetab.py

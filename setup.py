@@ -1,6 +1,7 @@
 from setuptools import setup
 # inline:
 # from omega.logic import lexyacc
+# import git
 
 
 name = 'omega'
@@ -11,11 +12,11 @@ VERSION_FILE = '{name}/_version.py'.format(name=name)
 MAJOR = 0
 MINOR = 0
 MICRO = 6
-version = '{major}.{minor}.{micro}'.format(
+VERSION = '{major}.{minor}.{micro}'.format(
     major=MAJOR, minor=MINOR, micro=MICRO)
-s = (
+VERSION_TEXT = (
     '# This file was generated from setup.py\n'
-    "version = '{version}'\n").format(version=version)
+    "version = '{version}'\n")
 install_requires = [
     'dd >= 0.2.1',
     'ply >= 3.6',
@@ -33,9 +34,38 @@ classifiers = [
     'Topic :: Scientific/Engineering']
 
 
-if __name__ == '__main__':
+def git_version(version):
+    import git
+    repo = git.Repo('.git')
+    repo.git.status()
+    sha = repo.head.commit.hexsha
+    if repo.is_dirty():
+        return '{v}.dev0+{sha}.dirty'.format(
+            v=version, sha=sha)
+    # commit is clean
+    # is it release of `version` ?
+    try:
+        tag = repo.git.describe(
+            match='v[0-9]*', exact_match=True,
+            tags=True, dirty=True)
+    except git.GitCommandError:
+        return '{v}.dev0+{sha}'.format(
+            v=version, sha=sha)
+    assert tag[1:] == version, (tag, version)
+    return version
+
+
+def run_setup():
+    # version
+    try:
+        version = git_version(VERSION)
+    except:
+        print('No git info: Assume release.')
+        version = VERSION
+    s = VERSION_TEXT.format(version=version)
     with open(VERSION_FILE, 'w') as f:
         f.write(s)
+    # build parser
     try:
         from omega.logic import lexyacc
         lexyacc._rewrite_tables(outputdir='./omega/logic/')
@@ -57,3 +87,7 @@ if __name__ == '__main__':
         package_dir={name: name},
         classifiers=classifiers,
         keywords=['logic'])
+
+
+if __name__ == '__main__':
+    run_setup()

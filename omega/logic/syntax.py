@@ -144,13 +144,13 @@ def recurse_binary(f, x, bdd=None):
     if n == 1:
         assert len(x) == 1, x
         return x.pop()
-    k = int(math.floor(math.log(n, 2)))
-    m = 2**k
-    if m == n:
-        m = int(n / 2.0)
-    assert n <= 2 * m, (n, m)
-    left = x[:m]
-    right = x[m:]
+    assert n > 1, n
+    # largest power of 2 less than n
+    m = (n - 1).bit_length() - 1
+    c = 2**m
+    assert c < n <= 2 * c, (n, c)
+    left = x[:c]
+    right = x[c:]
     del x[:]
     a = recurse_binary(f, left, bdd)
     b = recurse_binary(f, right, bdd)

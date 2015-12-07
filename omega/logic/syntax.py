@@ -135,6 +135,22 @@ def conj_neg(s, paren=True):
         return conj('!{x}'.format(x=x) for x in s)
 
 
+def recurse_binary_log_space(f, x, n):
+    """Apply associative binary operator `f` to generator `x`."""
+    logger.info('++ recurse binary')
+    assert n > 0, n
+    if n == 1:
+        return next(x)
+    assert n > 1, n
+    m = (n - 1).bit_length() - 1
+    c = 2**m
+    assert c < n <= 2 * c, (n, c)
+    a = recurse_binary_log_space(f, x, c)
+    b = recurse_binary_log_space(f, x, n - c)
+    logger.info('-- done binary {n} items'.format(n=n))
+    return f(a, b)
+
+
 def recurse_binary(f, x, bdd=None):
     """Recursively traverse binary tree of computation."""
     logger.info('++ recurse binary')

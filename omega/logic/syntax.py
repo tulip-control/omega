@@ -201,7 +201,6 @@ def _compute_as_binary_tree_simple(f, x):
     assert len(x) > 0
     while len(x) > 1:
         n = len(x)
-        k = int(math.floor(n / 2.0))
         # consume the power of 2
         r = [f(a, b) for a, b in zip(x[::2], x[1::2])]
         # has last element ?
@@ -211,6 +210,7 @@ def _compute_as_binary_tree_simple(f, x):
         x = r
         # assert
         n_ = len(x)
+        k = int(math.floor(n / 2.0))
         assert n_ == n - k, (n_, n - k)
     assert len(x) == 1, len(x)
     logger.debug('-- done binary tree')

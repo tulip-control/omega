@@ -52,6 +52,7 @@ def _recurse_op(a, b, h, true, false, glue):
     # singleton ?
     if n == 1:
         return h[a]
+    assert n > 1, n
     # power of 2 ?
     m = (n - 1).bit_length() - 1
     c = a + 2**m
@@ -139,7 +140,7 @@ def recurse_binary(f, x, bdd=None):
     logger.info('++ recurse binary')
     n = len(x)
     logger.debug('{n} items left to recurse'.format(n=n))
-    assert n > 0
+    assert n > 0, n
     if n == 1:
         assert len(x) == 1, x
         return x.pop()
@@ -183,7 +184,8 @@ def _compute_as_binary_tree(f, x):
             del x[k + 1:]
         else:
             del x[k:]
-        assert len(x) == n - k, (len(x), n - k)
+        n_ = len(x)
+        assert n_ == n - k, (n_, n - k)
     assert len(x) == 1, len(x)
     logger.debug('-- done binary tree')
     return x[0]
@@ -207,7 +209,9 @@ def _compute_as_binary_tree_simple(f, x):
             r.append(x[-1])
         # empty tail
         x = r
-        assert len(x) == n - k, (len(x), n - k)
+        # assert
+        n_ = len(x)
+        assert n_ == n - k, (n_, n - k)
     assert len(x) == 1, len(x)
     logger.debug('-- done binary tree')
     return x.pop()

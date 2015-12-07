@@ -177,8 +177,8 @@ def _compute_as_binary_tree(f, x):
             a = x[j]
             b = x[j + 1]
             x[i] = f(a, b)
-        if len(x) % 2 == 1:
-            # has last element ?
+        # has last element ?
+        if n % 2 == 1:
             x[k] = x[2 * k]
             # empty tail
             del x[k + 1:]
@@ -205,7 +205,7 @@ def _compute_as_binary_tree_simple(f, x):
         # consume the power of 2
         r = [f(a, b) for a, b in zip(x[::2], x[1::2])]
         # has last element ?
-        if len(x) % 2 == 1:
+        if n % 2 == 1:
             r.append(x[-1])
         # empty tail
         x = r

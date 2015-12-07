@@ -7,10 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 def conj(iterable, sep=''):
+    """Return binary conjunction in infix syntax."""
     return _associative_op(iterable, '&', sep)
 
 
 def disj(iterable, sep=''):
+    """Return binary disjunction in prefix syntax."""
     return _associative_op(iterable, '|', sep)
 
 
@@ -67,30 +69,41 @@ def _recurse_op(a, b, h, true, false, glue):
 
 
 def paren(iterable):
+    """Return generator that parenthesizes elements."""
     return ('(' + x + ')' for x in iterable)
 
 
 def linear_disj(s, op='||'):
+    """Return linear disjunction in prefix syntax."""
     b = ' {op} '.format(op=op)
     return b.join('({x})'.format(x=x) for x in s if x != '')
 
 
 def linear_conj(s, op='&&'):
+    """Return linear conjunction in prefix syntax."""
     b = ' {op} '.format(op=op)
     return b.join('({x})'.format(x=x) for x in s if x != '')
 
 
 def disj_prefix(iterable, op='|', false='0', true='1'):
+    """Return linear disjunction in prefix syntax."""
     return _prefix_linear(iterable, op, false, true)
 
 
 def conj_prefix(iterable, op='&', false='0', true='1'):
+    """Return linear conjunction in prefix syntax."""
     false, true = true, false
     return _prefix_linear(iterable, op, false, true)
 
 
 # TODO: recursive version
 def _prefix_linear(s, op, false, true):
+    """Apply associative binary operator linearly.
+
+    @param s: container
+    @param op: operator
+    @param false, true: values if treating `op` as disjunction
+    """
     if not s:
         return false
     u = s[0]
@@ -146,7 +159,11 @@ def recurse_binary(f, x, bdd=None):
 
 
 def _compute_as_binary_tree(f, x):
-    """Return result of applying operator `f`."""
+    """Return result of applying operator `f`.
+
+    In-place computation.
+    Non-recursive implementation.
+    """
     logger.debug('++ start binary tree')
     assert len(x) > 0
     while len(x) > 1:
@@ -173,7 +190,11 @@ def _compute_as_binary_tree(f, x):
 
 
 def _compute_as_binary_tree_simple(f, x):
-    """Return result of applying operator `f`."""
+    """Return result of applying operator `f`.
+
+    Delete level d only after computing level (d + 1).
+    Non-recursive implementation.
+    """
     logger.debug('++ start binary tree')
     assert len(x) > 0
     while len(x) > 1:

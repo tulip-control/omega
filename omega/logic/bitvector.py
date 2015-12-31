@@ -936,15 +936,16 @@ def int_to_twos_complement(s):
     logger.info(
         '++ convert integer "{s}" to 2s complement'.format(s=s))
     x = int(s)
+    n = x.bit_length()
     if x >= 0:
         sign_bit = '0'
         y = x
     else:
         sign_bit = '1'
-        n = x.bit_length()
         y = 2**n + x
-    # zfill catches the case: y == 0, because lstrip removes 0
-    bits = list(reversed(bin(y).lstrip('-0b').zfill(1)))
+    m = max(n, 1)  # if y == 0 then n == 0
+    bits = bin(y).lstrip('-0b').zfill(m)
+    bits = list(reversed(bits))
     bits.append(sign_bit)
     x_ = twos_complement_to_int(bits)
     assert x == x_, (x, x_)

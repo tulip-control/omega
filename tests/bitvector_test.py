@@ -341,11 +341,13 @@ def test_twos_complement_for_var():
 def test_twos_complement_for_int():
     f = bv.twos_complement_to_int
     g = bv.int_to_twos_complement
-    pairs = {1: ['1', '0'],
+    pairs = {0: ['0', '0'],
+             1: ['1', '0'],
              2: ['0', '1', '0'],
              5: ['1', '0', '1', '0'],
              -1: ['1', '1'],
-             -2: ['0', '1', '1']}
+             -2: ['0', '1', '1'],
+             -3: ['1', '0', '1']}
     for k, v in pairs.iteritems():
         assert g(k) == v
         assert k == f(v)

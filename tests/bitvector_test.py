@@ -107,6 +107,29 @@ def test_flatten_arithmetic():
     # TODO: subtraction
 
 
+def test_div_mul_expr():
+    mem = list()
+    res = parser.parse('4 / 2').flatten(t=t, mem=mem)
+    r = _evaluate_result(res, mem)
+    assert r == 2, r
+    mem = list()
+    res = parser.parse('-8 / 3').flatten(t=t, mem=mem)
+    r = _evaluate_result(res, mem)
+    assert r == -2, r
+    mem = list()
+    res = parser.parse('4 * 2').flatten(t=t, mem=mem)
+    r = _evaluate_result(res, mem)
+    assert r == 8, r
+    mem = list()
+    res = parser.parse('4 % 3').flatten(t=t, mem=mem)
+    r = _evaluate_result(res, mem)
+    assert r == 1, r
+    mem = list()
+    res = parser.parse('4 % -3').flatten(t=t, mem=mem)
+    r = _evaluate_result(res, mem)
+    assert r == 1, r
+
+
 def test_division():
     # 1 / 1 = 1 * 1 + 0
     x = ['1', '0']

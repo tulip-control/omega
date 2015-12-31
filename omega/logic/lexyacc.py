@@ -34,7 +34,7 @@ class Lexer(astutils.Lexer):
     operators = [
         'NOT', 'AND', 'OR', 'XOR', 'IMP', 'BIMP',
         'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
-        'PLUS', 'MINUS', 'TIMES', 'DIV', 'TRUNCATE',
+        'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
         'ONCE', 'PRIME', 'DOT']
     misc = ['NAME', 'NUMBER']
@@ -87,6 +87,7 @@ class Lexer(astutils.Lexer):
     t_MINUS = r'-'
     t_TIMES = r'\*'
     t_DIV = r'/'
+    t_MOD = r'\%'
     t_TRUNCATE = r'<<>>'
     # temporal
     t_PREVIOUS = r'--X'
@@ -126,7 +127,7 @@ class Parser(astutils.Parser):
         ('left', 'EQUALS', 'NEQUALS'),
         ('left', 'LT', 'LE', 'GT', 'GE'),
         ('left', 'PLUS', 'MINUS'),
-        ('left', 'TIMES', 'DIV'),
+        ('left', 'TIMES', 'DIV', 'MOD'),
         ('right', 'NOT', 'UMINUS'),
         ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
         ('left', 'PRIME', 'DOT'))
@@ -194,6 +195,7 @@ class Parser(astutils.Parser):
     def p_binary_function(self, p):
         """expr : expr TIMES expr
                 | expr DIV expr
+                | expr MOD expr
                 | expr PLUS expr
                 | expr MINUS expr
         """

@@ -340,10 +340,13 @@ The only temporal operator in the resulting formulae is “next”. Using the `b
 
 ## Temporal logic syntax
 
+Integer division has C99 semantics ([6.5.5, p.82](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf)).
+
 ```
        # first-order
 expr ::= expr '*' expr
-       | expr '/' expr
+       | expr '/' expr  # quotient of C99 integer division
+       | expr '%' expr  # remainder of C99 integer division
        | expr '+' expr
        | expr '-' expr
 
@@ -404,7 +407,7 @@ The token precedence (lowest to highest) and associativity (r = right, l = left,
 - `=`, `!=` (l)
 - `<=`, `>=`, `>` (l)
 - `+`, `-` (l)
-- `\`, `/` (l)
+- `*`, `/`, `%` (l)
 - `!` (r)
 - `X`, `-X`, `--X` (r)
 - `'`, `.` (l)

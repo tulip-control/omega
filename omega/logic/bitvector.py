@@ -946,8 +946,9 @@ def int_to_twos_complement(s):
     # zfill catches the case: y == 0, because lstrip removes 0
     bits = list(reversed(bin(y).lstrip('-0b').zfill(1)))
     bits.append(sign_bit)
-    assert x == twos_complement_to_int(bits)
-    assert len(bits) > 1
+    x_ = twos_complement_to_int(bits)
+    assert x == x_, (x, x_)
+    assert len(bits) > 1, bits
     # bits = sign_extension(bits, n + 1)
     logger.info("two's complement of \"{s}\" is:\n\t{bits}".format(
         s=s, bits=bits))

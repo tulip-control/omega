@@ -85,11 +85,14 @@ def _attractor_under_assumptions(z, goal, aut):
     return y, yj, xjk
 
 
-def make_streett_transducer(z, yij, xijk, aut):
+def make_streett_transducer(z, yij, xijk, aut, bdd=None):
     """Return I/O `symbolic.Automaton` implementing strategy.
 
     An auxiliary variable `_goal` is added,
     to represent the counter of recurrence goals.
+
+    @param bdd: use this BDD manager
+    @type bdd: `BDD` in `dd.cudd` or `dd.bdd` or `dd.autoref`
     """
     aut.assert_consistent(built=True)
     assert z != aut.bdd.false, 'empty winning set'
@@ -104,7 +107,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # compile transducer with refined shared BDD
     t = symbolic.Automaton()
     t.vars = dvars
-    t = t.build()
+    t = t.build(bdd=bdd)
     bdd = t.bdd
     # copy functions of interest from solution BDD
     r = [z, yij, xijk,
@@ -431,9 +434,11 @@ def _moore_trans(target, aut):
     return u
 
 
-def trivial_winning_set(aut_streett):
+def trivial_winning_set(aut_streett, bdd=None):
     """Return set of trivially winning nodes for Streett(1).
 
+    @param bdd: use this BDD manager
+    @type bdd: `BDD` in `dd.cudd` or `dd.bdd` or `dd.autoref`
     @return: `(trivial, aut_streett)` where:
         - `trivial`: node in `aut_streett.bdd`
         - `aut_streett`: `symbolic.Automaton`
@@ -450,8 +455,8 @@ def trivial_winning_set(aut_streett):
     win = ['!({w})'.format(w=w) for w in aut_streett.win['<>[]']]
     aut_rabin.win['[]<>'] = win
     symbolic.fill_blanks(aut_rabin, rabin=True)
-    aut_streett = aut_streett.build()
-    aut_rabin = aut_rabin.build()
+    aut_streett = aut_streett.build(bdd=bdd)
+    aut_rabin = aut_rabin.build(bdd=bdd)
     # solve
     win_set_streett, _, _ = solve_streett_game(aut_streett)
     zk, _, _ = solve_rabin_game(aut_rabin)

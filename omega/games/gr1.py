@@ -40,7 +40,7 @@ def solve_streett_game(aut, rank=1):
     @type aut: `symbolic.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
-    assert aut.bdd.ordering, 'first call `Automaton.build`'
+    assert aut.bdd.vars, 'first call `Automaton.build`'
     aut.assert_consistent(built=True)
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
@@ -193,7 +193,7 @@ def solve_rabin_game(aut, rank=1):
     @type aut: `symbolic.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
-    assert aut.bdd.ordering, 'first call `Automaton.build`'
+    assert aut.bdd.vars, 'first call `Automaton.build`'
     aut.assert_consistent(built=True)
     # TODO: can these assertions be removed elegantly ?
     assert len(aut.win['<>[]']) > 0

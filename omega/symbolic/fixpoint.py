@@ -22,7 +22,7 @@ def attractor(env_action, sys_action, target, aut,
     logger.info('++ attractor')
     # no free primed vars must remain after quantification
     # support = a.bdd.support(a.action)
-    # support = {a.bdd.ordering[k] for k in support}
+    # support = {a.bdd.vars[k] for k in support}
     # primed_support = set(k for k in map(a.prime.get, support)
     # if k is not None)
     # unquantified = primed_support.difference(

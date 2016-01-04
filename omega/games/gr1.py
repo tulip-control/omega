@@ -20,7 +20,6 @@ Robert Konighofer
 """
 import logging
 import copy
-from dd import bdd as _bdd
 from omega.symbolic import fixpoint as fx
 from omega.symbolic import symbolic
 
@@ -114,7 +113,7 @@ def make_streett_transducer(z, yij, xijk, aut, bdd=None):
          aut.init['env'][0], aut.init['sys'][0],
          aut.action['env'][0], aut.action['sys'][0],
          aut.win['<>[]'], aut.win['[]<>']]
-    r = _map_nested_lists(_bdd.copy_bdd, r, aut.bdd, t.bdd)
+    r = _map_nested_lists(_copy_bdd, r, aut.bdd, t.bdd)
     (z, yij, xijk, env_init, sys_init,
      env_action, sys_action, holds, goals) = r
     # compute strategy from iterates
@@ -290,7 +289,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
          aut.init['env'][0], aut.init['sys'][0],
          aut.action['env'][0], aut.action['sys'][0],
          aut.win['<>[]'], aut.win['[]<>']]
-    r = _map_nested_lists(_bdd.copy_bdd, r, aut.bdd, t.bdd)
+    r = _map_nested_lists(_copy_bdd, r, aut.bdd, t.bdd)
     (zk, yki, xkijr, env_init, sys_init,
      env_action, sys_action, holds, goals) = r
     t.action['env'] = [env_action]
@@ -462,8 +461,8 @@ def trivial_winning_set(aut_streett, bdd=None):
     zk, _, _ = solve_rabin_game(aut_rabin)
     win_set_rabin = zk[-1]
     # find trivial win set
-    win_set_rabin_ = _bdd.copy_bdd(win_set_rabin,
-                                   aut_rabin.bdd, aut_streett.bdd)
+    win_set_rabin_ = _copy_bdd(win_set_rabin,
+                               aut_rabin.bdd, aut_streett.bdd)
     trivial = aut_streett.bdd.apply('diff', win_set_streett, win_set_rabin_)
     return trivial, aut_streett
 
@@ -477,3 +476,13 @@ def _map_nested_lists(f, x, *arg, **kw):
         return [_map_nested_lists(f, y, *arg, **kw) for y in x]
     except TypeError:
         return f(x, *arg, **kw)
+
+
+def _copy_bdd(u, a, b):
+    """Copy bdd `u` from manager `a` to `b`.
+
+    No effect if `a is b`.
+    """
+    if a is b:
+        return u
+    return a.copy(u, b)

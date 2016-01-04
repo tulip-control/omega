@@ -22,7 +22,11 @@ It contains:
 - Flattening of semi-symbolic transition systems to LTL.
 - Enumeration / plotting of BDDs representing sets and (transition) relations.
 
-User documentation can be found in [`doc/doc.md`](https://github.com/johnyf/omega/blob/master/doc/doc.md).
+
+Documentation
+=============
+
+In the [Markdown](https://en.wikipedia.org/wiki/Markdown) file  [`doc/doc.md`](https://github.com/johnyf/omega/blob/master/doc/doc.md).
 
 
 Installation

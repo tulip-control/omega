@@ -123,7 +123,7 @@ def make_streett_transducer(z, yij, xijk, aut):
         u = t.add_expr(s)
         u = bdd.apply('and', u, goal)
         rho_1 = bdd.apply('or', u, rho_1)
-    zp = _bdd.rename(z, bdd, t.prime)
+    zp = bdd.rename(z, t.prime)
     rho_1 = bdd.apply('and', rho_1, zp)
     # \rho_2: descent in basin
     rho_2 = bdd.false
@@ -133,7 +133,7 @@ def make_streett_transducer(z, yij, xijk, aut):
         rho_2j = bdd.false
         basin = yj[0]
         for y in yj[1:]:
-            next_basin = _bdd.rename(basin, bdd, t.prime)
+            next_basin = bdd.rename(basin, t.prime)
             rim = bdd.apply('diff', y, basin)
             u = bdd.apply('and', rim, next_basin)
             rho_2j = bdd.apply('or', rho_2j, u)
@@ -150,7 +150,7 @@ def make_streett_transducer(z, yij, xijk, aut):
         for xk in xjk:
             assert len(xk) == len(holds), xk
             for x, hold in zip(xk, holds):
-                next_wait = _bdd.rename(x, bdd, t.prime)
+                next_wait = bdd.rename(x, t.prime)
                 stay = bdd.apply('diff', x, used)
                 used = bdd.apply('or', used, x)
                 u = bdd.apply('and', stay, next_wait)
@@ -424,7 +424,7 @@ def _moore_trans(target, aut):
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]
     uvars = aut.upvars
-    u = _bdd.rename(target, bdd, aut.prime)
+    u = bdd.rename(target, aut.prime)
     u = bdd.apply('->', env_action, u)
     u = bdd.apply('and', sys_action, u)
     u = bdd.quantify(u, uvars, forall=True)

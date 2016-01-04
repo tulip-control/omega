@@ -3,7 +3,6 @@
 Integers are decoded from binary to decimal.
 """
 import logging
-from dd import bdd as _bdd
 import natsort
 import networkx as nx
 from omega.logic.syntax import linear_conj as conj
@@ -159,7 +158,7 @@ def _care_relation(source, target, prime, bdd):
     if source is None or target is None:
         care_relation = None
         return care_relation
-    primed_target = _bdd.rename(target, bdd, prime)
+    primed_target = bdd.rename(target, prime)
     care_relation = bdd.apply('and', source, primed_target)
     return care_relation
 

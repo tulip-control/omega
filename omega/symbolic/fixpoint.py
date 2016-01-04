@@ -85,7 +85,7 @@ def ue_preimage(env_action, sys_action, target, aut,
         uvars = aut.upvars
     else:
         uvars = set(aut.unprime).difference(evars)
-    u = _bdd.rename(target, bdd, aut.prime)
+    u = bdd.rename(target, aut.prime)
     if moore:
         # \exists \forall
         u = bdd.apply('->', env_action, u)

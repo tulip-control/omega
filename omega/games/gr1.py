@@ -468,13 +468,13 @@ def trivial_winning_set(aut_streett, bdd=None):
 
 
 def _map_nested_lists(f, x, *arg, **kw):
-    """Recursively map lists, with integers at the bottom.
+    """Recursively map lists, with non-lists at the bottom.
 
     Useful for applying `dd.bdd.copy_bdd` to several lists.
     """
-    try:
+    if isinstance(x, list):
         return [_map_nested_lists(f, y, *arg, **kw) for y in x]
-    except TypeError:
+    else:
         return f(x, *arg, **kw)
 
 

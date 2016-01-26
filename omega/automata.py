@@ -45,7 +45,7 @@ class _SystemGraph(nx.MultiDiGraph):
         pd.write(filename, format=ext[1:], prog=prog)
 
     def to_pydot(self):
-        return nx.to_pydot(self)
+        return nx.drawing.nx_pydot.to_pydot(self)
 
 
 class Automaton(_SystemGraph):
@@ -216,7 +216,7 @@ class Automaton(_SystemGraph):
                 for k, v in d.iteritems()
                 if k in self.directions or k in self.alphabet)
             g.add_edge(u, v, label=label)
-        return nx.to_pydot(g)
+        return nx.drawing.nx_pydot.to_pydot(g)
 
     def _init_accepting_sets(self, acceptance):
         """Return a `set`, `list` or other, depending on acceptance type."""
@@ -336,7 +336,7 @@ class TransitionSystem(_SystemGraph):
             else:
                 label = '"{f}"'.format(f=f)
             g.add_edge(u, v, label=label, **d)
-        return nx.to_pydot(g)
+        return nx.drawing.nx_pydot.to_pydot(g)
 
     def assert_consistent(self):
         """Return `True` if attributes are conformant."""

@@ -2,6 +2,7 @@ import logging
 import dd.bdd
 from omega.logic import bitvector as bv
 from omega.symbolic import bdd as sym_bdd
+from omega.symbolic import bdd_iterative as bdd_trs
 from omega.symbolic import symbolic
 
 
@@ -27,7 +28,7 @@ def test_partition_vars():
     assert partition == partition_, (partition, partition_)
 
 
-def test_bdd_nodes():
+def test_bdd_nodes_parser():
     parser = sym_bdd.parser
     order = {'x': 0, 'y': 1, 'z': 2}
     # x & y
@@ -44,6 +45,30 @@ def test_bdd_nodes():
     t = parser.parse(e)
     u = t.flatten(bdd=bdd)
     v = bdd.add_expr('(x & y) | ! z')
+    assert u == v, (u, v)
+
+
+def test_bdd_nodes_translator():
+    parser = bdd_trs.parser
+    order = {'x': 0, 'y': 1, 'z': 2}
+    # x & y
+    bdd = dd.bdd.BDD(order)
+    e = '& x y'
+    u = parser.parse(e, bdd)
+    v = bdd.add_expr('x & y')
+    assert u == v, (u, v)
+    # buffers
+    # (x & y) | ! z
+    bdd = dd.bdd.BDD(order)
+    e = '$ 3   & x y   ! z  | ? 0 ? 1'
+    u = parser.parse(e, bdd)
+    v = bdd.add_expr('(x & y) | ! z')
+    assert u == v, (u, v)
+    #
+    e = '& $2 & 1 x ?0 $3 | !x y z & ?1 z'
+    s = 'x & z'
+    u = parser.parse(e, bdd)
+    v = bdd.add_expr(s)
     assert u == v, (u, v)
 
 

@@ -75,7 +75,7 @@ def print_nodes(
     @param dvars: table of unprimed variables
     @type bdd: `BDD`
     """
-    if u == -1:
+    if u == bdd.false:
         print('empty set')
         return
     t = symbolic._prime_and_order_table(dvars)
@@ -172,7 +172,7 @@ def _enumerate_bdd(
     @param care_bits: enumerate only over these bits
     @param full: if `True`, return minterms, else cubes
     """
-    if u == bdd.add_expr('False'):
+    if u == bdd.false:
         return
     if care_set is not None:
         u = bdd.apply('and', u, care_set)

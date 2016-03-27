@@ -20,47 +20,50 @@ logger = logging.getLogger(__name__)
 class Automaton(object):
     """Transition relation, initial condition, and hidden variables.
 
-    The user defines the attributes:
 
-      - vars: `dict` that maps each var to `dict` of attr
+    User-defined attributes
+    =======================
+
+    You define the attributes:
+
+      - vars: `dict` that maps each variable name to
+        a `dict` with keys:
+
+          - `"type": "bool" or "modwrap" or "saturating"`
+          - `"dom": (min, max)`, range of integer
+          - `"owner": "env" or "sys"`
+          - `"init"`: has suitable `__str__` (and is optional)
+
       - init: initial condition
       - action: transition relation
       - win: winning condition
       - acceptance: `str` that describes `win`,
           for example `'Streett(1)'`
 
-    Each of `init, action` is a `dict(env=list(), sys=list())`,
-    and `win` is a `{'<>[]': list(), '[]<>': list()}`
-    The lists contain formulae, as strings when populating the attributes.
-    Call the method `build` to convert the formulae to BDD nodes,
+    Each of `init, action` is a `dict`:
+
+      `{player: list(), ...}`
+
+    `win` is a `dict` of the form:
+
+      `{'<>[]': list(),
+        '[]<>': list()}`
+
+    Add formulae (as strings) to these lists.
+    Call the method `build` to convert these formulae to BDD nodes,
     and generate the below.
-
-
-    User-defined attributes
-    =======================
-
-    The attributes `init`, `action`, `win` are
-    lists of formulae as `str` or BDD nodes.
-
-    The attribute `vars` is a `dict` that
-    maps each integer variable name to a `dict` with keys:
-
-      - `"type": "boolean" or "modwrap" or "saturating"`
-      - `"dom": (min, max)`, range of integer
-      - `"owner": "env" or "sys"`
-      - `"init"`: has suitable `__str__` (and is optional)
 
 
     Auto-generated attributes
     =========================
 
-    The method `build` adds the keys:
+    The method `build` adds to `vars[var]` the keys:
 
       - `"bitnames"`: `list`
       - `"signed"`: `True` if signed integer
       - `"width"`: `len(bitnames)`
 
-    Each of the following is a `set` of BDD levels:
+    Each of the following is a `set` of variable names:
 
       - uvars
       - upvars
@@ -75,24 +78,29 @@ class Automaton(object):
 
     Prefix meaning:
 
-    u = universally quantified
-    e = existentially quantified
-    p = primed (absence means unprimed)
-    b = both primed and unprimed
+      u = universally quantified
+      e = existentially quantified
+      p = primed (absence means unprimed)
+      b = both primed and unprimed
 
 
-    Reference
-    =========
+    References
+    ==========
 
-    Schneider K.
-        "Verification of reactive systems"
-        Springer, 2004
-
-    Lamport L.
+    Leslie Lamport
         "The temporal logic of actions"
         ACM Transactions on Programming
         Languages and Systems (TOPLAS),
         Vol.16, No.3, pp.872--923, 1994
+
+    Rajeev Alur, Thomas A. Henzinger, Orna Kupferman
+        "Alternating-time temporal logic"
+        Journal of the ACM (JACM)
+        Vol.49, No.5, pp.672--713, 2002
+
+    Klaus Schneider
+        "Verification of reactive systems"
+        Springer, 2004
     """
 
     def __init__(self):

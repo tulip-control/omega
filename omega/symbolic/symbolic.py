@@ -363,60 +363,33 @@ def _bitblast_owner(aut, a, owner, t):
     a.win[s] = map(f, aut.win[s])
 
 
-# at least 4 use cases:
-#
-# 1. build `dd.bdd.BDD` from scratch (so levels too)
-# 2. use a `dd.bdd.BDD` loaded from a `dddmp` file,
-#    so extract the levels, because they exist already
-# 3. build `dd.cudd.BDD` from scratch
-#    (simplest if it tells you the indices)
-# 4. use a `dd.cudd.BDD` that already exists,
-#    e.g., add counters to build a transducer.
-def _bitvector_to_bdd(aut, bdd=None, add=True):
+def _bitvector_to_bdd(aut):
     """Return `Automaton` with BDD formulae.
 
     @type aut: `Automaton`
-    @type bdd: `dd.bdd.BDD`
     """
     dvars = aut.vars
-    dbits = bv.list_bits(dvars)
-    ubits = set(b for b, d in dbits.iteritems()
+    bits = bv.list_bits(dvars)
+    # index both, to allow for unquantified parameters
+    ubits = set(b for b, d in bits.iteritems()
                 if d['owner'] == 'env')
-    # use fresh `BDD` ?
-    if bdd is None:
-        ordbits = _pick_var_order(dbits, ubits)
-        order, prime, partition = _partition_vars(ordbits, ubits)
-        bdd = aut.bdd
-        for var, level in order.iteritems():
-            bdd.add_var(var, level)
+    ebits = set(b for b, d in bits.iteritems()
+                if d['owner'] == 'sys')
+    b = _pick_var_order(bits, ubits)
+    b = _add_primed_bits(b)
+    bdd = aut.bdd
+    # define levels only if no existing vars
+    if bdd.vars:
+        for var in b:
+            bdd.add_var(var)
     else:
-        # check no missing vars,
-        # including primed
-        pbits, _, _ = _partition_vars(dbits, ubits)
-        bdd_bits = bdd.vars
-        missing = set(pbits).difference(bdd_bits)
-        if add:
-            for bit in missing:
-                logger.debug('add missing bit "{b}"'.format(b=bit))
-                if bit.endswith("'"):
-                    unprimed_bit = bit[:-1]
-                else:
-                    unprimed_bit = bit
-                level = dbits[unprimed_bit].get('level')
-                if level is None:
-                    bdd.add_var(bit)
-                else:
-                    logger.debug('at level: {level}'.format(level=level))
-                    try:
-                        bdd.insert_var(bit, level)
-                    except:
-                        bdd.add_var(bit)
-        else:
-            assert not missing, (missing, pbits, bdd_bits)
+        for level, var in enumerate(b):
+            bdd.add_var(var, level)
     # bundle as:
     a = Automaton()
     a.bdd = bdd
     # vars
+    prime, partition = _partition_vars(bits, ubits, ebits)
     a.vars = copy.deepcopy(dvars)
     a.uvars = partition['uvars']
     a.upvars = partition['upvars']

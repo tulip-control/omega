@@ -103,6 +103,7 @@ class Automaton(object):
     """
 
     def __init__(self):
+        self.players = {'env': 0, 'sys': 1}  # name -> turn
         self.vars = dict()
         # formulae
         self.init = dict(env=list(), sys=list())
@@ -110,6 +111,7 @@ class Automaton(object):
         self.win = {'<>[]': list(), '[]<>': list()}
         self.acceptance = 'Streett(1)'
         # auto-populated
+        self.turns = list()  # inverse of `self.players`
         # subsets of bits
         self.uvars = set()  # unprimed env
         self.upvars = set()  # primed env
@@ -129,6 +131,7 @@ class Automaton(object):
 
     def __copy__(self):
         a = Automaton()
+        a.players = copy.deepcopy(self.players)
         a.vars = copy.deepcopy(self.vars)
         a.init = copy.deepcopy(self.init)
         a.action = copy.deepcopy(self.action)
@@ -315,6 +318,7 @@ def _bitblast(aut):
 
     @type aut: `Automaton`
     """
+    players = dict(aut.players)
     aut = copy.copy(aut)
     t = bv.bitblast_table(aut.vars)
     init, safety = bv.type_invariants(t)
@@ -328,6 +332,7 @@ def _bitblast(aut):
     _conj_owner(aut, 'env', 'infix')
     _conj_owner(aut, 'sys', 'infix')
     a = Automaton()
+    a.players = players
     a.vars = t
     # TODO: replace GR(1) syntax check
     # spec.check_syntax()

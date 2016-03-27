@@ -172,13 +172,13 @@ class Automaton(object):
                 '{gf}',
                 ''])
         return '\n'.join(c).format(
-                dvars=pprint.pformat(self.vars),
-                env_init=_join(self.init['env']),
-                env_action=_join(self.action['env']),
-                fg=_join(self.win['<>[]']),
-                sys_init=_join(self.init['sys']),
-                sys_action=_join(self.action['sys']),
-                gf=_join(self.win['[]<>']))
+            dvars=pprint.pformat(self.vars),
+            env_init=_join(self.init['env']),
+            env_action=_join(self.action['env']),
+            fg=_join(self.win['<>[]']),
+            sys_init=_join(self.init['sys']),
+            sys_action=_join(self.action['sys']),
+            gf=_join(self.win['[]<>']))
 
     def dumps(self):
         """Return `repr` of a `dict` with the attributes."""

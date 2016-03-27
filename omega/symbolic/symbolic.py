@@ -4,7 +4,6 @@ Including bitblasting of first-order to bitvector logic,
 and transformation to BDD nodes.
 """
 import copy
-from itertools import chain
 import logging
 import pprint
 import dd.bdd

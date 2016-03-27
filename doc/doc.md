@@ -210,7 +210,12 @@ The simple format is used in `automata.Automaton.vars`, `automata.TransitionSyst
 
 ### Simple format
 
-This is a `dict` that maps each variable name (as `str`) to a `dict` with `key: value` pairs:
+The simple format is a `dict` that maps each variable name (as `str`) to either `'bool'` or a `tuple` of `(min, max)`. For example, `dict(x='bool', y=(0, 3))`.
+
+
+### Detailed and bitblasted formats
+
+The detailed format is a `dict` that maps each variable name (as `str`) to a `dict` with `key: value` pairs:
 
 - `'type': 'bool' or 'modwrap' or 'saturating'`
 - `'dom': tuple(min, max)` (only for integer variables)
@@ -221,7 +226,7 @@ and optionally:
 - `"init": initial value`
 
 
-### Detailed and bitblasted formats
+A comparison of detailed and bitblasted tables:
 
 | `symbolic.Automaton.vars` | detailed | bitblasted |
 | --- | --- | --- |

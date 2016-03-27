@@ -13,17 +13,19 @@ log.setLevel('ERROR')
 
 
 def test_partition_vars():
-    v = ['a', 'b', 'c']
-    uv = ['a']
-    d, prime, partition = symbolic._partition_vars(v, uv)
-    order = {"a": 0, "a'": 1, "b": 2, "b'": 3, "c": 4, "c'": 5}
-    prime_ = {k: k + "'" for k in v}
+    bits = ['a', 'b', 'c']
+    ubits = ['a']
+    ebits = ['b', 'c']
+    order = symbolic._add_primed_bits(bits)
+    order_ = ["a", "a'", "b", "b'", "c", "c'"]
+    assert order == order_, (order, order_)
+    prime, partition = symbolic._partition_vars(bits, ubits, ebits)
+    prime_ = {k: k + "'" for k in bits}
     partition_ = dict(
         uvars={"a"},
         upvars={"a'"},
         evars={"b", "c"},
         epvars={"b'", "c'"})
-    assert d == order, d
     assert prime == prime_, (prime, prime_)
     assert partition == partition_, (partition, partition_)
 

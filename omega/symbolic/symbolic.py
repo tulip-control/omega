@@ -413,8 +413,6 @@ def _bitvector_to_bdd(aut, bdd=None, add=True):
                         bdd.add_var(bit)
         else:
             assert not missing, (missing, pbits, bdd_bits)
-        # extract order and partition
-        prime, partition = _extract_partition(bdd.vars, ubits)
     # bundle as:
     a = Automaton()
     a.bdd = bdd
@@ -574,56 +572,6 @@ def _prime_and_order_table(t, suffix="'"):
         dvars[var].update(level=j, len=m, bitnames=bits)
         dvars[primed].update(level=k, len=m, bitnames=pbits)
     return dvars
-
-
-def _extract_partition(dbits, ubits):
-    """Return partition, given both primed and unprimed bits.
-
-    @param dbits: `BDD.vars` that maps each bit to an identifier.
-        The identifier may be its name, level, or index.
-        It depends on how quantification works for the manager used.
-    @type dbits: `dict`
-    @param ubits: universally quantified unprimed bits
-    @type ubits: `set`
-
-    @return: priming and partition, containing levels
-    @rtype: `tuple(dict, dict)`
-    """
-    suffix = "'"
-    diff = set(ubits).difference(dbits)
-    assert not diff, (diff, ubits, dbits)
-    uvars = set()
-    upvars = set()
-    evars = set()
-    epvars = set()
-    for bit in dbits:
-        primed = bit.endswith(suffix)
-        if primed:
-            s = bit[:-1]
-        else:
-            s = bit
-        universal = (s in ubits)
-        if universal:
-            if primed:
-                upvars.add(bit)
-            else:
-                uvars.add(bit)
-        else:
-            if primed:
-                epvars.add(bit)
-            else:
-                evars.add(bit)
-    prime = dict()
-    for bit in chain(uvars, evars):
-        pbit = bit + suffix
-        # not primed ?
-        if pbit not in dbits:
-            continue
-        # primed bit
-        prime[bit] = pbit
-    partition = dict(uvars=uvars, upvars=upvars,
-                     evars=evars, epvars=epvars)
-    return prime, partition
 
 
 def assert_primed_adjacent(prime, bdd):

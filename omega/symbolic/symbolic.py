@@ -186,18 +186,19 @@ class Automaton(object):
                  action=self.action, win=self.win)
         return repr(d)
 
-    def build(self, bdd=None, add=True):
+    def build(self):
         """Return `Automaton` with formulae as BDD nodes.
 
-        Bitblast variables, interleaved order,
-        then prime them.
+        Bitblast variables and formulae,
+        add bits to `self.bdd`,
+        and populate primed and unprimed bits.
 
-        @param bdd: use this `BDD`, instead of a fresh one
-        @type bdd: `dd.bdd.BDD`
-        @param add: insert any missing variables as new to `bdd`
+        BDD levels defined only if no existing bits.
+        Otherwise, reorder to desired order later.
         """
         aut = _bitblast(self)
-        aut = _bitvector_to_bdd(aut, bdd, add)
+        aut.bdd = self.bdd
+        aut = _bitvector_to_bdd(aut)
         return aut
 
     def assert_consistent(self, built=False):

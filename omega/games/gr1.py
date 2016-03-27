@@ -85,14 +85,11 @@ def _attractor_under_assumptions(z, goal, aut):
     return y, yj, xjk
 
 
-def make_streett_transducer(z, yij, xijk, aut, bdd=None):
+def make_streett_transducer(z, yij, xijk, aut):
     """Return I/O `symbolic.Automaton` implementing strategy.
 
     An auxiliary variable `_goal` is added,
     to represent the counter of recurrence goals.
-
-    @param bdd: use this BDD manager
-    @type bdd: `BDD` in `dd.cudd` or `dd.bdd` or `dd.autoref`
     """
     aut.assert_consistent(built=True)
     assert z != aut.bdd.false, 'empty winning set'
@@ -107,8 +104,9 @@ def make_streett_transducer(z, yij, xijk, aut, bdd=None):
     # compile transducer with refined shared BDD
     t = symbolic.Automaton()
     t.vars = dvars
-    t = t.build(bdd=bdd)
-    bdd = t.bdd
+    bdd = aut.bdd
+    t.bdd = bdd
+    t = t.build()
     # copy functions of interest from solution BDD
     r = [z, yij, xijk,
          aut.init['env'][0], aut.init['sys'][0],
@@ -285,6 +283,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     # compile
     t = symbolic.Automaton()
     t.vars = dvars
+    bdd = aut.bdd
+    t.bdd = bdd
     t = t.build()
     # copy functions of interest from solution BDD
     r = [zk, yki, xkijr,
@@ -296,7 +296,6 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
      env_action, sys_action, holds, goals) = r
     t.action['env'] = [env_action]
     # compute strategy from iterates
-    bdd = t.bdd
     # \rho_1: descent in persistence basin
     s = "({c}' = {c}) & ({w}' = {none})".format(
         c=c, w=w, none=n_holds)
@@ -435,11 +434,9 @@ def _moore_trans(target, aut):
     return u
 
 
-def trivial_winning_set(aut_streett, bdd=None):
+def trivial_winning_set(aut_streett):
     """Return set of trivially winning nodes for Streett(1).
 
-    @param bdd: use this BDD manager
-    @type bdd: `BDD` in `dd.cudd` or `dd.bdd` or `dd.autoref`
     @return: `(trivial, aut_streett)` where:
         - `trivial`: node in `aut_streett.bdd`
         - `aut_streett`: `symbolic.Automaton`
@@ -456,16 +453,17 @@ def trivial_winning_set(aut_streett, bdd=None):
     win = ['!({w})'.format(w=w) for w in aut_streett.win['<>[]']]
     aut_rabin.win['[]<>'] = win
     symbolic.fill_blanks(aut_rabin, rabin=True)
-    aut_streett = aut_streett.build(bdd=bdd)
-    aut_rabin = aut_rabin.build(bdd=bdd)
+    aut_rabin.bdd = aut_streett.bdd
+    aut_streett = aut_streett.build()
+    aut_rabin = aut_rabin.build()
     # solve
-    win_set_streett, _, _ = solve_streett_game(aut_streett)
+    win_streett, _, _ = solve_streett_game(aut_streett)
     zk, _, _ = solve_rabin_game(aut_rabin)
-    win_set_rabin = zk[-1]
+    win_rabin = zk[-1]
     # find trivial win set
-    win_set_rabin_ = _copy_bdd(win_set_rabin,
-                               aut_rabin.bdd, aut_streett.bdd)
-    trivial = aut_streett.bdd.apply('diff', win_set_streett, win_set_rabin_)
+    # win_rabin_ = _copy_bdd(win_rabin,
+    #                        aut_rabin.bdd, aut_streett.bdd)
+    trivial = aut_streett.bdd.apply('diff', win_streett, win_rabin)
     return trivial, aut_streett
 
 

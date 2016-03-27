@@ -498,38 +498,36 @@ def _pick_var_order(bits, ubits):
     return r
 
 
-def _partition_vars(ordvars, uvars, suffix="'"):
-    """Return primed and unprimed BDD levels.
+def _add_primed_bits(unprimed_bits, suffix="'"):
+    """Return list of ordered primed and unprimed bits."""
+    bits = list()
+    for bit in unprimed_bits:
+        primed = bit + suffix
+        bits.append(bit)
+        bits.append(primed)
+    return bits
 
-    @param ordvars: `list` of variable names as `str`
-    @param uv: universally quantified subset of `v`
 
-    @return: (d, prime, uvars, upvars, evars, epvars)
-      - d: `dict` that maps each var name to a level
-      - prime: `dict` that maps unprimed to primed var levels
-      - uvars/upvars (evars/epvars): `set` of
-        universally (existentially) quantified
-        un/primed variables as levels
+def _partition_vars(bits, ubits, ebits, suffix="'"):
+    """Return primed and unprimed variable names.
+
+    @param bits: `list` of variable names as `str`
+    @param ubits: universally quantified variables
+    @param ebits: existentially quantified variables
+    @param suffix: primed variables have this suffix
+
+    @return: (prime, partition)
+      - prime: `dict` that maps unprimed to primed variable names
+      - partition: `dict(uvars=set, upvars=set,
+                         evars=set, epvars=set)`
     """
-    d = dict()
-    prime = dict()
-    for i, var in enumerate(ordvars):
-        j = 2 * i
-        primed = var + suffix
-        logger.debug('{var} at {j}, {pvar} at {jp}'.format(
-            var=var, pvar=primed, j=j, jp=j + 1))
-        d[var] = j
-        d[primed] = j + 1
-        prime[var] = primed
-    evars = {var for var in ordvars if var not in uvars}
-    upvars = map(prime.get, uvars)
-    epvars = map(prime.get, evars)
-    # bundle
-    c = [uvars, upvars, evars, epvars]
-    uvars, upvars, evars, epvars = map(set, c)
-    partition = dict(uvars=uvars, upvars=upvars,
-                     evars=evars, epvars=epvars)
-    return d, prime, partition
+    prime = {b: b + suffix for b in bits}
+    partition = dict(
+        uvars=set(ubits),
+        upvars={prime[b] for b in ubits},
+        evars=set(ebits),
+        epvars={prime[b] for b in ebits})
+    return prime, partition
 
 
 def _prime_and_order_table(t, suffix="'"):

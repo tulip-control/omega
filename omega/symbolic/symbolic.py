@@ -125,7 +125,8 @@ class Automaton(object):
         self.prime = dict()  # unprimed -> primed
         self.unprime = dict()  # primed -> unprimed
         # aux
-        self.bdd = dd.bdd.BDD()  # init only to help static analysis
+        # init only to aid static analysis
+        self.bdd = dd.bdd.BDD()
 
     def __copy__(self):
         a = Automaton()
@@ -212,7 +213,8 @@ class Automaton(object):
     def assert_consistent(self, built=False):
         """Raise `AssertionError` if not well-formed.
 
-        @param built: if `True`, then assert `build` has been called.
+        @param built: if `True`,
+        then assert `build` has been called.
         """
         # check attributes
         for d in (self.init, self.action, self.win):

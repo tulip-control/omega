@@ -96,9 +96,14 @@ class Automaton(object):
     """
 
     def __init__(self):
-        # vars
         self.vars = dict()
-        # subsets of vars: auto-populated
+        # formulae
+        self.init = dict(env=list(), sys=list())
+        self.action = dict(env=list(), sys=list())
+        self.win = {'<>[]': list(), '[]<>': list()}
+        self.acceptance = 'Streett(1)'
+        # auto-populated
+        # subsets of bits
         self.uvars = set()  # unprimed env
         self.upvars = set()  # primed env
         self.ubvars = set()  # both primed and unprimed env
@@ -109,13 +114,8 @@ class Automaton(object):
         self.uepvars = set()  # all primed vars
         # future: hidden, node vars
         # map between primed and unprimed
-        self.prime = dict()
-        self.unprime = dict()
-        # formulae
-        self.init = dict(env=list(), sys=list())
-        self.action = dict(env=list(), sys=list())
-        self.win = {'<>[]': list(), '[]<>': list()}
-        self.acceptance = 'Streett(1)'
+        self.prime = dict()  # unprimed -> primed
+        self.unprime = dict()  # primed -> unprimed
         # aux
         self.bdd = dd.bdd.BDD()  # init only to help static analysis
 

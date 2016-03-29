@@ -89,7 +89,7 @@ def bitblast_table(table, players=None):
         if dtype == 'bool':
             continue
         # int var
-        assert dtype in ('int', 'saturating', 'modwrap')
+        assert dtype in ('int', 'saturating', 'modwrap'), dtype
         dmin, dmax = dom
         # saturating semantics ?
         if dtype not in ('saturating', 'int'):
@@ -141,7 +141,7 @@ def dom_to_width(dom):
     absval = max(abs(minval), abs(maxval))
     width = absval.bit_length()
     if width == 0:
-        assert minval == maxval
+        assert minval == maxval, (minval, maxval)
         # TODO: optimize by substituting values
         # for variables that are constants
         width = 1
@@ -307,7 +307,7 @@ class Nodes(_Nodes):
                 return super(Nodes.Operator, self).flatten(
                     mem=mem, *arg, **kw)
             # ternary conditional
-            assert self.operator == 'ite'
+            assert self.operator == 'ite', self.operator
             x = self.operands[0].flatten(mem=None, *arg, **kw)
             y = self.operands[1].flatten(mem=mem, *arg, **kw)
             z = self.operands[2].flatten(mem=mem, *arg, **kw)
@@ -351,7 +351,7 @@ class Nodes(_Nodes):
             if _is_bool_var(name, t):
                 # Boolean scope ?
                 if name in t:
-                    assert mem is None
+                    assert mem is None, mem
                 return '{v}{prime}'.format(
                     v=name, prime="'" if prime else '')
             # arithmetic context
@@ -421,10 +421,10 @@ def flatten_comparator(operator, x, y, mem):
     """Return flattened comparator formula."""
     logger.info(
         '++ flatten comparator "{op}" ...'.format(op=operator))
-    assert isinstance(x, list)
-    assert isinstance(y, list)
+    assert isinstance(x, list), x
+    assert isinstance(y, list), y
     p, q = equalize_width(x, y)
-    assert len(p) == len(q)
+    assert len(p) == len(q), (p, q)
     logger.debug('p = {p}\nq = {q}'.format(p=p, q=q))
     negate = False
     if operator in {'=', '!='}:
@@ -432,7 +432,7 @@ def flatten_comparator(operator, x, y, mem):
         if operator == '=':
             negate = True
         else:
-            assert operator == '!='
+            assert operator == '!=', operator
     elif operator in {'<', '<=', '>=', '>'}:
         swap = False
         if operator == '<=':
@@ -443,7 +443,7 @@ def flatten_comparator(operator, x, y, mem):
         elif operator == '>=':
             negate = True
         else:
-            assert operator == '<'
+            assert operator == '<', operator
         if swap:
             p, q = q, p
         r = less_than(p, q, mem)
@@ -460,7 +460,7 @@ def flatten_comparator(operator, x, y, mem):
 
 def inequality(p, q, mem):
     """Return bitvector propositional formula for '!='"""
-    assert len(p) == len(q)
+    assert len(p) == len(q), (p, q)
     return ' '.join('| ^ {a} {b}'.format(a=a, b=b)
                     for a, b in zip(p, q)) + ' 0'
 
@@ -478,9 +478,9 @@ def flatten_arithmetic(operator, p, q, mem):
     """Return flattened arithmetic expression."""
     logger.info(
         '++ flatten arithmetic operator "{op}"'.format(op=operator))
-    assert isinstance(p, list)
-    assert isinstance(q, list)
-    assert isinstance(mem, list)
+    assert isinstance(p, list), p
+    assert isinstance(q, list), q
+    assert isinstance(mem, list), mem
     start = len(mem)
     if operator in {'+', '-'}:
         add = (operator == '+')
@@ -706,7 +706,7 @@ def adder_subtractor(x, y, add=True, start=0, extend_by=1):
         mem.append(
             '| & {a} {b} & ^ {a} {b} {c}'.format(a=a, b=b, c=carry))
         carry = '? {r}'.format(r=r)
-    assert len(mem) == 2 * len(result)
+    assert len(mem) == 2 * len(result), (mem, result)
     logger.debug('mem = {mem}\nres = {res}'.format(
         mem=_format_mem(mem), res=result))
     logger.info('-- done {what}ing\n'.format(what=dowhat))
@@ -733,11 +733,11 @@ def barrel_shifter(x, y, s=None, start=0):
       2. memory contents from stage 0 to stage `s`
     @rtype: `tuple([list, list])`
     """
-    assert len(y) == math.log(len(x), 2)
+    assert len(y) == math.log(len(x), 2), (x, y)
     if s is None:
         s = len(y) - 1
-    assert -1 <= s < len(y)
-    assert start >= 0
+    assert -1 <= s < len(y), (s, y)
+    assert start >= 0, start
     # base stage: -1
     if s == -1:
         mem = list()
@@ -756,7 +756,7 @@ def barrel_shifter(x, y, s=None, start=0):
     n = len(x)
     m = len(mem) - n
     c = ['? {i}'.format(i=i + m) for i in xrange(n)]
-    assert len(c) == len(x)
+    assert len(c) == len(x), (c, x)
     return c, mem
 
 
@@ -799,7 +799,7 @@ def truncate(x, n):
 
     @rtype: `list`
     """
-    assert n >= 0
+    assert n >= 0, n
     return x[:n]
 
 
@@ -815,9 +815,9 @@ def ite_function(a, b, c, start):
 
     @rtype: `list`
     """
-    assert isinstance(a, basestring)
-    assert isinstance(b, list)
-    assert isinstance(c, list)
+    assert isinstance(a, basestring), a
+    assert isinstance(b, list), b
+    assert isinstance(c, list), c
     assert len(b) == len(c), (b, c)
     m = list()
     m.append(a)
@@ -838,9 +838,9 @@ def ite_connective(a, b, c):
 
     @rtype: `str`
     """
-    assert isinstance(a, basestring)
-    assert isinstance(b, basestring)
-    assert isinstance(c, basestring)
+    assert isinstance(a, basestring), a
+    assert isinstance(b, basestring), b
+    assert isinstance(c, basestring), c
     # local memory buffer
     return '$ 2 {a} | & {b} ? {i} & {c} ! ? {i}'.format(
         a=a, b=b, c=c, i=0)
@@ -860,7 +860,7 @@ def var_to_twos_complement(var, t):
             'Boolean variable "{var}"').format(var=var))
     bits = list(d['bitnames'])
     _append_sign_bit(bits, var, d)
-    assert len(bits) > 1
+    assert len(bits) > 1, bits
     logger.debug('encoded variable "{var}":\n\t{bits}'.format(
         var=var, bits=bits))
     logger.info('-- done encoding variable "{var}".\n'.format(var=var))
@@ -1006,8 +1006,8 @@ def equalize_width(x, y, extend_by=0):
     q = sign_extension(y, n)
     logger.debug('after extension:\n\t x = {p}\n\t y = {q}'.format(
         p=p, q=q))
-    assert len(p) == len(q)
-    assert len(p) == n
+    assert len(p) == len(q), (p, q)
+    assert len(p) == n, (p, n)
     logger.info('-- done equalizing.\n')
     return p, q
 
@@ -1027,7 +1027,7 @@ def sign_extension(x, n):
     """
     logger.debug(
         '++ sign extension to {n} bits of: {x}'.format(x=x, n=n))
-    assert isinstance(x, list)
+    assert isinstance(x, list), x
     assert n < ALU_BITWIDTH, n
     m = len(x)
     if m < 2:
@@ -1036,8 +1036,8 @@ def sign_extension(x, n):
         raise ValueError(
             'Extension width is {n} < {m} = len(x)'.format(n=n, m=m))
     y = x + (n - m) * [x[-1]]
-    assert y[:len(x)] == x
-    assert len(y) == n
+    assert y[:len(x)] == x, (y, x)
+    assert len(y) == n, (y, n)
     logger.debug('-- result of extension: {y}\n'.format(y=y))
     return y
 

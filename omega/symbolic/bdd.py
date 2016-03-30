@@ -23,11 +23,14 @@ slugs_log = logging.getLogger(__name__ + '.slugs')
 class Lexer(object):
     """Token rules for slugsin lexer."""
 
-    operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION']
+    operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION',
+                 'FORALL', 'EXISTS']
     identifiers = ['NAME', 'NUMBER']
 
     t_NUMBER = r'\d+'
     t_NAME = r"[A-Za-z_][A-Za-z0-9_']*"
+    t_FORALL = r'\\A'
+    t_EXISTS = r'\\E'
     t_NOT = r'\!'
     t_AND = r'\&'
     t_OR = r'\|'
@@ -58,7 +61,8 @@ class Parser(object):
         self.nodes = nodes
         self.lexer = Lexer()
         self.tokens = self.lexer.tokens
-        self._binary = {'AND', 'OR', 'XOR'}
+        self._binary = {'AND', 'OR', 'XOR',
+                        'FORALL', 'EXISTS'}
 
     def parse(self, data):
         self.lexer.lexer.input(data)

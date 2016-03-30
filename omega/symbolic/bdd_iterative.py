@@ -13,9 +13,9 @@ Slugsin syntax:
 from omega.symbolic.bdd import Lexer
 
 
-OPERATORS = {'!', '&', '|', '^'}
-BINARY_OPERATORS = {'&', '|', '^'}
-BINARY = {'AND', 'OR', 'XOR'}
+OPERATORS = {'!', '&', '|', '^', '\A', '\E'}
+BINARY_OPERATORS = {'&', '|', '^', '\A', '\E'}
+BINARY = {'AND', 'OR', 'XOR', 'FORALL', 'EXISTS'}
 
 
 class Parser(object):

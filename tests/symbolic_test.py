@@ -74,6 +74,40 @@ def test_bdd_nodes_translator():
     assert u == v, (u, v)
 
 
+def test_bddizer_quantifiers():
+    add = sym_bdd.add_expr
+    order = {'x': 0, 'y': 1, 'z': 2}
+    bdd = dd.bdd.BDD(order)
+    e = '\E x 1'
+    u = add(e, bdd)
+    assert u == bdd.true, u
+    e = '\E x 0'
+    u = add(e, bdd)
+    assert u == bdd.false, u
+    e = '\A x 1'
+    u = add(e, bdd)
+    assert u == bdd.true, u
+    e = '\A x 0'
+    u = add(e, bdd)
+    assert u == bdd.false, u
+    e = '\A x x'
+    u = add(e, bdd)
+    assert u == bdd.false, u
+    e = '\E x x'
+    u = add(e, bdd)
+    assert u == bdd.true, u
+    e = '\A & x y y'
+    u = add(e, bdd)
+    assert u == bdd.false, u
+    e = '\A x y'
+    u = add(e, bdd)
+    u_ = bdd.var('y')
+    assert u == u_, (u, u_)
+    e = '\E & x y & y x'
+    u = add(e, bdd)
+    assert u == bdd.true, u
+
+
 def slugsin_parser(s, t):
     """Helper that converts prefix to infix syntax for readability."""
     slugs_table = t.to_slugs()

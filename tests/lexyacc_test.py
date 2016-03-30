@@ -1,0 +1,57 @@
+"""Tests for `omega.logic.lexyacc."""
+from omega.logic import lexyacc
+
+
+parser = lexyacc.Parser()
+
+
+def test_quantifiers():
+    s = '\E x: True'
+    t = parser.parse(s)
+    assert hasattr(t, 'operator'), t
+    assert t.type == 'operator', t
+    assert t.operator == '\E', t.operator
+    assert len(t.operands) == 2, t.operands
+    qvars, e = t.operands
+    assert len(qvars) == 1, qvars
+    (x,) = qvars
+    _assert_is_var_node(x, 'x')
+    assert hasattr(e, 'type'), e
+    assert e.type == 'bool', e.type
+    assert e.value == 'True', e.value
+    s = '\E x, y: False'
+    t = parser.parse(s)
+    assert hasattr(t, 'type'), t
+    assert t.type == 'operator', t.type
+    assert t.operator == '\E', t.operator
+    assert len(t.operands) == 2, t.operands
+    qvars, e = t.operands
+    assert len(qvars) == 2, qvars
+    x, y = qvars
+    _assert_is_var_node(x, 'x')
+    _assert_is_var_node(y, 'y')
+    assert hasattr(e, 'type'), e
+    assert e.type == 'bool', e.type
+    assert e.value == 'False', e.value
+    s = '\A y: True'
+    t = parser.parse(s)
+    assert t.operator == '\A', t.operator
+    s = '\A x, y, z: (x | ! y) & z'
+    t = parser.parse(s)
+    assert t.operator == '\A', t.operator
+    assert len(t.operands) == 2, t.operands
+    qvars, e = t.operands
+    assert len(qvars) == 3, qvars
+    r = e.flatten()
+    r_ = '( ( x | ( ! y ) ) & z )'
+    assert r == r_, (r, r_)
+
+
+def _assert_is_var_node(x, var):
+    assert hasattr(x, 'type'), x
+    assert x.type == 'var', x.type
+    assert x.value == var, x.value
+
+
+if __name__ == '__main__':
+    test_quantifiers()

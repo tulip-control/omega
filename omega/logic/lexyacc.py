@@ -36,7 +36,8 @@ class Lexer(astutils.Lexer):
         'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
-        'ONCE', 'PRIME', 'DOT']
+        'ONCE', 'PRIME', 'DOT',
+        'FORALL', 'EXISTS', 'COLON']
     misc = ['NAME', 'NUMBER']
 
     def t_NAME(self, t):
@@ -65,6 +66,10 @@ class Lexer(astutils.Lexer):
         t.value = '|'
         return t
 
+    # quantifiers
+    t_FORALL = r'\\A'
+    t_EXISTS = r'\\E'
+    t_COLON = r'\:'
     # Boolean
     t_NOT = r'\!'
     t_XOR = r'\^'
@@ -129,6 +134,7 @@ class Parser(astutils.Parser):
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIV', 'MOD'),
         ('right', 'NOT', 'UMINUS'),
+        ('left', 'FORALL', 'EXISTS'),
         ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
         ('left', 'PRIME', 'DOT'))
     Lexer = Lexer
@@ -209,6 +215,21 @@ class Parser(astutils.Parser):
     def p_ternary_conditional(self, p):
         """expr : ITE LPAREN expr COMMA expr COMMA expr RPAREN"""
         p[0] = self.nodes.Operator(p[1], p[3], p[5], p[7])
+
+    def p_quantifier(self, p):
+        """expr : FORALL varlist COLON expr
+                | EXISTS varlist COLON expr
+        """
+        p[0] = self.nodes.Operator(p[1], p[2], p[4])
+
+    def p_varlist_iter(self, p):
+        """varlist : varlist COMMA NAME"""
+        p[1].append(p[3])
+        p[0] = p[1]
+
+    def p_varlist_end(self, p):
+        """varlist : NAME"""
+        p[0] = [p[1]]
 
     def p_paren(self, p):
         """expr : LPAREN expr RPAREN"""

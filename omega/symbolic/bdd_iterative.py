@@ -93,6 +93,9 @@ class Parser(object):
                 mem.append(s)
             r = mem[-1]
             need -= 1
+        else:
+            raise Exception(
+                'unknown token type "{t}"'.format(t=t))
         stack.append(r)
         return need
 

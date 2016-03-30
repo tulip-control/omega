@@ -121,7 +121,7 @@ class Parser(object):
             for i in xrange(n):
                 stack.pop(k)
             stack.pop(k - 1)
-            u = bdd.apply(operator, *reversed(operands))
+            u = bdd.apply(operator, *operands)
             stack.insert(k - 1, u)
         (r,) = stack
         return r

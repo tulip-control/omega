@@ -66,7 +66,12 @@ t = {'a': {'type': 'int',
            'bitnames': ['b0', 'b1']},
      'x': {'type': 'int',
            'signed': True,
-           'bitnames': ['x@0.0.3', 'x@1']}}
+           'bitnames': ['x@0.0.3', 'x@1']},
+     'y': {'type': 'int',
+           'signed': True,
+           'bitnames': ['y0', 'y1', 'y2']},
+     'q': {'type': 'bool'},
+     'r': {'type': 'bool'}}
 parser = bv._parser
 
 
@@ -105,6 +110,35 @@ def test_flatten_arithmetic():
                    '^ ^ a1 0 ? 3',
                    '| & a1 0 & ^ a1 0 ? 3'], mem
     # TODO: subtraction
+
+
+def test_flatten_quantifiers():
+    # single qvar
+    s = '\A a: True'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \A & a0 a1 1', r
+    s = '\E y: False'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \E & & y0 y1 y2 0', r
+    s = '\E y: x = y'
+    r = parser.parse(s).flatten(t=t)
+    eq = parser.parse('x = y').flatten(t=t)
+    r_ = ' \E & & y0 y1 y2 {eq}'.format(eq=eq)
+    assert r == r_, (r, r_)
+    # multiple qvars
+    s = '\E a, b: True'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \E & & & a0 a1 b0 b1 1', r
+    s = '\E a, x: x - a > 0'
+    r = parser.parse(s).flatten(t=t)
+    h = parser.parse('x - a > 0').flatten(t=t)
+    r_ = ' \E & & & a0 a1 x@0.0.3 x@1 {h}'.format(h=h)
+    assert r == r_, (r, r_)
+    s = '\A r: r | ! q'
+    r = parser.parse(s).flatten(t=t)
+    h = parser.parse('r | ! q').flatten(t=t)
+    r_ = ' \A r {h}'.format(h=h)
+    assert r == r_, (r, r_)
 
 
 def test_div_mul_expr():

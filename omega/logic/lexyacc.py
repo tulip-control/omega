@@ -248,7 +248,7 @@ class Parser(astutils.Parser):
         p[0] = self.nodes.Num(p[1])
 
     def p_negative_number(self, p):
-        """expr : MINUS NUMBER %prec UMINUS"""
+        """number : MINUS NUMBER %prec UMINUS"""
         p[0] = self.nodes.Num('-' + p[2])
 
     def p_string(self, p):

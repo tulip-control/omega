@@ -294,7 +294,7 @@ class Nodes(_Nodes):
         'false': '0', 'true': '1',
         '!': '!',
         '|': '|', '&': '&', '->': '| !', '<->': '! ^',
-        'ite': 'ite',
+        'ite': 'ite', '@': '',
         '\A': '\A', '\E': '\E',
         'X': '',
         # 'G': '[]', 'F': '<>',
@@ -322,6 +322,10 @@ class Nodes(_Nodes):
                     u=u)
                 return r
                 return r
+            if self.operator == '@':
+                x = int(self.operands[0].value)
+                assert x not in (0, 1), x
+                return str(x)
             if self.operator != 'ite':
                 return super(Nodes.Operator, self).flatten(
                     mem=mem, *arg, **kw)

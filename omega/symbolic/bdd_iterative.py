@@ -65,13 +65,13 @@ class Parser(object):
             r = bdd.var(tok.value)
             need -= 1
         elif t == 'NUMBER':
-            v = tok.value
-            assert v in ('0', '1'), v
-            u = int(v)
+            u = int(tok.value)
             if u == 0:
                 r = bdd.false
-            else:
+            elif u == 1:
                 r = bdd.true
+            else:
+                r = bdd._add_int(u)
             need -= 1
         elif t == 'NOT':
             r = tok.value

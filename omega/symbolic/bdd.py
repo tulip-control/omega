@@ -27,7 +27,7 @@ class Lexer(object):
                  'FORALL', 'EXISTS']
     identifiers = ['NAME', 'NUMBER']
 
-    t_NUMBER = r'\d+'
+    t_NUMBER = r'[-]*\d+'
     t_NAME = r"[A-Za-z_][A-Za-z0-9_']*"
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'

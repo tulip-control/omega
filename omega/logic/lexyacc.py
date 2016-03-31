@@ -36,7 +36,7 @@ class Lexer(astutils.Lexer):
         'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
-        'ONCE', 'PRIME', 'DOT',
+        'ONCE', 'PRIME', 'DOT', 'AT',
         'FORALL', 'EXISTS', 'COLON']
     misc = ['NAME', 'NUMBER']
 
@@ -102,6 +102,7 @@ class Lexer(astutils.Lexer):
     t_DOT = r'\.'
     t_PRIME = r"\'"
     # other
+    t_AT = r'@'
     t_NUMBER = r'\d+'
     t_ignore = " \t"
 
@@ -238,6 +239,10 @@ class Parser(astutils.Parser):
     def p_var(self, p):
         """expr : NAME"""
         p[0] = self.nodes.Var(p[1])
+
+    def p_bdd_node(self, p):
+        """expr : AT number"""
+        p[0] = self.nodes.Operator(p[1], p[2])
 
     def p_number_expr(self, p):
         """expr : number"""

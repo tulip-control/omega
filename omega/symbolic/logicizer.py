@@ -68,6 +68,8 @@ def graph_to_logic(g, nodevar, ignore_initial,
                 r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
+    else:
+        raise Exception('owner is neither "sys" nor "env".')
     a = Automaton()
     a.vars = t
     a.init['env'].extend(env_init)

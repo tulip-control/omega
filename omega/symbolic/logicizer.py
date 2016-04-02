@@ -42,7 +42,8 @@ def graph_to_logic(g, nodevar, ignore_initial,
     p, _ = _prime_dict(dvars)
     dvars.update(p)
     # convert to logic
-    init = _init_from_ts(g.initial_nodes, nodevar, dvars, ignore_initial)
+    init = _init_from_ts(g.initial_nodes, nodevar,
+                         dvars, ignore_initial)
     tmp_init, nodepred = _node_var_trans(g, nodevar, dvars)
     sys_tran = list()
     env_tran = list()
@@ -50,7 +51,8 @@ def graph_to_logic(g, nodevar, ignore_initial,
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
         if self_loops:
-            r = '({r}) | ((X {var}) = {var})'.format(r=r, var=nodevar)
+            r = '({r}) | ((X {var}) = {var})'.format(
+                r=r, var=nodevar)
         sys_tran.append(r)
         sys_tran.extend(nodepred)
         env_init = list()
@@ -62,7 +64,8 @@ def graph_to_logic(g, nodevar, ignore_initial,
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
-            r = '({r}) | ((X {var}) = {var})'.format(r=r, var=nodevar)
+            r = '({r}) | ((X {var}) = {var})'.format(
+                r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
     a = Automaton()
@@ -125,7 +128,8 @@ def _node_var_trans(g, nodevar, dvars):
     return (init, trans)
 
 
-def _init_from_ts(initial_nodes, nodevar, dvars, ignore_initial=False):
+def _init_from_ts(initial_nodes, nodevar,
+                  dvars, ignore_initial=False):
     """Return initial condition."""
     if ignore_initial:
         return list()
@@ -177,7 +181,8 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
             continue
         post = disj(c)
         pre = _assign(nodevar, u, dvars)
-        env_trans.append('(({pre}) -> ({post}))'.format(pre=pre, post=post))
+        env_trans.append('(({pre}) -> ({post}))'.format(
+            pre=pre, post=post))
     s = conj(env_trans, sep='\n')
     return s
 

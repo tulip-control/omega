@@ -108,6 +108,24 @@ def test_bddizer_quantifiers():
     assert u == bdd.true, u
 
 
+def test_bddizer_substitution():
+    add = sym_bdd.add_expr
+    order = {'x': 0, 'y': 1, 'z': 2, 'w': 3}
+    bdd = dd.bdd.BDD(order)
+    e = '\S $2 x y y'
+    u = add(e, bdd)
+    u_ = bdd.var('x')
+    assert u == u_, (u, u_)
+    e = '\S $4 x y  z w  | y ! w'
+    u = add(e, bdd)
+    u_ = bdd.add_expr('x | ! z')
+    assert u == u_, (u, u_)
+    e = '$2 0 \S $2 x y y'
+    u = add(e, bdd)
+    u_ = bdd.var('x')
+    assert u == u_, (u, u_)
+
+
 def slugsin_parser(s, t):
     """Helper that converts prefix to infix syntax for readability."""
     slugs_table = t.to_slugs()

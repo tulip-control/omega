@@ -24,13 +24,15 @@ class Lexer(object):
     """Token rules for slugsin lexer."""
 
     operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION',
-                 'FORALL', 'EXISTS']
+                 'FORALL', 'EXISTS', 'RENAME', 'DIV']
     identifiers = ['NAME', 'NUMBER']
 
     t_NUMBER = r'[-]*\d+'
     t_NAME = r"[A-Za-z_][A-Za-z0-9_']*"
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'
+    t_RENAME = r'\\S'
+    t_DIV = r'/'
     t_NOT = r'\!'
     t_AND = r'\&'
     t_OR = r'\|'
@@ -62,7 +64,7 @@ class Parser(object):
         self.lexer = Lexer()
         self.tokens = self.lexer.tokens
         self._binary = {'AND', 'OR', 'XOR',
-                        'FORALL', 'EXISTS'}
+                        'FORALL', 'EXISTS', 'RENAME'}
 
     def parse(self, data):
         self.lexer.lexer.input(data)
@@ -195,13 +197,27 @@ class BDDNodes(Nodes):
     """AST to flatten prefix syntax to a BDD."""
 
     class Operator(Nodes.Operator):
-        def flatten(self, bdd, *arg, **kw):
+        def flatten(self, bdd, mem=None, *arg, **kw):
+            # op with variable number of args ?
+            if self.operator == '\S':
+                pairs, x = self.operands
+                operand = x.flatten(bdd=bdd, mem=mem, *arg, **kw)
+                mem = list()
+                pairs.flatten(bdd=bdd, mem=mem,
+                              same_mem=True, *arg, **kw)
+                mem = [bdd.support(u).pop() for u in mem]
+                rename = {
+                    a: b for a, b in zip(mem[1::2], mem[0::2])}
+                assert 2 * len(rename) == len(pairs.memory), (
+                    rename, pairs.memory)
+                r = bdd.rename(operand, rename)
+                return r
             operands = [
-                u.flatten(bdd=bdd, *arg, **kw)
+                u.flatten(bdd=bdd, mem=mem, *arg, **kw)
                 for u in self.operands]
-            u = bdd.apply(self.operator, *operands)
+            r = bdd.apply(self.operator, *operands)
             # print 'op: ', self.operator, operands, u
-            return u
+            return r
 
     class Var(Nodes.Var):
         def flatten(self, bdd, *arg, **kw):

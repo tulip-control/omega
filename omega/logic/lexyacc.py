@@ -218,18 +218,18 @@ class Parser(astutils.Parser):
         p[0] = self.nodes.Operator(p[1], p[3], p[5], p[7])
 
     def p_quantifier(self, p):
-        """expr : FORALL varlist COLON expr
-                | EXISTS varlist COLON expr
+        """expr : FORALL list COLON expr
+                | EXISTS list COLON expr
         """
         p[0] = self.nodes.Operator(p[1], p[2], p[4])
 
     def p_varlist_iter(self, p):
-        """varlist : varlist COMMA NAME"""
+        """list : list COMMA var"""
         p[1].append(p[3])
         p[0] = p[1]
 
     def p_varlist_end(self, p):
-        """varlist : NAME"""
+        """list : var"""
         p[0] = [p[1]]
 
     def p_paren(self, p):
@@ -237,8 +237,17 @@ class Parser(astutils.Parser):
         p[0] = p[2]
 
     def p_var(self, p):
-        """expr : NAME"""
+        """expr : var"""
+        p[0] = p[1]
+
+    def p_var_unprimed(self, p):
+        """var : NAME"""
         p[0] = self.nodes.Var(p[1])
+
+    def p_var_primed(self, p):
+        """var : NAME PRIME"""
+        var = self.nodes.Var(p[1])
+        p[0] = self.nodes.Unary('X', var)
 
     def p_bdd_node(self, p):
         """expr : AT number"""

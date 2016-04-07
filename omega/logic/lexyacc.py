@@ -37,7 +37,7 @@ class Lexer(astutils.Lexer):
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
         'ONCE', 'PRIME', 'DOT', 'AT',
-        'FORALL', 'EXISTS', 'COLON']
+        'FORALL', 'EXISTS', 'RENAME', 'COLON']
     misc = ['NAME', 'NUMBER']
 
     def t_NAME(self, t):
@@ -69,6 +69,8 @@ class Lexer(astutils.Lexer):
     # quantifiers
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'
+    t_RENAME = r'\\S'  # for arbitrary substitution (compose)
+    # conjoin and quantify existentially
     t_COLON = r'\:'
     # Boolean
     t_NOT = r'\!'
@@ -135,6 +137,7 @@ class Parser(astutils.Parser):
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIV', 'MOD'),
         ('right', 'NOT', 'UMINUS'),
+        ('left', 'RENAME'),
         ('left', 'FORALL', 'EXISTS'),
         ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
         ('left', 'PRIME', 'DOT'))
@@ -223,6 +226,10 @@ class Parser(astutils.Parser):
         """
         p[0] = self.nodes.Operator(p[1], p[2], p[4])
 
+    def p_substitute(self, p):
+        """expr : RENAME pairs COLON expr"""
+        p[0] = self.nodes.Operator(p[1], p[2], p[4])
+
     def p_varlist_iter(self, p):
         """list : list COMMA var"""
         p[1].append(p[3])
@@ -231,6 +238,19 @@ class Parser(astutils.Parser):
     def p_varlist_end(self, p):
         """list : var"""
         p[0] = [p[1]]
+
+    def p_pairs_iter(self, p):
+        """pairs : pairs COMMA pair"""
+        p[1].append(p[3])
+        p[0] = p[1]
+
+    def p_pairs_end(self, p):
+        """pairs : pair"""
+        p[0] = [p[1]]
+
+    def p_pair(self, p):
+        """pair : expr DIV var"""
+        p[0] = (p[1], p[3])
 
     def p_paren(self, p):
         """expr : LPAREN expr RPAREN"""

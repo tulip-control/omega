@@ -140,8 +140,7 @@ def _flatten_previous(op, x, testers, context,
     strong = (op == '--X')
     propagate = (
         context == 'arithmetic' or
-        len(x) == 1 or
-        (len(x) == 2 and x.operator in ('-X', '--X')))
+        len(x) == 1)
     if propagate:
         previous += 1
         return x.flatten(testers=testers, context=context,

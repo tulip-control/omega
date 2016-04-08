@@ -109,17 +109,19 @@ class Nodes(_Nodes):
     class Var(_Nodes.Var):
         def flatten(self, testers=None, context=None,
                     previous=None, strong=None, free_init=None,
-                    *arg, **kw):
+                    table=None, *arg, **kw):
+            var = self.value
+            assert var in table, (var, table)
+            dtype = table[var]['type']
             if previous is None:
-                return self.value
+                return var
             # previous N
             assert testers is not None
-            assert context is not None
+            assert context == 'bool', (context, self.value)
+            assert dtype == 'bool', (var, dtype)
             previous + 1  # isinstance(previous, int)  ?
-            var = self.value
             var_prev = '{name}_prev{i}'.format(
                 name=var, i=previous)
-            dtype = var
             # add tester
             init, trans = _make_tester_for_previous(
                 var_prev, var, context, strong)
@@ -135,11 +137,10 @@ def _flatten_previous(op, x, testers, context,
                       previous=0, strong=None, *arg, **kw):
     """Translate expression with "previous" as main operator."""
     # propagate ?
-    # (if arithmetic context or child is terminal)
-    # added benefit: avoids unnecessary constant aux vars
+    # (if child is terminal)
+    # added benefit: shares some history vars among subformulae
     strong = (op == '--X')
     propagate = (
-        context == 'arithmetic' or
         len(x) == 1)
     if propagate:
         previous += 1
@@ -171,12 +172,6 @@ def _make_tester_for_previous(var, expr, context, strong):
             init = '(! {var})'.format(var=var)
         else:
             init = var
-    elif context == 'arithmetic':
-        print('warning: an experiment, remember to init aux var')
-        assert not strong
-        op = '='
-        # init for weak "previous"
-        init = 'True'
     else:
         raise Exception(
             'unknown context: "{c}"'.format(c=context))
@@ -243,7 +238,7 @@ def translate(s, t, free_init=None, debug=False):
     testers = dict()
     context = 'bool'
     r = tree.flatten(testers=testers, context=context,
-                     free_init=free_init)
+                     free_init=free_init, table=t)
     if debug:
         ci = sorted(d['init'] for d in testers.itervalues())
         ct = sorted(d['trans'] for d in testers.itervalues())
@@ -257,19 +252,7 @@ def translate(s, t, free_init=None, debug=False):
     dvars = dict()
     for var_prev, d in testers.iteritems():
         dtype = d['type']
-        # get type from base variable
-        # (for example, base var of "-X p" is "p")
-        if dtype == 'bool':
-            dom = None
-        elif dtype in t:
-            var = dtype
-            q = t[var]
-            dtype = q['type']
-            dom = q.get('dom')
-        else:
-            raise Exception(
-                'variable "{var}" missing from table {t}.'.format(
-                    var=dtype, t=t))
+        dom = d.get('dom')
         dvars[var_prev] = dict(type=dtype, dom=dom, owner='sys')
     return dvars, init, trans
 

@@ -22,8 +22,6 @@ class Lexer(astutils.Lexer):
         'false': 'FALSE',
         'True': 'TRUE',
         'true': 'TRUE',
-        'G': 'ALWAYS',
-        'F': 'EVENTUALLY',
         'U': 'UNTIL',
         'W': 'WEAK_UNTIL',
         'V': 'RELEASE',
@@ -36,6 +34,7 @@ class Lexer(astutils.Lexer):
         'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
+        'ALWAYS', 'EVENTUALLY',
         'ONCE', 'PRIME', 'DOT', 'AT',
         'FORALL', 'EXISTS', 'RENAME', 'COLON']
     misc = ['NAME', 'NUMBER']
@@ -44,16 +43,6 @@ class Lexer(astutils.Lexer):
         r'[A-Za-z_][A-za-z0-9_]*'
         t.value = self.values.get(t.value, t.value)
         t.type = self.reserved.get(t.value, 'NAME')
-        return t
-
-    def t_ALWAYS(self, t):
-        r'\[\]'
-        t.value = 'G'
-        return t
-
-    def t_EVENTUALLY(self, t):
-        r'\<\>'
-        t.value = 'F'
         return t
 
     def t_AND(self, t):
@@ -101,6 +90,8 @@ class Lexer(astutils.Lexer):
     t_WEAK_PREVIOUS = r'-X'
     t_HISTORICALLY = r'-\[\]'
     t_ONCE = r'-\<\>'
+    t_ALWAYS = r'\[\]'
+    t_EVENTUALLY = r'\<\>'
     t_DOT = r'\.'
     t_PRIME = r"\'"
     # other

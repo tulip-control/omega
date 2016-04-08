@@ -372,8 +372,8 @@ expr ::= expr '*' expr
        # temporal modal
        | 'X' expr  # next
        | expr "'" [NUMBER]  # next [multiple]
-       | '[]' expr | 'G' expr  # always
-       | '<>' expr | 'F' expr  # eventually
+       | '[]' expr  # always
+       | '<>' expr  # eventually
        | '-X' expr  # weak previous
        | '--X' expr  # strong previous
        | expr '.' [NUMBER]  # previous [multiple]

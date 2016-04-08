@@ -209,8 +209,8 @@ class Parser(lexyacc.Parser):
 parser = Parser()
 
 
-def translate(s, t, free_init=None, debug=False):
-    """Translate full LTL formula `s` to future LTL.
+def translate(s, t, free_init=None, debug=False, until=False):
+    """Translate action formula `s` with past to future LTL.
 
     Return:
       - initial condition of temportal testers

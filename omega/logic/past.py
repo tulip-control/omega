@@ -213,6 +213,8 @@ def translate(s, t, free_init=None, debug=False, until=False):
     """Translate action formula `s` with past to future LTL.
 
     Return:
+      - history and prophecy variable symbol table
+      - translated formula
       - initial condition of temportal testers
       - conjunction `c` of translated formula with
         transition relations of temporal testers.
@@ -231,7 +233,8 @@ def translate(s, t, free_init=None, debug=False, until=False):
     @type free_init: `set`
     @param debug: ensures repeatable ordering
         of new subformulas, to enable testing.
-    @return: `(dvars, init, future_s)`
+    @param until: add prophecy variables for "until" too
+    @return: `(dvars, translated, init, action)`
     @rtype: `tuple`
     """
     tree = parser.parse(s)
@@ -247,24 +250,27 @@ def translate(s, t, free_init=None, debug=False, until=False):
         ct = (d['trans'] for d in testers.itervalues())
     init = conj(ci)
     trans = conj(ct)
-    trans = conj([r, trans])
     # collect new vars
     dvars = dict()
     for var_prev, d in testers.iteritems():
         dtype = d['type']
         dom = d.get('dom')
         dvars[var_prev] = dict(type=dtype, dom=dom, owner='sys')
-    return dvars, init, trans
+    return dvars, r, init, trans
 
 
 def map_translate(c, t, **kw):
     """Apply `translate` to all items of container `c`."""
-    add_vars = dict()
-    add_init = list()
-    add_action = list()
+    all_vars = dict()
+    f = list()
+    init = list()
+    action = list()
+    win = list()
     for s in c:
-        dvars, init, action = translate(s, t, **kw)
-        add_vars.update(dvars)
-        add_init.append(init)
-        add_action.append(action)
-    return add_vars, add_init, add_action
+        dvars, r, i, a, w = translate(s, t, **kw)
+        all_vars.update(dvars)
+        f.append(r)
+        init.append(i)
+        action.append(a)
+        win.extend(w)
+    return all_vars, f, init, action, win

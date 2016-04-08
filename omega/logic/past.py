@@ -67,12 +67,12 @@ class Nodes(_Nodes):
             if self.operator == '-[]':
                 x = Nodes.Bool('True')
                 y = Nodes.Unary('!', self.operands[0])
-                c = (x, y)
-                r = _flatten_since(c, *arg, **kw)
+                a = (x, y)
+                r = _flatten_since(a, *arg, **kw)
                 return '(! {r})'.format(r=r)
             elif self.operator == '-<>':
-                c = (Nodes.Bool('True'), self.operands[0])
-                return _flatten_since(c, *arg, **kw)
+                a = (Nodes.Bool('True'), self.operands[0])
+                return _flatten_since(a, *arg, **kw)
             return super(Nodes.Unary, self).flatten(*arg, **kw)
 
     class Binary(_Nodes.Binary):

@@ -316,9 +316,14 @@ def _bitblast(aut):
     @type aut: `Automaton`
     """
     aut = copy.copy(aut)
-    t, init, safety = bv.bitblast_table(aut.vars)
-    aut.update('init', init)
-    aut.update('action', safety)
+    t = bv.bitblast_table(aut.vars)
+    init, safety = bv.type_invariants(t)
+    for var, c in init.iteritems():
+        player = aut.vars[var]['owner']
+        aut.init[player].extend(c)
+    for var, c in safety.iteritems():
+        player = aut.vars[var]['owner']
+        aut.action[player].extend(c)
     # conjoin to avoid it later over BDD nodes
     _conj_owner(aut, 'env', 'infix')
     _conj_owner(aut, 'sys', 'infix')

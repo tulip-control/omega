@@ -35,41 +35,34 @@ def bitblast(f, t):
     return tree.flatten(t=t)
 
 
-def bitblast_table(table, players=None):
+def bitblast_table(table):
     """Return table of variables for bitvectors.
 
     `table` is a `dict` that maps each variable
     to a `dict` with attributes:
 
       - "type": `in ('bool', 'saturating', 'modwrap', 'int')`
-      - "owner": `in ('env', 'sys')`
       - "dom": `tuple([min, max])` where `min, max` are `int`
         used only if "type" is an integer
       - "init" (optional)
     """
-    if players is None:
-        players = {'env', 'sys'}
     data_types = {'bool', 'int', 'saturating', 'modwrap'}
     t = dict()
-    init = {k: list() for k in players}
-    safety = {k: list() for k in players}
-    keys = {'type', 'owner', 'dom', 'signed',
-            'width', 'bitnames', 'init'}
+    keys = {'type', 'dom', 'signed',
+            'width', 'bitnames'}
     for var, d in table.iteritems():
         dtype = d['type']
-        owner = d['owner']
-        assert owner in players, (owner, players)
         assert dtype in data_types, (var, dtype)
         b = dict(d)  # cp other keys
         for k in keys:
             b.pop(k, None)
         if dtype == 'bool':
-            b.update(type='bool', owner=owner)
+            b.update(type='bool')
         elif dtype in ('saturating', 'modwrap', 'int'):
             dom = d['dom']
             assert len(dom) == 2, dom
             signed, width = dom_to_width(dom)
-            b.update(type='int', owner=owner,
+            b.update(type='int',
                      signed=signed, width=width,
                      dom=dom)
         else:
@@ -79,15 +72,36 @@ def bitblast_table(table, players=None):
             print('WARNING: "int" found as type '
                   '(instead of "saturating")')
         t[var] = b
+    _check_data_types(t)
+    _add_bitnames(t)
+    logger.info('-- done bitblasting vars table\n')
+    return t
+
+
+def type_invariants(table):
+    """Return type invariants for variables.
+
+    @param table: bitblasted table of integers and Booleans
+    @return: `(init, safety)`
+    @rtype: `tuple` of `dict`,
+        each `dict` maps variables to `list` of `str`.
+    """
+    init = dict()
+    safety = dict()
+    for var, d in table.iteritems():
+        init[var] = list()
+        safety[var] = list()
+        dtype = d['type']
         # initial value
         # imperative var or free var assigned at decl ?
         ival = d.get('init')
         if ival is not None:
             c = _init_to_logic(var, d)
-            init[owner].append(c)
+            init[var].append(c)
         # ranged bitfield safety constraints
         if dtype == 'bool':
             continue
+        dom = d['dom']
         # int var
         assert dtype in ('int', 'saturating', 'modwrap'), dtype
         dmin, dmax = dom
@@ -102,20 +116,18 @@ def bitblast_table(table, players=None):
         # still included, for use with counters
         # during transducer construction,
         # because closure not taken for the counters
-        init[owner].append(
-             '({min} <= {x}) & ({x} <= {max})'.format(
-                 min=dmin, max=dmax, x=var))
+        s = '({min} <= {x}) & ({x} <= {max})'.format(
+            min=dmin, max=dmax, x=var)
+        init[var].append(s)
         # prime needed to enforce limits now, not one step later,
         # otherwise env can violate limits, if that will force
         # sys to lose in the next time step.
-        safety[owner].append((
+        s = (
             '({min} <= {x}) & ({x} <= {max}) & '
             '({min} <= X({x}) ) & ( X({x}) <= {max})').format(
-                min=dmin, max=dmax, x=var))
-    _check_data_types(t)
-    _add_bitnames(t)
-    logger.info('-- done bitblasting vars table\n')
-    return t, init, safety
+                min=dmin, max=dmax, x=var)
+        safety[var].append(s)
+    return init, safety
 
 
 def _init_to_logic(var, d):

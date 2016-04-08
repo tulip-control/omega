@@ -193,7 +193,7 @@ def _flatten_since(operands, testers, context, *arg, **kw):
     trans = (
         '('
         '(X {var}) <-> ('
-        '(X {q}) | ((X {p}) & {var})'
+        '    (X {q}) | ((X {p}) & {var})'
         '))').format(
             var=var, p=p, q=q)
     testers[var] = dict(init=init, trans=trans, type='bool')

@@ -322,13 +322,17 @@ def _bitblast(aut):
     players = dict(aut.players)
     aut = copy.copy(aut)
     t = bv.bitblast_table(aut.vars)
-    init, safety = bv.type_invariants(t)
+    init, action = bv.type_invariants(t)
     for var, c in init.iteritems():
-        player = aut.vars[var]['owner']
-        aut.init[player].extend(c)
-    for var, c in safety.iteritems():
-        player = aut.vars[var]['owner']
-        aut.action[player].extend(c)
+        owner = aut.vars[var]['owner']
+        # collect type invariants of parameters too,
+        # for convenience later
+        aut.init.setdefault(owner, list())
+        aut.init[owner].extend(c)
+    for var, c in action.iteritems():
+        owner = aut.vars[var]['owner']
+        aut.action.setdefault(owner, list())
+        aut.action[owner].extend(c)
     # conjoin to avoid it later over BDD nodes
     _conj_owner(aut, 'env', 'infix')
     _conj_owner(aut, 'sys', 'infix')
@@ -391,9 +395,7 @@ def _bitvector_to_bdd(aut):
     """
     players = dict(aut.players)
     table = aut.vars
-    player_vars = {k for k, d in table.iteritems()
-                   if d['owner'] in players}
-    bits = bv.bit_table(player_vars, table)
+    bits = bv.bit_table(table, table)
     # index both, to allow for unquantified parameters
     ubits = set(b for b, d in bits.iteritems()
                 if d['owner'] == 'env')
@@ -414,6 +416,9 @@ def _bitvector_to_bdd(aut):
     a.players = players
     a.bdd = bdd
     # vars
+    player_vars = {k for k, d in table.iteritems()
+                   if d['owner'] in players}
+    bits = bv.bit_table(player_vars, table)
     prime, partition = _partition_vars(bits, ubits, ebits)
     a.vars = copy.deepcopy(table)
     a.uvars = partition['uvars']

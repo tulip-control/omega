@@ -137,6 +137,7 @@ class Automaton(object):
         a.action = copy.deepcopy(self.action)
         a.win = copy.deepcopy(self.win)
         a.acceptance = self.acceptance
+        a.bdd = self.bdd
         return a
 
     def __del__(self):

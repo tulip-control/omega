@@ -58,21 +58,32 @@ class Nodes(_Nodes):
         def flatten(self, *arg, **kw):
             # type checking
             c = kw.get('context')
+            until = kw.get('until')
             # recurse
-            if self.operator in ('-X', '--X'):
+            op = self.operator
+            if op in ('-X', '--X'):
                 x = self.operands[0]
-                return _flatten_previous(self.operator, x, *arg, **kw)
-            if self.operator != 'X':
-                assert c == 'bool', (c, self.operator)
-            if self.operator == '-[]':
+                return _flatten_previous(op, x, *arg, **kw)
+            if op != 'X':
+                assert c == 'bool', (c, op)
+            if op == '-[]':
                 x = Nodes.Bool('True')
                 y = Nodes.Unary('!', self.operands[0])
                 a = (x, y)
                 r = _flatten_since(a, *arg, **kw)
                 return '(! {r})'.format(r=r)
-            elif self.operator == '-<>':
+            elif op == '-<>':
                 a = (Nodes.Bool('True'), self.operands[0])
                 return _flatten_since(a, *arg, **kw)
+            elif op == '[]' and until:
+                x = Nodes.Bool('True')
+                y = Nodes.Unary('!', self.operands[0])
+                a = (x, y)
+                r = _flatten_until(a, *arg, **kw)
+                return '(! {r})'.format(r=r)
+            elif op == '<>' and until:
+                a = (Nodes.Bool('True'), self.operands[0])
+                return _flatten_until(a, *arg, **kw)
             return super(Nodes.Unary, self).flatten(*arg, **kw)
 
     class Binary(_Nodes.Binary):
@@ -80,9 +91,14 @@ class Nodes(_Nodes):
             # type checking
             c = kw.get('context')
             assert c == 'bool', c
+            until = kw.get('until')
             # recurse
-            if self.operator == 'S':
+            op = self.operator
+            if op == 'S':
                 return _flatten_since(
+                    self.operands, *arg, **kw)
+            elif op == 'U' and until:
+                return _flatten_until(
                     self.operands, *arg, **kw)
             return super(Nodes.Binary, self).flatten(*arg, **kw)
 
@@ -129,7 +145,8 @@ class Nodes(_Nodes):
             if free_init is not None and var in free_init:
                 init = 'True'
             testers[var_prev] = dict(
-                init=init, trans=trans, type=dtype)
+                type=dtype,
+                init=init, trans=trans, win=None)
             return var_prev
 
 
@@ -158,7 +175,9 @@ def _flatten_previous(op, x, testers, context,
     # create tester
     init, trans = _make_tester_for_previous(
         var_prev, expr, context, strong)
-    testers[var_prev] = dict(init=init, trans=trans, type='bool')
+    testers[var_prev] = dict(
+        type='bool',
+        init=init, trans=trans, win=None)
     return var_prev
 
 
@@ -196,7 +215,29 @@ def _flatten_since(operands, testers, context, *arg, **kw):
         '    (X {q}) | ((X {p}) & {var})'
         '))').format(
             var=var, p=p, q=q)
-    testers[var] = dict(init=init, trans=trans, type='bool')
+    testers[var] = dict(
+        type='bool',
+        init=init, trans=trans, win=None)
+    return var
+
+
+def _flatten_until(operands, testers, context, *arg, **kw):
+    assert context == 'bool', context
+    x, y = operands
+    p = x.flatten(testers=testers, context=context, *arg, **kw)
+    q = y.flatten(testers=testers, context=context, *arg, **kw)
+    i = len(testers)
+    var = '_aux{i}'.format(i=i)
+    trans = (
+        '('
+        '{var} <-> ('
+        '    ({q}) | (({p}) & (X {var}))'
+        '))').format(
+            var=var, p=p, q=q)
+    win = '(({q}) | ! {var})'.format(var=var, q=q)
+    testers[var] = dict(
+        type='bool',
+        init='True', trans=trans, win=win)
     return var
 
 
@@ -218,6 +259,7 @@ def translate(s, t, free_init=None, debug=False, until=False):
       - initial condition of temportal testers
       - conjunction `c` of translated formula with
         transition relations of temporal testers.
+      - list of recurrence goals
 
     If formula `s` is an action (in the sense of TLA),
     then the returned formula `c` is also an action.
@@ -241,13 +283,17 @@ def translate(s, t, free_init=None, debug=False, until=False):
     testers = dict()
     context = 'bool'
     r = tree.flatten(testers=testers, context=context,
-                     free_init=free_init, table=t)
+                     free_init=free_init, table=t, until=until)
     if debug:
         ci = sorted(d['init'] for d in testers.itervalues())
         ct = sorted(d['trans'] for d in testers.itervalues())
+        win = [d['win'] for d in testers.itervalues()
+               if d['win'] is not None]
     else:
         ci = (d['init'] for d in testers.itervalues())
         ct = (d['trans'] for d in testers.itervalues())
+        win = [d['win'] for d in testers.itervalues()
+               if d['win'] is not None]
     init = conj(ci)
     trans = conj(ct)
     # collect new vars
@@ -256,7 +302,7 @@ def translate(s, t, free_init=None, debug=False, until=False):
         dtype = d['type']
         dom = d.get('dom')
         dvars[var_prev] = dict(type=dtype, dom=dom, owner='sys')
-    return dvars, r, init, trans
+    return dvars, r, init, trans, win
 
 
 def map_translate(c, t, **kw):

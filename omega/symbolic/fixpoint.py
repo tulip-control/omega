@@ -8,6 +8,7 @@ import logging
 from dd import bdd as _bdd
 
 
+SYS = 'sys'  # default player for existential image
 logger = logging.getLogger(__name__)
 
 
@@ -132,7 +133,7 @@ def descendants(source, constrain, a, future=True):
 
 def ee_image(source, a):
     """Existential image."""
-    u = a.action['sys'][0]
+    u = a.action[SYS][0]
     v = source
     assert u in a.bdd
     qvars = a.uevars

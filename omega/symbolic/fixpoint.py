@@ -137,6 +137,9 @@ def ee_image(source, a):
     v = source
     assert u in a.bdd
     qvars = a.uevars
-    image = _bdd.image(u, v, a.unprime, qvars,
-                       a.bdd, forall=False)
+    bdd = a.bdd
+    u = bdd.apply('and', u, v)
+    u = bdd.quantify(u, qvars, forall=False)
+    u = bdd.rename(u, a.unprime)
+    image = u
     return image

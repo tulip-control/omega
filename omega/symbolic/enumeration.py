@@ -36,6 +36,7 @@ def relation_to_graph(
     @type u, care_source, care_target: node in `aut.bdd`
     @rtype: `networkx.DiGraph`
     """
+    assert u != aut.bdd.false
     t, care_relation = _make_table(u, aut, care_source,
                                    care_target, care_bits)
     c = _enumerate_bdd(u, aut.bdd, t, care_relation, care_bits, full=True)

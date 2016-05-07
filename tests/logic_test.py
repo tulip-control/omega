@@ -10,7 +10,8 @@ def test_flatten_previous_var():
     testers = dict()
     context = 'bool'
     x = past.Nodes.Var('x')
-    s = past._flatten_previous('--X', x, testers, context)
+    s = past._flatten_previous(
+        '--X', x, testers, context)
     assert s == 'x_prev1', s
     # tester
     assert 'x_prev1' in testers, testers
@@ -33,7 +34,9 @@ def test_flatten_previous_boolean():
     y = past.Nodes.Var('y')
     previous_x = past.Nodes.Unary('--X', x)
     e = past.Nodes.Binary('&', previous_x, y)
-    s = e.flatten(testers, context=context)
+    s = e.flatten(
+        testers,
+        context=context)
     assert s == '( x_prev1 & y )', s
     # tester
     assert 'x_prev1' in testers, testers
@@ -49,29 +52,6 @@ def test_flatten_previous_boolean():
     assert a == b, a
 
 
-def test_flatten_previous_arithmetic():
-    testers = dict()
-    context = 'arithmetic'
-    x = past.Nodes.Var('x')
-    y = past.Nodes.Var('y')
-    previous_x = past.Nodes.Unary('-X', x)
-    e = past.Nodes.Arithmetic('+', previous_x, y)
-    s = e.flatten(testers=testers, context=context)
-    assert s == '( x_prev1 + y )', s
-    # tester
-    assert 'x_prev1' in testers
-    d = testers['x_prev1']
-    assert isinstance(d, dict), d
-    # init
-    a = d.get('init')
-    b = 'True'
-    assert a == b, a
-    # trans
-    a = d.get('trans')
-    b = '((X x_prev1) = x)'
-    assert a == b, a
-
-
 def test_flatten_previous_boolean_expr():
     testers = dict()
     context = 'bool'
@@ -80,7 +60,9 @@ def test_flatten_previous_boolean_expr():
     y = past.Nodes.Var('y')
     conj = past.Nodes.Binary('&', x, y)
     e = past.Nodes.Unary('--X', conj)
-    s = e.flatten(testers=testers, context=context)
+    s = e.flatten(
+        testers=testers,
+        context=context)
     assert s == '_aux0', s
     # tester
     assert '_aux0' in testers, testers
@@ -96,59 +78,22 @@ def test_flatten_previous_boolean_expr():
     assert a == b, a
 
 
-def test_flatten_previous_arithmetic_expr():
-    testers = dict()
-    context = 'arithmetic'
-    # "-X (z + 3)"
-    z = past.Nodes.Var('z')
-    n = past.Nodes.Num('3')
-    plus = past.Nodes.Arithmetic('+', z, n)
-    e = past.Nodes.Unary('-X', plus)
-    s = e.flatten(testers=testers, context=context)
-    assert s == '( z_prev1 + 3 )', s
-    # tester
-    assert 'z_prev1' in testers, testers
-    d = testers['z_prev1']
-    assert isinstance(d, dict), d
-    # init
-    a = d.get('init')
-    b = 'True'
-    assert a == b, a
-    # trans
-    a = d.get('trans')
-    b = '((X z_prev1) = z)'
-    assert a == b, a
-
-
 def test_flatten_nested_previous():
     testers = dict()
     context = 'bool'
-    # "-X (q & -X (3 = -X (p + 3)))"
+    # "-X (q & -X (3 = (p + 3)))"
     p = past.Nodes.Var('p')
     q = past.Nodes.Var('q')
     n = past.Nodes.Num('3')
     plus = past.Nodes.Arithmetic('+', p, n)
-    prev_plus = past.Nodes.Unary('-X', plus)
-    eq = past.Nodes.Comparator('=', n, prev_plus)
+    eq = past.Nodes.Comparator('=', n, plus)
     prev_eq = past.Nodes.Unary('--X', eq)
     conj = past.Nodes.Binary('&', q, prev_eq)
     e = past.Nodes.Unary('-X', conj)
-    s = e.flatten(testers=testers, context=context)
-    assert s == '_aux2', s
-    #
-    # tester for "-X p" (p_prev1)
-    #
-    assert 'p_prev1' in testers, testers
-    d = testers['p_prev1']
-    assert isinstance(d, dict), d
-    # init
-    a = d.get('init')
-    b = 'True'
-    assert a == b, a
-    # trans
-    a = d.get('trans')
-    b = '((X p_prev1) = p)'
-    assert a == b, a
+    s = e.flatten(
+        testers=testers,
+        context=context)
+    assert s == '_aux1', s
     #
     # tester for "-X (p + 3 = 3)" (_aux1)
     #
@@ -157,25 +102,25 @@ def test_flatten_nested_previous():
     assert isinstance(d, dict), d
     # init
     a = d.get('init')
-    b = '(! _aux1)'
+    b = '_aux1'
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux1) <-> ( 3 = ( p_prev1 + 3 ) ))'
+    b = '((X _aux1) <-> ( q & _aux0 ))'
     assert a == b, a
     #
     # tester for whole formula (_aux1)
     #
-    assert '_aux2' in testers, testers
-    d = testers['_aux2']
+    assert '_aux1' in testers, testers
+    d = testers['_aux1']
     assert isinstance(d, dict), d
     # init
     a = d.get('init')
-    b = '_aux2'
+    b = '_aux1'
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux2) <-> ( q & _aux1 ))'
+    b = '((X _aux1) <-> ( q & _aux0 ))'
     assert a == b, a
 
 
@@ -185,7 +130,9 @@ def test_flatten_since():
     p = past.Nodes.Var('p')
     q = past.Nodes.Var('q')
     since = past.Nodes.Binary('S', p, q)
-    s = since.flatten(testers=testers, context=context)
+    s = since.flatten(
+        testers=testers,
+        context=context)
     assert s == '_aux0', s
     # tester
     assert '_aux0' in testers
@@ -197,19 +144,19 @@ def test_flatten_since():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux0) <-> ((X q) | ((X p) & _aux0)))'
+    b = '((X _aux0) <-> (    (X q) | ((X p) & _aux0)))'
     assert a == b, a
 
 
 def test_past_parser_boolean():
-    t = dict(a=dict(type='bool', owner='sys'),
-             b=dict(type='bool', owner='env'))
-    s = 'a. & b'
-    dvars, init, trans = past.translate(s, t)
-    r = 'a_prev1'
-    assert init == r, init
-    r = '(( a_prev1 & b )) & (((X a_prev1) <-> a))'
-    assert trans == r, trans
+    s = '-X a & b'
+    dvars, r, init, trans, win = past.translate(s)
+    init_ = 'a_prev1'
+    assert init == init_, init
+    r_ = '( a_prev1 & b )'
+    assert r == r_, r
+    trans_ = '((X a_prev1) <-> a)'
+    assert trans == trans_, trans
 
 
 def test_parser_strong_weak_previous():
@@ -241,48 +188,48 @@ def test_parser_strong_weak_previous():
     assert v == 'p', v
 
 
-def test_parser_nested():
-    t = dict(
-        a=dict(type='bool', owner='sys'),
-        p=dict(type='int', dom=(0, 2), owner='env'),
-        q=dict(type='int', dom=(0, 5), owner='sys'))
-    s = '(--X a & ((p. + q). = 5))'
-    dvars, init, trans = past.translate(s, t, debug=True)
+def test_parser_mixed():
+    s = '(--X a & ((p + q) = 5))'
+    dvars, r, init, trans, win = past.translate(
+        s, debug=True)
     assert init == '(! a_prev1)', init
-    r = (
-        '(( a_prev1 & ( ( p_prev2 + q_prev1 ) = 5 ) )) & '
-        '(((((X a_prev1) <-> a)) & '
-        '(((X p_prev2) = p))) & (((X q_prev1) = q)))')
-    assert trans == r, trans
+    r_ = '( a_prev1 & ( ( p + q ) = 5 ) )'
+    assert r == r_, r
 
 
 def test_parser_multi_previous():
-    s = 'a..'
+    s = '--X --X a'
     tree = parser.parse(s)
     testers = dict()
-    r = tree.flatten(testers=testers, context='bool')
-    assert r == 'a_prev2', r
-    assert len(testers) == 1, testers
+    r = tree.flatten(testers=testers,
+                     context='bool')
+    assert r == '_aux1', r
+    assert len(testers) == 2, testers
 
 
 def test_context_checks():
     # boolean
     s = 'x + y'
     tree = parser.parse(s)
-    tree.flatten(testers=dict, context='arithmetic')
+    tree.flatten(testers=dict,
+                 context='arithmetic')
     with assert_raises(AssertionError):
-        tree.flatten(testers=dict, context='bool')
+        tree.flatten(testers=dict,
+                     context='bool')
     # arithmetic
-    s = 'p & q'
+    s = 'x & y'
     tree = parser.parse(s)
-    tree.flatten(testers=dict, context='bool')
+    tree.flatten(testers=dict,
+                 context='bool')
     with assert_raises(AssertionError):
-        tree.flatten(testers=dict, context='arithmetic')
+        tree.flatten(testers=dict,
+                     context='arithmetic')
     # nested
-    s = 'a & (b + 3)'
+    s = 'y & (y + 3)'
     tree = parser.parse(s)
     with assert_raises(AssertionError):
-        tree.flatten(testers=dict, context='bool')
+        tree.flatten(testers=dict,
+                     context='bool')
 
 
 if __name__ == '__main__':

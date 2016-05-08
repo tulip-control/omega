@@ -31,10 +31,10 @@ def ltl_to_automaton(f):
     a = symbolic.Automaton()
     a.init['env'] = d['assume']['init']
     a.init['sys'] = d['assert']['init']
-    a.action['env'] = d['assume']['G']
-    a.action['sys'] = d['assert']['G']
-    a.win['env'] = d['assume']['GF']
-    a.win['sys'] = d['assert']['GF']
+    a.action['env'] = d['assume']['[]']
+    a.action['sys'] = d['assert']['[]']
+    a.win['env'] = d['assume']['[]<>']
+    a.win['sys'] = d['assert']['[]<>']
     return a
 
 
@@ -51,8 +51,9 @@ def split_gr1(s):
     @param f: temporal logic formula
     @type f: `str` or AST
 
-    @return: conjunctions of formulae A, B as `str`, grouped by keys:
-        `'init', 'G', 'GF'`
+    @return: conjunctions of formulae A, B as `str`,
+    grouped by keys:
+        `'init', '[]', '[]<>'`
     @rtype: `dict` of `str`: `list` of `str`
     """
     u = parser.parse(s)
@@ -83,13 +84,13 @@ def _split_gr1(u, context, gf=None):
         return Nodes.Binary('&', p, q)
     assert u.operator != '&', u.operator
     if context == 'init':
-        if u.operator == 'G':
+        if u.operator == '[]':
             return Nodes.Bool('True')
         else:
             return u
-    if u.operator != 'G':
+    if u.operator != '[]':
         return Nodes.Bool('True')
-    assert u.operator == 'G'
+    assert u.operator == '[]'
     (v,) = u.operands
     # terminal ?
     if hasattr(v, 'value'):
@@ -100,19 +101,19 @@ def _split_gr1(u, context, gf=None):
     assert hasattr(v, 'operator'), v
     if context == 'action':
         # GF ?
-        if v.operator == 'F':
+        if v.operator == '<>':
             return Nodes.Bool('True')
         return v
     elif context == 'win':
-        if v.operator != 'F':
+        if v.operator != '<>':
             return
-        assert v.operator == 'F'
+        assert v.operator == '<>'
         (w,) = v.operands
         gf.append(w)
 
 
 def _assert_admissible_operators(d):
-    action_ops = {'G', 'F', 'U', 'V', 'R'}
+    action_ops = {'[]', '<>', 'U', 'V', 'R'}
     init_ops = set(action_ops)
     init_ops.add('X')
     operators = dict(init=init_ops, G=action_ops, GF=init_ops)
@@ -185,24 +186,24 @@ def split_gr1_old(f):
             d['init'].append(u)
             continue
         # some operator
-        if u.operator != 'G':
+        if u.operator != '[]':
             d['init'].append(u)
             continue
         # G
         (v,) = u.operands
         # terminal in G ?
         if not g.succ.get(v):
-            d['G'].append(v)
+            d['[]'].append(v)
             continue
         # some operator in G
-        if v.operator == 'F':
+        if v.operator == '<>':
             (w,) = v.operands
-            d['GF'].append(w)
+            d['[]<>'].append(w)
         else:
             # not a GF
-            d['G'].append(v)
+            d['[]'].append(v)
     # assert only admissible temporal operators
-    ops = {'G', 'F', 'U', 'V', 'R'}
+    ops = {'[]', '<>', 'U', 'V', 'R'}
     operators = dict(G=ops)
     ops = set(ops)
     ops.add('X')
@@ -220,10 +221,10 @@ def split_gr1_old(f):
     # conjoin (except for progress)
     init = conj(u.flatten() for u in reversed(d['init']))
     d['init'] = [init]
-    safe = conj(u.flatten() for u in reversed(d['G']))
-    d['G'] = [safe]
+    safe = conj(u.flatten() for u in reversed(d['[]']))
+    d['[]'] = [safe]
     # flatten individual progress formulae
-    d['GF'] = [u.flatten() for u in d['GF']]
+    d['[]<>'] = [u.flatten() for u in d['[]<>']]
     return d
 
 

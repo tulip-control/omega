@@ -125,16 +125,13 @@ class Nodes(_Nodes):
     class Var(_Nodes.Var):
         def flatten(self, testers=None, context=None,
                     previous=None, strong=None, free_init=None,
-                    table=None, *arg, **kw):
+                    *arg, **kw):
             var = self.value
-            assert var in table, (var, table)
-            dtype = table[var]['type']
             if previous is None:
                 return var
             # previous N
             assert testers is not None
             assert context == 'bool', (context, self.value)
-            assert dtype == 'bool', (var, dtype)
             previous + 1  # isinstance(previous, int)  ?
             var_prev = '{name}_prev{i}'.format(
                 name=var, i=previous)
@@ -145,7 +142,7 @@ class Nodes(_Nodes):
             if free_init is not None and var in free_init:
                 init = 'True'
             testers[var_prev] = dict(
-                type=dtype,
+                type='bool',  # previous applies only to bool vars
                 init=init, trans=trans, win=None)
             return var_prev
 
@@ -250,7 +247,7 @@ class Parser(lexyacc.Parser):
 parser = Parser()
 
 
-def translate(s, t, free_init=None, debug=False, until=False):
+def translate(s, free_init=free_init, debug=False, until=False):
     """Translate action formula `s` with past to future LTL.
 
     Return:
@@ -269,8 +266,6 @@ def translate(s, t, free_init=None, debug=False, until=False):
     The only exception are variables, for example "-X p".
 
     @type s: `str`
-    @param t: symbol table
-    @type t: `dict`
     @param free_init: variables with unconstrained anchor
     @type free_init: `set`
     @param debug: ensures repeatable ordering
@@ -283,7 +278,7 @@ def translate(s, t, free_init=None, debug=False, until=False):
     testers = dict()
     context = 'bool'
     r = tree.flatten(testers=testers, context=context,
-                     free_init=free_init, table=t, until=until)
+                     free_init=free_init, until=until)
     if debug:
         ci = sorted(d['init'] for d in testers.itervalues())
         ct = sorted(d['trans'] for d in testers.itervalues())
@@ -305,7 +300,7 @@ def translate(s, t, free_init=None, debug=False, until=False):
     return dvars, r, init, trans, win
 
 
-def map_translate(c, t, **kw):
+def map_translate(c, **kw):
     """Apply `translate` to all items of container `c`."""
     all_vars = dict()
     f = list()
@@ -313,7 +308,7 @@ def map_translate(c, t, **kw):
     action = list()
     win = list()
     for s in c:
-        dvars, r, i, a, w = translate(s, t, **kw)
+        dvars, r, i, a, w = translate(s, **kw)
         all_vars.update(dvars)
         f.append(r)
         init.append(i)

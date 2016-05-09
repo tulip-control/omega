@@ -172,22 +172,24 @@ def _check_data_types(t):
             'unknown type: "{dtype}"'.format(dtype=d['type']))
 
 
-def list_bits(dvars, players=None):
-    """Return symbol table of bits (comprising bitfields).
+def bit_table(variables, table):
+    """Return symbol table of bits.
 
     For symbol table definition, see `bitblast_table`.
 
-    @param dvars: symbol table of integer and Boolean vars
-    @type dvars: `dict` of `dict`
+    @param variables: include only these variables
+    @type variables: `set`
+    @param table: symbol table of integer and Boolean variables
+    @type table: `dict` of `dict`
     @return: symbol table of bits
     @rtype: `dict` of `dict`
     """
-    if players is None:
-        players = {'env', 'sys'}
+    assert variables, variables
     dout = dict()
-    keys = {'type', 'owner', 'dom', 'signed',
+    keys = {'type', 'dom', 'signed',
             'width', 'bitnames', 'init'}
-    for var, d in dvars.iteritems():
+    for var in variables:
+        d = table[var]
         dtype = d['type']
         if dtype == 'int':
             c = d['bitnames']
@@ -196,14 +198,12 @@ def list_bits(dvars, players=None):
         else:
             raise Exception(
                 'unknown type "{t}"'.format(t=dtype))
-        owner = d['owner']
-        assert owner in players, (owner, players)
         dcp = dict(d)  # cp other keys
         for k in keys:
             dcp.pop(k, None)
         for bit in c:
             dbit = dict(dcp)
-            dbit.update(type='bool', owner=owner)
+            dbit.update(type='bool')
             dout[bit] = dbit
     return dout
 

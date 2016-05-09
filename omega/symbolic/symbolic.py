@@ -378,8 +378,8 @@ def _bitvector_to_bdd(aut):
 
     @type aut: `Automaton`
     """
-    dvars = aut.vars
-    bits = bv.list_bits(dvars)
+    table = aut.vars
+    bits = bv.bit_table(table, table)
     # index both, to allow for unquantified parameters
     ubits = set(b for b, d in bits.iteritems()
                 if d['owner'] == 'env')
@@ -400,7 +400,7 @@ def _bitvector_to_bdd(aut):
     a.bdd = bdd
     # vars
     prime, partition = _partition_vars(bits, ubits, ebits)
-    a.vars = copy.deepcopy(dvars)
+    a.vars = copy.deepcopy(table)
     a.uvars = partition['uvars']
     a.upvars = partition['upvars']
     a.evars = partition['evars']

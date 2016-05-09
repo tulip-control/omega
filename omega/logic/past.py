@@ -138,9 +138,6 @@ class Nodes(_Nodes):
             # add tester
             init, trans = _make_tester_for_previous(
                 var_prev, var, context, strong)
-            # unconstrained init ?
-            if free_init is not None and var in free_init:
-                init = 'True'
             testers[var_prev] = dict(
                 type='bool',  # previous applies only to bool vars
                 init=init, trans=trans, win=None)
@@ -247,7 +244,7 @@ class Parser(lexyacc.Parser):
 parser = Parser()
 
 
-def translate(s, free_init=free_init, debug=False, until=False):
+def translate(s, debug=False, until=False):
     """Translate action formula `s` with past to future LTL.
 
     Return:
@@ -266,8 +263,6 @@ def translate(s, free_init=free_init, debug=False, until=False):
     The only exception are variables, for example "-X p".
 
     @type s: `str`
-    @param free_init: variables with unconstrained anchor
-    @type free_init: `set`
     @param debug: ensures repeatable ordering
         of new subformulas, to enable testing.
     @param until: add prophecy variables for "until" too
@@ -278,7 +273,7 @@ def translate(s, free_init=free_init, debug=False, until=False):
     testers = dict()
     context = 'bool'
     r = tree.flatten(testers=testers, context=context,
-                     free_init=free_init, until=until)
+                     until=until)
     if debug:
         ci = sorted(d['init'] for d in testers.itervalues())
         ct = sorted(d['trans'] for d in testers.itervalues())

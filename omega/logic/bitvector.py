@@ -20,6 +20,8 @@ from omega.logic.ast import Nodes as _Nodes
 
 
 ALU_BITWIDTH = 32
+DATA_TYPES = {'bool', 'int', 'saturating', 'modwrap'}
+KEYS = {'type', 'dom', 'signed', 'width', 'bitnames'}
 logger = logging.getLogger(__name__)
 
 
@@ -46,15 +48,12 @@ def bitblast_table(table):
         used only if "type" is an integer
       - "init" (optional)
     """
-    data_types = {'bool', 'int', 'saturating', 'modwrap'}
     t = dict()
-    keys = {'type', 'dom', 'signed',
-            'width', 'bitnames'}
     for var, d in table.iteritems():
         dtype = d['type']
-        assert dtype in data_types, (var, dtype)
+        assert dtype in DATA_TYPES, (var, dtype)
         b = dict(d)  # cp other keys
-        for k in keys:
+        for k in KEYS:
             b.pop(k, None)
         if dtype == 'bool':
             b.update(type='bool')

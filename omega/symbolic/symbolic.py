@@ -416,22 +416,6 @@ def _bitvector_to_bdd(aut):
     a.vars = copy.deepcopy(table)
     a.players = players
     a.bdd = bdd
-    # vars
-    player_vars = {k for k, d in table.iteritems()
-                   if d['owner'] in players}
-    bits = bv.bit_table(player_vars, table)
-    prime, partition = _partition_vars(bits, ubits, ebits)
-    a.uvars = partition['uvars']
-    a.upvars = partition['upvars']
-    a.evars = partition['evars']
-    a.epvars = partition['epvars']
-    a.ubvars = set(a.uvars).union(a.upvars)
-    a.ebvars = set(a.evars).union(a.epvars)
-    a.uevars = set(a.uvars).union(a.evars)
-    a.uepvars = set(a.upvars).union(a.epvars)
-    # priming
-    a.prime = prime
-    a.unprime = {v: k for k, v in prime.iteritems()}
     # slugsin -> BDD
     # add long attributes first,
     # to improve  effectiveness of reordering.
@@ -449,6 +433,25 @@ def _bitvector_to_bdd(aut):
         p = from_sections[section]
         q = to_sections[section]
         _to_bdd(p, q, bdd)
+    # vars
+    player_vars = {k for k, d in table.iteritems()
+                   if d['owner'] in players}
+    if not player_vars:
+        print('Warning: no player variables.')
+        return a
+    bits = bv.bit_table(player_vars, table)
+    prime, partition = _partition_vars(bits, ubits, ebits)
+    a.uvars = partition['uvars']
+    a.upvars = partition['upvars']
+    a.evars = partition['evars']
+    a.epvars = partition['epvars']
+    a.ubvars = set(a.uvars).union(a.upvars)
+    a.ebvars = set(a.evars).union(a.epvars)
+    a.uevars = set(a.uvars).union(a.evars)
+    a.uepvars = set(a.upvars).union(a.epvars)
+    # priming
+    a.prime = prime
+    a.unprime = {v: k for k, v in prime.iteritems()}
     return a
 
 

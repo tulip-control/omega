@@ -413,6 +413,7 @@ def _bitvector_to_bdd(aut):
             bdd.add_var(var, level)
     # bundle as:
     a = Automaton()
+    a.vars = copy.deepcopy(table)
     a.players = players
     a.bdd = bdd
     # vars
@@ -420,7 +421,6 @@ def _bitvector_to_bdd(aut):
                    if d['owner'] in players}
     bits = bv.bit_table(player_vars, table)
     prime, partition = _partition_vars(bits, ubits, ebits)
-    a.vars = copy.deepcopy(table)
     a.uvars = partition['uvars']
     a.upvars = partition['upvars']
     a.evars = partition['evars']

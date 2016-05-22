@@ -9,7 +9,7 @@ import pprint
 import dd.bdd
 import natsort
 from omega.logic import syntax
-from omega.symbolic import bdd_iterative as sym_bdd
+from omega.symbolic import bdd as sym_bdd
 from omega.logic import bitvector as bv
 
 

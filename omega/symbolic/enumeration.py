@@ -45,6 +45,8 @@ def relation_to_graph(
     sorted_vars = [level_to_var[i] for i in xrange(len(level_to_var))]
     g = nx.DiGraph()
     g.sorted_vars = sorted_vars
+    # fix an order of keys for lookup
+    keys = list(aut.vars)
     umap = dict()
     for model in c:
         # model = model of relation = edge
@@ -58,8 +60,8 @@ def relation_to_graph(
                 target[var] = value
         # map valuation to g node
         target = _unprime(target)
-        u = _find_or_add_model(source, umap)
-        v = _find_or_add_model(target, umap)
+        u = _find_or_add_model(source, umap, keys)
+        v = _find_or_add_model(target, umap, keys)
         g.add_node(u, **source)
         g.add_node(v, **target)
         g.add_edge(u, v)
@@ -297,7 +299,7 @@ def _unprime(model):
     return d
 
 
-def _find_or_add_model(model, umap):
+def _find_or_add_model(model, umap, keys):
     """Return integer node for given valuation.
 
     If absent, then a fresh node is created.
@@ -305,7 +307,7 @@ def _find_or_add_model(model, umap):
     @type model: `dict`
     @type umap: `dict`
     """
-    u = tuple(model.iteritems())
+    u = tuple(model[k] for k in keys)
     u = umap.setdefault(u, len(umap))
     return u
 

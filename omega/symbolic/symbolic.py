@@ -6,11 +6,13 @@ and transformation to BDD nodes.
 import copy
 import logging
 import pprint
+
 import dd.bdd
 import natsort
+
+from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
-from omega.logic import bitvector as bv
 
 
 logger = logging.getLogger(__name__)

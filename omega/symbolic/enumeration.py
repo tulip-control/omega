@@ -135,7 +135,7 @@ def _print_enumeration(u, bdd, t, care_set, care_bits, full):
 def _make_table(
         u, a, care_source=None,
         care_target=None, care_bits=None):
-    """Return `dict` models.
+    """Return symbol table with primed vars and care relation.
 
     The variables in `a.vars` should be unprimed.
     """
@@ -289,7 +289,7 @@ def _take_product_iter(sets, model):
 
 
 def _unprime(model):
-    """Trim primed variables."""
+    """Trim any primed variables."""
     d = dict(model)
     suffix = "'"
     for k in d:

@@ -219,6 +219,20 @@ def bit_table(variables, table):
     return dout
 
 
+def list_bits(variables, table):
+    """Collect bits of all (integer) `variables`."""
+    s = set()
+    for x in variables:
+        # Boolean ?
+        # if table[x]['type'] == 'bool':
+        #     s.add(x)
+        #     continue
+        # integer
+        bits = table[x]['bitnames']
+        s.update(bits)
+    return s
+
+
 def bitfield_to_int_states(g, t):
     """Convert bitfields to integers for "state" at each node.
 

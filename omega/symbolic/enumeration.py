@@ -312,19 +312,6 @@ def _find_or_add_model(model, umap, keys):
     return u
 
 
-def _care_bits(u, aut):
-    """Return unprimed bits together with support of `u`.
-
-    @type u: node in `aut.bdd`
-    @type aut: `symbolic.Automaton`
-    """
-    bdd = aut.bdd
-    care_bits = set(map(bdd.level_to_variable, aut.ubvars))
-    support = bdd.support(u)
-    care_bits.update(support)
-    return care_bits
-
-
 def _format_nx(g):
     """Return graph ready to be dumped.
 

@@ -5,8 +5,11 @@ Re-implementation of `tulip.synth`.
 from __future__ import absolute_import
 import logging
 import warnings
+
+from omega.logic.syntax import conj
+from omega.logic.syntax import conj_neg
+from omega.logic.syntax import disj
 from omega.symbolic.symbolic import Automaton
-from omega.logic.syntax import disj, conj, conj_neg
 
 
 logger = logging.getLogger(__name__)

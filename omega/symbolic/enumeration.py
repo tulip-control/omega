@@ -61,7 +61,7 @@ def relation_to_graph(
             else:
                 target[var] = value
         # map valuation to g node
-        target = _unprime(target)
+        target = _unprime_any_primed(target)
         u = _find_or_add_model(source, umap, keys)
         v = _find_or_add_model(target, umap, keys)
         g.add_node(u, **source)
@@ -290,7 +290,7 @@ def _take_product_iter(sets, model):
             yield m
 
 
-def _unprime(model):
+def _unprime_any_primed(model):
     """Trim any primed variables."""
     d = dict(model)
     suffix = "'"

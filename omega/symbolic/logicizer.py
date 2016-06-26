@@ -155,7 +155,7 @@ def _sys_trans(g, nodevar, dvars):
         post = list()
         for u, v, d in g.edges_iter(u, data=True):
             t = dict(d)
-            t[_prime(nodevar)] = v
+            t[stx.prime(nodevar)] = v
             r = _to_action(t, dvars)
             post.append(r)
         c = '({pre}) -> ({post})'.format(pre=pre, post=stx.disj(post))
@@ -216,7 +216,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
         for u, v, d in g.out_edges_iter(u, data=True):
             # action
             t = dict(d)
-            t[_prime(nodevar)] = v
+            t[stx.prime(nodevar)] = v
             r = _to_action(t, dvars)
             post.append(r)
             # what sys vars ?
@@ -272,13 +272,9 @@ def _assign(k, v, dvars):
 
 def _prime_dict(d):
     """Return `dict` with primed keys and `dict` mapping to them."""
-    p = dict((_prime(k), d[k]) for k in d)
-    d2p = {k: _prime(k) for k in d}
+    p = dict((stx.prime(k), d[k]) for k in d)
+    d2p = {k: stx.prime(k) for k in d}
     return p, d2p
-
-
-def _prime(s):
-    return s + "'"
 
 
 def _pstr(x):

@@ -6,9 +6,7 @@ from __future__ import absolute_import
 import logging
 import warnings
 
-from omega.logic.syntax import conj
-from omega.logic.syntax import conj_neg
-from omega.logic.syntax import disj
+from omega.logic import syntax as stx
 from omega.symbolic.symbolic import Automaton
 
 
@@ -140,7 +138,7 @@ def _init_from_ts(initial_nodes, nodevar,
         return list()
     if not initial_nodes:
         raise Exception('Transition system without initial states.')
-    return [disj(_assign(nodevar, u, dvars) for u in initial_nodes)]
+    return [stx.disj(_assign(nodevar, u, dvars) for u in initial_nodes)]
 
 
 def _sys_trans(g, nodevar, dvars):
@@ -160,9 +158,9 @@ def _sys_trans(g, nodevar, dvars):
             t[_prime(nodevar)] = v
             r = _to_action(t, dvars)
             post.append(r)
-        c = '({pre}) -> ({post})'.format(pre=pre, post=disj(post))
+        c = '({pre}) -> ({post})'.format(pre=pre, post=stx.disj(post))
         sys_trans.append(c)
-    s = conj(sys_trans, sep='\n')
+    s = stx.conj(sys_trans, sep='\n')
     return s
 
 
@@ -184,11 +182,11 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
         # no next env actions ?
         if not c:
             continue
-        post = disj(c)
+        post = stx.disj(c)
         pre = _assign(nodevar, u, dvars)
         env_trans.append('(({pre}) -> ({post}))'.format(
             pre=pre, post=post))
-    s = conj(env_trans, sep='\n')
+    s = stx.conj(env_trans, sep='\n')
     return s
 
 
@@ -227,10 +225,10 @@ def _env_trans(g, nodevar, dvars, self_loops):
             r = _to_action(t, dvars)
             sys.append(r)
         # avoid sys winning env by blocking all edges
-        # post.append(conj_neg(sys))
+        # post.append(stx.conj_neg(sys))
         env_trans.append('({pre}) -> ({post})'.format(
-            pre=pre, post=disj(post)))
-    s = conj(env_trans, sep='\n')
+            pre=pre, post=stx.disj(post)))
+    s = stx.conj(env_trans, sep='\n')
     return s
 
 
@@ -250,7 +248,7 @@ def _to_action(d, dvars):
             continue
         s = _assign(k, v, dvars)
         c.append(s)
-    return conj(c)
+    return stx.conj(c)
 
 
 def _assign(k, v, dvars):

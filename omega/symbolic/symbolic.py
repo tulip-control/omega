@@ -8,7 +8,7 @@ import logging
 import pprint
 import dd.bdd
 import natsort
-from omega.logic import syntax
+from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 from omega.logic import bitvector as bv
 
@@ -356,16 +356,16 @@ def _conj_owner(aut, owner, as_what):
     action = aut.action[owner]
     # compute
     if as_what == 'prefix':
-        init = syntax.conj_prefix(init)
-        action = syntax.conj_prefix(action)
+        init = stx.conj_prefix(init)
+        action = stx.conj_prefix(action)
     elif as_what == 'infix':
-        init = syntax.conj(init)
-        action = syntax.conj(action)
+        init = stx.conj(init)
+        action = stx.conj(action)
     elif as_what == 'bdd':
         def f(x, y):
             return aut.bdd.apply('and', x, y)
-        init = syntax.recurse_binary(f, init)
-        action = syntax.recurse_binary(f, action)
+        init = stx.recurse_binary(f, init)
+        action = stx.recurse_binary(f, action)
     else:
         raise Exception(
             'unknown as_what="{s}"'.format(s=as_what))

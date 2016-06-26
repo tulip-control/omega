@@ -276,3 +276,15 @@ def test_binary_operators():
 
 def _plus(x, y):
     return x + y
+
+
+def prime(var):
+    """Return primed variable."""
+    assert var[-1] != "'", var
+    return var + "'"
+
+
+def unprime(var):
+    """Return unprimed variable."""
+    assert var[-1] == "'", var
+    return var[:-1]

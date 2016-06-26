@@ -510,7 +510,7 @@ def _add_primed_bits(unprimed_bits):
     """Return list of ordered primed and unprimed bits."""
     bits = list()
     for bit in unprimed_bits:
-        primed = bit + suffix
+        primed = stx.prime(bit)
         bits.append(bit)
         bits.append(primed)
     return bits
@@ -528,7 +528,7 @@ def _partition_vars(bits, ubits, ebits):
       - partition: `dict(uvars=set, upvars=set,
                          evars=set, epvars=set)`
     """
-    prime = {b: b + suffix for b in bits}
+    prime = {b: stx.prime(b) for b in bits}
     partition = dict(
         uvars=set(ubits),
         upvars={prime[b] for b in ubits},
@@ -565,8 +565,8 @@ def _prime_and_order_table(t):
         elif dtype == 'bool':
             bits = [var]
         m = 2**len(bits)
-        primed = var + suffix
-        pbits = [bit + suffix for bit in bits]
+        primed = stx.prime(var)
+        pbits = [stx.prime(bit) for bit in bits]
         k = j + 1
         # copy attr
         dvars[var] = dict(d)

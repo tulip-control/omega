@@ -3,8 +3,10 @@
 Integers are decoded from binary to decimal.
 """
 import logging
+
 import natsort
 import networkx as nx
+
 from omega.logic.syntax import linear_conj as conj
 from omega.symbolic import symbolic
 

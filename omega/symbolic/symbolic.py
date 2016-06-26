@@ -506,7 +506,7 @@ def _pick_var_order(bits, ubits):
     return r
 
 
-def _add_primed_bits(unprimed_bits, suffix="'"):
+def _add_primed_bits(unprimed_bits):
     """Return list of ordered primed and unprimed bits."""
     bits = list()
     for bit in unprimed_bits:
@@ -516,13 +516,12 @@ def _add_primed_bits(unprimed_bits, suffix="'"):
     return bits
 
 
-def _partition_vars(bits, ubits, ebits, suffix="'"):
+def _partition_vars(bits, ubits, ebits):
     """Return primed and unprimed variable names.
 
     @param bits: `list` of variable names as `str`
     @param ubits: universally quantified variables
     @param ebits: existentially quantified variables
-    @param suffix: primed variables have this suffix
 
     @return: (prime, partition)
       - prime: `dict` that maps unprimed to primed variable names
@@ -538,7 +537,7 @@ def _partition_vars(bits, ubits, ebits, suffix="'"):
     return prime, partition
 
 
-def _prime_and_order_table(t, suffix="'"):
+def _prime_and_order_table(t):
     """Return ordered table of primed and unprimed variables.
 
     The table maps each (integer or Boolean) variable to
@@ -552,8 +551,6 @@ def _prime_and_order_table(t, suffix="'"):
 
     @param t: table of unprimed variables as `str`
     @type t: `dict`
-    @param suffix: primed var = unprimed var + suffix
-    @type suffix: `str`
 
     @rtype: `dict` from `str` to `dict`
     """

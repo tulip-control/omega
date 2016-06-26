@@ -233,6 +233,22 @@ def list_bits(variables, table):
     return s
 
 
+def map_bits_to_integers(table):
+    """Return `dict` that maps each bit to an integer or Boolean."""
+    bit2int = dict()
+    for var, d in table.iteritems():
+        if 'bitnames' in d:
+            a = {b: var for b in d['bitnames']}
+        else:
+            a = {var: var}
+        bit2int.update(a)
+    bit2int = {
+        bit: var
+        for var, d in table.iteritems()
+        for bit in d['bitnames']}
+    return bit2int
+
+
 def bitfield_to_int_states(g, t):
     """Convert bitfields to integers for "state" at each node.
 

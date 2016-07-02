@@ -19,9 +19,9 @@ VERSION_TEXT = (
     "version = '{version}'\n")
 install_requires = [
     'dd >= 0.2.1',
-    'ply >= 3.6',
     'natsort >= 3.5.3',
-    'networkx >= 1.9.1']
+    'networkx >= 1.9.1',
+    'ply >= 3.6']
 tests_require = ['nose >= 1.3.4']
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',

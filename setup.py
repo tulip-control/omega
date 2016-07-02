@@ -1,3 +1,4 @@
+"""Installation script."""
 from setuptools import setup
 # inline:
 # from omega.logic import lexyacc
@@ -36,6 +37,7 @@ classifiers = [
 
 
 def git_version(version):
+    """Return version with local version identifier."""
     import git
     repo = git.Repo('.git')
     repo.git.status()
@@ -57,6 +59,7 @@ def git_version(version):
 
 
 def run_setup():
+    """Build parser, get version from `git`, install."""
     # version
     try:
         version = git_version(VERSION)

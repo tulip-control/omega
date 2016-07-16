@@ -550,14 +550,14 @@ def flatten_comparator(operator, x, y, mem):
 
 
 def inequality(p, q, mem):
-    """Return bitvector propositional formula for '!='"""
+    """Return bitvector propositional formula for '!='."""
     assert len(p) == len(q), (p, q)
     return ' '.join('| ^ {a} {b}'.format(a=a, b=b)
                     for a, b in zip(p, q)) + ' 0'
 
 
 def less_than(p, q, mem):
-    """Return bitvector propositional formula for '<'"""
+    """Return bitvector propositional formula for '<'."""
     res, res_mem, carry = adder_subtractor(
         p, q, add=False, start=len(mem))
     mem.extend(res_mem)

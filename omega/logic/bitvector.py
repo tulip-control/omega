@@ -295,7 +295,7 @@ class Nodes(_Nodes):
         '!': '!',
         '|': '|', '&': '&', '->': '| !', '<->': '! ^',
         'ite': 'ite', '@': '',
-        '\A': '\A', '\E': '\E',
+        '\A': '\A', '\E': '\E', '\S': '\S',
         'X': '',
         # 'G': '[]', 'F': '<>',
         '<': '<', '<=': '<=', '=': '=',
@@ -321,6 +321,33 @@ class Nodes(_Nodes):
                     cube=cube,
                     u=u)
                 return r
+            if self.operator == '\S':
+                x, e = self.operands
+                assert isinstance(x, list), x
+                t = kw['t']
+                rename = dict()
+                for new, old in x:
+                    # take same values ?
+                    old_var = old.value
+                    new_var = new.value
+                    d_old = t[old_var]
+                    d_new = t[new_var]
+                    assert d_old['type'] == d_new['type']
+                    assert d_old.get('dom') == d_new.get('dom')
+                    # flatten
+                    a = _flatten_var(old, mem=mem, **kw)
+                    b = _flatten_var(new, mem=mem, **kw)
+                    assert len(a) == len(b), (a, b)
+                    rename.update(zip(a, b))
+                pairs = ' '.join(
+                    '{b} {a}'.format(a=a, b=b)
+                    for a, b in rename.iteritems())
+                u = e.flatten(mem=mem, **kw)
+                r = ' {op} ${n} {pairs} {u}'.format(
+                    op=Nodes.opmap[self.operator],
+                    n=2 * len(rename),
+                    pairs=pairs,
+                    u=u)
                 return r
             if self.operator == '@':
                 x = int(self.operands[0].value)

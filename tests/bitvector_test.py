@@ -141,6 +141,39 @@ def test_flatten_quantifiers():
     assert r == r_, (r, r_)
 
 
+def test_flatten_substitution():
+    # single pair
+    s = '\S a / b: True'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \S $4 a0 b0 a1 b1 1', r
+    s = '\S q / r: False'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \S $2 q r 0', r
+    s = '\S b / x: x - y <= 0'
+    r = parser.parse(s).flatten(t=t)
+    h = parser.parse('x - y <= 0').flatten(t=t)
+    r_ = ' \S $4 b1 x@1 b0 x@0.0.3 {h}'.format(h=h)
+    assert r == r_, r
+    # multiple pairs
+    s = '\S a / b,  q / r: False'
+    r = parser.parse(s).flatten(t=t)
+    assert r == ' \S $6 q r a0 b0 a1 b1 0', r
+    s = '\S a / b, q / r:  r | ! (a != b)'
+    r = parser.parse(s).flatten(t=t)
+    h = parser.parse('r | ! (a != b)').flatten(t=t)
+    r_ = ' \S $6 a0 b0 a1 b1 q r {h}'.format(h=h)
+    # invalid input
+    c = [
+        '\S a / q: True',
+        '\S q / a: True',
+        '\S a / y: True']
+    for s in c:
+        print(s)
+        with nt.assert_raises(AssertionError):
+            u = parser.parse(s)
+            u.flatten(t=t)
+
+
 def test_div_mul_expr():
     mem = list()
     res = parser.parse('4 / 2').flatten(t=t, mem=mem)

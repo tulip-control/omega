@@ -322,6 +322,7 @@ def make_table(d, env_vars=None):
 
 
 def make_dummy_table():
+    """Example of a symbol table."""
     t = dict(x=dict(type='bool', owner='env'),
              y=dict(type='bool', owner='sys'),
              z=dict(type='int', owner='env', signed=False, width=2),
@@ -331,6 +332,7 @@ def make_dummy_table():
 
 class Nodes(_Nodes):
     """Return object with AST node classes as attributes."""
+
     opmap = {
         'false': '0', 'true': '1',
         '!': '!',

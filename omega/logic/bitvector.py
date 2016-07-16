@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 def bitblast(f, t):
     """Flatten formula `f` to bitvector logic.
 
-    @param f: unquantified first-order temporal logic formula
+    @param f: quantified first-order action formula
     @type f: `str`
     @param t: symbol table
     @type t: `dict`

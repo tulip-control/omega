@@ -1105,3 +1105,19 @@ def _format_mem(mem):
     return 'memory:\n{mem}\n'.format(
         mem='\n'.join('{i}: {v}'.format(i=i, v=v)
                       for i, v in enumerate(mem)))
+
+
+def _flatten_var(v, *arg, **kw):
+    """Return `list` of bits, for both integer and Boolean var."""
+    flat = v.flatten(*arg, **kw)
+    # bool ?
+    try:
+        flat + 'str'
+        flat = [flat]
+    except TypeError:
+        pass
+    bits = _filter_trailing_zeros(flat)
+    return bits
+
+def _filter_trailing_zeros(flat):
+    return filter(lambda b: not b[0].isdigit(), flat)

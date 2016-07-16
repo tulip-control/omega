@@ -129,8 +129,9 @@ class Nodes(_Nodes):
             return 'Memory({c})'.format(
                 c=', '.join(repr(u) for u in self.memory))
 
-        def flatten(self, mem=None, *arg, **kw):
-            mem = list()
+        def flatten(self, mem=None, same_mem=False, *arg, **kw):
+            if not same_mem:
+                mem = list()
             for u in self.memory:
                 s = u.flatten(mem=mem, *arg, **kw)
                 mem.append(s)

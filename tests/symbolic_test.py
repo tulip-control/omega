@@ -30,46 +30,44 @@ def test_partition_vars():
     assert partition == partition_, (partition, partition_)
 
 
-def test_bdd_nodes_parser():
-    parser = sym_bdd.parser
+def test_iterative_bddizer():
+    add = bdd_trs.add_expr
     order = {'x': 0, 'y': 1, 'z': 2}
     # x & y
     bdd = dd.bdd.BDD(order)
     e = '& x y'
-    t = parser.parse(e)
-    u = t.flatten(bdd=bdd)
+    u = add(e, bdd)
     v = bdd.add_expr('x & y')
     assert u == v, (u, v)
     # buffers
     # (x & y) | ! z
     bdd = dd.bdd.BDD(order)
     e = '$ 3   & x y   ! z  | ? 0 ? 1'
-    t = parser.parse(e)
-    u = t.flatten(bdd=bdd)
+    u = add(e, bdd)
     v = bdd.add_expr('(x & y) | ! z')
     assert u == v, (u, v)
 
 
-def test_bdd_nodes_translator():
-    parser = bdd_trs.parser
+def test_bddizer_propositional():
+    add = sym_bdd.add_expr
     order = {'x': 0, 'y': 1, 'z': 2}
     # x & y
     bdd = dd.bdd.BDD(order)
     e = '& x y'
-    u = parser.parse(e, bdd)
+    u = add(e, bdd)
     v = bdd.add_expr('x & y')
     assert u == v, (u, v)
     # buffers
     # (x & y) | ! z
     bdd = dd.bdd.BDD(order)
     e = '$ 3   & x y   ! z  | ? 0 ? 1'
-    u = parser.parse(e, bdd)
+    u = add(e, bdd)
     v = bdd.add_expr('(x & y) | ! z')
     assert u == v, (u, v)
     #
     e = '& $2 & 1 x ?0 $3 | !x y z & ?1 z'
     s = 'x & z'
-    u = parser.parse(e, bdd)
+    u = add(e, bdd)
     v = bdd.add_expr(s)
     assert u == v, (u, v)
 

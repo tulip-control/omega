@@ -30,6 +30,130 @@ def test_partition_vars():
     assert partition == partition_, (partition, partition_)
 
 
+def test_slugsin_parser():
+    parser = sym_bdd.Parser()
+    s = '! x'
+    u = parser.parse(s)
+    assert_is_operator(u, '!')
+    (x,) = u.operands
+    assert_is_var(x, 'x')
+    s = '& x y'
+    u = parser.parse(s)
+    assert_is_operator(u, '&')
+    x, y = u.operands
+    assert_is_var(x, 'x')
+    assert_is_var(y, 'y')
+    s = '| x y'
+    u = parser.parse(s)
+    assert_is_operator(u, '|')
+    x, y = u.operands
+    assert_is_var(x, 'x')
+    assert_is_var(y, 'y')
+    s = '^ x12 y0'
+    u = parser.parse(s)
+    assert_is_operator(u, '^')
+    x12, y0 = u.operands
+    assert_is_var(x12, 'x12')
+    assert_is_var(y0, 'y0')
+    s = '$1 0'
+    u = parser.parse(s)
+    assert_is_buffer(u, 1)
+    (a,) = u.memory
+    assert_is_number(a, 0)
+    s = '$2 0 1'
+    u = parser.parse(s)
+    assert_is_buffer(u, 2)
+    a, b = u.memory
+    assert_is_number(a, 0)
+    assert_is_number(b, 1)
+    s = '$2 $2 1 ?0 ?0'
+    u = parser.parse(s)
+    assert_is_buffer(u, 2)
+    a, b = u.memory
+    assert_is_register(b, 0)
+    assert_is_buffer(a, 2)
+    a, b = a.memory
+    assert_is_number(a, 1)
+    assert_is_register(b, 0)
+    s = '\E x & x y'
+    u = parser.parse(s)
+    assert_is_operator(u, '\E')
+    qvars, e = u.operands
+    assert_is_var(qvars, 'x')
+    assert_is_operator(e, '&')
+    x, y = e.operands
+    assert_is_var(x, 'x')
+    assert_is_var(y, 'y')
+    s = '\A y | y ! x4'
+    u = parser.parse(s)
+    assert_is_operator(u, '\A')
+    qvars, e = u.operands
+    assert_is_var(qvars, 'y')
+    assert_is_operator(e, '|')
+    y, not_x4 = e.operands
+    assert_is_var(y, 'y')
+    assert_is_operator(not_x4, '!')
+    (x4,) = not_x4.operands
+    assert_is_var(x4, 'x4')
+    s = '\E x \A y | x y'
+    u = parser.parse(s)
+    assert_is_operator(u, '\E')
+    qvars, e = u.operands
+    assert_is_var(qvars, 'x')
+    assert_is_operator(e, '\A')
+    qvars, e = e.operands
+    assert_is_var(qvars, 'y')
+    assert_is_operator(e, '|')
+    x, y = e.operands
+    assert_is_var(x, 'x')
+    assert_is_var(y, 'y')
+    s = '\S $4 x y  z w  & y w'
+    u = parser.parse(s)
+    assert_is_operator(u, '\S')
+    subs, e = u.operands
+    assert_is_buffer(subs, 4)
+    x, y, z, w = subs.memory
+    assert_is_var(x, 'x')
+    assert_is_var(y, 'y')
+    assert_is_var(z, 'z')
+    assert_is_var(w, 'w')
+    assert_is_operator(e, '&')
+    y, w = e.operands
+    assert_is_var(y, 'y')
+    assert_is_var(w, 'w')
+
+
+def assert_is_operator(u, operator):
+    assert hasattr(u, 'type'), u
+    assert u.type == 'operator', u.type
+    assert u.operator == operator
+
+
+def assert_is_var(u, var):
+    assert hasattr(u, 'type'), u
+    assert u.type == 'var', u.type
+    assert u.value == var, u.value
+
+
+def assert_is_number(u, j):
+    assert hasattr(u, 'type'), u
+    assert u.type == 'num', u.type
+    assert u.value == str(j), u.value
+
+
+def assert_is_buffer(u, n):
+    assert hasattr(u, 'type'), u
+    assert u.type == 'buffer', u.type
+    assert hasattr(u, 'memory'), u
+    assert len(u.memory) == n, u.memory
+
+
+def assert_is_register(u, idx):
+    assert hasattr(u, 'type'), u
+    assert u.type == 'register', u.type
+    assert u.value == str(idx), u.value
+
+
 def test_iterative_bddizer():
     add = bdd_trs.add_expr
     order = {'x': 0, 'y': 1, 'z': 2}

@@ -16,10 +16,8 @@ logger = logging.getLogger(__name__)
 
 def dump_relation(
         u, aut, care_source=None,
-        care_target=None, fname=None):
+        care_target=None, fname='edges.pdf'):
     """Dump graph of relation as PDF."""
-    if fname is None:
-        fname = 'edges.pdf'
     g = relation_to_graph(u, aut, care_source, care_target)
     h, umap = _format_nx(g)
     pd = nx.drawing.nx_pydot.to_pydot(h)

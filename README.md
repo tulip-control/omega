@@ -5,12 +5,15 @@
 About
 =====
 
-A package of symbolic algorithms for omega-regular languages.
+A package of symbolic algorithms for solving games of infinite duration.
+It can be used to generate software from temporal logic specifications.
+This is useful for designing systems, especially vehicles that carry humans.
+
 It contains:
 
 - Synthesis algorithms for:
   - generalized Streett(1) games (known as GR(1))
-  - generalized Rabin(1) games (known as counter-strategies, not to be confused with [arXiv:1003.1684](http://arxiv.org/abs/1003.1684v2#))
+  - generalized Rabin(1) games (counter-strategies to GR(1))
   - detection of trivial realizability in GR(1) games.
 - Parser of [linear temporal logic](http://dx.doi.org/10.1109/SFCS.1977.32) (LTL).
 - Translation from past to future LTL, using [temporal testers](http://doi.org/10.1007/978-3-540-69850-0_11).
@@ -18,15 +21,15 @@ It contains:
 - Symbolic automata that include:
   - methods that compile to, and maintain, the underlying binary decision diagrams (BDDs)
   - functions for generatining primed variables, and BDD orderings.
-- Semi-symbolic automata (and "transition systems").
-- Flattening of semi-symbolic transition systems to LTL.
+- Semi-enumerated automata (and "transition systems").
+- Flattening of semi-enumerated transition systems to LTL.
 - Enumeration / plotting of BDDs representing sets and (transition) relations.
 
 
 Documentation
 =============
 
-In the [Markdown](https://en.wikipedia.org/wiki/Markdown) file  [`doc/doc.md`](https://github.com/johnyf/omega/blob/master/doc/doc.md).
+In  [`doc/doc.md`](https://github.com/johnyf/omega/blob/master/doc/doc.md).
 
 
 Installation

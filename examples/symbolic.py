@@ -24,7 +24,8 @@ def semi_symbolic():
     z, yij, xijk = gr1.solve_streett_game(aut)
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     # print t.bdd.to_expr(t.action['sys'][0])
-    t.bdd.dump('bdd.pdf')
+    r = t.action['sys'][0]
+    t.bdd.dump('bdd.pdf', roots=[r])
     print('Winning set:', aut.bdd.to_expr(z))
     print('Total number of BDD nodes: {n}'.format(
         n=len(t.bdd)))

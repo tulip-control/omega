@@ -36,8 +36,8 @@ def test_streett_trivial_loop():
     assert dom == (0, 0), dom
     assert 'x' in t.vars, t.vars
     # init
-    assert len(t.init['sys']) == 1, t.init
-    (init,) = t.init['sys']
+    assert len(t.init['env']) == 1, t.init
+    (init,) = t.init['env']
     init_ = t.add_expr('_goal = 0')
     assert init == init_, t.bdd.to_expr(init)
     # action
@@ -79,8 +79,8 @@ def test_rabin_trivial_loop():
     assert dom == (0, 1), dom
     assert 'x' in t.vars, t.vars
     # init
-    assert len(t.init['sys']) == 1, t.init
-    (init,) = t.init['sys']
+    assert len(t.init['env']) == 1, t.init
+    (init,) = t.init['env']
     init_ = t.add_expr('(_goal = 0) & (_hold = 1)')
     assert init == init_, t.bdd.to_expr(init)
     # action
@@ -135,7 +135,7 @@ def test_streett_always_x():
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     # init
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     init_ = t.add_expr('_goal = 0')
     assert init == init_, t.bdd.to_expr(init)
     # action
@@ -147,6 +147,7 @@ def test_streett_always_x():
     assert action == action_, t.bdd.to_expr(action)
     #
     # always ! x
+    a.init['env'] = ['!x']
     a.action['sys'] = ['!x']
     aut = a.build()
     # solve
@@ -155,7 +156,7 @@ def test_streett_always_x():
     # tranducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     init_ = t.add_expr('(_goal = 0) & !x')
     assert init == init_, t.bdd.to_expr(init)
     (action,) = t.action['sys']
@@ -179,7 +180,7 @@ def test_rabin_always_x():
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     # init
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     s = '(_goal = 0) & (_hold = 1)'
     init_ = t.add_expr(s)
     assert init == init_, t.bdd.to_expr(init)
@@ -193,6 +194,7 @@ def test_rabin_always_x():
     assert action == action_, t.bdd.to_expr(action)
     #
     # always ! x
+    a.init['env'] = ['!x']
     a.action['sys'] = ['!x']
     aut = a.build()
     # solve
@@ -203,7 +205,7 @@ def test_rabin_always_x():
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     s = (
         '(_goal = 0) & (_hold = 1) & '
         '!x')
@@ -230,7 +232,7 @@ def test_streett_counter():
     assert z == aut.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     init_ = t.add_expr('_goal = 0')
     assert init == init_, t.bdd.to_expr(init)
     (action,) = t.action['sys']
@@ -257,7 +259,7 @@ def test_rabin_counter():
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     s = '(_goal = 0) & (_hold = 1)'
     init_ = t.add_expr(s)
     assert init == init_, t.bdd.to_expr(init)
@@ -285,7 +287,7 @@ def test_rabin_persistence():
     # tranducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     s = '(_goal = 0) & (_hold = 1) & !x'
     init_ = t.add_expr(s)
     assert init == init_, t.bdd.to_expr(init)
@@ -318,7 +320,7 @@ def test_rabin_persistence_2():
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     s = '(_goal = 0) & (_hold = 2)'
     init_ = t.add_expr(s)
     assert init == init_, t.bdd.to_expr(init)
@@ -351,7 +353,7 @@ def test_streett_with_safety_assumption():
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     assert init == t.add_expr('_goal = 0'), t.bdd.to_expr(init)
     (action,) = t.action['sys']
     action_ = t.add_expr("(_goal = 0) & (_goal' = 0) & x")
@@ -383,8 +385,8 @@ def test_rabin_with_safety_assumption():
     # transducer
     t = gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
-    s = '(_goal = 0) & (_hold = 1)'
+    (init,) = t.init['env']
+    s = 'x & (_goal = 0) & (_hold = 1)'
     init_ = t.add_expr(s)
     assert init == init_, t.bdd.to_expr(init)
     (action,) = t.action['sys']
@@ -407,6 +409,7 @@ def test_streett_with_liveness_assumption():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='int', dom=(0, 2), owner='sys'))
+    a.init['env'] = ['y < 2']
     a.action['sys'] = [
         "((y = 0) & !x) -> (y' = 0)",
         "(y = 0) -> (y' < 2)",
@@ -425,7 +428,7 @@ def test_streett_with_liveness_assumption():
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut, t)
-    (init,) = t.init['sys']
+    (init,) = t.init['env']
     assert init == t.add_expr('(y < 2) & (_goal = 0)'), t.bdd.to_expr(init)
     (action,) = t.action['sys']
     s = (

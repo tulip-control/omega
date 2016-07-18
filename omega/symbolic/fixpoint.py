@@ -68,7 +68,7 @@ def trap(env_action, sys_action, safe, aut,
 
 def ue_preimage(env_action, sys_action, target, aut,
                 evars=None):
-    """Return controllable predecessor set.
+    r"""Return controllable predecessor set.
 
     Preimage with alternating quantification.
     Quantifier order: If `aut.moore`:

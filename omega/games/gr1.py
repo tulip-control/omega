@@ -168,19 +168,15 @@ def make_streett_transducer(z, yij, xijk, aut):
         u = bdd.forall(t.upvars, u)
     t.action['sys'] = [u]
     # initial condition for counter
+    # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
     count = t.add_expr(s)
     win_set = z
-    # counter initial limits (no closure taken for counter)
-    u = bdd.apply('and', sys_init, t.init['sys'][0])
-    u = bdd.apply('and', count, u)
-    u = bdd.apply('and', win_set, u)
-    init = bdd.apply('->', env_init, u)
-    t.init['sys'] = [init]
-    # \forall \exists init semantics
-    real = bdd.quantify(init, t.evars, forall=False)
-    real = bdd.quantify(real, t.uvars, forall=True)
-    assert real == t.bdd.true, 'cannot init in winning set'
+    # \A init
+    init = _all_init(env_init, sys_init, count, bdd)
+    t.init['env'] = [init]
+    init = bdd.apply('->', init, win_set)
+    assert init == bdd.true, 'losing from some init states'
     return t
 
 
@@ -397,19 +393,20 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = t.add_expr(s)
-    win_set_ = zk[-1]
-    u = bdd.apply('and', sys_init, t.init['sys'][0])
-    u = bdd.apply('and', count, u)
-    v = bdd.apply('->', env_init, win_set_)
-    u = bdd.apply('and', u, v)
-    init = u
-    assert init != t.bdd.false, 'no init in winning set'
-    t.init['sys'] = [init]
-    # \exists \forall init semantics
-    real = bdd.quantify(init, t.uvars, forall=True)
-    real = bdd.quantify(real, t.evars, forall=False)
-    assert real == t.bdd.true, 'cannot init in winning set'
+    # \A init
+    init = _all_init(env_init, sys_init, count, bdd)
+    t.init['env'] = [init]
+    init = bdd.apply('->', init, win_set)
+    assert init == bdd.true, 'losing from some init states'
     return t
+
+
+def _all_init(env_init, sys_init, internal, bdd):
+    """Initial condition conjoining for all variables."""
+    # case of `ONE_SIDE_INIT` with `ENVINIT` in `gr1c`
+    u = bdd.apply('and', sys_init, internal)
+    u = bdd.apply('and', env_init, u)
+    return u
 
 
 def _moore_trans(target, aut):

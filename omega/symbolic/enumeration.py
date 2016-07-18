@@ -41,10 +41,13 @@ def relation_to_graph(
     assert u != aut.bdd.false
     t, care_relation = _make_table(u, aut, care_source,
                                    care_target, care_bits)
-    c = _enumerate_bdd(u, aut.bdd, t, care_relation, care_bits, full=True)
+    c = _enumerate_bdd(u, aut.bdd, t,
+                       care_relation, care_bits, full=True)
     # to nx graph
-    level_to_var = {d['level']: var for var, d in t.iteritems()}
-    sorted_vars = [level_to_var[i] for i in xrange(len(level_to_var))]
+    level_to_var = {d['level']: var
+                    for var, d in t.iteritems()}
+    sorted_vars = [level_to_var[i]
+                   for i in xrange(len(level_to_var))]
     g = nx.DiGraph()
     g.sorted_vars = sorted_vars
     # fix an order of keys for lookup
@@ -105,7 +108,8 @@ def print_edges(
     target = care_set
     t, care_relation = _make_table(u, aut, source,
                                    target, care_bits)
-    _print_enumeration(u, aut.bdd, t, care_relation, care_bits, full)
+    _print_enumeration(u, aut.bdd, t, care_relation,
+                       care_bits, full)
 
 
 def _print_enumeration(u, bdd, t, care_set, care_bits, full):
@@ -124,8 +128,9 @@ def _print_enumeration(u, bdd, t, care_set, care_bits, full):
         s = ' & '.join(w)
         r.append(s)
     e = '\n'.join(r)
-    logger.debug(
-        'enumeration of BDD node {u} with care set {c}\n'.format(
+    logger.debug((
+        'enumeration of BDD node '
+        '{u} with care set {c}\n').format(
             u=u, c=care_set))
     s = (
         'contains {n} expressions:\n\n{e}\n').format(
@@ -181,8 +186,9 @@ def _enumerate_bdd(
         return
     if care_set is not None:
         u = bdd.apply('and', u, care_set)
-        logging.debug(
-            'enumerating BDD node {u}, with care set = {c}'.format(
+        logging.debug((
+            'enumerating BDD node {u}, '
+            'with care set = {c}').format(
                 u=u, c=care_set))
     c = list()
     for dbit in bdd.sat_iter(u, full, care_bits):
@@ -208,7 +214,8 @@ def _bitfields_to_int_iter(bits, t):
         elif dt == 'int':
             t_bits.update(d['bitnames'])
         else:
-            raise Exception('unknown type "{dt}"'.format(dt=dt))
+            raise Exception(
+                'unknown type "{dt}"'.format(dt=dt))
     missing = set(bits).difference(t_bits)
     if missing:
         print(('WARNING (synthesizer):'

@@ -19,6 +19,8 @@ def semi_symbolic():
     print(a)
     # compile to BDD
     aut = a.build()
+    aut.moore = True
+    aut.plus_one = True
     z, yij, xijk = gr1.solve_streett_game(aut)
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     # print t.bdd.to_expr(t.action['sys'][0])

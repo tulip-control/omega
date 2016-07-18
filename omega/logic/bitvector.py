@@ -68,8 +68,9 @@ def bitblast_table(table):
             raise Exception(
                 'unknown type: "{dtype}"'.format(dtype=dtype))
         if dtype == 'int':
-            print('WARNING: "int" found as type '
-                  '(instead of "saturating")')
+            logger.info(
+                '"int" found as type '
+                '(instead of "saturating")')
         t[var] = b
     _check_data_types(t)
     _add_bitnames(t)

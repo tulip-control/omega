@@ -3,11 +3,11 @@
 Integers are decoded from binary to decimal.
 """
 import logging
+import math
 
 import natsort
 import networkx as nx
 
-from omega.logic.syntax import linear_conj as conj
 from omega.symbolic import symbolic
 
 
@@ -325,12 +325,13 @@ def _format_nx(g):
     @type g: `networkx.DiGraph`
     @rtype: `pydot.Graph`
     """
+    n = len(g.sorted_vars)
     h = nx.DiGraph()
     umap = dict()
     for u, d in g.nodes_iter(data=True):
         gen = ('{var}={val}'.format(var=var, val=d[var])
                for var in g.sorted_vars if var in d)
-        s = conj(gen, op='&')
+        s = _square_conj(gen, n)
         h.add_node(s)
         umap[u] = s
     for u, v in g.edges_iter():
@@ -338,3 +339,15 @@ def _format_nx(g):
         vs = umap[v]
         h.add_edge(us, vs)
     return h, umap
+
+
+def _square_conj(gen, n, op=r'&and;'):
+    m = math.ceil(n**0.5)
+    c = list()
+    for i, s in enumerate(gen):
+        c.append(op)
+        s = '({s})'.format(s=s)
+        c.append(s)
+        if (i + 1) % m == 0:
+            c.append('\l')
+    return ''.join(c) + '\l'

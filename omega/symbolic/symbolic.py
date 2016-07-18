@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class Automaton(object):
-    """Transition relation, initial condition, and hidden variables.
+    r"""Transition relation, initial condition, and hidden variables.
 
     User-defined attributes
     =======================
@@ -39,6 +39,8 @@ class Automaton(object):
       - win: winning condition
       - acceptance: `str` that describes `win`,
           for example `'Streett(1)'`
+      - moore: choose between Moore or Mealy implementation
+      - plus_one: strict implication with `\weakprevious`
 
     Each of `init, action` is a `dict`:
 
@@ -106,6 +108,8 @@ class Automaton(object):
     def __init__(self):
         self.players = {'env': 0, 'sys': 1}  # name -> turn
         self.vars = dict()
+        self.moore = True
+        self.plus_one = True
         # formulae
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())
@@ -153,7 +157,10 @@ class Automaton(object):
             '',
             'variables:',
             '{dvars}',
-            '']
+            '',
+            'Moore' if self.moore else 'Mealy',
+            ('causal' if self.plus_one else
+            'circular') + ' implication']
         if self.init['env']:
             c.extend([
                 'ENV INIT:',
@@ -212,6 +219,8 @@ class Automaton(object):
         aut = _bitblast(self)
         aut.bdd = self.bdd
         aut = _bitvector_to_bdd(aut)
+        aut.moore = self.moore
+        aut.plus_one = self.plus_one
         return aut
 
     def assert_consistent(self, built=False):

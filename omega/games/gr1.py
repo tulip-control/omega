@@ -106,14 +106,12 @@ def make_streett_transducer(z, yij, xijk, aut):
     bdd = aut.bdd
     t.bdd = bdd
     t = t.build()
-    # copy functions of interest from solution BDD
-    r = [z, yij, xijk,
-         aut.init['env'][0], aut.init['sys'][0],
-         aut.action['env'][0], aut.action['sys'][0],
-         aut.win['<>[]'], aut.win['[]<>']]
-    r = _map_nested_lists(_copy_bdd, r, aut.bdd, t.bdd)
-    (z, yij, xijk, env_init, sys_init,
-     env_action, sys_action, holds, goals) = r
+    env_init = aut.init['env'][0]
+    sys_init = aut.init['sys'][0]
+    env_action = aut.action['env'][0]
+    sys_action = aut.action['sys'][0]
+    holds = aut.win['<>[]']
+    goals = aut.win['[]<>']
     # compute strategy from iterates
     # \rho_1: switch goals
     rho_1 = bdd.false
@@ -285,14 +283,11 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     bdd = aut.bdd
     t.bdd = bdd
     t = t.build()
-    # copy functions of interest from solution BDD
-    r = [zk, yki, xkijr,
-         aut.init['env'][0], aut.init['sys'][0],
-         aut.action['env'][0], aut.action['sys'][0],
-         aut.win['<>[]'], aut.win['[]<>']]
-    r = _map_nested_lists(_copy_bdd, r, aut.bdd, t.bdd)
-    (zk, yki, xkijr, env_init, sys_init,
-     env_action, sys_action, holds, goals) = r
+    env_init = aut.init['env'][0]
+    sys_init = aut.init['sys'][0]
+    env_action = aut.action['env'][0]
+    sys_action = aut.action['sys'][0]
+    goals = aut.win['[]<>']
     t.action['env'] = [env_action]
     # compute strategy from iterates
     # \rho_1: descent in persistence basin

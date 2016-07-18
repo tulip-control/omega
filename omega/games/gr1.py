@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 
 # TODO:
 # - switch to `dd.autoref`
-# - expose both Mealy and Moore synthesizers
 
 
 def solve_streett_game(aut, rank=1):
@@ -165,12 +164,12 @@ def make_streett_transducer(z, yij, xijk, aut):
     u = bdd.apply('and', sys_action, u)
     # counter `c` limits
     u = bdd.apply('and', t.action['sys'][0], u)
-    # include it only if `env_action` violation tracked
-    # with fresh bit in transducer memory
-    # u = bdd.apply('->', env_action, u)
-    action = u
-    t.action['sys'] = [action]
-    # initial condition
+    if not aut.plus_one:
+        u = bdd.apply('->', env_action, u)
+    if aut.moore:
+        u = bdd.forall(t.upvars, u)
+    t.action['sys'] = [u]
+    # initial condition for counter
     s = '{c} = 0'.format(c=c)
     count = t.add_expr(s)
     win_set = z
@@ -227,24 +226,24 @@ def _cycle_inside(z, hold, aut):
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]
     cox_z = fx.ue_preimage(env_action, sys_action,
-                           z, aut, moore=True)
+                           z, aut)
     g = bdd.apply('or', cox_z, hold)
     y = bdd.true
     yold = None
     while y != yold:
         yold = y
         cox_y = fx.ue_preimage(env_action, sys_action,
-                               y, aut, moore=True)
+                               y, aut)
         inside = bdd.apply('and', cox_y, g)
         xjr = list()
         for goal in aut.win['[]<>']:
-            x, xr = _attractor_inside(inside, goal, aut, moore=True)
+            x, xr = _attractor_inside(inside, goal, aut)
             xjr.append(xr)
             y = bdd.apply('and', y, x)
     return y, xjr
 
 
-def _attractor_inside(inside, goal, aut, moore=False):
+def _attractor_inside(inside, goal, aut):
     bdd = aut.bdd
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]
@@ -255,7 +254,7 @@ def _attractor_inside(inside, goal, aut, moore=False):
         xold = x
         cox_x = fx.ue_preimage(
             env_action, sys_action, x, aut,
-            evars=aut.epvars, moore=moore)
+            evars=aut.epvars)
         x = bdd.apply('or', cox_x, goal)
         x = bdd.apply('and', x, inside)
         x = bdd.apply('or', x, xold)
@@ -315,7 +314,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     basin = bdd.false
     for z, yi, xijr in zip(zk, yki, xkijr):
         cox_basin = fx.ue_preimage(env_action, sys_action,
-                                   basin, t, moore=True)
+                                   basin, t)
         rim = bdd.apply('diff', z, basin)
         rim = bdd.apply('and', rim, -cox_basin)
         # rho_2: pick persistence set
@@ -394,15 +393,12 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u = bdd.apply('and', sys_action, u)
     # counter limits
     u = bdd.apply('and', t.action['sys'][0], u)
-    # record whether env lost
-    # env_blocked = - bdd.quantify(env_action, t.upvars, forall=False)
-    # s = "{env_blocked} -> {won}".format(
-    #     env_blocked=env_blocked, won=won)
-    # action = t.add_expr(s)
-    # action = bdd.apply('and', action, u)
-    action = u
-    t.action['sys'] = [action]
-    # initial condition
+    if not aut.plus_one:
+        u = bdd.apply('->', env_action, u)
+    if aut.moore:
+        u = bdd.forall(t.upvars, u)
+    t.action['sys'] = [u]
+    # initial condition for counter
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = t.add_expr(s)
@@ -428,9 +424,14 @@ def _moore_trans(target, aut):
     sys_action = aut.action['sys'][0]
     uvars = aut.upvars
     u = bdd.rename(target, aut.prime)
-    u = bdd.apply('->', env_action, u)
-    u = bdd.apply('and', sys_action, u)
-    u = bdd.quantify(u, uvars, forall=True)
+    if aut.plus_one:
+        u = bdd.apply('->', env_action, u)
+        u = bdd.apply('and', sys_action, u)
+    else:
+        u = bdd.apply('and', sys_action, u)
+        u = bdd.apply('->', env_action, u)
+    if aut.moore:
+        u = bdd.forall(uvars, u)
     return u
 
 

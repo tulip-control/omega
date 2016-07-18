@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def attractor(env_action, sys_action, target, aut,
-              evars=None, moore=False, inside=None):
+              evars=None, inside=None):
     """Return attractor for `target`.
 
     Keyword args as `ue_preimage`.
@@ -35,8 +35,8 @@ def attractor(env_action, sys_action, target, aut,
     qold = None
     while q != qold:
         qold = q
-        pred = ue_preimage(env_action, sys_action, q, aut,
-                           evars=evars, moore=moore)
+        pred = ue_preimage(
+            env_action, sys_action, q, aut, evars=evars)
         q = bdd.apply('or', qold, pred)
         if inside is not None:
             q = aut.bdd.apply('and', q, inside)
@@ -67,16 +67,22 @@ def trap(env_action, sys_action, safe, aut,
 
 
 def ue_preimage(env_action, sys_action, target, aut,
-                evars=None, moore=False):
+                evars=None):
     """Return controllable predecessor set.
 
-    Preimage with mixed quantification.
-    For each input that satisfies `env_action`,
-    there exists an output that satisfies `sys_action`,
-    such that the successor is in `target`.
+    Preimage with alternating quantification.
+    Quantifier order: If `aut.moore`:
 
-    @param moore: set to swap quantification order to:
-        \exists \forall
+      - \E \A, else
+      - \A \E
+
+    Implication causality: If `aut.plus_one`:
+
+      - /\ sys_action
+        /\ env_action => target
+
+      - env_action => /\ sys_action
+                      /\ target
     """
     # TODO: controllable predecessor operator implemented
     # efficiently like relational product
@@ -87,25 +93,20 @@ def ue_preimage(env_action, sys_action, target, aut,
     else:
         uvars = set(aut.unprime).difference(evars)
     u = bdd.rename(target, aut.prime)
-    if moore:
-        # \exists \forall
-        u = bdd.apply('->', env_action, u)
+    if aut.plus_one:
         u = bdd.apply('and', sys_action, u)
-        u = bdd.quantify(u, uvars, forall=True)
-        u = bdd.quantify(u, evars, forall=False)
+        u = bdd.apply('->', env_action, u)
     else:
-        # \forall \exists
-        u = bdd.apply('and', sys_action, u)
         u = bdd.apply('->', env_action, u)
-        u = bdd.quantify(u, evars, forall=False)
-        u = bdd.quantify(u, uvars, forall=True)
-    # optimized Mealy
-    # doesn't work if transition relations are swapped
-    # u = _bdd.preimage(sys_action, target, aut.prime,
-    #                   evars, bdd, forall=False)
-    # u = bdd.quantify(u, evars, forall=False)
-    # u = bdd.apply('->', env_action, u)
-    # u = bdd.quantify(u, uvars, forall=True)
+        u = bdd.apply('and', sys_action, u)
+    if aut.moore:
+        # \E \A
+        u = bdd.forall(uvars, u)
+        u = bdd.exist(evars, u)
+    else:
+        # \A \E
+        u = bdd.exist(evars, u)
+        u = bdd.forall(uvars, u)
     return u
 
 

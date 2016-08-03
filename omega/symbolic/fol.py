@@ -106,7 +106,10 @@ class Context(object):
 
     def sat_iter(self, u, full, care_vars):
         """Return generator of first-order satisfying assignments."""
-        care_bits = bv.bit_table(care_vars, self.vars)
+        if care_vars:
+            care_bits = bv.bit_table(care_vars, self.vars)
+        else:
+            care_bits = set()
         for bit_assignment in self.bdd.sat_iter(
                 u, full=full, care_bits=care_bits):
             d = next(enum._bitfields_to_int_iter(

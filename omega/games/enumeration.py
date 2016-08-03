@@ -75,6 +75,7 @@ def action_to_steps(aut, qinit=None):
         (u,) = aut.action['sys']
         sys = fol.replace(u, values)
         for next_env in env_iter:
+            log.debug('next_env: {r}'.format(r=next_env))
             u = fol.replace(sys, next_env)
             u = fol.replace(u, unprime_vars)
             env_values = {unprime_vars[var]: value

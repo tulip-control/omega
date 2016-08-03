@@ -41,6 +41,12 @@ class Automaton(object):
           for example `'Streett(1)'`
       - moore: choose between Moore or Mealy implementation
       - plus_one: strict implication with `\weakprevious`
+      - qinit: quantification of initial variable values:
+
+        - `'\A \A'`
+        - `'\A \E'`
+        - `'\E \A'`
+        - `'\E \E'`
 
     Each of `init, action` is a `dict`:
 
@@ -110,6 +116,7 @@ class Automaton(object):
         self.vars = dict()
         self.moore = True
         self.plus_one = True
+        self.qinit = '\A \A'
         # formulae
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())
@@ -160,7 +167,10 @@ class Automaton(object):
             '',
             'Moore' if self.moore else 'Mealy',
             ('causal' if self.plus_one else
-            'circular') + ' implication']
+            'circular') + ' implication',
+            '',
+            'Initially:',
+            self.qinit]
         if self.init['env']:
             c.extend([
                 'ENV INIT:',
@@ -221,6 +231,7 @@ class Automaton(object):
         aut = _bitvector_to_bdd(aut)
         aut.moore = self.moore
         aut.plus_one = self.plus_one
+        aut.qinit = self.qinit
         return aut
 
     def assert_consistent(self, built=False):

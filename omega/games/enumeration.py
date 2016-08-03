@@ -32,6 +32,7 @@ def action_to_steps(aut, qinit=None):
     if qinit is None:
         qinit = '\A \A'
     bdd = aut.bdd
+    assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()
     fol.bdd = bdd
     table = symbolic._prime_and_order_table(aut.vars)
@@ -87,6 +88,7 @@ def action_to_steps(aut, qinit=None):
                 remain = False
             else:
                 remain = True
+            assert v != bdd.false
             sys_values = fol.pick(
                 v, full=True, care_vars=aut.control['sys'])
             d = dict(env_values)

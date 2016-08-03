@@ -164,6 +164,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     u = bdd.apply('and', t.action['sys'][0], u)
     if not aut.plus_one:
         u = bdd.apply('->', env_action, u)
+    assert u != bdd.false
     if aut.moore:
         u = bdd.forall(t.upvars, u)
     t.action['sys'] = [u]

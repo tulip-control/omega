@@ -94,11 +94,13 @@ def ue_preimage(env_action, sys_action, target, aut,
         uvars = set(aut.unprime).difference(evars)
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
-        u = bdd.apply('and', sys_action, u)
+        # sys_action /\ (env_action -> target')
         u = bdd.apply('->', env_action, u)
+        u = bdd.apply('and', sys_action, u)
     else:
-        u = bdd.apply('->', env_action, u)
+        # env_action -> (sys_action /\ target')
         u = bdd.apply('and', sys_action, u)
+        u = bdd.apply('->', env_action, u)
     if aut.moore:
         # \E \A
         u = bdd.forall(uvars, u)

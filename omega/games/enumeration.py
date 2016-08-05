@@ -35,9 +35,8 @@ def action_to_steps(aut, qinit=None):
     assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()
     fol.bdd = bdd
-    table = symbolic._prime_and_order_table(aut.vars)
+    fol.vars = symbolic._prime_and_order_table(aut.vars)
     # fol.add_vars(table)
-    fol.vars = table
     aut.control = dict(env=set(), sys=set())
     aut.primed_vars = dict(env=set(), sys=set())
     for var, d in aut.vars.iteritems():

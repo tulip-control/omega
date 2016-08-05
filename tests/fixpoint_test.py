@@ -69,7 +69,7 @@ def test_ue_preimage():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
-    a.action['sys'] = ["x' -> !y'"]
+    a.action['sys'] = ["x' => !y'"]
     symbolic.fill_blanks(a)
     aut = a.build()
     target = aut.add_expr('y')

@@ -223,7 +223,7 @@ def test_rabin_always_x():
 def test_streett_counter():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='sys'))
-    a.action['sys'] = ["x -> !x'"]
+    a.action['sys'] = ["x => !x'"]
     a.win['[]<>'] = ['x']
     symbolic.fill_blanks(a)
     # solve
@@ -248,7 +248,7 @@ def test_streett_counter():
 def test_rabin_counter():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='sys'))
-    a.action['sys'] = ["x -> !x'"]
+    a.action['sys'] = ["x => !x'"]
     a.win['[]<>'] = ['x']
     symbolic.fill_blanks(a, rabin=True)
     # solve
@@ -268,7 +268,7 @@ def test_rabin_counter():
     s = (
         "(_goal = 0) & (_goal' = 0) & "
         "(_hold' = 0) & "
-        "ite(_hold = 0, x <-> !x', x -> !x')")
+        "ite(_hold = 0, x <-> !x', x => !x')")
     action_ = t.add_expr(s)
     assert action == action_, t.bdd.to_expr(action)
 
@@ -411,10 +411,10 @@ def test_streett_with_liveness_assumption():
                   y=dict(type='int', dom=(0, 2), owner='sys'))
     a.init['env'] = ['y < 2']
     a.action['sys'] = [
-        "((y = 0) & !x) -> (y' = 0)",
-        "(y = 0) -> (y' < 2)",
-        "(y = 1) -> (y' = 0)",
-        "(y = 2) -> False"]
+        "((y = 0) & !x) => (y' = 0)",
+        "(y = 0) => (y' < 2)",
+        "(y = 1) => (y' = 0)",
+        "(y = 2) => False"]
     a.win['<>[]'] = ['!x']
     a.win['[]<>'] = ['y = 1']
     symbolic.fill_blanks(a)
@@ -432,8 +432,8 @@ def test_streett_with_liveness_assumption():
     assert init == t.add_expr('(y < 2) & (_goal = 0)'), t.bdd.to_expr(init)
     (action,) = t.action['sys']
     s = (
-        "( (y = 0) -> ite(x, (y' = 1), (y' = 0)) ) & "
-        "( (y = 1) -> (y' = 0) ) & "
+        "( (y = 0) => ite(x, (y' = 1), (y' = 0)) ) & "
+        "( (y = 1) => (y' = 0) ) & "
         "( (_goal = 0) & (_goal' = 0) ) & "
         "( (y != 2) & (y != 3) )")
     action_ = t.add_expr(s)
@@ -479,10 +479,10 @@ def test_streett_2_goals():
     # print_fol_bdd(action, t.bdd, t.vars)
     # enumeration.dump_relation(action, t)
     s = (
-        "((x & (_goal = 0)) -> (_goal' = 1)) & "
-        "((!x & (_goal = 1)) -> (_goal' = 0)) & "
-        "((!x & (_goal = 0)) -> (x' & (_goal' = 0))) & "
-        "((x & (_goal = 1)) -> (!x' & (_goal' = 1)))")
+        "((x & (_goal = 0)) => (_goal' = 1)) & "
+        "((!x & (_goal = 1)) => (_goal' = 0)) & "
+        "((!x & (_goal = 0)) => (x' & (_goal' = 0))) & "
+        "((x & (_goal = 1)) => (!x' & (_goal' = 1)))")
     action_ = t.add_expr(s)
     assert action == action_, t.bdd.to_expr(action)
 
@@ -503,7 +503,7 @@ def test_rabin_2_goals():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
-    a.win['[]<>'] = ['x -> y']
+    a.win['[]<>'] = ['x => y']
     symbolic.fill_blanks(a, rabin=True)
     aut = a.build()
     # solve
@@ -526,7 +526,7 @@ def test_rabin_2_goals():
     assert win_set == aut.bdd.true, aut.bdd.to_expr(win_set)
     #
     # unrealizable
-    a.win['[]<>'] = ['x -> y', '!y']
+    a.win['[]<>'] = ['x => y', '!y']
     aut = a.build()
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]

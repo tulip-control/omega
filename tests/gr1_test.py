@@ -26,12 +26,12 @@ def test_split_gr1():
     f = (
         '(x > 0) & (y + 1 < 2) & '
         '[]( (X y) > 0) & '
-        '[]<>((z - x <= 0) | (p -> q))')
+        '[]<>((z - x <= 0) | (p => q))')
     d = gr1.split_gr1(f)
     s = '( ( ( ( x > 0 ) & ( ( y + 1 ) < 2 ) ) & True ) & True )'
     assert d['init'] == [s], d
     assert d['G'] == ['( ( ( True & True ) & ( ( X y ) > 0 ) ) & True )'], d
-    assert d['GF'] == ['( ( ( z - x ) <= 0 ) | ( p -> q ) )'], d
+    assert d['GF'] == ['( ( ( z - x ) <= 0 ) | ( p => q ) )'], d
     # not in fragment
     with assert_raises(AssertionError):
         gr1.split_gr1('[]( [] p )')

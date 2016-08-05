@@ -77,7 +77,7 @@ a.init['env'].append('!x')
 a.init['sys'].append('y >= 2')
 a.action['env'].append("ite(x, !x', x')")
 a.action['sys'].append('y < 5')
-a.action['sys'].extend(["y' > 0", "x' -> (y = y - 1)"])
+a.action['sys'].extend(["y' > 0", "x' => (y = y - 1)"])
 a.win['sys'].append('y = 3')
 ```
 
@@ -105,7 +105,7 @@ y >= 2
 SYS ACTION
 y < 5
 y' > 0
-x' -> (y = y - 1)
+x' => (y = y - 1)
 
 SYS WIN
 y = 3

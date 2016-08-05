@@ -34,6 +34,19 @@ classifiers = [
     'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 2.7',
     'Topic :: Scientific/Engineering']
+keywords = [
+    'first-order', 'propositional', 'logic',
+    'quantifier', 'forall', 'exists',
+    'fixpoint', 'mu-calculus', 'formula', 'flatten',
+    'bitblaster', 'bitvector', 'arithmetic',
+    'binary decision diagram', 'symbolic',
+    'games', 'specification', 'system',
+    'assume', 'guarantee', 'satisfiability',
+    'enumeration', 'state machine',
+    'transition system', 'automaton', 'automata',
+    'streett', 'rabin',
+    'temporal logic', 'temporal tester',
+    'gr1', 'generalized reactivity']
 
 
 def git_version(version):
@@ -90,7 +103,7 @@ def run_setup():
         packages=[name, 'omega.games', 'omega.logic', 'omega.symbolic'],
         package_dir={name: name},
         classifiers=classifiers,
-        keywords=['logic'])
+        keywords=keywords)
 
 
 if __name__ == '__main__':

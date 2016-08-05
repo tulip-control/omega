@@ -30,7 +30,7 @@ class Lexer(astutils.Lexer):
     values = {'next': 'X'}
     delimiters = ['LPAREN', 'RPAREN', 'DQUOTES', 'COMMA']
     operators = [
-        'NOT', 'AND', 'OR', 'XOR', 'IMP', 'BIMP',
+        'NOT', 'AND', 'OR', 'XOR', 'IMP', 'IMPLIES', 'BIMP',
         'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
@@ -65,6 +65,7 @@ class Lexer(astutils.Lexer):
     t_NOT = r'\!'
     t_XOR = r'\^'
     t_IMP = '->'
+    t_IMPLIES = r'\=>'
     t_BIMP = '\<->'
     # comparators
     t_EQUALS = r'\='
@@ -118,7 +119,7 @@ class Parser(astutils.Parser):
     precedence = (
         ('left', 'COLON'),
         ('left', 'BIMP'),
-        ('left', 'IMP'),
+        ('left', 'IMP', 'IMPLIES'),
         ('left', 'XOR'),
         ('left', 'OR'),
         ('left', 'AND'),
@@ -171,6 +172,7 @@ class Parser(astutils.Parser):
                 | expr OR expr
                 | expr XOR expr
                 | expr IMP expr
+                | expr IMPLIES expr
                 | expr BIMP expr
                 | expr UNTIL expr
                 | expr WEAK_UNTIL expr

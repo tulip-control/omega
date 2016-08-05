@@ -370,6 +370,7 @@ expr ::= expr '*' expr
        | expr '|' expr | expr '||' expr
        | expr '^' expr  # xor
        | expr '->' expr
+       | expr '=>' expr
        | expr '<->' expr
        | 'ite' '(' expr ',' expr ',' expr ')'  # ternary conditional
 
@@ -407,8 +408,9 @@ NUMBER ::= \d+  # integer
 
 The token precedence (lowest to highest) and associativity (r = right, l = left, n = none) is:
 
+- `:` (l)
 - `<->` (l)
-- `->` (l)
+- `=>`, `->` (l)
 - `^` (l)
 - `|` (l)
 - `&` (l)

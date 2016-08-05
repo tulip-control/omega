@@ -21,6 +21,7 @@ Robert Konighofer
 import logging
 import copy
 from omega.symbolic import fixpoint as fx
+from omega.symbolic import fol as _fol
 from omega.symbolic import symbolic
 
 
@@ -173,12 +174,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
     count = t.add_expr(s)
-    win_set = z
-    # \A init
-    init = _all_init(env_init, sys_init, count, bdd)
-    t.init['env'] = [init]
-    init = bdd.apply('->', init, win_set)
-    assert init == bdd.true, 'losing from some init states'
+    _make_init(count, winning, t, aut)
     return t
 
 
@@ -395,20 +391,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = t.add_expr(s)
-    # \A init
-    init = _all_init(env_init, sys_init, count, bdd)
-    t.init['env'] = [init]
-    init = bdd.apply('->', init, win_set)
-    assert init == bdd.true, 'losing from some init states'
+    _make_init(count, winning, t, aut)
     return t
 
 
-def _all_init(env_init, sys_init, internal, bdd):
-    """Initial condition conjoining for all variables."""
-    # case of `ONE_SIDE_INIT` with `ENVINIT` in `gr1c`
-    u = bdd.apply('and', sys_init, internal)
-    u = bdd.apply('and', env_init, u)
-    return u
 
 
 def _moore_trans(target, aut):
@@ -427,6 +413,48 @@ def _moore_trans(target, aut):
     if aut.moore:
         u = bdd.forall(uvars, u)
     return u
+
+
+def _make_init(internal_init, win, t, aut):
+    """Return initial conditions for implementation.
+
+    Depending on `aut.qinit`,
+    synthesize the initial condition `t.env_init`
+    using the winning states `win`.
+
+    @param internal_init: initial condition for
+        internal variables.
+    """
+    bdd = t.bdd
+    evars = t.evars
+    uvars = t.uvars
+    qinit = aut.qinit
+    t.qinit = '\A \A'  # we synthesize `env_init` below
+    (a,) = aut.init['env']
+    (b,) = aut.init['sys']
+    u = bdd.apply('and', b, internal_init)
+    sys_init = bdd.apply('and', u, win)
+    # setup fol context
+    fol = _fol.Context()
+    fol.bdd = bdd
+    fol.vars = symbolic._prime_and_order_table(t.vars)
+    # synthesize initial predicate
+    if qinit in ('\A \A', '\A \E', '\E \E'):
+        env_init = bdd.apply('and', a, sys_init)
+    elif qinit == '\E \A':
+        env_bound = bdd.exist(aut.evars, a)
+        u = bdd.apply('and', a, sys_init)
+        u = bdd.apply('->', env_bound, u)
+        sys_bound = bdd.forall(aut.uvars, u)
+        env_init = bdd.apply('and', env_bound, sys_bound)
+    else:
+        raise ValueError(
+            'unknown `qinit` value "{qinit}"'.format(
+                qinit=qinit))
+    assert env_init != bdd.false
+    assert sys_init != bdd.false
+    t.init['env'] = [env_init]
+    t.init['sys'] = [sys_init]
 
 
 def _warn_moore_mealy(aut):

@@ -1,3 +1,4 @@
+"""Tests for `omega.games.gr1`."""
 import logging
 import pprint
 from dd import bdd as _bdd
@@ -125,6 +126,7 @@ def test_rabin_deadend():
 def test_streett_always_x():
     # always x
     a = symbolic.Automaton()
+    a.moore = False
     a.vars = dict(x=dict(type='bool', owner='sys'))
     a.action['sys'] = ["x'"]
     symbolic.fill_blanks(a)
@@ -247,6 +249,8 @@ def test_streett_counter():
 
 def test_rabin_counter():
     a = symbolic.Automaton()
+    a.plus_one = False
+    a.qinit = '\A \A'
     a.vars = dict(x=dict(type='bool', owner='sys'))
     a.action['sys'] = ["x => !x'"]
     a.win['[]<>'] = ['x']
@@ -276,7 +280,7 @@ def test_rabin_counter():
 def test_rabin_persistence():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='sys'))
-    a.init['sys'] = ['!x']
+    a.init['env'] = ['!x']
     a.win['<>[]'] = ['x']
     symbolic.fill_blanks(a, rabin=True)
     # solve
@@ -348,15 +352,16 @@ def test_streett_with_safety_assumption():
     symbolic.fill_blanks(a)
     # solve
     aut = a.build()
+    aut.moore = False
+    aut.plus_one = False
     z, yij, xijk = gr1.solve_streett_game(aut)
     assert z == aut.bdd.true, z
     # transducer
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
-    assert action_refined(aut, t)
     (init,) = t.init['env']
     assert init == t.add_expr('_goal = 0'), t.bdd.to_expr(init)
     (action,) = t.action['sys']
-    action_ = t.add_expr("(_goal = 0) & (_goal' = 0) & x")
+    action_ = t.add_expr("x => ((_goal = 0) & (_goal' = 0))")
     assert action == action_, t.bdd.to_expr(action)
     #
     # negate action to make unrealizable

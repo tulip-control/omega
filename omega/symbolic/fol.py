@@ -230,6 +230,15 @@ def _prime_bits_of_integers(ints, t):
     return bit_rename
 
 
+def _assignment_to_bdd(dvars, fol):
+    """Return BDD from assignment to `dvars`."""
+    conj = stx.conj(
+        '{var} = {value}'.format(var=var, value=value)
+        for var, value in dvars.iteritems())
+    u = fol.add_expr(conj)
+    return u
+
+
 def closed_interval(var, a, b):
     """Return string `a <= var <= b`."""
     return (

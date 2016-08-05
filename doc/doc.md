@@ -375,7 +375,7 @@ expr ::= expr '*' expr
 
        # temporal modal
        | 'X' expr  # next
-       | expr "'" [NUMBER]  # next [multiple]
+       | expr "'"  # next
        | '[]' expr  # always
        | '<>' expr  # eventually
        | '-X' expr  # weak previous

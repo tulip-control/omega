@@ -145,10 +145,6 @@ class Parser(astutils.Parser):
         """expr : expr PRIME"""
         p[0] = self.nodes.Unary('X', p[1])
 
-    def p_postfix_multi_next(self, p):
-        """expr : expr PRIME number"""
-        p[0] = self.nodes.Unary('X', p[1], p[2])
-
     def p_postfix_previous(self, p):
         """expr : expr DOT"""
         p[0] = self.nodes.Unary('-X', p[1])

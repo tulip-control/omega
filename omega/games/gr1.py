@@ -92,6 +92,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     """
     aut.assert_consistent(built=True)
     assert z != aut.bdd.false, 'empty winning set'
+    _warn_moore_mealy(aut)
     # add goal counter var
     c = '_goal'
     dvars = copy.deepcopy(aut.vars)
@@ -261,6 +262,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     aut.assert_consistent(built=True)
     win_set = zk[-1]
     assert win_set != aut.bdd.false, 'empty winning set'
+    _warn_moore_mealy(aut)
     dvars = dict(aut.vars)
     n_holds = len(aut.win['<>[]'])
     n_goals = len(aut.win['[]<>'])
@@ -425,6 +427,42 @@ def _moore_trans(target, aut):
     if aut.moore:
         u = bdd.forall(uvars, u)
     return u
+
+
+def _warn_moore_mealy(aut):
+    """Warn the user if they define actions suspect of error."""
+    bdd = aut.bdd
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    moore = aut.moore
+    env_support = bdd.support(env_action)
+    sys_support = bdd.support(sys_action)
+    env_depends_on_primed_sys = env_support.intersection(aut.epvars)
+    sys_depends_on_primed_env = sys_support.intersection(aut.upvars)
+    r = True
+    if moore and sys_depends_on_primed_env:
+        r = False
+        print(
+            'WARNING: Moore sys, but sys depends on '
+            'primed env vars:\n {r}'.format(
+                r=sys_depends_on_primed_env))
+    if not moore and env_depends_on_primed_sys:
+        r = False
+        print((
+            'WARNING: Mealy sys, and assumption depends on '
+            'primed sys vars.\n'
+            'If env has to be Mealy too, '
+            'then you can get cyclic dependencies.\n'
+            'Primed sys vars:\n {r}').format(
+                r=env_depends_on_primed_sys))
+    if env_depends_on_primed_sys:
+        r = False
+        print((
+            'ATTENTION: assumption depends on primed sys vars:\n'
+            '{r}\n'
+            'Is a Mealy env realistic for your problem ?').format(
+                r=env_depends_on_primed_sys))
+    return r
 
 
 def trivial_winning_set(aut_streett):

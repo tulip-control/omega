@@ -124,8 +124,8 @@ def make_streett_transducer(z, yij, xijk, aut):
         u = t.add_expr(s)
         u = bdd.apply('and', u, goal)
         rho_1 = bdd.apply('or', u, rho_1)
-    zp = bdd.rename(z, t.prime)
-    rho_1 = bdd.apply('and', rho_1, zp)
+    zstar = bdd.rename(z, t.prime)
+    rho_1 = bdd.apply('and', rho_1, zstar)
     # \rho_2: descent in basin
     rho_2 = bdd.false
     for i, yj in enumerate(yij):
@@ -134,9 +134,10 @@ def make_streett_transducer(z, yij, xijk, aut):
         rho_2j = bdd.false
         basin = yj[0]
         for y in yj[1:]:
-            next_basin = bdd.rename(basin, t.prime)
+            # steps leading to next basin
+            ystar = bdd.rename(basin, t.prime)
             rim = bdd.apply('diff', y, basin)
-            u = bdd.apply('and', rim, next_basin)
+            u = bdd.apply('and', rim, ystar)
             rho_2j = bdd.apply('or', rho_2j, u)
             basin = bdd.apply('or', basin, y)
         u = bdd.apply('and', rho_2j, count)
@@ -151,10 +152,11 @@ def make_streett_transducer(z, yij, xijk, aut):
         for xk in xjk:
             assert len(xk) == len(holds), xk
             for x, hold in zip(xk, holds):
-                next_wait = bdd.rename(x, t.prime)
+                # steps leading to next wait
+                xstar = bdd.rename(x, t.prime)
                 stay = bdd.apply('diff', x, used)
                 used = bdd.apply('or', used, x)
-                u = bdd.apply('and', stay, next_wait)
+                u = bdd.apply('and', stay, xstar)
                 u = bdd.apply('and', u, hold)
                 rho_3j = bdd.apply('or', rho_3j, u)
         u = bdd.apply('and', rho_3j, count)
@@ -293,9 +295,9 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     rho_1 = bdd.false
     basin = zk[0]
     for z in zk[1:]:
-        trans = _controllable_action(basin, aut)
+        zstar = _controllable_action(basin, aut)
         rim = bdd.apply('diff', z, basin)
-        u = bdd.apply('and', rim, trans)
+        u = bdd.apply('and', rim, zstar)
         u = bdd.apply('and', u, count)
         rho_1 = bdd.apply('or', rho_1, u)
         basin = z
@@ -317,8 +319,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, y in enumerate(yi):
             s = "{w}' = {i}".format(w=w, i=i)
             count = t.add_expr(s)
-            trans = _controllable_action(y, aut)
-            q = bdd.apply('and', count, trans)
+            ystar = _controllable_action(y, aut)
+            q = bdd.apply('and', count, ystar)
             v = bdd.apply('or', v, q)
         u = bdd.apply('and', u, v)
         rho_2 = bdd.apply('or', rho_2, u)
@@ -340,8 +342,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                 x_basin = xr[0]
                 p = bdd.false
                 for x in xr[1:]:
-                    trans = _controllable_action(x_basin, aut)
-                    q = bdd.apply('and', trans, -x_basin)
+                    xstar = _controllable_action(x_basin, aut)
+                    q = bdd.apply('and', xstar, -x_basin)
                     q = bdd.apply('and', x, q)
                     p = bdd.apply('or', p, q)
                     x_basin = x
@@ -370,8 +372,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, y in enumerate(yi):
             s = "{w} = {i}".format(w=w, i=i)
             count = t.add_expr(s)
-            trans = _controllable_action(y, aut)
-            q = bdd.apply('and', count, trans)
+            ystar = _controllable_action(y, aut)
+            q = bdd.apply('and', count, ystar)
             v = bdd.apply('or', v, q)
         u = bdd.apply('and', u, v)
         rho_4 = bdd.apply('or', rho_4, u)

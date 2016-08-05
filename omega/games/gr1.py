@@ -248,8 +248,7 @@ def _attractor_inside(inside, goal, aut):
     while x != xold:
         xold = x
         cox_x = fx.ue_preimage(
-            env_action, sys_action, x, aut,
-            evars=aut.epvars)
+            env_action, sys_action, x, aut)
         x = bdd.apply('or', cox_x, goal)
         x = bdd.apply('and', x, inside)
         x = bdd.apply('or', x, xold)

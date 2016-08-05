@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def attractor(env_action, sys_action, target, aut,
-              evars=None, inside=None):
+              inside=None):
     """Return attractor for `target`.
 
     Keyword args as `ue_preimage`.
@@ -36,7 +36,7 @@ def attractor(env_action, sys_action, target, aut,
     while q != qold:
         qold = q
         pred = ue_preimage(
-            env_action, sys_action, q, aut, evars=evars)
+            env_action, sys_action, q, aut)
         q = bdd.apply('or', qold, pred)
         if inside is not None:
             q = aut.bdd.apply('and', q, inside)
@@ -45,7 +45,7 @@ def attractor(env_action, sys_action, target, aut,
 
 
 def trap(env_action, sys_action, safe, aut,
-         evars=None, unless=None):
+         unless=None):
     """Return subset of `safe` with contolled exit.
 
     @param unless: if `None`, then returned controlled invariant
@@ -58,7 +58,7 @@ def trap(env_action, sys_action, safe, aut,
     qold = None
     while q != qold:
         qold = q
-        pre = ue_preimage(env_action, sys_action, q, aut, evars=evars)
+        pre = ue_preimage(env_action, sys_action, q, aut)
         q = bdd.apply('and', safe, pre)
         if unless is not None:
             q = bdd.apply('or', q, unless)
@@ -66,15 +66,14 @@ def trap(env_action, sys_action, safe, aut,
     return q
 
 
-def ue_preimage(env_action, sys_action, target, aut,
-                evars=None):
+def ue_preimage(env_action, sys_action, target, aut):
     r"""Return controllable predecessor set.
 
     Preimage with alternating quantification.
     Quantifier order: If `aut.moore`:
 
-      - \E \A, else
-      - \A \E
+      - \E epvars: \A upvars, else
+      - \A upvars: \E epvars
 
     Implication causality: If `aut.plus_one`:
 
@@ -87,11 +86,8 @@ def ue_preimage(env_action, sys_action, target, aut,
     # TODO: controllable predecessor operator implemented
     # efficiently like relational product
     bdd = aut.bdd
-    if evars is None:
-        evars = aut.epvars
-        uvars = aut.upvars
-    else:
-        uvars = set(aut.unprime).difference(evars)
+    epvars = aut.epvars
+    upvars = aut.upvars
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action -> target')
@@ -102,13 +98,13 @@ def ue_preimage(env_action, sys_action, target, aut,
         u = bdd.apply('and', sys_action, u)
         u = bdd.apply('->', env_action, u)
     if aut.moore:
-        # \E \A
-        u = bdd.forall(uvars, u)
-        u = bdd.exist(evars, u)
+        # \E evars': \A uvars'
+        u = bdd.forall(upvars, u)
+        u = bdd.exist(epvars, u)
     else:
-        # \A \E
-        u = bdd.exist(evars, u)
-        u = bdd.forall(uvars, u)
+        # \A uvars': \E evars'
+        u = bdd.exist(epvars, u)
+        u = bdd.forall(upvars, u)
     return u
 
 

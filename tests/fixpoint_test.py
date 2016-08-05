@@ -77,8 +77,9 @@ def test_ue_preimage():
     (sys_action,) = aut.action['sys']
     u = fx.ue_preimage(env_action, sys_action, target, aut)
     assert u == aut.bdd.false, aut.bdd.to_expr(u)
-    u = fx.ue_preimage(env_action, sys_action, target, aut,
-                       evars=aut.uepvars)
+    aut.epvars = list(aut.uepvars)
+    aut.upvars = list()
+    u = fx.ue_preimage(env_action, sys_action, target, aut)
     assert u == aut.bdd.true, aut.bdd.to_expr(u)
 
 

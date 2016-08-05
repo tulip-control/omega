@@ -72,9 +72,9 @@ def test_ue_preimage():
     a.action['sys'] = ["x' => !y'"]
     symbolic.fill_blanks(a)
     aut = a.build()
-    target = aut.add_expr('y')
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
+    target = aut.add_expr('y')
     u = fx.ue_preimage(env_action, sys_action, target, aut)
     assert u == aut.bdd.false, aut.bdd.to_expr(u)
     aut.epvars = list(aut.uepvars)

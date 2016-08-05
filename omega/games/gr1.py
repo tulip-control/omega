@@ -170,6 +170,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     if aut.moore:
         u = bdd.forall(t.upvars, u)
     t.action['sys'] = [u]
+    symbolic._assert_support_moore(t)
     # initial condition for counter
     # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
@@ -387,14 +388,13 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     if aut.moore:
         u = bdd.forall(t.upvars, u)
     t.action['sys'] = [u]
+    symbolic._assert_support_moore(t)
     # initial condition for counter
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = t.add_expr(s)
     _make_init(count, winning, t, aut)
     return t
-
-
 
 
 def _moore_trans(target, aut):

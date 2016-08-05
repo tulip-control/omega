@@ -596,6 +596,16 @@ def assert_primed_adjacent(prime, bdd):
             'the given BDD.').format(x=x, y=y, i=i, j=j)
 
 
+def _assert_support_moore(aut):
+    """Raise `AssertionError` if Moore that depends on `env'`."""
+    if not aut.moore:
+        return
+    (u,) = aut.action['sys']
+    s = aut.bdd.support(u)
+    upvars_in_support = s.intersection(aut.upvars)
+    assert not upvars_in_support, upvars_in_support
+
+
 def _join(c):
     """Return `str` with one element of `c` per line."""
     return '\n'.join(str(x) for x in c)

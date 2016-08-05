@@ -69,8 +69,11 @@ def test_ue_preimage():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
+    a.action['env'] = ["True"]
     a.action['sys'] = ["x' => !y'"]
     symbolic.fill_blanks(a)
+    a.moore = False
+    a.plus_one = False
     aut = a.build()
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']

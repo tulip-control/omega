@@ -92,7 +92,8 @@ def make_streett_transducer(z, yij, xijk, aut):
     to represent the counter of recurrence goals.
     """
     aut.assert_consistent(built=True)
-    assert z != aut.bdd.false, 'empty winning set'
+    winning = z
+    assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)
     # add goal counter var
     c = '_goal'
@@ -257,8 +258,8 @@ def _attractor_inside(inside, goal, aut):
 def make_rabin_transducer(zk, yki, xkijr, aut):
     """Return O/I transducer for Rabin(1) game."""
     aut.assert_consistent(built=True)
-    win_set = zk[-1]
-    assert win_set != aut.bdd.false, 'empty winning set'
+    winning = zk[-1]
+    assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)
     dvars = dict(aut.vars)
     n_holds = len(aut.win['<>[]'])
@@ -395,6 +396,100 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     count = t.add_expr(s)
     _make_init(count, winning, t, aut)
     return t
+
+
+def is_realizable(z, aut):
+    """Return `True` if, and only if, `aut` wins from `z`.
+
+    @param z: bdd node
+    @param type: compiled `symbolic.Automaton`
+    """
+    bdd = aut.bdd
+    (env_init,) = aut.init['env']
+    (sys_init,) = aut.init['sys']
+    (sys_action,) = aut.action['sys']
+    evars = aut.evars
+    uvars = aut.uvars
+    # common errors
+    assert env_init != bdd.false, 'vacuous spec'
+    # realizable ?
+    qinit = aut.qinit
+    if qinit == '\A \A':
+        w = bdd.apply('->', env_init, sys_init)
+        if w != bdd.true:
+            print(
+                'WARNING: `qinit = "\A \A"` but '
+                'not `EnvInit => SysInit`')
+        w = bdd.exist(aut.epvars, sys_action)
+        w = bdd.apply('->', env_init, w)
+        if w != bdd.true:
+            print(
+                "WARNING: `qinit = '\A \A'` but "
+                "not `EnvInit => (\E y': SysNext)`")
+        # \A env, sys:
+        #    env_init => /\ sys_init
+        #                /\ z
+        u = bdd.apply('and', sys_init, z)
+        u = bdd.apply('->', env_init, u)
+        r = (u == bdd.true)
+        msg = (
+            'some initial states are losing:\n'
+            '`\A x, y: EnvInit => (SysInit /\ Win)`')
+    elif qinit == '\E \E':
+        # \E env, sys: /\ env_init
+        #              /\ sys_init
+        #              /\ z
+        u = bdd.apply('and', sys_init, z)
+        u = bdd.apply('and', env_init, u)
+        u = bdd.exist(aut.uevars, u)
+        r = (u == bdd.true)
+        msg = (
+            'no winning state satisfies:\n'
+            '`EnvInit /\ SysInit /\ Win`')
+    elif qinit == '\A \E':
+        assert not aut.moore
+        # \A env: \E sys:
+        #    (\E sys: env_init) => /\ env_init
+        #                          /\ sys_init
+        #                          /\ z
+        a = bdd.exist(evars, env_init)
+        u = bdd.apply('and', sys_init, z)
+        u = bdd.apply('and', env_init, u)
+        u = bdd.apply('->', a, u)
+        u = bdd.exist(evars, u)
+        u = bdd.forall(uvars, u)
+        r = (u == bdd.true)
+        msg = (
+            'cannot for each x pick a y:\n'
+            '`\A x: \E y:\n'
+            '    (\E y: EnvInit) => /\ EnvInit\n'
+            '                       /\ SysInit\n'
+            '                       /\ Win`')
+    elif qinit == '\E \A':
+        # \E sys: \A env:
+        #    (\E sys: env_init) => /\ env_init
+        #                          /\ sys_init
+        #                          /\ z
+        a = bdd.exist(evars, env_init)
+        u = bdd.apply('and', sys_init, z)
+        u = bdd.apply('and', env_init, u)
+        u = bdd.apply('->', a, u)
+        u = bdd.forall(uvars, u)
+        u = bdd.exist(evars, u)
+        r = (u == bdd.true)
+        msg = (
+            'cannot pick y that works for all x:\n'
+            '`\E y: \A x:\n'
+            '    (\E y: EnvInit) => /\ EnvInit\n'
+            '                       /\ SysInit\n'
+            '                       /\ Win`')
+    else:
+        raise ValueError(
+            'unknown `qinit` value "{qinit}"'.format(
+                qinit=qinit))
+    if not r:
+        print(msg)
+    return r
 
 
 def _moore_trans(target, aut):

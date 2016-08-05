@@ -83,8 +83,7 @@ def ue_preimage(env_action, sys_action, target, aut):
       - env_action => /\ sys_action
                       /\ target
     """
-    # TODO: controllable predecessor operator implemented
-    # efficiently like relational product
+    # TODO: use efficient substitution
     bdd = aut.bdd
     epvars = aut.epvars
     upvars = aut.upvars

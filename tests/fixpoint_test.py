@@ -65,6 +65,373 @@ def test_ee_image():
     assert u == u_, aut.bdd.to_expr(u)
 
 
+def test_cpre_moore_plus_one():
+    cpre = fx.ue_preimage
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='bool', owner='sys'))
+    a.moore = True
+    a.plus_one = True
+    bdd = a.bdd
+    # no env
+    # y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    # y
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    # with env
+    # x => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('y')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x' => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x' => y' with assumption
+    a.action['env'] = ["! x'"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    # `plus_one` cannot depend on `x`
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x => y' with assumption
+    a.action['env'] = ["! x'"]
+    a.action['sys'] = ["x => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    target = aut.add_expr('x & ! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('! x & ! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+
+
+def test_cpre_moore_circular():
+    cpre = fx.ue_preimage
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='bool', owner='sys'))
+    a.moore = True
+    a.plus_one = False
+    bdd = a.bdd
+    # no env
+    # y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    # y
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    # with env
+    # x => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('y')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x' => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x' => y' with assumption
+    a.action['env'] = ["x"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    # circular
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    # x => y' with assumption
+    a.action['env'] = ["! x'"]
+    a.action['sys'] = ["x => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    target = aut.add_expr('x & ! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('! x & ! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+
+
+def test_cpre_mealy_plus_one():
+    cpre = fx.ue_preimage
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='bool', owner='sys'))
+    a.moore = False
+    a.plus_one = True
+    bdd = a.bdd
+    # no env
+    # y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+    # y
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["y"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == y, bdd.to_expr(u)
+    # with env
+    # x => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('y')
+    y =  bdd.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('! x'), bdd.to_expr(u)
+    target = aut.add_expr('False')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x' => y'
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    target = aut.add_expr('! x | y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    # x' => y' with assumption
+    a.action['env'] = ["! x'"]
+    a.action['sys'] = ["x' => y'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    # `plus_one` cannot depend on `x`
+    target = aut.add_expr('! y')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    # x => y' with assumption
+    a.action['env'] = ["! x'"]
+    a.action['sys'] = ["False"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    # x => y' with assumption
+    a.action['env'] = ["x'"]
+    a.action['sys'] = ["x'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false, bdd.to_expr(u)
+    #
+    a.action['env'] = ["x'"]
+    a.action['sys'] = ["True"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true, bdd.to_expr(u)
+    #
+    a.action['env'] = ["x'"]
+    a.action['sys'] = ["x & y"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = aut.add_expr('True')
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.add_expr('x & y'), bdd.to_expr(u)
+
+
+def test_cpre_mealy_circular():
+    cpre = fx.ue_preimage
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='bool', owner='sys'))
+    a.moore = False
+    a.plus_one = False
+    bdd = a.bdd
+    #
+    a.action['env'] = ["x'"]
+    a.action['sys'] = ["x'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = bdd.true
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.true
+    #
+    a.action['env'] = ["True"]
+    a.action['sys'] = ["x'"]
+    aut = a.build()
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
+    target = bdd.true
+    u = cpre(env_action, sys_action, target, aut)
+    assert u == bdd.false
+
+
 def test_ue_preimage():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),

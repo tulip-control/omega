@@ -508,7 +508,6 @@ def _controllable_action(target, aut):
     bdd = aut.bdd
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]
-    uvars = aut.upvars
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
@@ -519,7 +518,8 @@ def _controllable_action(target, aut):
         u = bdd.apply('and', sys_action, u)
         u = bdd.apply('->', env_action, u)
     if aut.moore:
-        u = bdd.forall(uvars, u)
+        # \A uvars'
+        u = bdd.forall(aut.upvars, u)
     return u
 
 

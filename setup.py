@@ -100,7 +100,8 @@ def run_setup():
         license='BSD',
         install_requires=install_requires,
         tests_require=tests_require,
-        packages=[name, 'omega.games', 'omega.logic', 'omega.symbolic'],
+        packages=[name, 'omega.games',
+                  'omega.logic', 'omega.symbolic'],
         package_dir={name: name},
         classifiers=classifiers,
         keywords=keywords)

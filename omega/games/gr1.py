@@ -293,7 +293,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     rho_1 = bdd.false
     basin = zk[0]
     for z in zk[1:]:
-        trans = _moore_trans(basin, t)
+        trans = _controllable_action(basin, aut)
         rim = bdd.apply('diff', z, basin)
         u = bdd.apply('and', rim, trans)
         u = bdd.apply('and', u, count)
@@ -317,7 +317,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, y in enumerate(yi):
             s = "{w}' = {i}".format(w=w, i=i)
             count = t.add_expr(s)
-            trans = _moore_trans(y, t)
+            trans = _controllable_action(y, aut)
             q = bdd.apply('and', count, trans)
             v = bdd.apply('or', v, q)
         u = bdd.apply('and', u, v)
@@ -340,7 +340,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                 x_basin = xr[0]
                 p = bdd.false
                 for x in xr[1:]:
-                    trans = _moore_trans(x_basin, t)
+                    trans = _controllable_action(x_basin, aut)
                     q = bdd.apply('and', trans, -x_basin)
                     q = bdd.apply('and', x, q)
                     p = bdd.apply('or', p, q)
@@ -370,7 +370,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, y in enumerate(yi):
             s = "{w} = {i}".format(w=w, i=i)
             count = t.add_expr(s)
-            trans = _moore_trans(y, t)
+            trans = _controllable_action(y, aut)
             q = bdd.apply('and', count, trans)
             v = bdd.apply('or', v, q)
         u = bdd.apply('and', u, v)
@@ -492,8 +492,11 @@ def is_realizable(z, aut):
     return r
 
 
-def _moore_trans(target, aut):
-    """Return controllable transitions for progress."""
+def _controllable_action(target, aut):
+    """Return controllable transitions for progress.
+
+    Compared to CPre, this has "half" the quantification.
+    """
     bdd = aut.bdd
     env_action = aut.action['env'][0]
     sys_action = aut.action['sys'][0]

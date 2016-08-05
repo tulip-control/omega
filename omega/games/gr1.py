@@ -124,7 +124,7 @@ def make_streett_transducer(z, yij, xijk, aut):
         u = t.add_expr(s)
         u = bdd.apply('and', u, goal)
         rho_1 = bdd.apply('or', u, rho_1)
-    zstar = bdd.rename(z, t.prime)
+    zstar = _controllable_action(z, aut)
     rho_1 = bdd.apply('and', rho_1, zstar)
     # \rho_2: descent in basin
     rho_2 = bdd.false
@@ -135,7 +135,7 @@ def make_streett_transducer(z, yij, xijk, aut):
         basin = yj[0]
         for y in yj[1:]:
             # steps leading to next basin
-            ystar = bdd.rename(basin, t.prime)
+            ystar = _controllable_action(basin, aut)
             rim = bdd.apply('diff', y, basin)
             u = bdd.apply('and', rim, ystar)
             rho_2j = bdd.apply('or', rho_2j, u)
@@ -153,7 +153,7 @@ def make_streett_transducer(z, yij, xijk, aut):
             assert len(xk) == len(holds), xk
             for x, hold in zip(xk, holds):
                 # steps leading to next wait
-                xstar = bdd.rename(x, t.prime)
+                xstar = _controllable_action(x, aut)
                 stay = bdd.apply('diff', x, used)
                 used = bdd.apply('or', used, x)
                 u = bdd.apply('and', stay, xstar)

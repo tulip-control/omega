@@ -165,7 +165,6 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho
     u = bdd.apply('or', rho_1, rho_2)
     u = bdd.apply('or', rho_3, u)
-    u = bdd.apply('and', sys_action, u)
     # counter `c` limits
     u = bdd.apply('and', t.action['sys'][0], u)
     # `sys_action` is already in the `\rho`
@@ -388,7 +387,6 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u = bdd.apply('or', rho_1, rho_2)
     u = bdd.apply('or', rho_3, u)
     u = bdd.apply('or', rho_4, u)
-    u = bdd.apply('and', sys_action, u)
     # counter limits
     u = bdd.apply('and', t.action['sys'][0], u)
     if not aut.plus_one:

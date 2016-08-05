@@ -171,9 +171,9 @@ def make_streett_transducer(z, yij, xijk, aut):
     # next is "useful" only if `env_action` depends on `y'`
     if not aut.plus_one:
         u = bdd.apply('->', env_action, u)
+        if aut.moore:
+            u = bdd.forall(aut.upvars, u)
     assert u != bdd.false
-    if aut.moore:
-        u = bdd.forall(t.upvars, u)
     t.action['sys'] = [u]
     symbolic._assert_support_moore(t)
     # initial condition for counter
@@ -391,8 +391,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u = bdd.apply('and', t.action['sys'][0], u)
     if not aut.plus_one:
         u = bdd.apply('->', env_action, u)
-    if aut.moore:
-        u = bdd.forall(t.upvars, u)
+        if aut.moore:
+            u = bdd.forall(aut.upvars, u)
     assert u != bdd.false
     t.action['sys'] = [u]
     symbolic._assert_support_moore(t)

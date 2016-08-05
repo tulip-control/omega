@@ -105,6 +105,8 @@ def make_streett_transducer(z, yij, xijk, aut):
         owner='sys')
     # compile transducer with refined shared BDD
     t = symbolic.Automaton()
+    t.moore = aut.moore
+    t.plus_one = aut.plus_one
     t.vars = dvars
     bdd = aut.bdd
     t.bdd = bdd
@@ -277,6 +279,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     dvars[c] = dict(type='saturating', dom=(0, n_c), owner='sys')
     # compile
     t = symbolic.Automaton()
+    t.moore = aut.moore
+    t.plus_one = aut.plus_one
     t.vars = dvars
     bdd = aut.bdd
     t.bdd = bdd

@@ -278,4 +278,8 @@ def _rewrite_tables(outputdir='./'):
 
 
 if __name__ == '__main__':
+    import logging
+    log = logging.getLogger('astutils')
+    log.setLevel(logging.DEBUG)
+    log.addHandler(logging.StreamHandler())
     _rewrite_tables()

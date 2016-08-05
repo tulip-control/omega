@@ -359,11 +359,11 @@ expr ::= expr '*' expr
        | expr '!=' expr
        | expr '<=' expr
        | expr '>=' expr
-       
+
        # quantifiers
        | '\A' list `:` expr  # forall
        | '\E' list `:` expr  # exists
-       
+
        # propositional
        | '!' expr
        | expr '&' expr | expr '&&' expr

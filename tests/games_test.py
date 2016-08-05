@@ -542,7 +542,7 @@ def test_trivial_winning_set():
     assert triv == aut.bdd.true, aut.bdd.to_expr(triv)
 
 
-def action_refined(aut_a, aut_b, owner='sys'):
+def action_refined(aut_a, aut_b):
     """Return `True` if action of `aut_b` refines `aut_a`.
 
     @type aut_a, aut_b: `symbolic.Automaton`

@@ -219,12 +219,12 @@ class Parser(astutils.Parser):
         p[0] = self.nodes.Operator(p[1], p[2], p[4])
 
     def p_varlist_iter(self, p):
-        """list : list COMMA var"""
+        """list : list COMMA expr"""
         p[1].append(p[3])
         p[0] = p[1]
 
     def p_varlist_end(self, p):
-        """list : var"""
+        """list : expr"""
         p[0] = [p[1]]
 
     def p_pairs_iter(self, p):
@@ -237,7 +237,7 @@ class Parser(astutils.Parser):
         p[0] = [p[1]]
 
     def p_pair(self, p):
-        """pair : expr DIV var"""
+        """pair : expr DIV expr"""
         p[0] = (p[1], p[3])
 
     def p_paren(self, p):
@@ -251,11 +251,6 @@ class Parser(astutils.Parser):
     def p_var_unprimed(self, p):
         """var : NAME"""
         p[0] = self.nodes.Var(p[1])
-
-    def p_var_primed(self, p):
-        """var : NAME PRIME"""
-        var = self.nodes.Var(p[1])
-        p[0] = self.nodes.Unary('X', var)
 
     def p_bdd_node(self, p):
         """expr : AT number"""

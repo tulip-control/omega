@@ -116,6 +116,7 @@ class Parser(astutils.Parser):
     # lowest to highest
     # based on precedence in `spin.y`
     precedence = (
+        ('left', 'COLON'),
         ('left', 'BIMP'),
         ('left', 'IMP'),
         ('left', 'XOR'),

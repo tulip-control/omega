@@ -547,16 +547,16 @@ def action_refined(aut_a, aut_b):
 
     @type aut_a, aut_b: `symbolic.Automaton`
     """
-    bdd_a = aut_a.bdd
-    bdd_b = aut_b.bdd
-    a = aut_a.action[owner][0]
-    b = aut_b.action[owner][0]
-    if bdd_a is not bdd_b:
-        a_cp = _bdd.copy_bdd(a, bdd_a, bdd_b)
-    else:
-        a_cp = a
-    refined = bdd_b.apply('->', b, a_cp)
-    return refined == bdd_b.true
+    assert aut_a.moore == aut_b.moore, (
+        aut_a.moore, aut_b.moore)
+    assert aut_a.plus_one == aut_b.plus_one, (
+        aut_a.plus_one, aut_b.plus_one)
+    assert aut_a.bdd is aut_b.bdd
+    bdd = aut_a.bdd
+    (a,) = aut_a.action['sys']
+    (b,) = aut_b.action['sys']
+    refined = bdd.apply('->', b, a)
+    return refined == bdd.true
 
 
 def print_fol_bdd(u, bdd, table):

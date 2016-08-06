@@ -144,15 +144,12 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     queue = list()
     for env_0 in env_iter:
         u = fol.replace(init, env_0)
-        sys_iter = fol.sat_iter(
-            u, full=True,
-            care_vars=aut.control['sys'])
-        for sys_0 in sys_iter:
-            d = dict(env_0)
-            d.update(sys_0)
-            _add_new_node(d, g, queue, umap, keys)
-            visited = _add_to_visited(d, visited, aut)
-            break
+        sys_0 = fol.pick(u, full=True,
+                         care_vars=aut.control['sys'])
+        d = dict(env_0)
+        d.update(sys_0)
+        _add_new_node(d, g, queue, umap, keys)
+        visited = _add_to_visited(d, visited, aut)
     return queue, visited
 
 

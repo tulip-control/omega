@@ -129,25 +129,30 @@ def _forall_init(g, fol, aut, umap, keys):
 
 
 def _forall_exist_init(g, fol, aut, umap, keys):
-    r"""Enumerate initial states with \A env \E sys vars.
+    r"""Enumerate initial states with \A env: \E sys vars.
 
     Note that each initial "state" is a class of
     initial states in ZF set theory.
     """
+    aut.assert_consistent(built=True)
+    assert fol.bdd is aut.bdd
     bdd = fol.bdd
-    u = fol.exist(aut.control['sys'], aut.init['env'][0])
+    (env_init,) = aut.init['env']
+    assert env_init != bdd.false
+    only_env_init = fol.exist(aut.control['sys'], env_init)
     env_iter = fol.sat_iter(
-        u, full=True,
-        care_vars=aut.control['env'])
-    init = bdd.apply('and', aut.init['sys'][0], u)
+        only_env_init, full=True, care_vars=aut.control['env'])
     visited = bdd.false
     queue = list()
     for env_0 in env_iter:
-        u = fol.replace(init, env_0)
+        u = fol.replace(env_init, env_0)
         sys_0 = fol.pick(u, full=True,
                          care_vars=aut.control['sys'])
         d = dict(env_0)
         d.update(sys_0)
+        # confirm `sys_0` picked properly
+        u = fol.replace(env_init, d)
+        assert u == bdd.true, u
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)
     return queue, visited

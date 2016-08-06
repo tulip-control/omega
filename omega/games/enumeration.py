@@ -57,6 +57,8 @@ def action_to_steps(aut, qinit=None):
         queue, visited = _forall_exist_init(g, fol, aut, umap, keys)
     elif qinit == '\A \A':
         queue, visited = _forall_init(g, fol, aut, umap, keys)
+    elif qinit == '\E \E':
+        queue, visited = _exist_init(g, fol, aut, umap, keys)
     else:
         raise Exception('unknown qinit "{q}"'.format(q=qinit))
     log.info('{n} initial nodes'.format(n=len(queue)))
@@ -127,6 +129,21 @@ def _forall_init(g, fol, aut, umap, keys):
     for d in init_iter:
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)
+    return queue, visited
+
+
+def _exist_init(g, fol, aut, umap, keys):
+    r"""Enumerate initial states with \E env, sys vars."""
+    aut.assert_consistent(built=True)
+    assert fol.bdd is aut.bdd
+    bdd = fol.bdd
+    (env_init,) = aut.init['env']
+    assert env_init != bdd.false
+    d = fol.pick(env_init, full=True, care_vars=aut.vars)
+    visited = bdd.false
+    queue = list()
+    _add_new_node(d, g, queue, umap, keys)
+    visited = _add_to_visited(d, visited, aut)
     return queue, visited
 
 

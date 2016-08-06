@@ -21,7 +21,7 @@ from omega.symbolic import symbolic
 log = logging.getLogger(__name__)
 
 
-def action_to_steps(aut, qinit=None):
+def action_to_steps(aut, qinit='\A \A'):
     r"""Return enumerated graph with steps as edges.
 
     @param qinit:
@@ -29,8 +29,6 @@ def action_to_steps(aut, qinit=None):
         '\A \E' == forall env values: exist sys values
         '\E \A' == exist sys values: forall env values
     """
-    if qinit is None:
-        qinit = '\A \A'
     bdd = aut.bdd
     assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()

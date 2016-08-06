@@ -114,8 +114,11 @@ def action_to_steps(aut, qinit=None):
 
 def _forall_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
+    aut.assert_consistent(built=True)
+    assert fol.bdd is aut.bdd
     bdd = fol.bdd
     (env_init,) = aut.init['env']
+    assert env_init != bdd.false
     init_iter = fol.sat_iter(
         env_init, full=True,
         care_vars=aut.vars)

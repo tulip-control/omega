@@ -61,8 +61,8 @@ def solve_streett_game(aut, rank=1):
 def _attractor_under_assumptions(z, goal, aut):
     """Targeting `goal`, under unconditional assumptions."""
     bdd = aut.bdd
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     xjk = list()
     yj = list()
     y = bdd.false
@@ -110,10 +110,10 @@ def make_streett_transducer(z, yij, xijk, aut):
     bdd = aut.bdd
     t.bdd = bdd
     t = t.build()
-    env_init = aut.init['env'][0]
-    sys_init = aut.init['sys'][0]
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_init,) = aut.init['env']
+    (sys_init,) = aut.init['sys']
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     holds = aut.win['<>[]']
     goals = aut.win['[]<>']
     # compute strategy from iterates
@@ -221,8 +221,8 @@ def solve_rabin_game(aut, rank=1):
 def _cycle_inside(z, hold, aut):
     """Cycling through goals, while staying in `hold`."""
     bdd = aut.bdd
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     cox_z = fx.ue_preimage(env_action, sys_action,
                            z, aut)
     g = bdd.apply('or', cox_z, hold)
@@ -243,8 +243,8 @@ def _cycle_inside(z, hold, aut):
 
 def _attractor_inside(inside, goal, aut):
     bdd = aut.bdd
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     xr = list()
     x = bdd.false
     xold = None
@@ -285,10 +285,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     bdd = aut.bdd
     t.bdd = bdd
     t = t.build()
-    env_init = aut.init['env'][0]
-    sys_init = aut.init['sys'][0]
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_init,) = aut.init['env']
+    (sys_init,) = aut.init['sys']
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     goals = aut.win['[]<>']
     t.action['env'] = [env_action]
     # compute strategy from iterates
@@ -504,8 +504,8 @@ def _controllable_action(target, aut):
     Compared to CPre, this has "half" the quantification.
     """
     bdd = aut.bdd
-    env_action = aut.action['env'][0]
-    sys_action = aut.action['sys'][0]
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action => target')

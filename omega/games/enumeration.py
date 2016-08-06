@@ -115,10 +115,9 @@ def action_to_steps(aut, qinit=None):
 def _forall_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
     bdd = fol.bdd
-    init = bdd.apply(
-        'and', aut.init['env'][0], aut.init['sys'][0])
+    (env_init,) = aut.init['env']
     init_iter = fol.sat_iter(
-        init, full=True,
+        env_init, full=True,
         care_vars=aut.vars)
     visited = bdd.false
     queue = list()

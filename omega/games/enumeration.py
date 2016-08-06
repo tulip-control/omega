@@ -59,6 +59,8 @@ def action_to_steps(aut, qinit=None):
         queue, visited = _forall_init(g, fol, aut, umap, keys)
     elif qinit == '\E \E':
         queue, visited = _exist_init(g, fol, aut, umap, keys)
+    elif qinit == '\E \A':
+        queue, visited = _exist_forall_init(g, fol, aut, umap, keys)
     else:
         raise Exception('unknown qinit "{q}"'.format(q=qinit))
     log.info('{n} initial nodes'.format(n=len(queue)))
@@ -170,6 +172,40 @@ def _forall_exist_init(g, fol, aut, umap, keys):
         d = dict(env_0)
         d.update(sys_0)
         # confirm `sys_0` picked properly
+        u = fol.replace(env_init, d)
+        assert u == bdd.true, u
+        _add_new_node(d, g, queue, umap, keys)
+        visited = _add_to_visited(d, visited, aut)
+    return queue, visited
+
+
+def _exist_forall_init(g, fol, aut, umap, keys):
+    r"""Enumerate initial states with \E sys: \A env vars."""
+    # this function can be merged with `_forall_exist_init`
+    # by constraining initial sys assignments,
+    # then enumerating the same way
+    aut.assert_consistent(built=True)
+    assert fol.bdd is aut.bdd
+    bdd = fol.bdd
+    (env_init,) = aut.init['env']
+    assert env_init != bdd.false
+    # pick `sys_0` so that it work for all
+    # env assignments alowed by `env_init`
+    only_env_init = fol.exist(aut.control['sys'], env_init)
+    u = fol.apply('->', only_env_init, env_init)
+    u = fol.forall(aut.control['env'], u)
+    assert u != bdd.false
+    sys_0 = fol.pick(u, full=True, care_vars=aut.control['sys'])
+    # iterate over env initial assignments
+    # independently of sys
+    env_iter = fol.sat_iter(
+        only_env_init, full=True, care_vars=aut.control['env'])
+    visited = bdd.false
+    queue = list()
+    for env_0 in env_iter:
+        d = dict(env_0)
+        d.update(sys_0)
+        # confirm `sys_0` works for all `env_0`
         u = fol.replace(env_init, d)
         assert u == bdd.true, u
         _add_new_node(d, g, queue, umap, keys)

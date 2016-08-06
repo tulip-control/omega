@@ -24,10 +24,21 @@ log = logging.getLogger(__name__)
 def action_to_steps(aut, qinit='\A \A'):
     r"""Return enumerated graph with steps as edges.
 
-    @param qinit:
-        '\A \A' == forall env values: forall sys values
-        '\A \E' == forall env values: exist sys values
-        '\E \A' == exist sys values: forall env values
+    Only `aut.env_init` considered.
+    The predicate `aut.sys_init` is ignored.
+
+    `qinit` has different meaning that in `omega.games.gr1`.
+    Nonetheless, for synthesized `env_init`,
+    the meaning of `qinit` here yields the expected result.
+
+    Enumeration is done based on `qinit`:
+
+    - `'\A \A'`: pick all states that satisfy `env_init`
+    - `'\E \E'`: pick one state that satisfies `env_init`
+    - `'\A \E'`: for all states that satisfy `env_init`,
+      pick a unique state for each env state `x`
+    - `'\E \A'`: pick a sys state `u` and enumerate all
+      states that satisfy `env_init` and `y = u`
     """
     bdd = aut.bdd
     assert aut.action['sys'][0] != bdd.false

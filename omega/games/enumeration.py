@@ -57,12 +57,13 @@ def action_to_steps(aut, qinit='\A \A'):
     g = nx.DiGraph()
     g.sorted_vars = keys
     queue, visited = _init_search(g, fol, aut, umap, keys, qinit)
+    varnames = set(aut.vars)
     # search
     while queue:
         node = queue.pop()
         values = g.node[node]
         log.debug('at node: {d}'.format(d=values))
-        assert set(values) == set(aut.vars), (values, aut.vars)
+        assert set(values) == varnames, (values, aut.vars)
         (u,) = aut.action['env']
         u = fol.replace(u, values)
         # apply Mealy controller function

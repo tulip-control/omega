@@ -47,14 +47,9 @@ def action_to_steps(aut, qinit='\A \A'):
     fol.bdd = bdd
     fol.vars = symbolic._prime_and_order_table(aut.vars)
     # fol.add_vars(table)
-    aut.control = dict(env=set(), sys=set())
-    aut.primed_vars = dict(env=set(), sys=set())
-    for var, d in aut.vars.iteritems():
-        pvar = stx.prime(var)
-        owner = d['owner']
-        assert owner in aut.players, owner
-        aut.control[owner].add(var)
-        aut.primed_vars[owner].add(pvar)
+    control, primed_vars = _split_vars_per_quantifier(
+        aut.vars, aut.players)
+    aut.control = control
     # prime_vars = {var: stx.prime(var) for var in aut.vars}
     unprime_vars = {stx.prime(var): var for var in aut.vars}
     keys = list(aut.vars)  # fix an order for tupling
@@ -84,7 +79,7 @@ def action_to_steps(aut, qinit='\A \A'):
         u = fol.replace(u, values)
         # apply Mealy controller function
         env_iter = fol.sat_iter(
-            u, full=True, care_vars=aut.primed_vars['env'])
+            u, full=True, care_vars=primed_vars['env'])
         (u,) = aut.action['sys']
         sys = fol.replace(u, values)
         for next_env in env_iter:
@@ -124,6 +119,19 @@ def action_to_steps(aut, qinit='\A \A'):
                     e=env_values,
                     s=sys_values))
     return g
+
+
+def _split_vars_per_quantifier(dvars, players):
+    """Return controllability `dict` and primed vars `dict`."""
+    control = {owner: set() for owner in players}
+    primed_vars = {owner: set() for owner in players}
+    for var, d in dvars.iteritems():
+        pvar = stx.prime(var)
+        owner = d['owner']
+        assert owner in players, (owner, players)
+        control[owner].add(var)
+        primed_vars[owner].add(pvar)
+    return control, primed_vars
 
 
 def _forall_init(g, fol, aut, umap, keys):

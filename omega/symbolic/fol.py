@@ -90,7 +90,10 @@ class Context(object):
 
     def forall(self, qvars, u):
         """Universally quantify `qvars` in `u`."""
-        return ~self.exist(qvars, ~u)
+        r = self.apply('not', u)
+        r = self.exist(qvars, r)
+        r = self.apply('not', r)
+        return r
 
     def exist(self, qvars, u):
         """Existentially quantify `qvars` in `u`."""

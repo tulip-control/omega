@@ -56,19 +56,7 @@ def action_to_steps(aut, qinit='\A \A'):
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
     g.sorted_vars = keys
-    # danger of blowup due to sparsity
-    # implement enumerated equivalent to compare
-    if qinit == '\A \E':
-        queue, visited = _forall_exist_init(g, fol, aut, umap, keys)
-    elif qinit == '\A \A':
-        queue, visited = _forall_init(g, fol, aut, umap, keys)
-    elif qinit == '\E \E':
-        queue, visited = _exist_init(g, fol, aut, umap, keys)
-    elif qinit == '\E \A':
-        queue, visited = _exist_forall_init(g, fol, aut, umap, keys)
-    else:
-        raise Exception('unknown qinit "{q}"'.format(q=qinit))
-    log.info('{n} initial nodes'.format(n=len(queue)))
+    queue, visited = _init_search(g, fol, aut, umap, keys, qinit)
     # search
     while queue:
         node = queue.pop()
@@ -132,6 +120,24 @@ def _split_vars_per_quantifier(dvars, players):
         control[owner].add(var)
         primed_vars[owner].add(pvar)
     return control, primed_vars
+
+
+def _init_search(g, fol, aut, umap, keys, qinit):
+    """Enumerate initial states according to `qinit`."""
+    # danger of blowup due to sparsity
+    # implement enumerated equivalent to compare
+    if qinit == '\A \E':
+        queue, visited = _forall_exist_init(g, fol, aut, umap, keys)
+    elif qinit == '\A \A':
+        queue, visited = _forall_init(g, fol, aut, umap, keys)
+    elif qinit == '\E \E':
+        queue, visited = _exist_init(g, fol, aut, umap, keys)
+    elif qinit == '\E \A':
+        queue, visited = _exist_forall_init(g, fol, aut, umap, keys)
+    else:
+        raise Exception('unknown qinit "{q}"'.format(q=qinit))
+    log.info('{n} initial nodes'.format(n=len(queue)))
+    return queue, visited
 
 
 def _forall_init(g, fol, aut, umap, keys):

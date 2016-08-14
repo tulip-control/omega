@@ -12,6 +12,38 @@ log = logging.getLogger('omega')
 log.setLevel('ERROR')
 
 
+def test_symbolic_automaton():
+    aut = symbolic.Automaton()
+    aut.vars['x'] = dict(
+        type='bool',
+        owner='env')
+    aut.vars['y'] = dict(
+        type='int',
+        dom=(3, 17),
+        owner='sys')
+    aut.init['env'].append('x')
+    aut.action['env'].append("x -> ! x'")
+    aut.init['sys'].append('y = 5')
+    aut.action['sys'].append("(y < 6) -> (y' > 10)")
+    # strategy definition
+    assert aut.moore is True, aut.moore
+    assert aut.plus_one is True, aut.plus_one
+    assert aut.qinit == '\A \A', aut.qinit
+    # str
+    s = str(aut)
+    assert s.startswith('Symbolic automaton:'), s[:10]
+    assert s.endswith('> 10)\n'), s[-3:]
+    # data persistence
+    s = aut.dumps()
+    d = eval(s)
+    assert isinstance(d, dict), d
+    keys = set(d)
+    keys_ = {
+        'vars', 'init', 'action', 'win',
+        'acceptance', 'moore', 'plus_one', 'qinit'}
+    assert keys == keys_, keys
+
+
 def test_partition_vars():
     bits = ['a', 'b', 'c']
     ubits = ['a']

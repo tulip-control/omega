@@ -57,6 +57,7 @@ def action_to_steps(aut, qinit='\A \A'):
     g = nx.DiGraph()
     queue, visited = _init_search(g, fol, aut, umap, keys, qinit)
     varnames = set(aut.vars)
+    symbolic._assert_support_moore(aut)
     # search
     while queue:
         node = queue.pop()
@@ -72,6 +73,7 @@ def action_to_steps(aut, qinit='\A \A'):
         sys = fol.replace(u, values)
         for next_env in env_iter:
             log.debug('next_env: {r}'.format(r=next_env))
+            # no effect if `aut.moore`
             u = fol.replace(sys, next_env)
             u = fol.replace(u, unprime_vars)
             env_values = {unprime_vars[var]: value

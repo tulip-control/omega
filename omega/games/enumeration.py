@@ -9,6 +9,7 @@ Leslie Lamport
     Vol.21, No.9, pp.768--775, 1995
     doi: 10.1109/32.464544
 """
+import collections
 import logging
 
 import networkx as nx
@@ -224,6 +225,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
 
 def _find_node(d, umap, keys):
     """Return node in `umap` with assignment `d`."""
+    assert isinstance(keys, collections.Sequence), keys
     key = _node_tuple(d, keys)
     assert key in umap, (key, umap)
     u = umap[key]
@@ -232,6 +234,7 @@ def _find_node(d, umap, keys):
 
 def _add_new_node(d, g, queue, umap, keys):
     """Add node to graph `g` for the assignment `d`."""
+    assert isinstance(keys, collections.Sequence), keys
     u = len(g)
     assert u not in g, u
     g.add_node(u, **d)

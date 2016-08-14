@@ -41,6 +41,8 @@ def action_to_steps(aut, qinit='\A \A'):
     - `'\E \A'`: pick a sys state `u` and enumerate all
       states that satisfy `env_init` and `y = u`
     """
+    assert set(aut.players) == {'env', 'sys'}, aut.players
+    aut.assert_consistent(built=True)
     bdd = aut.bdd
     assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()

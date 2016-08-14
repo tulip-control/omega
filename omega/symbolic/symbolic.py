@@ -252,7 +252,12 @@ class Automaton(object):
             for k, v in d.iteritems():
                 for u in v:
                     if built:
-                        assert u in self.bdd, u
+                        try:
+                            assert u in self.bdd, u
+                        except TypeError:
+                            raise AssertionError(
+                                'Automaton needs '
+                                'to be compiled')
                     else:
                         assert isinstance(u, basestring)
         if not built:

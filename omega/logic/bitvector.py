@@ -238,15 +238,18 @@ def map_bits_to_integers(table):
     """Return `dict` that maps each bit to an integer or Boolean."""
     bit2int = dict()
     for var, d in table.iteritems():
-        if 'bitnames' in d:
+        dtype = d['type']
+        if dtype in ('int', 'saturating', 'modwrap'):
+            assert 'bitnames' in d, d
             a = {b: var for b in d['bitnames']}
-        else:
+        elif dtype == 'bool':
             a = {var: var}
+        else:
+            raise Exception(
+                'unknown var type "{dtype}"'.format(
+                    dtype=dtype))
         bit2int.update(a)
-    bit2int = {
-        bit: var
-        for var, d in table.iteritems()
-        for bit in d['bitnames']}
+    assert len(bit2int) >= len(table)
     return bit2int
 
 

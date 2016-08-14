@@ -18,7 +18,6 @@ from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import enumeration as enum
-from omega.symbolic import symbolic
 
 
 log = logging.getLogger(__name__)

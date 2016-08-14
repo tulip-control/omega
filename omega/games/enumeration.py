@@ -55,7 +55,6 @@ def action_to_steps(aut, qinit='\A \A'):
     keys = list(aut.vars)  # fix an order for tupling
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
-    g.sorted_vars = keys
     queue, visited = _init_search(g, fol, aut, umap, keys, qinit)
     varnames = set(aut.vars)
     # search

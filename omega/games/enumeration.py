@@ -248,7 +248,8 @@ def _add_to_visited(values, visited, aut):
     bdd = aut.bdd
     c = list()
     for var, value in values.iteritems():
-        if aut.vars[var]['type'] == 'bool':
+        t = aut.vars[var]['type']
+        if t == 'bool':
             assert value in (True, False), value
             if bool(value):
                 c.append(var)
@@ -256,6 +257,7 @@ def _add_to_visited(values, visited, aut):
                 c.append('! ' + var)
             continue
         # integer
+        assert t in ('int', 'saturating', 'modwrap'), t
         s = '{var} = {value}'.format(var=var, value=value)
         c.append(s)
     s = stx.conj(c)

@@ -224,7 +224,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
 
 def _find_node(d, umap, keys):
     """Return node in `umap` with assignment `d`."""
-    key = tuple(d[k] for k in keys)
+    key = _node_tuple(d, keys)
     assert key in umap, (key, umap)
     u = umap[key]
     return u
@@ -235,7 +235,7 @@ def _add_new_node(d, g, queue, umap, keys):
     u = len(g)
     assert u not in g, u
     g.add_node(u, **d)
-    key = tuple(d[k] for k in keys)
+    key = _node_tuple(d, keys)
     assert key not in umap, (key, umap)
     umap[key] = u
     queue.append(u)
@@ -264,3 +264,12 @@ def _add_to_visited(values, visited, aut):
     u = aut.add_expr(s)
     visited = bdd.apply('or', visited, u)
     return visited
+
+
+def _node_tuple(d, keys):
+    """Return `tuple` of `d` values ordered by `keys`.
+
+    @type d: `dict`
+    @type keys: `tuple`
+    """
+    return tuple(d[k] for k in keys)

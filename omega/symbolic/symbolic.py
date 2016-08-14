@@ -212,8 +212,15 @@ class Automaton(object):
 
     def dumps(self):
         """Return `repr` of a `dict` with the attributes."""
-        d = dict(vars=self.vars, init=self.init,
-                 action=self.action, win=self.win)
+        d = dict(
+            vars=self.vars,
+            init=self.init,
+            action=self.action,
+            win=self.win,
+            acceptance=self.acceptance,
+            moore=self.moore,
+            plus_one=self.plus_one,
+            qinit=self.qinit)
         return repr(d)
 
     def build(self):

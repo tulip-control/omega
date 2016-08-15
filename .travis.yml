@@ -1,12 +1,17 @@
+sudo: false
+
 language: python
 
 python:
   - 2.7
 
-install:
+before_install:
   - pip install --upgrade pip setuptools
   - pip install coveralls
-  - pip install .
+
+install:
+  - python setup.py sdist
+  - pip install dist/omega-*.tar.gz
 
 script:
   - cd tests/
@@ -14,4 +19,3 @@ script:
 
 after_success:
   - coveralls
-

@@ -115,8 +115,13 @@ class Context(object):
             yield d
 
     def add_expr(self, e):
-        """Add first-order formula."""
+        """Add first-order predicate.
+
+        A predicate is a Boolean-valued formula.
+        """
+        assert stx.isinstance_str(e), e
         s = bv.bitblast(e, self.vars)
+        assert stx.isinstance_str(s), s  # was `e` a predicate ?
         return sym_bdd.add_expr(s, self.bdd)
 
     def apply(self, op, u, v=None, w=None):

@@ -1,6 +1,44 @@
+"""Test `omega.symbolic.fixpoint`."""
+import logging
+
+logging.getLogger('omega').setLevel(logging.WARNING)
+
 from omega.automata import TransitionSystem
 from omega.symbolic import fixpoint as fx
-from omega.symbolic import logicizer, symbolic
+from omega.symbolic import fol as _fol
+from omega.symbolic import logicizer
+from omega.symbolic import symbolic
+
+
+def test_attractor():
+    g = TransitionSystem()
+    g.vars['x'] = 'bool'
+    g.env_vars.add('x')
+    g.add_path([0, 1, 2, 3])
+    g.add_edge(4, 1, formula='x')
+    a = logicizer.graph_to_logic(g, 'loc', True)
+    symbolic.fill_blanks(a)
+    aut = a.build()
+    target = aut.add_expr('loc = 2')
+    u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
+                     target, aut)
+    fol = _fol.Context()
+    fol.add_vars(aut.vars)
+    fol.bdd = aut.bdd
+    bdd = aut.bdd
+    ok = {0: True, 1: True, 2: True, 3: False, 4: False}
+    for q, value in ok.iteritems():
+        subs = {'loc': q}
+        v = fol.replace(u, subs)
+        assert (v == bdd.true) == value, v
+    inside = aut.add_expr('loc > 0')
+    u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
+                     target, aut, inside=inside)
+    ok = {0: False, 1: True, 2: True, 3: False, 4: False}
+    for q, value in ok.iteritems():
+        subs = {'loc': q}
+        v = fol.replace(u, subs)
+        assert (v == bdd.true) == value, v
 
 
 def test_descendants():

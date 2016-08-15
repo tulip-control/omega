@@ -14,8 +14,11 @@ Decision Procedures, Springer
 from __future__ import absolute_import
 import logging
 import math
+
 import networkx as nx
+
 from omega.logic import lexyacc
+from omega.logic import syntax as stx
 from omega.logic.ast import Nodes as _Nodes
 
 
@@ -1188,11 +1191,8 @@ def _flatten_var(v, *arg, **kw):
     """Return `list` of bits, for both integer and Boolean var."""
     flat = v.flatten(*arg, **kw)
     # bool ?
-    try:
-        flat + 'str'
+    if stx.isinstance_str(flat):
         flat = [flat]
-    except TypeError:
-        pass
     bits = _filter_trailing_zeros(flat)
     return bits
 

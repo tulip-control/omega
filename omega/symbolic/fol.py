@@ -69,11 +69,7 @@ class Context(object):
             return u
         assert vars_to_new, vars_to_new
         for k in vars_to_new:
-            try:
-                vars_to_new[k] + 'str'
-                rename = True
-            except TypeError:
-                rename = False
+            rename = stx.isinstance_str(vars_to_new[k])
             break
         if rename:
             bit_rename = _refine_renaming(vars_to_new, self.vars)

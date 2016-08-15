@@ -1,8 +1,11 @@
 """Syntactic check for GR(1) fragment."""
 from __future__ import absolute_import
+
 import networkx as nx
+
 from omega.logic import lexyacc
 from omega.logic.ast import Nodes
+from omega.logic import syntax as stx
 from omega.symbolic import symbolic
 from omega.logic import transformation as tx
 
@@ -157,11 +160,10 @@ def split_gr1_old(f):
     binary tree.
     """
     # TODO: preprocess by applying syntactic identities: [][] = [] etc
-    try:
-        f + 's'
-        t = parser.parse(f)
-    except TypeError:
+    if stx.isinstance_str(f):
         t = f
+    else:
+        t = parser.parse(f)
     g = tx.Tree.from_recursive_ast(t)
     # collect boundary of conjunction operators
     Q = [g.root]

@@ -98,11 +98,11 @@ class Context(object):
     def pick(self, u, full, care_vars):
         """Return a satisfying assignment, or `None`."""
         try:
-            return next(self.sat_iter(u, full, care_vars))
+            return next(self.pick_iter(u, full, care_vars))
         except StopIteration:
             return None
 
-    def sat_iter(self, u, full, care_vars):
+    def pick_iter(self, u, full, care_vars):
         """Return generator of first-order satisfying assignments."""
         if care_vars:
             care_bits = bv.bit_table(care_vars, self.vars)

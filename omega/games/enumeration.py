@@ -69,7 +69,7 @@ def action_to_steps(aut, qinit='\A \A'):
         (u,) = aut.action['env']
         u = fol.replace(u, values)
         # apply Mealy controller function
-        env_iter = fol.sat_iter(
+        env_iter = fol.pick_iter(
             u, full=True, care_vars=primed_vars['env'])
         (u,) = aut.action['sys']
         sys = fol.replace(u, values)
@@ -151,7 +151,7 @@ def _forall_init(g, fol, aut, umap, keys):
     bdd = fol.bdd
     (env_init,) = aut.init['env']
     assert env_init != bdd.false
-    init_iter = fol.sat_iter(
+    init_iter = fol.pick_iter(
         env_init, full=True,
         care_vars=aut.vars)
     visited = bdd.false
@@ -189,7 +189,7 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     (env_init,) = aut.init['env']
     assert env_init != bdd.false
     only_env_init = fol.exist(aut.control['sys'], env_init)
-    env_iter = fol.sat_iter(
+    env_iter = fol.pick_iter(
         only_env_init, full=True, care_vars=aut.control['env'])
     visited = bdd.false
     queue = list()
@@ -226,7 +226,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
     sys_0 = fol.pick(u, full=True, care_vars=aut.control['sys'])
     # iterate over env initial assignments
     # independently of sys
-    env_iter = fol.sat_iter(
+    env_iter = fol.pick_iter(
         only_env_init, full=True, care_vars=aut.control['env'])
     visited = bdd.false
     queue = list()

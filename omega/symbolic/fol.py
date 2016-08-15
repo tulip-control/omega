@@ -1,4 +1,13 @@
-"""First-order wrapper for BDDs."""
+"""First-order wrapper for BDDs.
+
+References
+==========
+
+Leslie Lamport, Lawrence C. Paulson
+    "Should your specification language be typed?"
+    ACM Transactions on Programming Languages and Systems
+    Vol.21, No.3, pp.502--526, 1999
+"""
 # other places where relevant functions exist:
 #   dd.mdd
 #   omega.logic.bitvector
@@ -24,7 +33,16 @@ log = logging.getLogger(__name__)
 
 
 class Context(object):
-    """First-order interface to a binary decision diagram."""
+    """First-order interface to a binary decision diagram.
+
+    All operations assume that integer-valued variables
+    take only values that correspond to the Boolean-valued
+    variables that refine them.
+
+    Quantification is implicitly bounded.
+    In the future, the bound will be made explicit
+    in the syntax.
+    """
 
     def __init__(self):
         """Instantiate first-order context."""
@@ -32,19 +50,41 @@ class Context(object):
         self.bdd = _bdd.BDD()
 
     def add_vars(self, dvars):
-        """Bitblast and add variables in `dvars`.
+        r"""Refine variables in `dvars`.
 
-        These variables can have integer or Boolean type hints.
-        Type hints are used to choose a refinement of
-        integers by finitely many bits.
+        The variables in `dvars` should have type hints.
+        A Boolean-valued variable remains so.
+        An integer-valued variable is assumed to take the
+        value resulting as a function of some (fresh)
+        Boolean-valued variables.
 
-        No type predicates managed here:
-        This is an untyped logic!
+        Sometimes these variables are called "bits".
+        The function is based on two's complement,
+        see `omega.logic.bitvector` for details.
 
-        Priming is not reasoned about here.
-        Priming is the responsibility of higher levels.
+        In other words, type hints are used to pick
+        a refinement of integers by finitely many bits.
+        A sufficient number of bits is selected,
+        and operations assume this as type invariant,
+        *not* the exact type hint given.
+
+        For example, an integer `x` with type hint `x \in 0..2`
+        will be refined using 2 Boolean-valued variables
+        `x_0` and `x_1`. All operations and quantification
+        will assume that `x \in 0..3`.
+        Mind the extra value (3) allowed,
+        compared to the hint (0..2).
+
+        Attention:
+
+        - Fine-grained type predicates
+          (`n..m` with `n` and `m` other than powers of 2)
+          are not managed here.
+
+        - Priming is not reasoned about here.
+          Priming is cared for by other modules.
         """
-        # should be fresh
+        # vars in `dvars` should be fresh
         common = set(dvars).intersection(self.vars)
         assert not common, common
         t = bv.bitblast_table(dvars)

@@ -1,9 +1,11 @@
 """Tests for `omega.games.gr1`."""
 import logging
 import pprint
+
 from dd import bdd as _bdd
 from dd import mdd
 from nose.tools import assert_raises
+
 from omega.symbolic import symbolic, enumeration
 from omega.games import gr1
 
@@ -347,13 +349,13 @@ def test_rabin_persistence_2():
 def test_streett_with_safety_assumption():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'))
+    a.moore = False
+    a.plus_one = False
     a.action['env'] = ['x']
     a.action['sys'] = ['x']
     symbolic.fill_blanks(a)
     # solve
     aut = a.build()
-    aut.moore = False
-    aut.plus_one = False
     z, yij, xijk = gr1.solve_streett_game(aut)
     assert z == aut.bdd.true, z
     # transducer
@@ -373,6 +375,18 @@ def test_streett_with_safety_assumption():
     # transducer
     with assert_raises(AssertionError):
         gr1.make_streett_transducer(z, yij, xijk, aut)
+    # Moore case
+    a.moore = True
+    a.plus_one = False
+    a.action['env'] = ['x']
+    a.action['sys'] = ['x']
+    # solve
+    aut = a.build()
+    z_moore, yij, xijk = gr1.solve_streett_game(aut)
+    assert z_moore != z, 'should differ due to plus_one'
+    t = gr1.make_streett_transducer(z_moore, yij, xijk, aut)
+    (init,) = t.init['env']
+    assert init == t.add_expr('_goal = 0'), t.bdd.to_expr(init)
 
 
 def test_rabin_with_safety_assumption():
@@ -538,6 +552,106 @@ def test_rabin_2_goals():
     assert win_set == aut.bdd.false, aut.bdd.to_expr(win_set)
 
 
+def test_is_realizable():
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='int', dom=(0, 5), owner='sys'))
+    # \A \A realizable
+    a.init['env'] = ['x & (y = 1)']
+    a.init['sys'] = ['(y < 3)']
+    a.qinit = '\A \A'
+    aut = a.build()
+    z = aut.add_expr('x & (y < 2)')
+    assert gr1.is_realizable(z, aut)
+    # \A \A unrealizable
+    a.init['sys'] = ['(y < 1)']
+    aut = a.build()
+    assert not gr1.is_realizable(z, aut)
+    # \E \E realizable
+    a.init['env'] = ['x & (y = 1)']
+    a.init['sys'] = ['(y < 3)']
+    a.qinit = '\E \E'
+    aut = a.build()
+    z = aut.add_expr('x & (y < 2)')
+    assert gr1.is_realizable(z, aut)
+    # \E \E unrealizable
+    a.init['env'] = ['x & (y = 1)']
+    a.init['sys'] = ['(y > 10)']
+    a.qinit = '\E \E'
+    aut = a.build()
+    z = aut.add_expr('True')
+    assert not gr1.is_realizable(z, aut)
+    # \A \E realizable
+    a.moore = False
+    a.init['env'] = ['True']
+    s = (
+        '(x => (y = 1)) & '
+        '((! x) => (y = 4))')
+    a.init['sys'] = [s]
+    a.qinit = '\A \E'
+    aut = a.build()
+    z = aut.add_expr('y > 0')
+    assert gr1.is_realizable(z, aut)
+    # \A \E unrealizable
+    s = (
+        '(x => (y = 1)) & '
+        '((! x) => (y = 10))')
+    a.init['sys'] = [s]
+    a.qinit = '\A \E'
+    aut = a.build()
+    z = aut.add_expr('True')
+    assert not gr1.is_realizable(z, aut)
+    # \E \A realizable
+    a.moore = True
+    s = 'x => (y = 1)'
+    a.init['sys'] = [s]
+    a.qinit = '\E \A'
+    aut = a.build()
+    z = aut.add_expr('y <= 2')
+    assert gr1.is_realizable(z, aut)
+    # \E \A unrealizable
+    s = (
+        '(x => (y = 1)) & '
+        '((! x) => (y = 3))')
+    a.init['sys'] = [s]
+    a.qinit = '\E \A'
+    aut = a.build()
+    z = aut.add_expr('True')
+    assert not gr1.is_realizable(z, aut)
+
+
+def test_make_init():
+    internal_init = 1
+    win = 1
+    t = symbolic.Automaton()
+    t.vars['x'] = dict(type='bool', owner='sys')
+    t = t.build()
+    aut = t
+    aut.qinit = '???'
+    with assert_raises(ValueError):
+        gr1._make_init(internal_init, win, t, aut)
+
+
+def test_streett_qinit_exist_forall():
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='int', dom=(0, 5), owner='sys'))
+    a.moore = True
+    a.qinit = '\E \A'
+    a.init['env'] = ['x']
+    a.init['sys'] = ['x -> (y = 4)']
+    symbolic.fill_blanks(a)
+    # solve
+    a = a.build()
+    z, yij, xijk = gr1.solve_streett_game(a)
+    assert z == a.add_expr('(y >= 0) & (y <= 5)'), z
+    # transducer
+    t = gr1.make_streett_transducer(z, yij, xijk, a)
+    u = t.init['env'][0]
+    u_ = t.add_expr('x & (y = 4) & (_goal = 0)')
+    assert u == u_, t.bdd.to_expr(u)
+
+
 def test_trivial_winning_set():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='sys'))
@@ -545,6 +659,43 @@ def test_trivial_winning_set():
     symbolic.fill_blanks(a)
     triv, aut = gr1.trivial_winning_set(a)
     assert triv == aut.bdd.true, aut.bdd.to_expr(triv)
+
+
+def test_warn_moore_mealy():
+    a = symbolic.Automaton()
+    a.vars = dict(x=dict(type='bool', owner='env'),
+                  y=dict(type='int', dom=(0, 25), owner='sys'))
+    # Moore OK
+    a.moore = True
+    a.action['env'] = ["x & x'"]
+    a.action['sys'] = ["(y > 4) & (y' = 5)"]
+    symbolic.fill_blanks(a)
+    aut = a.build()
+    r = gr1._warn_moore_mealy(aut)
+    assert r is True, r
+    # Moore with env' in sys action
+    a.action['env'] = ["x & x'"]
+    a.action['sys'] = ["x' & (y > 4) & (y' = 5)"]
+    aut = a.build()
+    r = gr1._warn_moore_mealy(aut)
+    assert r is False, r
+    # Mealy with env' in sys action
+    a.moore = False
+    aut = a.build()
+    r = gr1._warn_moore_mealy(aut)
+    assert r is True, r
+    # Mealy with sys' in env action
+    a.action['env'] = ["x & x' & (y' > 4)"]
+    a.moore = False
+    aut = a.build()
+    r = gr1._warn_moore_mealy(aut)
+    assert r is False, r
+    # Moore with sys' in env action
+    a.action['sys'] = ["(y > 4) & (y' = 5)"]
+    a.moore = True
+    aut = a.build()
+    r = gr1._warn_moore_mealy(aut)
+    assert r is False, r
 
 
 def action_refined(aut_a, aut_b):

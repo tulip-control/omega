@@ -288,3 +288,12 @@ def unprime(var):
     """Return unprimed variable."""
     assert var[-1] == "'", var
     return var[:-1]
+
+
+def isinstance_str(s):
+    """Raise `AssertionError` if `s` is not a "string"."""
+    try:
+        s + 's'
+    except TypeError:
+        return False
+    return True

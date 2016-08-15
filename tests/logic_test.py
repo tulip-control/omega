@@ -1,6 +1,8 @@
 """Tests for `omega.logic`."""
 from nose.tools import assert_raises
+
 from omega.logic import past
+from omega.logic import syntax as stx
 
 
 parser = past.Parser()
@@ -230,6 +232,15 @@ def test_context_checks():
     with assert_raises(AssertionError):
         tree.flatten(testers=dict,
                      context='bool')
+
+
+def test_isinstance_str():
+    s = 's'
+    r = stx.isinstance_str(s)
+    assert r is True, r
+    s = 0
+    r = stx.isinstance_str(s)
+    assert r is False, r
 
 
 if __name__ == '__main__':

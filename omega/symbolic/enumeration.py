@@ -338,6 +338,8 @@ def _format_nx(g):
         us = umap[u]
         vs = umap[v]
         h.add_edge(us, vs)
+    assert len(h) == len(g)
+    assert len(h) == len(umap)
     return h, umap
 
 

@@ -341,10 +341,24 @@ def _format_nx(g):
     return h, umap
 
 
-def _square_conj(gen, n, op=r'&and;'):
+def _square_conj(p, n=None, op=r'&and;'):
+    """Return conjunction arranged vertically.
+
+    The number of conjuncts per line is
+    picked to make the result more balanced,
+    closer to a square.
+    The formatting characters are for `dot`.
+
+    @param p: iterable of conjuncts
+    @param n: number of items in `p`
+        (useful when `p` is a generator)
+    """
+    if n is None:
+        n = len(p)
+    assert n > 0, n
     m = math.ceil(n**0.5)
     c = list()
-    for i, s in enumerate(gen):
+    for i, s in enumerate(p):
         c.append(op)
         s = '({s})'.format(s=s)
         c.append(s)

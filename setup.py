@@ -6,7 +6,9 @@ from setuptools import setup
 
 
 name = 'omega'
-description = 'Algorithms related to omega regular languages.'
+description = (
+    'Symbolic algorithms for solving '
+    'games of infinite duration.')
 url = 'https://github.com/johnyf/{name}'.format(name=name)
 README = 'README.md'
 VERSION_FILE = '{name}/_version.py'.format(name=name)

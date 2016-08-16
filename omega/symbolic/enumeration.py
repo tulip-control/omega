@@ -360,7 +360,7 @@ def _square_conj(p, n=None, op=r'&and;'):
     c = list()
     for i, s in enumerate(p):
         c.append(op)
-        s = '({s})'.format(s=s)
+        s = ' ({s}) '.format(s=s)
         c.append(s)
         if (i + 1) % m == 0:
             c.append('\l')

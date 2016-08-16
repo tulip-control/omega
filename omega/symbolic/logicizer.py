@@ -258,15 +258,16 @@ def _assign(k, v, dvars):
     @type v: `str` or `int`
     @type dvars: `dict`
     """
-    dom = dvars[k]['dom']
-    if isinstance(dom, tuple):
+    dtype = dvars[k]['type']
+    if dtype in ('int', 'saturating', 'modwrap'):
         s = '{k} = {v}'.format(k=k, v=v)
-    elif isinstance(dom, (set, list)):
+    elif dtype == 'str':
         s = '{k} = "{v}"'.format(k=k, v=v)
-    elif dom == 'bool':
+    elif dtype == 'bool':
         s = '{k} <-> {v}'.format(k=k, v=v)
     else:
-        raise Exception('domain is: {dom}'.format(dom=dom))
+        raise Exception('dtype is: {dtype}'.format(
+            dtype=dtype))
     return _pstr(s)
 
 

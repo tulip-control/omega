@@ -52,7 +52,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
         if self_loops:
-            r = '({r}) | ((X {var}) = {var})'.format(
+            r = "({r}) | ({var}' = {var})".format(
                 r=r, var=nodevar)
         sys_tran.append(r)
         sys_tran.extend(nodepred)
@@ -65,7 +65,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
-            r = '({r}) | ((X {var}) = {var})'.format(
+            r = "({r}) | ({var}' = {var})".format(
                 r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
@@ -127,7 +127,7 @@ def _node_var_trans(g, nodevar, dvars):
         # initial node vars
         init.append('!({pre}) || ({r})'.format(pre=pre, r=r))
         # transitions of node vars
-        trans.append('(X (({pre}) -> ({r})))'.format(pre=pre, r=r))
+        trans.append("((({pre}) -> ({r}))')".format(pre=pre, r=r))
     return (init, trans)
 
 

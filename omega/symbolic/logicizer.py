@@ -150,7 +150,7 @@ def _sys_trans(g, nodevar, dvars):
         # no successors ?
         if not g.succ.get(u):
             logger.debug('node: {u} is deadend !'.format(u=u))
-            sys_trans.append('({pre}) -> (X False)'.format(pre=pre))
+            sys_trans.append('({pre}) -> False'.format(pre=pre))
             continue
         post = list()
         for u, v, d in g.edges_iter(u, data=True):
@@ -203,7 +203,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
         pre = _assign(nodevar, u, dvars)
         # no successors ?
         if not g.succ.get(u):
-            env_trans.append('{pre} -> X(False)'.format(pre=pre))
+            env_trans.append('{pre} -> False'.format(pre=pre))
             if not self_loops:
                 warnings.warn(
                     'Environment dead-end found.\n'

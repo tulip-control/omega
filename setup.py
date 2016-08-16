@@ -14,7 +14,7 @@ README = 'README.md'
 VERSION_FILE = '{name}/_version.py'.format(name=name)
 MAJOR = 0
 MINOR = 0
-MICRO = 9
+MICRO = 10
 VERSION = '{major}.{minor}.{micro}'.format(
     major=MAJOR, minor=MINOR, micro=MICRO)
 VERSION_TEXT = (

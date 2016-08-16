@@ -329,9 +329,9 @@ def _format_nx(g):
     h = nx.DiGraph()
     umap = dict()
     for u, d in g.nodes_iter(data=True):
-        gen = ('{var}={val}'.format(var=var, val=d[var])
-               for var in g.sorted_vars if var in d)
-        s = _square_conj(gen, n)
+        c = ['{var}={val}'.format(var=var, val=d[var])
+             for var in g.sorted_vars if var in d]
+        s = _square_conj(c)
         h.add_node(s)
         umap[u] = s
     for u, v in g.edges_iter():

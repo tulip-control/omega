@@ -85,6 +85,7 @@ class Context(object):
           Priming is cared for by other modules.
         """
         # vars in `dvars` should be fresh
+        assert dvars, dvars
         common = set(dvars).intersection(self.vars)
         assert not common, common
         t = bv.bitblast_table(dvars)
@@ -171,6 +172,7 @@ class Context(object):
 
 def reorder(dvars, fol):
     """Shift integers up in the variable order of `fol.bdd`."""
+    assert dvars, dvars
     bdd = fol.bdd
     for var, d in dvars.iteritems():
         level = d['level']

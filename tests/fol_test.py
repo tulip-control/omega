@@ -142,6 +142,16 @@ def test_quantifiers():
     bdd = fol.bdd
     d = dict(x=dict(type='int', dom=(0, 5), owner='sys'))
     fol.add_vars(d)
+    # no `qvars`
+    u = fol.add_expr('True')
+    r = fol.exist(set(), u)
+    assert r == u, (r, u)
+    u = fol.add_expr('False')
+    r = fol.exist(set(), u)
+    assert r == u, (r, u)
+    u = fol.add_expr('x = 5')
+    r = fol.exist(set(), u)
+    assert r == u, (r, u)
     # TYPENESS !!!
     s = '\E x: (x = 7)'
     u = fol.add_expr(s)
@@ -173,7 +183,7 @@ def test_quantifiers():
     u = fol.add_expr('x > 7')
     u = fol.exist(['x'], u)
     assert u == bdd.false
-    del u
+    del u, r
 
 
 def test_pick():

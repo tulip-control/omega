@@ -133,6 +133,8 @@ class Context(object):
 
     def exist(self, qvars, u):
         """Existentially quantify `qvars` in `u`."""
+        if not qvars:
+            return u
         qbits = bv.bit_table(qvars, self.vars)
         return self.bdd.exist(qbits, u)
 

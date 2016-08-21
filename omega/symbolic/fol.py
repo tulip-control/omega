@@ -17,6 +17,7 @@ Leslie Lamport, Lawrence C. Paulson
 # symbolic_transducers
 # simulate
 import logging
+import pprint
 
 try:
     from dd import cudd as _bdd
@@ -48,6 +49,13 @@ class Context(object):
         """Instantiate first-order context."""
         self.vars = dict()
         self.bdd = _bdd.BDD()
+
+    def __str__(self):
+        return ((
+            'Refinement of variables by '
+            'Boolean-valued variables:\n\n'
+            '{vars}').format(
+                vars=pprint.pformat(self.vars)))
 
     def add_vars(self, dvars):
         r"""Refine variables in `dvars`.

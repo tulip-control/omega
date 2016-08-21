@@ -467,12 +467,12 @@ class Nodes(_Nodes):
                 if name in t:
                     assert mem is None, mem
                 return '{v}{prime}'.format(
-                    v=name, prime="'" if prime else '')
+                    v=name, prime=stx.PRIME if prime else '')
             # arithmetic context
             # must be integer variable
             bits = var_to_twos_complement(name, t)
             bits = ["{b}{prime}".format(
-                    b=b, prime="'"
+                    b=b, prime=stx.PRIME
                     if not b[0].isdigit() and prime else '')
                 for b in bits]
             return bits

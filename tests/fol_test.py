@@ -39,8 +39,8 @@ def test_add_vars():
     d = {"y'": dict(type='int', dom=(0, 1))}
     fol.add_vars(d)
     assert "y'" in fol.vars, fol.vars
-    # TODO: this will have to change
-    assert "y'_0" in bdd.vars, bdd.vars
+    assert "y_0'" in bdd.vars, bdd.vars
+    assert "y'_0" not in bdd.vars, bdd.vars
 
 
 def test_support():

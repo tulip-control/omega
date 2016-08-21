@@ -170,8 +170,17 @@ def _add_bitnames(t):
     for var, d in t.iteritems():
         if d['type'] != 'int':
             continue
-        bits = ['{name}_{i}'.format(name=var, i=i)
-                for i in xrange(d['width'])]
+        assert d['type'] == 'int', d['type']
+        if stx.isprimed(var):
+            name = stx.unprime(var)
+            prime = stx.PRIME
+        else:
+            name = var
+            prime = ''
+        bits = [
+            '{name}_{i}{prime}'.format(
+                name=name, i=i, prime=prime)
+            for i in xrange(d['width'])]
         are_booleans = filter(t.__contains__, bits)
         assert not are_booleans, (bits, t)
         d['bitnames'] = bits

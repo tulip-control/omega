@@ -232,11 +232,12 @@ def _bitfields_to_int_iter(bits, t):
     for flatname, d in t.iteritems():
         if d['type'] == 'bool':
             continue
+        bitnames = d['bitnames']
         # missing ?
-        if not set(d['bitnames']).intersection(bits):
+        if not set(bitnames).intersection(bits):
             continue
         # partial bitvector valuation
-        bitvalues = map(bits.get, d['bitnames'])
+        bitvalues = map(bits.get, bitnames)
         if not d['signed']:
             # TODO: update this
             bitvalues += ['0']

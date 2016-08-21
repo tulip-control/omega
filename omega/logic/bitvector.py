@@ -716,7 +716,7 @@ def multiplier(x, y, start=0):
     res, mem = _multiplier(p, q, s=None, start=start)
     assert len(res) == n, (len(res), n)
     if n > ALU_BITWIDTH:
-        print('WARNING: (openpromela.bitvector) '
+        print('WARNING: (bitvector) '
               'Truncating multiplication to {alu} bits.'.format(
                   alu=ALU_BITWIDTH))
         res = truncate(res, ALU_BITWIDTH)

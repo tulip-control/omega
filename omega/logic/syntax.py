@@ -4,6 +4,7 @@ import math
 
 
 logger = logging.getLogger(__name__)
+PRIME = "'"
 
 
 def conj(iterable, sep=''):
@@ -281,7 +282,7 @@ def _plus(x, y):
 def prime(var):
     """Return primed variable."""
     assert var[-1] != "'", var
-    return var + "'"
+    return var + PRIME
 
 
 def unprime(var):

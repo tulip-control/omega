@@ -365,6 +365,8 @@ expr ::= expr '*' expr
        | '\E' list `:` expr  # exists
 
        # propositional
+       | expr '/\' expr
+       | expr '\/' expr
        | '!' expr
        | expr '&' expr | expr '&&' expr
        | expr '|' expr | expr '||' expr
@@ -412,8 +414,8 @@ The token precedence (lowest to highest) and associativity (r = right, l = left,
 - `<->` (l)
 - `=>`, `->` (l)
 - `^` (l)
-- `|` (l)
-- `&` (l)
+- `\/`, `|` (l)
+- `/\`, `&` (l)
 - `[]`, `<>`, `-[]`, `-<>` (l)
 - `U`, `W`, `R`, `S`, `T` (l)
 - `=`, `!=` (l)

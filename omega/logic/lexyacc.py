@@ -46,12 +46,12 @@ class Lexer(astutils.Lexer):
         return t
 
     def t_AND(self, t):
-        r'\&\&|\&'
+        r'\&\&|\&|/\\'
         t.value = '&'
         return t
 
     def t_OR(self, t):
-        r'\|\||\|'
+        r'\|\||\||\\/'
         t.value = '|'
         return t
 

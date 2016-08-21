@@ -33,7 +33,7 @@ def bitblast(f, t):
 
     @param f: quantified first-order action formula
     @type f: `str`
-    @param t: symbol table
+    @param t: symbol table as returned by `bitblast_table`
     @type t: `dict`
     """
     tree = _parser.parse(f)

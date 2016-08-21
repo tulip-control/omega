@@ -215,9 +215,10 @@ def _bitfields_to_int_iter(bits, t):
             raise Exception(
                 'unknown type "{dt}"'.format(dt=dt))
     missing = set(bits).difference(t_bits)
-    if missing:
-        print(('WARNING (synthesizer):'
-               ' missing bits:\n{b}').format(b=missing))
+    assert not missing, (
+        'WARNING: missing bits:\n {b}\n'
+        'from concrete table:\n {t}').format(
+            b=missing, t=t)
     # init
     bits = dict(bits)
     model = dict()

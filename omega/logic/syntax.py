@@ -29,7 +29,7 @@ def _associative_op(iterable, op, sep):
     false = 'False'
     if op == '&':
         true, false = false, true
-    glue = ') ' + sep + op + ' ('
+    glue = (') ' + sep + op + ' (')
     # avoid consuming a generator
     h = [x for x in iterable if x]
     return _recurse_op(0, len(h), h, true, false, glue)

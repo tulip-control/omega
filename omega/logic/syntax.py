@@ -281,14 +281,21 @@ def _plus(x, y):
 
 def prime(var):
     """Return primed variable."""
-    assert var[-1] != "'", var
+    assert not isprimed(var), var
     return var + PRIME
 
 
 def unprime(var):
     """Return unprimed variable."""
-    assert var[-1] == "'", var
-    return var[:-1]
+    assert isprimed(var), var
+    s = var[:-1]
+    assert not isprimed(s), s
+    return s
+
+
+def isprimed(var):
+    """Return `True` iff `var` ends with prime."""
+    return var[-1] == PRIME
 
 
 def isinstance_str(s):

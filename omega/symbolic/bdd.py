@@ -227,13 +227,13 @@ class BDDNodes(Nodes):
 
     class Num(Nodes.Num):
         def flatten(self, bdd, *arg, **kw):
-            # the only numbers in the tree are Boolean constants
-            assert self.value in ('0', '1'), self.value
             u = int(self.value)
             if u == 0:
                 r = bdd.false
-            else:
+            elif u == 1:
                 r = bdd.true
+            else:
+                r = bdd._add_int(u)
             return r
 
 

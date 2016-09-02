@@ -365,17 +365,23 @@ expr ::= expr '*' expr
        | '\E' list `:` expr  # exists
 
        # propositional
+
+       # TLA+ syntax
        | '~' expr
        | expr '/\' expr
        | expr '\/' expr
+       | expr '=>' expr
        | expr '<=>' expr
+
+       # Promela syntax
        | '!' expr
        | expr '&' expr | expr '&&' expr
        | expr '|' expr | expr '||' expr
-       | expr '^' expr  # xor
        | expr '->' expr
-       | expr '=>' expr
        | expr '<->' expr
+
+       # other
+       | expr '^' expr  # xor
        | 'ite' '(' expr ',' expr ',' expr ')'  # ternary conditional
 
        # temporal modal

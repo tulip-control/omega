@@ -365,8 +365,10 @@ expr ::= expr '*' expr
        | '\E' list `:` expr  # exists
 
        # propositional
+       | '~' expr
        | expr '/\' expr
        | expr '\/' expr
+       | expr '<=>' expr
        | '!' expr
        | expr '&' expr | expr '&&' expr
        | expr '|' expr | expr '||' expr
@@ -411,7 +413,7 @@ NUMBER ::= \d+  # integer
 The token precedence (lowest to highest) and associativity (r = right, l = left, n = none) is:
 
 - `:` (l)
-- `<->` (l)
+- `<=>`, `<->` (l)
 - `=>`, `->` (l)
 - `^` (l)
 - `\/`, `|` (l)
@@ -422,6 +424,6 @@ The token precedence (lowest to highest) and associativity (r = right, l = left,
 - `<=`, `>=`, `>` (l)
 - `+`, `-` (l)
 - `*`, `/`, `%` (l)
-- `!` (r)
+- `~`, `!` (r)
 - `X`, `-X`, `--X` (r)
 - `'`, `.` (l)

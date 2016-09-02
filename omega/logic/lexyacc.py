@@ -55,9 +55,24 @@ class Lexer(astutils.Lexer):
         t.value = '|'
         return t
 
+    def t_NEQUALS(self, t):
+        r'\!\='
+        # symbol `#` already marks comments
+        return t
+
+    def t_NOT(self, t):
+        r'~|\!'
+        t.value = '!'
+        return t
+
     def t_IMPLIES(self, t):
         r'\=>|->'
         t.value = '=>'
+        return t
+
+    def t_EQUIV(self, t):
+        r'\<\=>|\<->'
+        t.value = '<->'
         return t
 
     # quantifiers
@@ -67,12 +82,9 @@ class Lexer(astutils.Lexer):
     # conjoin and quantify existentially
     t_COLON = r'\:'
     # Boolean
-    t_NOT = r'\!'
     t_XOR = r'\^'
-    t_EQUIV = '\<->'
     # comparators
     t_EQUALS = r'\='
-    t_NEQUALS = r'\!\='
     t_LT = r'\<'
     t_LE = r'\<\='
     t_GT = r'>\='

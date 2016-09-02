@@ -33,8 +33,8 @@ g.vars = dict(x='bool', y=(0, 5))
 g.env_vars.add('x')
 
 g.add_nodes_from(xrange(5))
-g.add_edge(0, 1, formula="x & (y' = 4)")
-g.add_edge(0, 0, formula="! x")
+g.add_edge(0, 1, formula="x /\ (y' = 4)")
+g.add_edge(0, 0, formula=" ~ x")
 g.add_edge(1, 2, formula="(y' = 3)")
 g.add_edge(2, 3, formula="(y' = y - 1")
 g.add_edge(3, 4, formula="y' < y")
@@ -73,9 +73,9 @@ from omega.symbolic.symbolic import Automaton
 a = Automaton()
 a.vars = dict(x=dict(type='bool', owner='env'),
               y=dict(type='int', dom=(0, 5), owner='sys'))
-a.init['env'].append('!x')
+a.init['env'].append(' ~ x')
 a.init['sys'].append('y >= 2')
-a.action['env'].append("ite(x, !x', x')")
+a.action['env'].append("ite(x, ~ x', x')")
 a.action['sys'].append('y < 5')
 a.action['sys'].extend(["y' > 0", "x' => (y = y - 1)"])
 a.win['sys'].append('y = 3')
@@ -161,7 +161,7 @@ Notice that the same data structure is re-used with different formulae represent
 One of the most useful methods is `add_expr`. It takes a first-order formula and returns a BDD node:
 
 ```python
->>> u = aut.add_expr("x' & (y = 5)")
+>>> u = aut.add_expr("x' /\ (y = 5)")
 -42
 ```
 
@@ -255,7 +255,7 @@ t = dict(
     x=dict(type='bool', owner='env', init='True'),
     y=dict(type='saturating', dom=(0, 4), owner='sys', init=2)
 bt, init, safe = bv.bitblast_table(t)
-f = "x' & (y <= 5)"
+f = "x' /\ (y <= 5)"
 s = bv.bitblast(s, bt)
 ```
 
@@ -275,7 +275,7 @@ gives:
 {'sys': ['y = 2'], 'env': ['x = True']}
 
 >>> print(safe)
-{'sys': ['(0 <= y) & (y <= 4)'], 'env': []}
+{'sys': ['(0 <= y) /\ (y <= 4)'], 'env': []}
 
 >>> print(s)
 & x' $ 11 ^ ^ 1 ! y_0 1 | & 1 ! y_0 & ^ 1 ! y_0 1 ^ ^ 0 ! y_1 ? 1 | & 0 ! y_1 & ^ 0 ! y_1 ? 1 ^ ^ 1 ! y_2 ? 3 | & 1 ! y_2 & ^ 1 ! y_2 ? 3 ^ ^ 0 ! 0 ? 5 | & 0 ! 0 & ^ 0 ! 0 ? 5 ^ ^ 0 ! 0 ? 7 | & 0 ! 0 & ^ 0 ! 0 ? 7 ! ^ ! ^ 0 0 ? 9

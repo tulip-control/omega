@@ -92,8 +92,18 @@ class Context(object):
         - Priming is not reasoned about here.
           Priming is cared for by other modules.
         """
-        # vars in `dvars` should be fresh
+        # if any `dvars` not fresh, then must be same
         assert dvars, dvars
+        common = set(dvars).intersection(self.vars)
+        for var in common:
+            for k, v in dvars[var].iteritems():
+                assert self.vars[var][k] == v
+        if common:
+            log.warning('attempted adding existing vars')
+        dvars = {k: v for k, v in dvars.iteritems()
+                 if k not in common}
+        if not dvars:
+            return
         common = set(dvars).intersection(self.vars)
         assert not common, common
         t = bv.bitblast_table(dvars)

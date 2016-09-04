@@ -41,6 +41,22 @@ def test_add_vars():
     assert "y'" in fol.vars, fol.vars
     assert "y_0'" in bdd.vars, bdd.vars
     assert "y'_0" not in bdd.vars, bdd.vars
+    # adding same vars twice
+    fol = _fol.Context()
+    d = dict(x=dict(type='bool'))
+    fol.add_vars(d)
+    fol.add_vars(d)
+    # mismatch with existing var
+    d = dict(x=dict(type='int'))
+    with nt.assert_raises(AssertionError):
+        fol.add_vars(d)
+    # mixed new and existing
+    d = dict(x=dict(type='bool'),
+             y=dict(type='int', dom=(0, 5)))
+    fol.add_vars(d)
+    d['y']['dom'] = (3, 15)
+    with nt.assert_raises(AssertionError):
+        fol.add_vars(d)
 
 
 def test_support():

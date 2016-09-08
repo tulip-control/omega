@@ -5,7 +5,7 @@ import math
 
 logger = logging.getLogger(__name__)
 PRIME = "'"
-SUPPORTED_OPERATORS = {'&', '|'}
+SUPPORTED_OPERATORS = {'&', '|', '/\\', '\/'}
 
 
 def conj(iterable, sep='', op='&'):
@@ -28,7 +28,7 @@ def _associative_op(iterable, op, sep):
             'operator "{op}" not supported.'.format(op=op))
     true = 'True'
     false = 'False'
-    if op == '&':
+    if op in ('&', '/\\'):
         true, false = false, true
     glue = (') ' + sep + op + ' (')
     # avoid consuming a generator

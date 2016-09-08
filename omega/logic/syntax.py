@@ -7,14 +7,14 @@ logger = logging.getLogger(__name__)
 PRIME = "'"
 
 
-def conj(iterable, sep=''):
+def conj(iterable, sep='', op='&'):
     """Return binary conjunction in infix syntax."""
-    return _associative_op(iterable, '&', sep)
+    return _associative_op(iterable, op, sep)
 
 
-def disj(iterable, sep=''):
+def disj(iterable, sep='', op='|'):
     """Return binary disjunction in prefix syntax."""
-    return _associative_op(iterable, '|', sep)
+    return _associative_op(iterable, op, sep)
 
 
 def _associative_op(iterable, op, sep):

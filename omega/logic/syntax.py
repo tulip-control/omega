@@ -5,6 +5,7 @@ import math
 
 logger = logging.getLogger(__name__)
 PRIME = "'"
+SUPPORTED_OPERATORS = {'&', '|'}
 
 
 def conj(iterable, sep='', op='&'):
@@ -22,7 +23,7 @@ def _associative_op(iterable, op, sep):
 
     @param sep: separator
     """
-    if op not in {'&', '|'}:
+    if op not in SUPPORTED_OPERATORS:
         raise Exception(
             'operator "{op}" not supported.'.format(op=op))
     true = 'True'

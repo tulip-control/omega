@@ -579,7 +579,7 @@ def test_type_invariants():
     assert init == init_, init
     s = (
          "(0 <= x) & (x <= 3) & "
-         "(0 <= X(x) ) & ( X(x) <= 3)")
+         "(0 <= x') & (x' <= 3)")
     action_ = dict(x=[s])
     assert action == action_, action
 

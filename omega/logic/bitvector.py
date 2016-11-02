@@ -127,7 +127,7 @@ def type_invariants(table):
         # sys to lose in the next time step.
         s = (
             '({min} <= {x}) & ({x} <= {max}) & '
-            '({min} <= X({x}) ) & ( X({x}) <= {max})').format(
+            "({min} <= {x}') & ({x}' <= {max})").format(
                 min=dmin, max=dmax, x=var)
         safety[var].append(s)
     return init, safety

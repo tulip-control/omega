@@ -330,8 +330,10 @@ def make_dummy_table():
     """Example of a symbol table."""
     t = dict(x=dict(type='bool', owner='env'),
              y=dict(type='bool', owner='sys'),
-             z=dict(type='int', owner='env', signed=False, width=2),
-             w=dict(type='int', owner='env', signed=False, width=2))
+             z=dict(type='int', owner='env',
+                    signed=False, width=2),
+             w=dict(type='int', owner='env',
+                    signed=False, width=2))
     return t
 
 
@@ -446,7 +448,8 @@ class Nodes(_Nodes):
                 op=Nodes.opmap[self.operator], x=x, y=y)
 
     class Var(_Nodes.Var):
-        def flatten(self, prime=None, mem=None, t=None, *arg, **kw):
+        def flatten(self, prime=None, mem=None,
+                    t=None, *arg, **kw):
             logger.info('flatten "{s}"'.format(s=repr(self)))
             name = self.value
             if _is_bool_var(name, t):
@@ -459,7 +462,8 @@ class Nodes(_Nodes):
             # must be integer variable
             bits = var_to_twos_complement(name, t)
             bits = ["{b}{prime}".format(
-                b=b, prime="'" if not b[0].isdigit() and prime else '')
+                    b=b, prime="'"
+                    if not b[0].isdigit() and prime else '')
                 for b in bits]
             return bits
 
@@ -491,8 +495,9 @@ class Nodes(_Nodes):
             logger.info('flatten "{s}"'.format(s=repr(self)))
             # only for testing purposes
             assert mem is not None, (
-                'Arithmetic formula "{f}" in Boolean scope.'.format(
-                    f=self))
+                'Arithmetic formula "{f}" '
+                'in Boolean scope.').format(
+                    f=self)
             p = self.operands[0].flatten(mem=mem, *arg, **kw)
             q = self.operands[1].flatten(mem=mem, *arg, **kw)
             return flatten_arithmetic(self.operator, p, q, mem)
@@ -578,7 +583,8 @@ def less_than(p, q, mem):
 def flatten_arithmetic(operator, p, q, mem):
     """Return flattened arithmetic expression."""
     logger.info(
-        '++ flatten arithmetic operator "{op}"'.format(op=operator))
+        '++ flatten arithmetic operator "{op}"'.format(
+            op=operator))
     assert isinstance(p, list), p
     assert isinstance(q, list), q
     assert isinstance(mem, list), mem
@@ -594,7 +600,8 @@ def flatten_arithmetic(operator, p, q, mem):
         _, result, res_mem = restoring_divider(p, q, start)
     else:
         raise ValueError(
-            'Unknown arithmetic operator "{op}"'.format(op=operator))
+            'Unknown arithmetic operator "{op}"'.format(
+                op=operator))
     mem.extend(res_mem)
     logger.info('-- done flattening "{op}"\n'.format(op=operator))
     return result
@@ -951,7 +958,8 @@ def var_to_twos_complement(var, t):
     """Return `list` of bits in two's complement."""
     # little-endian encoding
     logger.info(
-        '++ encode variable "{var}" to 2s complement'.format(var=var))
+        '++ encode variable "{var}" to 2s complement'.format(
+            var=var))
     _assert_var_in_table(var, t)
     d = t[var]
     # arithmetic operators defined only for integers
@@ -964,7 +972,8 @@ def var_to_twos_complement(var, t):
     assert len(bits) > 1, bits
     logger.debug('encoded variable "{var}":\n\t{bits}'.format(
         var=var, bits=bits))
-    logger.info('-- done encoding variable "{var}".\n'.format(var=var))
+    logger.info('-- done encoding variable "{var}".\n'.format(
+        var=var))
     return bits
 
 
@@ -972,23 +981,27 @@ def _append_sign_bit(bits, var, d):
     """Convert trimmed bitfield to two's complement.
 
     The bitfield `bits` is modified by appending a sign bit.
-    The integer variable represented by `bits` should be sign-definite.
-    As given, `bits` is a bitfield that stores the two's complement
+    The integer variable represented by
+    `bits` should be sign-definite.
+    As given, `bits` is a bitfield that
+    stores the two's complement
     with omitted sign bit, because it is constant.
 
     @type bits: `list`
     @param d: attributes of integer
     @type d: `dict`
     """
-    logger.debug('bits of "{var}": {bits}"'.format(var=var, bits=bits))
+    logger.debug('bits of "{var}": {bits}"'.format(
+        var=var, bits=bits))
     # variable sign ?
     if d['signed']:
         logger.debug('variable "{var}" is signed'.format(var=var))
         if len(bits) < 2:
-            raise ValueError(
+            raise ValueError((
                 'A signed bitvector must have at least 2 bits.\n'
-                'Got instead, for variable "{var}",'.format(var=var) +
-                ' the bitvector:\n\t {bits}'.format(bits=bits))
+                'Got instead, for variable "{var}",'
+                ' the bitvector:\n\t {bits}').format(
+                    var=var, bits=bits))
         return
     # sign-definite
     logger.debug('variable "{var}" has fixed sign'.format(var=var))
@@ -1063,7 +1076,9 @@ def twos_complement_to_int(bits):
     n = len(bits)  # width including sign bit
     n = n - 1  # width w/o sign bit
     r = [int(b) for b in bits]
-    return -r[-1] * 2**n + sum(b * 2**i for i, b in enumerate(r[:-1]))
+    return -r[-1] * 2**n + sum(
+        b * 2**i
+        for i, b in enumerate(r[:-1]))
 
 
 def abs_(x, start=0):

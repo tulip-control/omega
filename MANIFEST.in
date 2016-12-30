@@ -5,3 +5,4 @@ include doc/*.md
 include doc/*.dot
 include tests/*_test.py
 include examples/*.py
+include spec/*.tla

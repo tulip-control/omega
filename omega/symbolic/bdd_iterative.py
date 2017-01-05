@@ -88,7 +88,7 @@ class Parser(object):
             tok = self.lexer.lexer.token()
             n = int(tok.value)
             mem = list()
-            for i in xrange(n):
+            for i in range(n):
                 s = self._increase(mem, bdd)
                 mem.append(s)
             r = mem[-1]
@@ -118,7 +118,7 @@ class Parser(object):
                 raise Exception(
                     'unknown operator "{t}"'.format(t=t))
             operands = stack[k:k + n]
-            for i in xrange(n):
+            for i in range(n):
                 stack.pop(k)
             stack.pop(k - 1)
             # print(operator)

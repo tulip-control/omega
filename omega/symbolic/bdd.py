@@ -101,7 +101,7 @@ class Parser(object):
             u = self._recurse()
             assert u.type == 'num', u.type
             n = int(u.value)
-            mem = [self._recurse() for i in xrange(n)]
+            mem = [self._recurse() for i in range(n)]
             return self.nodes.Buffer(mem)
         elif t == 'QUESTION':
             u = self._recurse()

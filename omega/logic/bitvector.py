@@ -180,7 +180,7 @@ def _add_bitnames(t):
         bits = [
             '{name}_{i}{prime}'.format(
                 name=name, i=i, prime=prime)
-            for i in xrange(d['width'])]
+            for i in range(d['width'])]
         are_booleans = filter(t.__contains__, bits)
         assert not are_booleans, (bits, t)
         d['bitnames'] = bits
@@ -873,7 +873,7 @@ def barrel_shifter(x, y, s=None, start=0):
         mem.append(z)
     n = len(x)
     m = len(mem) - n
-    c = ['? {i}'.format(i=i + m) for i in xrange(n)]
+    c = ['? {i}'.format(i=i + m) for i in range(n)]
     assert len(c) == len(x), (c, x)
     return c, mem
 

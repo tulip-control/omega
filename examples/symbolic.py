@@ -27,7 +27,7 @@ def semi_symbolic():
     g.owner = 'sys'
     g.vars = dict(x='bool')
     g.env_vars.add('x')
-    g.add_path(xrange(11))
+    g.add_path(range(11))
     g.add_edge(10, 10)
     g.add_edge(10, 0, formula="x")
     # symbolic

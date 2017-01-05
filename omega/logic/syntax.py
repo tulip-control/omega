@@ -190,7 +190,7 @@ def _compute_as_binary_tree(f, x):
         logger.debug('Binary at: {n}'.format(n=n))
         k = int(math.floor(n / 2.0))
         # consume the power of 2
-        for i in xrange(k):
+        for i in range(k):
             j = 2 * i
             a = x[j]
             b = x[j + 1]
@@ -240,7 +240,7 @@ def _linear_operator(f, x):
     logger.debug('++ start linear operator')
     assert len(x) > 0
     n = len(x)
-    for i in xrange(1, n):
+    for i in range(1, n):
         x[0] = f(x[0], x.pop())
     assert len(x) == 1, len(x)
     logger.debug('-- done linear operator')
@@ -259,7 +259,7 @@ def _linear_operator_simple(f, x):
 
 
 def test_binary_operators():
-    for n in xrange(1, 1500):
+    for n in range(1, 1500):
         a = range(n)
         f = _plus
         x0 = _compute_as_binary_tree(f, list(a))

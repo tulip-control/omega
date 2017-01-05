@@ -213,7 +213,7 @@ def reorder(dvars, fol):
             assert old_level >= level, (old_level, level)
         # shift to levels wanted
         order = [bdd.var_at_level(i)
-                 for i in xrange(len(bdd.vars))]
+                 for i in range(len(bdd.vars))]
         below = order[:level]
         above = order[level:]
         above = [v for v in above if v not in bitnames]
@@ -221,7 +221,7 @@ def reorder(dvars, fol):
         dorder = {var: i for i, var in enumerate(new_order)}
         _bdd.reorder(bdd, dorder)
         order = [bdd.var_at_level(i)
-                 for i in xrange(len(bdd.vars))]
+                 for i in range(len(bdd.vars))]
         assert order == new_order, (order, new_order)
 
 
@@ -315,7 +315,7 @@ def closed_interval(var, a, b):
 def add_one_hot(var, a, b):
     """Return symbol table for one-hot encoding."""
     t = dict()
-    for i in xrange(a, b):
+    for i in range(a, b):
         var = '{var}{i}'.format(var=var, i=i)
         d = dict(type='bool', owner='parameters', level=0)
         t[var] = d

@@ -96,11 +96,11 @@ class Context(object):
         assert dvars, dvars
         common = set(dvars).intersection(self.vars)
         for var in common:
-            for k, v in dvars[var].iteritems():
+            for k, v in dvars[var].items():
                 assert self.vars[var][k] == v
         if common:
             log.warning('attempted adding existing vars')
-        dvars = {k: v for k, v in dvars.iteritems()
+        dvars = {k: v for k, v in dvars.items()
                  if k not in common}
         if not dvars:
             return
@@ -194,7 +194,7 @@ def reorder(dvars, fol):
     """Shift integers up in the variable order of `fol.bdd`."""
     assert dvars, dvars
     bdd = fol.bdd
-    for var, d in dvars.iteritems():
+    for var, d in dvars.items():
         level = d['level']
         dv = fol.vars[var]
         var_type = dv['type']
@@ -228,7 +228,7 @@ def reorder(dvars, fol):
 def _refine_assignment(fol_values, table):
     """Return assignment to bits, from FOL assignment."""
     bit_values = dict()
-    for var, value in fol_values.iteritems():
+    for var, value in fol_values.items():
         assert var in table, var
         if table[var]['type'] == 'bool':
             bit_values[var] = value
@@ -241,7 +241,7 @@ def _refine_assignment(fol_values, table):
 def _refine_renaming(fol_rename, table):
     """Return renaming of bits, from renaming of FOL vars."""
     bit_rename = dict()
-    for old, new in fol_rename.iteritems():
+    for old, new in fol_rename.items():
         old_d = table[old]
         new_d = table[new]
         old_type = old_d['type']
@@ -299,7 +299,7 @@ def _assignment_to_bdd(dvars, fol):
     """Return BDD from assignment to `dvars`."""
     conj = stx.conj(
         '{var} = {value}'.format(var=var, value=value)
-        for var, value in dvars.iteritems())
+        for var, value in dvars.items())
     u = fol.add_expr(conj)
     return u
 

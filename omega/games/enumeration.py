@@ -79,7 +79,7 @@ def action_to_steps(aut, qinit='\A \A'):
             u = fol.replace(sys, next_env)
             u = fol.replace(u, unprime_vars)
             env_values = {unprime_vars[var]: value
-                          for var, value in next_env.iteritems()}
+                          for var, value in next_env.items()}
             v = fol.replace(visited, env_values)
             # prefer already visited nodes
             v = bdd.apply('and', u, v)
@@ -117,7 +117,7 @@ def _split_vars_per_quantifier(dvars, players):
     """Return controllability `dict` and primed vars `dict`."""
     control = {owner: set() for owner in players}
     primed_vars = {owner: set() for owner in players}
-    for var, d in dvars.iteritems():
+    for var, d in dvars.items():
         pvar = stx.prime(var)
         owner = d['owner']
         assert owner in players, (owner, players)
@@ -268,7 +268,7 @@ def _add_to_visited(values, visited, aut):
     """Return BDD `visted` updated with assignment `values`."""
     bdd = aut.bdd
     c = list()
-    for var, value in values.iteritems():
+    for var, value in values.items():
         t = aut.vars[var]['type']
         if t == 'bool':
             assert value in (True, False), value

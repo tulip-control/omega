@@ -213,7 +213,7 @@ class Automaton(_SystemGraph):
         for u, v, d in self.edges_iter(data=True):
             label = ', '.join(
                 '{k} = {v}'.format(k=k, v=v)
-                for k, v in d.iteritems()
+                for k, v in d.items()
                 if k in self.directions or k in self.alphabet)
             g.add_edge(u, v, label=label)
         return nx.drawing.nx_pydot.to_pydot(g)
@@ -257,7 +257,7 @@ class Automaton(_SystemGraph):
             r = self.directions
             if u in self.universal_nodes:
                 t, r = r, t
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 if k in t:
                     _check_value(v, t[k])
                 assert k not in r
@@ -325,7 +325,7 @@ class TransitionSystem(_SystemGraph):
         for u, d in self.nodes_iter(data=True):
             label = ', '.join(
                 '{k} = {v}'.format(k=k, v=v)
-                for k, v in d.iteritems()
+                for k, v in d.items()
                 if k in self.vars)
             label = '"{u}\n{label}"'.format(u=u, label=label)
             g.add_node(u, label=label, shape='box', **d)
@@ -345,11 +345,11 @@ class TransitionSystem(_SystemGraph):
         assert self.owner in {'env', 'sys'}
         assert set(self.env_vars).issubset(self.vars)
         for u, d in self.nodes_iter(data=True):
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 if k in self.vars:
                     _check_value(v, self.vars[k])
         for u, v, d in self.edges_iter(data=True):
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 # primed ?
                 if k.endswith("'"):
                     var = k[:-1]
@@ -368,7 +368,7 @@ def _dumps_nodes(g):
             u=u,
             values=', '.join(
                 '{k} = {v}'.format(k=k, v=v)
-                for k, v in d.iteritems()))
+                for k, v in d.items()))
         r.append(s)
     return ''.join(r)
 

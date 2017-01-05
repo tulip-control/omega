@@ -52,7 +52,7 @@ def bitblast_table(table):
       - "init" (optional)
     """
     t = dict()
-    for var, d in table.iteritems():
+    for var, d in table.items():
         dtype = d['type']
         assert dtype in DATA_TYPES, (var, dtype)
         b = dict(d)  # cp other keys
@@ -91,7 +91,7 @@ def type_invariants(table):
     """
     init = dict()
     safety = dict()
-    for var, d in table.iteritems():
+    for var, d in table.items():
         init[var] = list()
         safety[var] = list()
         dtype = d['type']
@@ -167,7 +167,7 @@ def dom_to_width(dom):
 
 def _add_bitnames(t):
     """Map each integer to a list of bit variables."""
-    for var, d in t.iteritems():
+    for var, d in t.items():
         if d['type'] != 'int':
             continue
         assert d['type'] == 'int', d['type']
@@ -188,7 +188,7 @@ def _add_bitnames(t):
 
 def _check_data_types(t):
     types = {'bool', 'int'}
-    for var, d in t.iteritems():
+    for var, d in t.items():
         if d['type'] in types:
             continue
         raise Exception(
@@ -248,7 +248,7 @@ def list_bits(variables, table):
 def map_bits_to_integers(table):
     """Return `dict` that maps each bit to an integer or Boolean."""
     bit2int = dict()
-    for var, d in table.iteritems():
+    for var, d in table.items():
         dtype = d['type']
         if dtype in ('int', 'saturating', 'modwrap'):
             assert 'bitnames' in d, d
@@ -303,7 +303,7 @@ def bitfields_to_ints(bit_state, t):
     @type t: `VariablesTable`
     """
     int_state = dict()
-    for flatname, d in t.iteritems():
+    for flatname, d in t.items():
         if d['type'] == 'bool':
             int_state[flatname] = bit_state[flatname]
             continue
@@ -320,7 +320,7 @@ def make_table(d, env_vars=None):
     if env_vars is None:
         env_vars = set()
     t = dict()
-    for var, dom in d.iteritems():
+    for var, dom in d.items():
         if dom == 'bool':
             dtype = 'bool'
             dom = None
@@ -404,7 +404,7 @@ class Nodes(_Nodes):
                     rename.update(zip(a, b))
                 pairs = ' '.join(
                     '{b} {a}'.format(a=a, b=b)
-                    for a, b in rename.iteritems())
+                    for a, b in rename.items())
                 u = e.flatten(mem=mem, **kw)
                 r = ' {op} ${n} {pairs} {u}'.format(
                     op=Nodes.opmap[self.operator],

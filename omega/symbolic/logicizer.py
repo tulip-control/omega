@@ -89,7 +89,7 @@ def _vars_to_symbol_table(g, nodevar):
       - owner: 'env' | 'sys'
     """
     t = dict()
-    for var, dom in g.vars.iteritems():
+    for var, dom in g.vars.items():
         # type and domain
         if dom == 'bool':
             dtype = 'bool'
@@ -166,7 +166,7 @@ def _sys_trans(g, nodevar, dvars):
 
 def _env_trans_from_sys_ts(g, nodevar, dvars):
     """Return safety assumption to prevent env from blocking sys."""
-    denv = {k: v for k, v in dvars.iteritems() if k in g.env_vars}
+    denv = {k: v for k, v in dvars.items() if k in g.env_vars}
     env_trans = list()
     for u in g:
         # no successor states ?
@@ -220,7 +220,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
             r = _to_action(t, dvars)
             post.append(r)
             # what sys vars ?
-            t = {k: v for k, v in d.iteritems()
+            t = {k: v for k, v in d.items()
                  if k not in g.env_vars}
             r = _to_action(t, dvars)
             sys.append(r)
@@ -243,7 +243,7 @@ def _to_action(d, dvars):
     c = list()
     if 'formula' in d:
         c.append(d['formula'])
-    for k, v in d.iteritems():
+    for k, v in d.items():
         if k not in dvars:
             continue
         s = _assign(k, v, dvars)

@@ -415,13 +415,13 @@ def test_twos_complement_for_int():
              -1: ['1', '1'],
              -2: ['0', '1', '1'],
              -3: ['1', '0', '1']}
-    for k, v in pairs.iteritems():
+    for k, v in pairs.items():
         assert g(k) == v
         assert k == f(v)
     pairs = {-1: ['1', '1', '1'],
              -2: ['0', '1', '1', '1'],
              2: ['0', '1', '0', '0']}
-    for k, v in pairs.iteritems():
+    for k, v in pairs.items():
         assert k == f(v)
 
 

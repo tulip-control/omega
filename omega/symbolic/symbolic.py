@@ -249,7 +249,7 @@ class Automaton(object):
         """
         # check attributes
         for d in (self.init, self.action, self.win):
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 for u in v:
                     if built:
                         try:
@@ -310,7 +310,7 @@ def fill_blanks(aut, as_bdd=False, rabin=False):
         true = 'True'
         false = 'False'
     for d in (aut.init, aut.action):
-        for k, v in d.iteritems():
+        for k, v in d.items():
             if not v:
                 d[k] = [true]
     if not aut.win['<>[]']:
@@ -338,13 +338,13 @@ def _bitblast(aut):
     aut = copy.copy(aut)
     t = bv.bitblast_table(aut.vars)
     init, action = bv.type_invariants(t)
-    for var, c in init.iteritems():
+    for var, c in init.items():
         owner = aut.vars[var]['owner']
         # collect type invariants of parameters too,
         # for convenience later
         aut.init.setdefault(owner, list())
         aut.init[owner].extend(c)
-    for var, c in action.iteritems():
+    for var, c in action.items():
         owner = aut.vars[var]['owner']
         aut.action.setdefault(owner, list())
         aut.action[owner].extend(c)
@@ -412,9 +412,9 @@ def _bitvector_to_bdd(aut):
     table = aut.vars
     bits = bv.bit_table(table, table)
     # index both, to allow for unquantified parameters
-    ubits = set(b for b, d in bits.iteritems()
+    ubits = set(b for b, d in bits.items()
                 if d['owner'] == 'env')
-    ebits = set(b for b, d in bits.iteritems()
+    ebits = set(b for b, d in bits.items()
                 if d['owner'] == 'sys')
     b = _pick_var_order(bits, ubits)
     b = _add_primed_bits(b)
@@ -439,7 +439,7 @@ def _bitvector_to_bdd(aut):
     to_sections = _make_section_map(a)
     lengths = {
         k: _section_len(v)
-        for k, v in from_sections.iteritems()}
+        for k, v in from_sections.items()}
     sort = sorted(
         from_sections,
         key=lengths.__getitem__,
@@ -449,7 +449,7 @@ def _bitvector_to_bdd(aut):
         q = to_sections[section]
         _to_bdd(p, q, bdd)
     # vars
-    player_vars = {k for k, d in table.iteritems()
+    player_vars = {k for k, d in table.items()
                    if d['owner'] in players}
     if not player_vars:
         print('Warning: no player variables.')
@@ -466,7 +466,7 @@ def _bitvector_to_bdd(aut):
     a.uepvars = set(a.upvars).union(a.epvars)
     # priming
     a.prime = prime
-    a.unprime = {v: k for k, v in prime.iteritems()}
+    a.unprime = {v: k for k, v in prime.items()}
     return a
 
 
@@ -511,7 +511,7 @@ def _pick_var_order(bits, ubits):
 
     and concatenated in that order.
     """
-    array_bits = {b for b, d in bits.iteritems() if d.get('array')}
+    array_bits = {b for b, d in bits.items() if d.get('array')}
     other = set(bits).difference(array_bits)
     top = natsort.natsorted(other)
     bottom = natsort.natsorted(array_bits)
@@ -598,7 +598,7 @@ def assert_primed_adjacent(prime, bdd):
     @type bdd: `BDD`
     """
     # check adjacency of unprimed-primed pairs
-    for x, y in prime.iteritems():
+    for x, y in prime.items():
         i = bdd.level_of_var(x)
         j = bdd.level_of_var(y)
         assert abs(i - j) == 1, (

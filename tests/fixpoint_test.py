@@ -27,7 +27,7 @@ def test_attractor():
     fol.bdd = aut.bdd
     bdd = aut.bdd
     ok = {0: True, 1: True, 2: True, 3: False, 4: False}
-    for q, value in ok.iteritems():
+    for q, value in ok.items():
         subs = {'loc': q}
         v = fol.replace(u, subs)
         assert (v == bdd.true) == value, v
@@ -35,7 +35,7 @@ def test_attractor():
     u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
                      target, aut, inside=inside)
     ok = {0: False, 1: True, 2: True, 3: False, 4: False}
-    for q, value in ok.iteritems():
+    for q, value in ok.items():
         subs = {'loc': q}
         v = fol.replace(u, subs)
         assert (v == bdd.true) == value, v

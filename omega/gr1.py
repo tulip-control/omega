@@ -120,7 +120,7 @@ def _assert_admissible_operators(d):
     init_ops = set(action_ops)
     init_ops.add('X')
     operators = dict(init=init_ops, G=action_ops, GF=init_ops)
-    for part, f in d.items():
+    for part, f in list(d.items()):
         ops = operators[part]
         for s in f:
             op = has_operator(s, ops)
@@ -210,7 +210,7 @@ def split_gr1_old(f):
     ops = set(ops)
     ops.add('X')
     operators.update(init=ops, GF=ops)
-    for part, f in d.iteritems():
+    for part, f in d.items():
         ops = operators[part]
         for u in f:
             op = has_operator(u, g, ops)

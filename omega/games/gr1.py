@@ -609,7 +609,7 @@ def trivial_winning_set(aut_streett):
         - `aut_streett`: `symbolic.Automaton`
     """
     aut_rabin = symbolic.Automaton()
-    for var, d in aut_streett.vars.iteritems():
+    for var, d in aut_streett.vars.items():
         d = d.copy()
         owner = d['owner']
         owner = 'env' if owner == 'sys' else 'sys'

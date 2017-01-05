@@ -43,7 +43,7 @@ def relation_to_graph(
                        care_relation, care_bits, full=True)
     # to nx graph
     level_to_var = {d['level']: var
-                    for var, d in t.iteritems()}
+                    for var, d in t.items()}
     sorted_vars = [level_to_var[i]
                    for i in xrange(len(level_to_var))]
     g = nx.DiGraph()
@@ -56,7 +56,7 @@ def relation_to_graph(
         # source = model of set = node
         source = dict()
         target = dict()
-        for var, value in model.iteritems():
+        for var, value in model.items():
             if var in aut.vars:
                 source[var] = value
             else:
@@ -205,7 +205,7 @@ def _bitfields_to_int_iter(bits, t):
     """
     # any bits missing ?
     t_bits = set()
-    for flatname, d in t.iteritems():
+    for flatname, d in t.items():
         dt = d['type']
         if dt == 'bool':
             t_bits.add(flatname)
@@ -223,13 +223,13 @@ def _bitfields_to_int_iter(bits, t):
     bits = dict(bits)
     model = dict()
     # bool first
-    for flatname, d in t.iteritems():
+    for flatname, d in t.items():
         if d['type'] == 'bool':
             if flatname in bits:
                 model[flatname] = bits.pop(flatname)
     # integers
     sets = dict()
-    for flatname, d in t.iteritems():
+    for flatname, d in t.items():
         if d['type'] == 'bool':
             continue
         bitnames = d['bitnames']

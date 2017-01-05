@@ -288,7 +288,7 @@ def translate(s, debug=False, until=False):
     trans = conj(ct)
     # collect new vars
     dvars = dict()
-    for var_prev, d in testers.iteritems():
+    for var_prev, d in testers.items():
         dtype = d['type']
         dom = d.get('dom')
         dvars[var_prev] = dict(type=dtype, dom=dom, owner='sys')

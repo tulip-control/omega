@@ -275,14 +275,14 @@ def translate(s, debug=False, until=False):
     r = tree.flatten(testers=testers, context=context,
                      until=until)
     if debug:
-        ci = sorted(d['init'] for d in testers.itervalues())
-        ct = sorted(d['trans'] for d in testers.itervalues())
-        win = [d['win'] for d in testers.itervalues()
+        ci = sorted(d['init'] for d in testers.values())
+        ct = sorted(d['trans'] for d in testers.values())
+        win = [d['win'] for d in testers.values()
                if d['win'] is not None]
     else:
-        ci = (d['init'] for d in testers.itervalues())
-        ct = (d['trans'] for d in testers.itervalues())
-        win = [d['win'] for d in testers.itervalues()
+        ci = (d['init'] for d in testers.values())
+        ct = (d['trans'] for d in testers.values())
+        win = [d['win'] for d in testers.values()
                if d['win'] is not None]
     init = conj(ci)
     trans = conj(ct)

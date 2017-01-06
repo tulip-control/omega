@@ -102,7 +102,7 @@ class Parser(object):
     def _reduce(self, stack, bdd):
         while len(stack) > 1:
             for i, t in enumerate(reversed(stack)):
-                if not isinstance(t, basestring):
+                if not isinstance(t, str):
                     continue
                 if t in OPERATORS:
                     break

@@ -452,8 +452,8 @@ class Nodes(_Nodes):
             logger.info('flatten "{s}"'.format(s=repr(self)))
             x = self.operands[0].flatten(*arg, **kw)
             y = self.operands[1].flatten(*arg, **kw)
-            assert isinstance(x, basestring), x
-            assert isinstance(y, basestring), y
+            assert isinstance(x, str), x
+            assert isinstance(y, str), y
             return ' {op} {x} {y} '.format(
                 op=Nodes.opmap[self.operator], x=x, y=y)
 
@@ -933,7 +933,7 @@ def ite_function(a, b, c, start):
 
     @rtype: `list`
     """
-    assert isinstance(a, basestring), a
+    assert isinstance(a, str), a
     assert isinstance(b, list), b
     assert isinstance(c, list), c
     assert len(b) == len(c), (b, c)
@@ -956,9 +956,9 @@ def ite_connective(a, b, c):
 
     @rtype: `str`
     """
-    assert isinstance(a, basestring), a
-    assert isinstance(b, basestring), b
-    assert isinstance(c, basestring), c
+    assert isinstance(a, str), a
+    assert isinstance(b, str), b
+    assert isinstance(c, str), c
     # local memory buffer
     return '$ 2 {a} | & {b} ? {i} & {c} ! ? {i}'.format(
         a=a, b=b, c=c, i=0)
@@ -1218,6 +1218,7 @@ def _flatten_var(v, *arg, **kw):
         flat = [flat]
     bits = _filter_trailing_zeros(flat)
     return bits
+
 
 def _filter_trailing_zeros(flat):
     return [b for b in flat if not b[0].isdigit()]

@@ -259,7 +259,7 @@ class Automaton(object):
                                 'Automaton needs '
                                 'to be compiled')
                     else:
-                        assert isinstance(u, basestring)
+                        assert isinstance(u, str)
         if not built:
             return
         # bdd initialized ?

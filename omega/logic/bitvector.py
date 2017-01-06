@@ -1220,4 +1220,4 @@ def _flatten_var(v, *arg, **kw):
     return bits
 
 def _filter_trailing_zeros(flat):
-    return filter(lambda b: not b[0].isdigit(), flat)
+    return [b for b in flat if not b[0].isdigit()]

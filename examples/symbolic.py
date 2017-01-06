@@ -52,7 +52,7 @@ def semi_symbolic():
     pd.write_pdf('game_states.pdf')
     print('Enumerated strategy has {n} nodes.'.format(
         n=len(g)))
-    print('Winning set:', aut.bdd.to_expr(z))
+    print(('Winning set:', aut.bdd.to_expr(z)))
     print('{n} BDD nodes in total'.format(
         n=len(t.bdd)))
 

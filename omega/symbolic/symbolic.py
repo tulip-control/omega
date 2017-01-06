@@ -167,7 +167,7 @@ class Automaton(object):
             '',
             'Moore' if self.moore else 'Mealy',
             ('causal' if self.plus_one else
-            'circular') + ' implication',
+             'circular') + ' implication',
             '',
             'Initially:',
             self.qinit]

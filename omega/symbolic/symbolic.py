@@ -394,13 +394,13 @@ def _bitblast_owner(aut, a, owner, t):
     def f(x):
         return bv.bitblast(x, t)
     assert owner in ('env', 'sys'), owner
-    a.init[owner] = map(f, aut.init[owner])
-    a.action[owner] = map(f, aut.action[owner])
+    a.init[owner] = list(map(f, aut.init[owner]))
+    a.action[owner] = list(map(f, aut.action[owner]))
     if owner == 'env':
         s = '<>[]'
     else:
         s = '[]<>'
-    a.win[s] = map(f, aut.win[s])
+    a.win[s] = list(map(f, aut.win[s]))
 
 
 def _bitvector_to_bdd(aut):

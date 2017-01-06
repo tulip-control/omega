@@ -181,7 +181,7 @@ def _add_bitnames(t):
             '{name}_{i}{prime}'.format(
                 name=name, i=i, prime=prime)
             for i in range(d['width'])]
-        are_booleans = filter(t.__contains__, bits)
+        are_booleans = list(filter(t.__contains__, bits))
         assert not are_booleans, (bits, t)
         d['bitnames'] = bits
 

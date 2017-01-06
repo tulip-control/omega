@@ -237,7 +237,7 @@ def _bitfields_to_int_iter(bits, t):
         if not set(bitnames).intersection(bits):
             continue
         # partial bitvector valuation
-        bitvalues = map(bits.get, bitnames)
+        bitvalues = list(map(bits.get, bitnames))
         if not d['signed']:
             # TODO: update this
             bitvalues += ['0']

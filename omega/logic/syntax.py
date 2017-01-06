@@ -188,7 +188,7 @@ def _compute_as_binary_tree(f, x):
     while len(x) > 1:
         n = len(x)
         logger.debug('Binary at: {n}'.format(n=n))
-        k = int(math.floor(n / 2.0))
+        k = int(math.floor(0.5 * n))
         # consume the power of 2
         for i in range(k):
             j = 2 * i
@@ -228,7 +228,7 @@ def _compute_as_binary_tree_simple(f, x):
         x = r
         # assert
         n_ = len(x)
-        k = int(math.floor(n / 2.0))
+        k = int(math.floor(0.5 * n))
         assert n_ == n - k, (n_, n - k)
     assert len(x) == 1, len(x)
     logger.debug('-- done binary tree')

@@ -314,8 +314,10 @@ def test_logicizer_env():
     assert xtype == 'bool', xtype
     assert ktype == 'saturating', ktype
     (s,) = aut.action['env']
-    s_ = (
-        "(((((k = 0)) -> (((x <-> True)) & ((k' = 1)))) \n"
+    e1 = "(((((k = 0)) -> (((x <-> True)) & ((k' = 1)))) \n"
+    e2 = "(((((k = 0)) -> (((k' = 1)) & ((x <-> True)))) \n"
+    assert s.startswith(e1) or s.startswith(e2), s
+    e3 = (
         "& (((k = 1)) -> ((x') & ((k' = 2))))) \n"
         "& (((k = 2)) -> ((k' = 1)))) | (k' = k)")
-    assert s == s_, s
+    assert s.endswith(e3), s

@@ -390,7 +390,7 @@ class Nodes(_Nodes):
                 unique = set(new.value for new, old in x)
                 assert len(unique) == len(x), x  # duplicates ?
                 t = kw['t']
-                rename = dict()
+                rename = list()
                 for new, old in x:
                     # take same values ?
                     old_var = old.value
@@ -403,10 +403,10 @@ class Nodes(_Nodes):
                     a = _flatten_var(old, mem=mem, **kw)
                     b = _flatten_var(new, mem=mem, **kw)
                     assert len(a) == len(b), (a, b)
-                    rename.update(zip(a, b))
+                    rename.extend(zip(a, b))
                 pairs = ' '.join(
                     '{b} {a}'.format(a=a, b=b)
-                    for a, b in rename.items())
+                    for a, b in rename)
                 u = e.flatten(mem=mem, **kw)
                 r = ' {op} ${n} {pairs} {u}'.format(
                     op=Nodes.opmap[self.operator],

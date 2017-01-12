@@ -152,16 +152,24 @@ def test_flatten_substitution():
     s = '\S b / x: x - y <= 0'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('x - y <= 0').flatten(t=t)
-    r_ = ' \S $4 b1 x@1 b0 x@0.0.3 {h}'.format(h=h)
+    r_ = ' \S $4 b0 x@0.0.3 b1 x@1 {h}'.format(h=h)
     assert r == r_, r
     # multiple pairs
-    s = '\S a / b,  q / r: False'
+    s = '\S a / b,  q / r:  False'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \S $6 q r a0 b0 a1 b1 0', r
+    r_ = ' \S $6 a0 b0 a1 b1 q r 0'
+    assert r == r_, r
+    # swap: order of substitutions should be preserved
+    s = '\S q / r, a / b:  False'
+    r = parser.parse(s).flatten(t=t)
+    r_ = ' \S $6 q r a0 b0 a1 b1 0'
+    assert r == r_, r
+    # more complex expr
     s = '\S a / b, q / r:  r | ! (a != b)'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('r | ! (a != b)').flatten(t=t)
     r_ = ' \S $6 a0 b0 a1 b1 q r {h}'.format(h=h)
+    assert r == r_, r
     # invalid input
     c = [
         '\S a / q: True',

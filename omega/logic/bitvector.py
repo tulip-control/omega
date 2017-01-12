@@ -387,6 +387,8 @@ class Nodes(_Nodes):
             if self.operator == '\S':
                 x, e = self.operands
                 assert isinstance(x, list), x
+                unique = set(new.value for new, old in x)
+                assert len(unique) == len(x), x  # duplicates ?
                 t = kw['t']
                 rename = dict()
                 for new, old in x:

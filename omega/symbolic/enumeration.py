@@ -40,7 +40,7 @@ def relation_to_graph(
     t, care_relation = _make_table(u, aut, care_source,
                                    care_target, care_bits)
     c = _enumerate_bdd(u, aut.bdd, t,
-                       care_relation, care_bits, full=True)
+                       care_relation, care_bits)
     # to nx graph
     level_to_var = {d['level']: var
                     for var, d in t.items()}
@@ -73,7 +73,7 @@ def relation_to_graph(
 
 def print_nodes(
         u, dvars, bdd, care_set=None,
-        care_bits=None, full=False):
+        care_bits=None):
     """Enumerate first-order models of a set.
 
     A set of nodes is defined over unprimed variables.
@@ -88,12 +88,12 @@ def print_nodes(
     if care_bits is not None:
         support = bdd.support(u)
         assert support.issubset(care_bits), (support, care_bits)
-    _print_enumeration(u, bdd, t, care_set, care_bits, full)
+    _print_enumeration(u, bdd, t, care_set, care_bits)
 
 
 def print_edges(
         u, aut, care_set=None,
-        care_bits=None, full=False):
+        care_bits=None):
     """Enumerate first-order models of a relation.
 
     A relation is defined over both primed and
@@ -107,12 +107,12 @@ def print_edges(
     t, care_relation = _make_table(u, aut, source,
                                    target, care_bits)
     _print_enumeration(u, aut.bdd, t, care_relation,
-                       care_bits, full)
+                       care_bits)
 
 
-def _print_enumeration(u, bdd, t, care_set, care_bits, full):
+def _print_enumeration(u, bdd, t, care_set, care_bits):
     """Print first-order models."""
-    c = _enumerate_bdd(u, bdd, t, care_set, care_bits, full)
+    c = _enumerate_bdd(u, bdd, t, care_set, care_bits)
     r = list()
     keys = natsort.natsorted(t)
     for product in c:
@@ -173,12 +173,11 @@ def _care_relation(source, target, prime, bdd):
 
 def _enumerate_bdd(
         u, bdd, t, care_set=None,
-        care_bits=None, full=False):
+        care_bits=None):
     """Enumerate first-order models of BDD `u`.
 
     @param care_set: enumerate only models in this set
-    @param care_bits: enumerate only over these bits
-    @param full: if `True`, return minterms, else cubes
+    @param care_bits: enumerate over at least these bits
     """
     if u == bdd.false:
         return
@@ -189,7 +188,7 @@ def _enumerate_bdd(
             'with care set = {c}').format(
                 u=u, c=care_set))
     c = list()
-    for dbit in bdd.sat_iter(u, full, care_bits):
+    for dbit in bdd.sat_iter(u, care_bits):
         dint = _bitfields_to_int_iter(dbit, t)
         c.extend(dint)
     return c

@@ -17,7 +17,9 @@ def test_relation_to_graph():
     a.vars['y'] = dict(type='bool', owner='sys')
     aut = a.build()
     u = aut.add_expr("(x = 4) & y & (x' = 0)")
-    g = enum.relation_to_graph(u, aut)
+    care_bits = aut.bdd.vars
+    g = enum.relation_to_graph(
+        u, aut, care_bits=care_bits)
     assert len(g) == 3, g.nodes()
     keys = ('x', 'y')
     r = {tuple(d[k] for k in keys)

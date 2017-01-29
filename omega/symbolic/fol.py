@@ -156,21 +156,23 @@ class Context(object):
         qbits = bv.bit_table(qvars, self.vars)
         return self.bdd.exist(qbits, u)
 
-    def pick(self, u, full, care_vars):
+    def pick(self, u, care_vars=None):
         """Return a satisfying assignment, or `None`."""
         try:
-            return next(self.pick_iter(u, full, care_vars))
+            return next(self.pick_iter(u, care_vars))
         except StopIteration:
             return None
 
-    def pick_iter(self, u, full, care_vars):
+    def pick_iter(self, u, care_vars=None):
         """Return generator of first-order satisfying assignments."""
-        if care_vars:
+        if care_vars is None:
+            care_bits = None
+        elif care_vars:
             care_bits = bv.bit_table(care_vars, self.vars)
         else:
             care_bits = set()
         for bit_assignment in self.bdd.sat_iter(
-                u, full=full, care_bits=care_bits):
+                u, care_bits=care_bits):
             for d in enum._bitfields_to_int_iter(
                     bit_assignment, self.vars):
                 yield d

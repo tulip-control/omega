@@ -208,12 +208,12 @@ def test_pick():
         x=dict(type='bool'),
         y=dict(type='int', dom=(0, 2))))
     u = fol.add_expr('x')
-    p = fol.pick(u, full=True, care_vars=['x'])
+    p = fol.pick(u, care_vars=['x'])
     for i in range(10):
-        q = fol.pick(u, full=True, care_vars=['x'])
+        q = fol.pick(u, care_vars=['x'])
         assert p == q, (p, q)
     u = fol.add_expr('False')
-    p = fol.pick(u, full=True, care_vars=['x'])
+    p = fol.pick(u, care_vars=['x'])
     assert p is None, p
     del u
 
@@ -224,19 +224,19 @@ def test_pick_iter():
         x=dict(type='bool'),
         y=dict(type='int', dom=(0, 2))))
     u = fol.add_expr('True')
-    gen = fol.pick_iter(u, full=True, care_vars=['x'])
+    gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
     assert len(r) == 2, r
     u = fol.add_expr('False')
-    gen = fol.pick_iter(u, full=True, care_vars=['x'])
+    gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
     assert len(r) == 0, r
     u = fol.add_expr('x')
-    gen = fol.pick_iter(u, full=True, care_vars=['x'])
+    gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
     assert len(r) == 1, r
     u = fol.add_expr('x')
-    gen = fol.pick_iter(u, full=True, care_vars=['x', 'y'])
+    gen = fol.pick_iter(u, care_vars=['x', 'y'])
     r = list(gen)
     assert len(r) == 4, r
     del u

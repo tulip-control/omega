@@ -223,9 +223,10 @@ def _bitfields_to_int_iter(bits, t):
     model = dict()
     # bool first
     for flatname, d in t.items():
-        if d['type'] == 'bool':
-            if flatname in bits:
-                model[flatname] = bits.pop(flatname)
+        if d['type'] != 'bool':
+            continue
+        if flatname in bits:
+            model[flatname] = bits.pop(flatname)
     # integers
     sets = dict()
     for flatname, d in t.items():

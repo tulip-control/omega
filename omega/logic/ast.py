@@ -1,4 +1,7 @@
 """Abstract syntax tree classes for logic."""
+# Copyright 2014 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import astutils
 
 

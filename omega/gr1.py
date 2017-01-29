@@ -1,4 +1,7 @@
 """Syntactic check for GR(1) fragment."""
+# Copyright 2015 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 from __future__ import absolute_import
 
 import networkx as nx

@@ -11,6 +11,9 @@ Chapter 6, in particular pp. 158--159 from:
 Kroening D. and Strichman O.
 Decision Procedures, Springer
 """
+# Copyright 2015 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 from __future__ import absolute_import
 import logging
 import math

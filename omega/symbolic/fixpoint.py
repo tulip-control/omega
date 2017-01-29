@@ -4,6 +4,9 @@
 - control invariance (greatest fixpoint)
 - controllable preimage
 """
+# Copyright 2015 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import logging
 from dd import bdd as _bdd
 

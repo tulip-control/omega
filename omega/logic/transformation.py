@@ -1,4 +1,7 @@
 """Syntactic manipulation of trees."""
+# Copyright 2014 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import copy
 import os
 import networkx as nx

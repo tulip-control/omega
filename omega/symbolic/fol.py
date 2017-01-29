@@ -8,6 +8,9 @@ Leslie Lamport, Lawrence C. Paulson
     ACM Transactions on Programming Languages and Systems
     Vol.21, No.3, pp.502--526, 1999
 """
+# Copyright 2016 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 # other places where relevant functions exist:
 #   dd.mdd
 #   omega.logic.bitvector

@@ -9,6 +9,9 @@ Leslie Lamport
     Vol.21, No.9, pp.768--775, 1995
     doi: 10.1109/32.464544
 """
+# Copyright 2016 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import collections
 import logging
 

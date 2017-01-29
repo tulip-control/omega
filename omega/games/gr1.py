@@ -17,6 +17,9 @@ Robert Konighofer
     Inst. for Applied Information Processing and Communications,
     Graz University of Technology, 2009
 """
+# Copyright 2016 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import logging
 import copy
 from omega.symbolic import fixpoint as fx

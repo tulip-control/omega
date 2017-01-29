@@ -3,6 +3,9 @@
 Including bitblasting of first-order to bitvector logic,
 and transformation to BDD nodes.
 """
+# Copyright 2015 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import copy
 import logging
 import pprint

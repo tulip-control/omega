@@ -10,6 +10,9 @@ Reference
 Slugsin syntax:
     https://github.com/LTLMoP/slugs/blob/master/doc/input_formats.md
 """
+# Copyright 2016 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 from omega.symbolic.bdd import Lexer
 
 

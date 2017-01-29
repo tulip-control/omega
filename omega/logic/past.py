@@ -26,6 +26,9 @@ Roderick Bloem, Barbara Jobstmann, Nir Piterman,
     Journal of Computer and System Sciences
     Vol.78, No.3, pp.911--938, 2012
 """
+# Copyright 2015 by California Institute of Technology
+# All rights reserved. Licensed under BSD-3.
+#
 import logging
 from omega.logic.ast import Nodes as _Nodes
 from omega.logic import lexyacc

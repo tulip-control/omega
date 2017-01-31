@@ -159,6 +159,27 @@ class Context(object):
         qbits = bv.bit_table(qvars, self.vars)
         return self.bdd.exist(qbits, u)
 
+    def count(self, u, care_vars=None):
+        """Return number of satisfying assignments.
+
+        @param care_vars: variables that the assignments
+            should contain. Should be `support(u) <= care_vars`
+            If `care_vars == None`, then use `support(u)`.
+        """
+        # We could allow `support(u) > care_vars`.
+        # But that needs a dedicated BDD traversal
+        # (to avoid enumeration). Deferred until needed.
+        support = self.support(u)
+        if care_vars is None:
+            care_vars = support
+        assert set(care_vars) >= support, (care_vars, support)
+        bits = _refine_vars(care_vars, self.vars)
+        n = len(bits)
+        c = self.bdd.sat_len(u, n)
+        assert c == int(c), c
+        assert c >= 0, c
+        return c
+
     def pick(self, u, care_vars=None):
         """Return a satisfying assignment, or `None`."""
         try:
@@ -228,6 +249,17 @@ def reorder(dvars, fol):
         order = [bdd.var_at_level(i)
                  for i in range(len(bdd.vars))]
         assert order == new_order, (order, new_order)
+
+
+def _refine_vars(fol_vars, table):
+    """Return bits that represent the `fol_vars`."""
+    if fol_vars:
+        bits = bv.bit_table(fol_vars, table)
+    else:
+        # `bit_table` raises `AssertionError` for
+        # empty `fol_vars`
+        bits = set()
+    return bits
 
 
 def _refine_assignment(fol_values, table):

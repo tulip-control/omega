@@ -101,9 +101,11 @@ class Context(object):
         common = set(dvars).intersection(self.vars)
         for var in common:
             for k, v in dvars[var].items():
-                assert self.vars[var][k] == v
+                assert self.vars[var][k] == v, (
+                    'attempted to redefine "{var}"'.format(
+                        var=var))
         if common:
-            log.warning('attempted adding existing vars')
+            log.debug('attempted adding existing vars')
         dvars = {k: v for k, v in dvars.items()
                  if k not in common}
         if not dvars:
@@ -189,7 +191,7 @@ class Context(object):
             return None
 
     def pick_iter(self, u, care_vars=None):
-        """Return generator of first-order satisfying assignments."""
+        """Generator of first-order satisfying assignments."""
         if care_vars is None:
             care_bits = None
         elif care_vars:

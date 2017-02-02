@@ -34,6 +34,7 @@ from omega.symbolic import enumeration as enum
 
 
 log = logging.getLogger(__name__)
+TYPE_HINTS = {'int', 'saturating', 'modwrap'}
 
 
 class Context(object):
@@ -227,7 +228,7 @@ def reorder(dvars, fol):
         if var_type == 'bool':
             bitnames = [var]
         else:
-            assert var_type in ('int', 'saturating', 'modwrap')
+            assert var_type in TYPE_HINTS, var_type
             bitnames = dv['bitnames']
         # print('Shifting bits {bitnames} to '
         #       'level {level}'.format(
@@ -287,7 +288,7 @@ def _refine_renaming(fol_rename, table):
         if old_type == 'bool':
             bit_rename[old] = new
             continue
-        assert old_type in ('int', 'saturating', 'modwrap')
+        assert old_type in TYPE_HINTS, old_type
         # int
         old_dom = old_d['dom']
         new_dom = new_d['dom']

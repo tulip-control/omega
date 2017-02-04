@@ -298,7 +298,11 @@ def _int_to_bit_assignment(var, value, table):
 
 
 def _assignment_to_bdd(dvars, fol):
-    """Return BDD from assignment to `dvars`."""
+    """Return BDD from assignment to `dvars`.
+
+    Handles only assignments of integer values.
+    """
+    raise DeprecationWarning('use `_refine_assignment` instead')
     conj = stx.conj(
         '{var} = {value}'.format(var=var, value=value)
         for var, value in dvars.items())

@@ -214,6 +214,15 @@ class Context(object):
         assert stx.isinstance_str(s), s  # was `e` a predicate ?
         return sym_bdd.add_expr(s, self.bdd)
 
+    def assign_from(self, assignment):
+        """Return bdd from `assignment` to variables.
+
+        @param assignment: `dict` that maps each variable to
+            a value (`int` or `bool`) in accord with `self.vars`.
+        """
+        bit_values = _refine_assignment(assignment, self.vars)
+        return self.bdd.cube(bit_values)
+
     def apply(self, op, u, v=None, w=None):
         """Apply operator `op` on operands `u, v, w`."""
         return self.bdd.apply(op, u, v, w)

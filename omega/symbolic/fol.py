@@ -278,6 +278,34 @@ def _refine_assignment(m, table):
     return bit_values
 
 
+def _int_to_bit_assignment(var, value, table):
+    """Return assignment to bits from assignment to integer.
+
+    Skips the parser, compared to `_assignment_to_bdd`.
+    """
+    assert var in table, var
+    var_bits = bv.var_to_twos_complement(var, table)
+    int_bits = bv.int_to_twos_complement(value)
+    p, q = bv.equalize_width(var_bits, int_bits)
+    values = dict()
+    for u, v in zip(p, q):
+        # primed ?
+        if u.isdigit():
+            assert u == v, (u, v)
+        else:
+            values[u] = bool(int(v))
+    return values
+
+
+def _assignment_to_bdd(dvars, fol):
+    """Return BDD from assignment to `dvars`."""
+    conj = stx.conj(
+        '{var} = {value}'.format(var=var, value=value)
+        for var, value in dvars.items())
+    u = fol.add_expr(conj)
+    return u
+
+
 def _refine_renaming(fol_rename, table):
     """Return renaming of bits, from renaming of FOL vars."""
     bit_rename = dict()
@@ -309,25 +337,6 @@ def _refine_renaming(fol_rename, table):
     return bit_rename
 
 
-def _int_to_bit_assignment(var, value, table):
-    """Return assignment to bits from assignment to integer.
-
-    Skips the parser, compared to `_assignment_to_bdd`.
-    """
-    assert var in table, var
-    var_bits = bv.var_to_twos_complement(var, table)
-    int_bits = bv.int_to_twos_complement(value)
-    p, q = bv.equalize_width(var_bits, int_bits)
-    values = dict()
-    for u, v in zip(p, q):
-        # primed ?
-        if u.isdigit():
-            assert u == v, (u, v)
-        else:
-            values[u] = bool(int(v))
-    return values
-
-
 def _prime_bits_of_integers(ints, t):
     """Return bit priming for integers in `x`."""
     bit_rename = dict()
@@ -336,15 +345,6 @@ def _prime_bits_of_integers(ints, t):
         d = {k: stx.prime(k) for k in bits}
         bit_rename.update(d)
     return bit_rename
-
-
-def _assignment_to_bdd(dvars, fol):
-    """Return BDD from assignment to `dvars`."""
-    conj = stx.conj(
-        '{var} = {value}'.format(var=var, value=value)
-        for var, value in dvars.items())
-    u = fol.add_expr(conj)
-    return u
 
 
 def closed_interval(var, a, b):

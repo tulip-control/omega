@@ -265,10 +265,10 @@ def _refine_vars(fol_vars, table):
     return bits
 
 
-def _refine_assignment(fol_values, table):
-    """Return assignment to bits, from FOL assignment."""
+def _refine_assignment(m, table):
+    """Return bit assignment, from int/bool assignment `m`."""
     bit_values = dict()
-    for var, value in fol_values.items():
+    for var, value in m.items():
         assert var in table, var
         if table[var]['type'] == 'bool':
             bit_values[var] = value

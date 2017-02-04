@@ -310,7 +310,10 @@ def _refine_renaming(fol_rename, table):
 
 
 def _int_to_bit_assignment(var, value, table):
-    """Return assignment to bits from assignment to integer."""
+    """Return assignment to bits from assignment to integer.
+
+    Skips the parser, compared to `_assignment_to_bdd`.
+    """
     assert var in table, var
     var_bits = bv.var_to_twos_complement(var, table)
     int_bits = bv.int_to_twos_complement(value)

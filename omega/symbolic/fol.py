@@ -7,6 +7,10 @@ Leslie Lamport, Lawrence C. Paulson
     "Should your specification language be typed?"
     ACM Transactions on Programming Languages and Systems
     Vol.21, No.3, pp.502--526, 1999
+
+Kenneth Kunen
+    "The foundations of mathematics"
+    College Publications, 2009
 """
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
@@ -47,6 +51,9 @@ class Context(object):
     Quantification is implicitly bounded.
     In the future, the bound will be made explicit
     in the syntax.
+
+    "Context" alludes to extension of a formal theory
+    by definitions [Kunen, Sec.II.15].
     """
 
     def __init__(self):

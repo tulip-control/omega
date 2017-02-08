@@ -553,6 +553,23 @@ def _partition_vars(bits, ubits, ebits):
     return prime, partition
 
 
+def add_primed_too(table):
+    """Return table of primed and unprimed vars.
+
+    Assert `table` contains only unprimed vars.
+    Return new table with a primed variable for
+    each unprimed variable in `table`,
+    in addition to the unprimed variables.
+    """
+    t = dict()
+    for var, d in table.items():
+        assert not stx.isprimed(var)
+        pvar = stx.prime(var)
+        t[var] = dict(d)
+        t[pvar] = dict(d)
+    return t
+
+
 def _prime_and_order_table(t):
     """Return ordered table of primed and unprimed variables.
 

@@ -96,8 +96,8 @@ class Context(object):
         - Priming is not reasoned about here.
           Priming is cared for by other modules.
         """
-        # if any `dvars` not fresh, then must be same
         assert dvars, dvars
+        # if any `dvars` not fresh, then must be same
         common = set(dvars).intersection(self.vars)
         for var in common:
             for k, v in dvars[var].items():

@@ -29,7 +29,7 @@ import pprint
 try:
     from dd import cudd as _bdd
 except ImportError:
-    from dd import bdd as _bdd
+    from dd import autoref as _bdd
 
 from omega.logic import bitvector as bv
 from omega.logic import syntax as stx

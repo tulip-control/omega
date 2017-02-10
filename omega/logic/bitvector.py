@@ -419,7 +419,7 @@ class Nodes(_Nodes):
                 return r
             if self.operator == '@':
                 x = int(self.operands[0].value)
-                assert x not in (0, 1), x
+                assert x != 0, x
                 return str(x)
             if self.operator != 'ite':
                 return super(Nodes.Operator, self).flatten(

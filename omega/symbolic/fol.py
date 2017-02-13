@@ -171,9 +171,9 @@ class Context(object):
             care_bits = set()
         for bit_assignment in self.bdd.sat_iter(
                 u, full=full, care_bits=care_bits):
-            d = next(enum._bitfields_to_int_iter(
-                bit_assignment, self.vars))
-            yield d
+            for d in enum._bitfields_to_int_iter(
+                    bit_assignment, self.vars):
+                yield d
 
     def add_expr(self, e):
         """Add first-order predicate.

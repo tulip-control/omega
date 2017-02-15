@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 """Test `omega.symbolic.fol`."""
-from nose import tools as nt
+import logging
 
+from nose import tools as nt
 from omega.symbolic import fol as _fol
+
+
+log = logging.getLogger('dd')
+log.setLevel(logging.WARNING)
+log = logging.getLogger('omega.logic')
+log.setLevel(logging.WARNING)
 
 
 def test_add_vars():

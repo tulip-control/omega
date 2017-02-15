@@ -253,6 +253,25 @@ def test_add_expr():
     u = fol.add_expr('x < y + 5')
     v = fol.add_expr('x - 5 < y')
     assert u == v, (u, v)
+
+
+def test_to_expr():
+    fol = _fol.Context()
+    fol.bdd.configure(reordering=True)
+    d = dict(x=dict(type='int', dom=(-14, 100)),
+             y=dict(type='int', dom=(5, 23)))
+    fol.add_vars(d)
+    u = fol.add_expr('(1 <= x) /\ (x <= 3)')
+    s = fol.to_expr(u, show_limits=True)
+    s_ = ' /\\ x \\in -128 .. 127\n /\\ (x \in 1 .. 3)'
+    assert s == s_, (s, s_)
+    care = fol.add_expr('(-14 <= x)  /\  (x <= 100)')
+    s = fol.to_expr(u, care=care, show_dom=True)
+    s_ = (
+        ' /\\ x \\in -14 .. 100\n'
+        ' /\\ (x \in 1 .. 3)\n'
+        ' /\\ care expression')
+    assert s == s_, (s, s_)
     del u, v
 
 

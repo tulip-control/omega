@@ -34,6 +34,7 @@ except ImportError:
 from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
+from omega.symbolic import cover as cov
 from omega.symbolic import enumeration as enum
 
 
@@ -220,6 +221,32 @@ class Context(object):
         s = bv.bitblast(e, self.vars)
         assert stx.isinstance_str(s), s  # was `e` a predicate ?
         return sym_bdd.add_expr(s, self.bdd)
+
+    def to_expr(self, u, care=None, **kw):
+        """Return minimal DNF of integer inequalities.
+
+        For now, this method supports all variables in
+        `support(u)` being integers.
+
+        @param care: BDD of care set
+        @param kw: keyword args are passed to
+            function `cover.dumps_cover`.
+        """
+        if care is None:
+            care = self.bdd.true
+        cover = cov.minimize(u, care, self)
+        s = cov.dumps_cover(
+            cover, u, care, self, **kw)
+        # prepare to assert
+        _, px, _, _ = cov._setup_aux_vars(u, care, self)
+        r = cov._list_orthotope_expr(
+            cover, px, self, simple=True)
+        r = stx.disj(r)
+        u_ = self.add_expr(r)
+        # promise to match `u` only inside `care`
+        # forgive `|#  u => care`
+        assert u & care == u_ & care, s
+        return s
 
     def assign_from(self, assignment):
         """Return bdd from `assignment` to variables.

@@ -155,11 +155,6 @@ class Automaton(object):
         a.bdd = self.bdd
         return a
 
-    def __del__(self):
-        del self.init
-        del self.action
-        del self.win
-
     def __str__(self):
         c = [
             'Symbolic automaton:',

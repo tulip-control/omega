@@ -82,7 +82,6 @@ def test_support():
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == {'x', 'y'}, r
-    del u
 
 
 def test_replace():
@@ -135,7 +134,6 @@ def test_replace():
     subs = {'z': True}
     v = fol.replace(u, subs)
     assert u == v
-    del u, u_, v
 
 
 # requires `dd.cudd`
@@ -149,7 +147,6 @@ def replace_with_bdd():
     u = fol.replace_with_bdd(u, subs)
     u_ = fol.add_expr('y')
     assert u == u_, (u, u_)
-    del u, u_, subs
 
 
 def test_quantifiers():
@@ -199,7 +196,6 @@ def test_quantifiers():
     u = fol.add_expr('x > 7')
     u = fol.exist(['x'], u)
     assert u == bdd.false
-    del u, r
 
 
 def test_pick():
@@ -215,7 +211,6 @@ def test_pick():
     u = fol.add_expr('False')
     p = fol.pick(u, care_vars=['x'])
     assert p is None, p
-    del u
 
 
 def test_pick_iter():
@@ -239,7 +234,6 @@ def test_pick_iter():
     gen = fol.pick_iter(u, care_vars=['x', 'y'])
     r = list(gen)
     assert len(r) == 4, r
-    del u
 
 
 def test_add_expr():
@@ -272,7 +266,6 @@ def test_to_expr():
         ' /\\ (x \in 1 .. 3)\n'
         ' /\\ care expression')
     assert s == s_, (s, s_)
-    del u, v
 
 
 def test_apply():
@@ -286,7 +279,6 @@ def test_apply():
     assert w == bdd.false
     w = fol.apply('or', u, v)
     assert w == bdd.true
-    del u, v, w
 
 
 def test_reorder():

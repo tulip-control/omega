@@ -293,7 +293,6 @@ def test_add_to_visited():
     s = 'x & (y = 5)'
     u = c.add_expr(s)
     assert new_visited == u
-    del new_visited, visited, u
 
 
 def test_node_tuple():

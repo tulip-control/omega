@@ -50,12 +50,12 @@ class Lexer(astutils.Lexer):
 
     def t_AND(self, t):
         r'\&\&|\&|/\\'
-        t.value = '&'
+        t.value = '/\\'
         return t
 
     def t_OR(self, t):
         r'\|\||\||\\/'
-        t.value = '|'
+        t.value = r'\/'
         return t
 
     def t_NEQUALS(self, t):
@@ -65,7 +65,7 @@ class Lexer(astutils.Lexer):
 
     def t_NOT(self, t):
         r'~|\!'
-        t.value = '!'
+        t.value = '~'
         return t
 
     def t_IMPLIES(self, t):
@@ -75,7 +75,7 @@ class Lexer(astutils.Lexer):
 
     def t_EQUIV(self, t):
         r'\<\=>|\<->'
-        t.value = '<->'
+        t.value = '<=>'
         return t
 
     # quantifiers

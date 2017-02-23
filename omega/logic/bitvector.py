@@ -464,9 +464,12 @@ class Nodes(_Nodes):
 
     class Var(_Nodes.Var):
         def flatten(self, prime=None, mem=None,
-                    t=None, *arg, **kw):
+                    t=None, defs=None, *arg, **kw):
             logger.info('flatten "{s}"'.format(s=repr(self)))
             name = self.value
+            # operator definition ?
+            if defs is not None and name in defs:
+                return str(defs[name])
             if _is_bool_var(name, t):
                 # Boolean scope ?
                 if name in t:

@@ -131,7 +131,7 @@ def _assert_admissible_operators(d):
                 continue
             raise AssertionError((
                 'found inadmissible operator "{op}" '
-                'in "{p}" formla. Parts:\n {d}').format(
+                'in "{p}" formula. Parts:\n {d}').format(
                     op=op, p=part, d=d))
 
 

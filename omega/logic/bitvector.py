@@ -478,6 +478,7 @@ class Nodes(_Nodes):
                     v=name, prime=stx.PRIME if prime else '')
             # arithmetic context
             # must be integer variable
+            # a refinement occurs here automatically
             bits = var_to_twos_complement(name, t)
             bits = ["{b}{prime}".format(
                     b=b, prime=stx.PRIME

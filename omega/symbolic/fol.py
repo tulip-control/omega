@@ -261,6 +261,16 @@ class Context(object):
         """Apply operator `op` on operands `u, v, w`."""
         return self.bdd.apply(op, u, v, w)
 
+    @property
+    def false(self):
+        """Return `self.bdd.false`."""
+        return self.bdd.false
+
+    @property
+    def true(self):
+        """Return `self.bdd.true`."""
+        return self.bdd.true
+
 
 def reorder(dvars, fol):
     """Shift integers up in the variable order of `fol.bdd`."""

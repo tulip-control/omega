@@ -26,9 +26,9 @@ def test_symbolic_automaton():
         dom=(3, 17),
         owner='sys')
     aut.init['env'].append('x')
-    aut.action['env'].append("x -> ! x'")
+    aut.action['env'].append("x => ~ x'")
     aut.init['sys'].append('y = 5')
-    aut.action['sys'].append("(y < 6) -> (y' > 10)")
+    aut.action['sys'].append("(y < 6) => (y' > 10)")
     # strategy definition
     assert aut.moore is True, aut.moore
     assert aut.plus_one is True, aut.plus_one
@@ -204,7 +204,7 @@ def test_iterative_bddizer():
     bdd = dd.bdd.BDD(order)
     e = '$ 3   & x y   ! z  | ? 0 ? 1'
     u = add(e, bdd)
-    v = bdd.add_expr('(x & y) | ! z')
+    v = bdd.add_expr('(x /\ y) \/ ~ z')
     assert u == v, (u, v)
 
 
@@ -215,7 +215,7 @@ def test_bddizer_propositional():
     bdd = dd.bdd.BDD(order)
     e = '& x y'
     u = add(e, bdd)
-    v = bdd.add_expr('x & y')
+    v = bdd.add_expr('x /\ y')
     assert u == v, (u, v)
     # buffers
     # (x & y) | ! z
@@ -226,7 +226,7 @@ def test_bddizer_propositional():
     assert u == v, (u, v)
     #
     e = '& $2 & 1 x ?0 $3 | !x y z & ?1 z'
-    s = 'x & z'
+    s = 'x /\ z'
     u = add(e, bdd)
     v = bdd.add_expr(s)
     assert u == v, (u, v)
@@ -314,10 +314,10 @@ def test_logicizer_env():
     assert xtype == 'bool', xtype
     assert ktype == 'saturating', ktype
     (s,) = aut.action['env']
-    e1 = "(((((k = 0)) -> (((x <-> True)) & ((k' = 1)))) \n"
-    e2 = "(((((k = 0)) -> (((k' = 1)) & ((x <-> True)))) \n"
+    e1 = "(((((k = 0)) => (((x <=> True)) /\ ((k' = 1)))) \n"
+    e2 = "(((((k = 0)) => (((k' = 1)) /\ ((x <=> True)))) \n"
     assert s.startswith(e1) or s.startswith(e2), s
     e3 = (
-        "& (((k = 1)) -> ((x') & ((k' = 2))))) \n"
-        "& (((k = 2)) -> ((k' = 1)))) | (k' = k)")
+        "/\ (((k = 1)) => ((x') /\ ((k' = 2))))) \n"
+        "/\ (((k = 2)) => ((k' = 1)))) \/ (k' = k)")
     assert s.endswith(e3), s

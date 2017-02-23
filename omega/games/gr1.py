@@ -35,9 +35,9 @@ logger = logging.getLogger(__name__)
 
 
 def solve_streett_game(aut, rank=1):
-    """Return winning set and iterants for Streett(1) game.
+    r"""Return winning set and iterants for Streett(1) game.
 
-    @param aut: compiled game with <>[] | []<> winning
+    @param aut: compiled game with <>[] \/ []<> winning
     @type aut: `symbolic.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'

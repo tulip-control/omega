@@ -122,15 +122,15 @@ def type_invariants(table):
         # still included, for use with counters
         # during transducer construction,
         # because closure not taken for the counters
-        s = '({min} <= {x}) & ({x} <= {max})'.format(
+        s = '({min} <= {x})  /\  ({x} <= {max})'.format(
             min=dmin, max=dmax, x=var)
         init[var].append(s)
         # prime needed to enforce limits now, not one step later,
         # otherwise env can violate limits, if that will force
         # sys to lose in the next time step.
         s = (
-            '({min} <= {x}) & ({x} <= {max}) & '
-            "({min} <= {x}') & ({x}' <= {max})").format(
+            "    ({min} <= {x})  /\  ({x} <= {max}) "
+            " /\ ({min} <= {x}') /\  ({x}' <= {max})").format(
                 min=dmin, max=dmax, x=var)
         safety[var].append(s)
     return init, safety
@@ -139,7 +139,7 @@ def type_invariants(table):
 def _init_to_logic(var, d):
     """Return logic formulae for initial condition."""
     if d['type'] == 'bool':
-        op = '<->'
+        op = '<=>'
     else:
         op = '='
     return '{var} {op} {value}'.format(
@@ -355,11 +355,11 @@ class Nodes(_Nodes):
 
     opmap = {
         'false': '0', 'true': '1',
-        '!': '!',
-        '|': '|', '&': '&',
-        '->': '| !',
+        '~': '!',
+        r'\/': '|', '/\\': '&',
         '=>': '| !',
-        '<->': '! ^',
+        '=>': '| !',
+        '<=>': '! ^',
         'ite': 'ite', '@': '',
         '\A': '\A', '\E': '\E', '\S': '\S',
         'X': '',

@@ -36,14 +36,14 @@ def test_quantifiers():
     s = '\A y: True'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
-    s = '\A x, y, z: (x | ! y) & z'
+    s = '\A x, y, z: (x \/ ~ y) /\ z'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
     assert len(qvars) == 3, qvars
     r = e.flatten()
-    r_ = '( ( x | ( ! y ) ) & z )'
+    r_ = '( ( x \/ ( ~ y ) ) /\ z )'
     assert r == r_, (r, r_)
 
 

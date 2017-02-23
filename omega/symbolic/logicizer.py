@@ -55,7 +55,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
         if self_loops:
-            r = "({r}) | ({var}' = {var})".format(
+            r = "({r}) \/ ({var}' = {var})".format(
                 r=r, var=nodevar)
         sys_tran.append(r)
         sys_tran.extend(nodepred)
@@ -68,7 +68,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
-            r = "({r}) | ({var}' = {var})".format(
+            r = "({r}) \/ ({var}' = {var})".format(
                 r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
@@ -87,9 +87,9 @@ def _vars_to_symbol_table(g, nodevar):
     """Return `dict` of integer and Boolean variables.
 
     Conforms to `openpromela.bitvector` input:
-      - type: 'bool' | 'saturating'
+      - type: 'bool' or 'saturating'
       - dom: (min, max)
-      - owner: 'env' | 'sys'
+      - owner: 'env' or 'sys'
     """
     t = dict()
     for var, dom in g.vars.items():
@@ -128,9 +128,9 @@ def _node_var_trans(g, nodevar, dvars):
         if r == 'True':
             continue
         # initial node vars
-        init.append('!({pre}) || ({r})'.format(pre=pre, r=r))
+        init.append('~ ({pre}) \/ ({r})'.format(pre=pre, r=r))
         # transitions of node vars
-        trans.append("((({pre}) -> ({r}))')".format(pre=pre, r=r))
+        trans.append("((({pre}) => ({r}))')".format(pre=pre, r=r))
     return (init, trans)
 
 
@@ -161,7 +161,7 @@ def _sys_trans(g, nodevar, dvars):
             t[stx.prime(nodevar)] = v
             r = _to_action(t, dvars)
             post.append(r)
-        c = '({pre}) -> ({post})'.format(pre=pre, post=stx.disj(post))
+        c = '({pre}) => ({post})'.format(pre=pre, post=stx.disj(post))
         sys_trans.append(c)
     s = stx.conj(sys_trans, sep='\n')
     return s
@@ -187,7 +187,7 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
             continue
         post = stx.disj(c)
         pre = _assign(nodevar, u, dvars)
-        env_trans.append('(({pre}) -> ({post}))'.format(
+        env_trans.append('(({pre}) => ({post}))'.format(
             pre=pre, post=post))
     s = stx.conj(env_trans, sep='\n')
     return s
@@ -206,7 +206,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
         pre = _assign(nodevar, u, dvars)
         # no successors ?
         if not g.succ.get(u):
-            env_trans.append('{pre} -> False'.format(pre=pre))
+            env_trans.append('{pre} => False'.format(pre=pre))
             if not self_loops:
                 warnings.warn(
                     'Environment dead-end found.\n'
@@ -229,7 +229,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
             sys.append(r)
         # avoid sys winning env by blocking all edges
         # post.append(stx.conj_neg(sys))
-        env_trans.append('({pre}) -> ({post})'.format(
+        env_trans.append('({pre}) => ({post})'.format(
             pre=pre, post=stx.disj(post)))
     s = stx.conj(env_trans, sep='\n')
     return s
@@ -267,7 +267,7 @@ def _assign(k, v, dvars):
     elif dtype == 'str':
         s = '{k} = "{v}"'.format(k=k, v=v)
     elif dtype == 'bool':
-        s = '{k} <-> {v}'.format(k=k, v=v)
+        s = '{k} <=> {v}'.format(k=k, v=v)
     else:
         raise Exception('dtype is: {dtype}'.format(
             dtype=dtype))

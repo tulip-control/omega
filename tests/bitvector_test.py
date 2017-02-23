@@ -540,7 +540,7 @@ def test_init_to_logic():
     # bool
     d = dict(type='bool', init='False')
     c = bv._init_to_logic('x', d)
-    assert c == 'x <-> False', c
+    assert c == 'x <=> False', c
     # number
     d = dict(type='other', init=5)
     c = bv._init_to_logic('y', d)
@@ -555,12 +555,12 @@ def test_init_to_logic():
 def test_bool_eq_number():
     t = dict(x=dict(type='bool', owner='env'))
     # wrong
-    s = 'x <-> 0'
+    s = 'x <=> 0'
     tree = parser.parse(s)
     with nt.assert_raises(AssertionError):
         tree.flatten(t=t)
     # correct
-    s = 'x <-> false'
+    s = 'x <=> false'
     tree = parser.parse(s)
     r = tree.flatten(t=t)
     assert r == ' ! ^ x 0 ', r
@@ -570,7 +570,7 @@ def test_mixed_fol_bitblasted():
     t = dict(x=dict(type='bool', owner='sys'),
              y=dict(type='int', dom=(0, 3), owner='sys'))
     t = bv.bitblast_table(t)
-    s = '(x & y_0) | (y < 0)'
+    s = '(x /\ y_0) \/ (y < 0)'
     tree_0 = parser.parse(s)
     q = 'y < 0'
     tree_1 = parser.parse(q)
@@ -583,11 +583,11 @@ def test_type_invariants():
     t = dict(x=dict(type='int', dom=(0, 3), init=2))
     t = bv.bitblast_table(t)
     init, action = bv.type_invariants(t)
-    init_ = dict(x=['x = 2', '(0 <= x) & (x <= 3)'])
+    init_ = dict(x=['x = 2', '(0 <= x)  /\  (x <= 3)'])
     assert init == init_, init
     s = (
-         "(0 <= x) & (x <= 3) & "
-         "(0 <= x') & (x' <= 3)")
+         "    (0 <= x)  /\  (x <= 3)"
+         "  /\ (0 <= x') /\  (x' <= 3)")
     action_ = dict(x=[s])
     assert action == action_, action
 

@@ -71,19 +71,19 @@ class Nodes(_Nodes):
                 assert c == 'bool', (c, op)
             if op == '-[]':
                 x = Nodes.Bool('True')
-                y = Nodes.Unary('!', self.operands[0])
+                y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_since(a, *arg, **kw)
-                return '(! {r})'.format(r=r)
+                return '(~ {r})'.format(r=r)
             elif op == '-<>':
                 a = (Nodes.Bool('True'), self.operands[0])
                 return _flatten_since(a, *arg, **kw)
             elif op == '[]' and until:
                 x = Nodes.Bool('True')
-                y = Nodes.Unary('!', self.operands[0])
+                y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_until(a, *arg, **kw)
-                return '(! {r})'.format(r=r)
+                return '(~ {r})'.format(r=r)
             elif op == '<>' and until:
                 a = (Nodes.Bool('True'), self.operands[0])
                 return _flatten_until(a, *arg, **kw)
@@ -182,10 +182,10 @@ def _make_tester_for_previous(var, expr, context, strong):
     """Return temporal tester for "previous"."""
     # select operator
     if context == 'bool':
-        op = '<->'
+        op = '<=>'
         # strong "previous" operator "--X" ?
         if strong:
-            init = '(! {var})'.format(var=var)
+            init = '(~ {var})'.format(var=var)
         else:
             init = var
     else:
@@ -205,11 +205,11 @@ def _flatten_since(operands, testers, context, *arg, **kw):
     q = y.flatten(testers=testers, context=context, *arg, **kw)
     i = len(testers)
     var = '_aux{i}'.format(i=i)
-    init = '({var} <-> {q})'.format(var=var, q=q)
+    init = '({var} <=> {q})'.format(var=var, q=q)
     trans = (
         '('
-        '(X {var}) <-> ('
-        '    (X {q}) | ((X {p}) & {var})'
+        '(X {var}) <=> ('
+        '    (X {q}) \/ ((X {p}) /\ {var})'
         '))').format(
             var=var, p=p, q=q)
     testers[var] = dict(
@@ -227,11 +227,11 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     var = '_aux{i}'.format(i=i)
     trans = (
         '('
-        '{var} <-> ('
-        '    ({q}) | (({p}) & (X {var}))'
+        '{var} <=> ('
+        '    ({q}) \/ (({p}) /\ (X {var}))'
         '))').format(
             var=var, p=p, q=q)
-    win = '(({q}) | ! {var})'.format(var=var, q=q)
+    win = '(({q}) \/ ~ {var})'.format(var=var, q=q)
     testers[var] = dict(
         type='bool',
         init='True', trans=trans, win=win)

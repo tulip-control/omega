@@ -126,7 +126,7 @@ def _print_enumeration(u, bdd, t, care_set, care_bits):
             i = product[x]
             s = '({x} = {i})'.format(x=x, i=i)
             w.append(s)
-        s = ' & '.join(w)
+        s = ' /\ '.join(w)
         r.append(s)
     e = '\n'.join(r)
     logger.debug((

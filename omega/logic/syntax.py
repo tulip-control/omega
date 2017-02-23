@@ -11,12 +11,12 @@ PRIME = "'"
 SUPPORTED_OPERATORS = {'&', '|', '/\\', '\/'}
 
 
-def conj(iterable, sep='', op='&'):
+def conj(iterable, sep='', op='/\\'):
     """Return binary conjunction in infix syntax."""
     return _associative_op(iterable, op, sep)
 
 
-def disj(iterable, sep='', op='|'):
+def disj(iterable, sep='', op=r'\/'):
     """Return binary disjunction in prefix syntax."""
     return _associative_op(iterable, op, sep)
 

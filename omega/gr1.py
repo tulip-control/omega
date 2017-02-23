@@ -83,12 +83,12 @@ def _split_gr1(u, context, gf=None):
         else:
             return Nodes.Bool('True')
     # operator
-    if u.operator == '&':
+    if u.operator == '/\\':
         v, w = u.operands
         p = _split_gr1(v, context, gf)
         q = _split_gr1(w, context, gf)
-        return Nodes.Binary('&', p, q)
-    assert u.operator != '&', u.operator
+        return Nodes.Binary('/\\', p, q)
+    assert u.operator != '/\\', u.operator
     if context == 'init':
         if u.operator == '[]':
             return Nodes.Bool('True')
@@ -178,7 +178,7 @@ def split_gr1_old(f):
             b.append(u)
             continue
         # operator
-        if u.operator == '&':
+        if u.operator == '/\\':
             # use `u.operands` instead of `g.successors`
             # to preserve original order
             Q.extend(u.operands)
@@ -234,7 +234,7 @@ def split_gr1_old(f):
 
 
 def conj(x):
-    return ' & '.join(x)
+    return ' /\ '.join(x)
 
 
 def has_operator_old(u, g, operators):

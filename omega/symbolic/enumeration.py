@@ -87,11 +87,10 @@ def print_nodes(
     if u == bdd.false:
         print('empty set')
         return
-    t = symbolic._prime_and_order_table(dvars)
     if care_bits is not None:
         support = bdd.support(u)
         assert support.issubset(care_bits), (support, care_bits)
-    _print_enumeration(u, bdd, t, care_set, care_bits)
+    _print_enumeration(u, bdd, dvars, care_set, care_bits)
 
 
 def print_edges(

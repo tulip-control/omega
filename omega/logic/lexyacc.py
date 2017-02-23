@@ -21,8 +21,10 @@ class Lexer(astutils.Lexer):
     reserved = {
         'ite': 'ITE',
         'X': 'NEXT',
+        'FALSE': 'FALSE',
         'False': 'FALSE',
         'false': 'FALSE',
+        'TRUE': 'TRUE',
         'True': 'TRUE',
         'true': 'TRUE',
         'U': 'UNTIL',

@@ -347,7 +347,14 @@ The only temporal operator in the resulting formulae is “next”. Using the `b
 
 Integer division has C99 semantics ([6.5.5, p.82](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf)).
 
+The parser BNF is given below. The parser admits modules or expressions
+as input, to make it easier to work at both levels of granularity.
+
 ```
+module ::= units
+units ::= unit [units]
+unit ::= operator_def
+
        # first-order
 expr ::= expr '*' expr
        | expr '/' expr  # quotient of C99 integer division
@@ -363,6 +370,7 @@ expr ::= expr '*' expr
        # quantifiers
        | '\A' list `:` expr  # forall
        | '\E' list `:` expr  # exists
+
 
        # propositional
 
@@ -408,6 +416,8 @@ expr ::= expr '*' expr
        | variable
        | string
 
+defs ::= operator_def [defs]
+operator_def ::= NAME '==' expr  # operator definition
 list ::= NAME ["'"] [',' list]  # list of variables
 variable ::= NAME
 string ::= '"' NAME '"'

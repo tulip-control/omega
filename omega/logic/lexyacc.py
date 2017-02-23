@@ -41,7 +41,7 @@ class Lexer(astutils.Lexer):
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
         'ALWAYS', 'EVENTUALLY',
         'ONCE', 'PRIME', 'DOT', 'AT',
-        'FORALL', 'EXISTS', 'RENAME', 'COLON']
+        'FORALL', 'EXISTS', 'RENAME', 'COLON', 'DEF']
     misc = ['NAME', 'NUMBER']
 
     def t_NAME(self, t):
@@ -80,6 +80,7 @@ class Lexer(astutils.Lexer):
         t.value = '<=>'
         return t
 
+    t_DEF = r'\=\='
     # quantifiers
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'
@@ -133,10 +134,11 @@ class Parser(astutils.Parser):
     """Production rules to build LTL parser."""
 
     tabmodule = TABMODULE
-    start = 'expr'
+    start = 'start'
     # lowest to highest
     # based on precedence in `spin.y`
     precedence = (
+        ('nonassoc', 'DEF'),
         ('left', 'COLON'),
         ('left', 'EQUIV'),
         ('left', 'IMPLIES'),
@@ -156,6 +158,35 @@ class Parser(astutils.Parser):
         ('left', 'PRIME', 'DOT'))
     Lexer = Lexer
     nodes = Nodes
+
+    def p_start(self, p):
+        """start : module
+                 | expr
+        """
+        p[0] = p[1]
+
+    def p_module(self, p):
+        """module : units"""
+        p[0] = p[1]
+
+    def p_units_iter(self, p):
+        """units : units unit"""
+        p[1].append(p[2])
+        p[0] = p[1]
+
+    def p_units_end(self, p):
+        """units : unit"""
+        p[0] = [p[1]]
+
+    def p_unit(self, p):
+        """unit : def"""
+        p[0] = p[1]
+
+    def p_operator_definition(self, p):
+        """def : NAME DEF expr """
+        name = p[1]
+        u = self.nodes.Terminal(name, dtype='opname')
+        p[0] = self.nodes.Binary('==', u, p[3])
 
     def p_nullary(self, p):
         """expr : TRUE

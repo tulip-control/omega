@@ -32,6 +32,7 @@ except ImportError:
     from dd import autoref as _bdd
 
 from omega.logic import bitvector as bv
+from omega.logic import lexyacc
 from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import cover as cov
@@ -39,6 +40,7 @@ from omega.symbolic import enumeration as enum
 
 
 log = logging.getLogger(__name__)
+_parser = lexyacc.Parser()
 TYPE_HINTS = {'int', 'saturating', 'modwrap'}
 
 
@@ -61,6 +63,8 @@ class Context(object):
         """Instantiate first-order context."""
         self.vars = dict()
         self.bdd = _bdd.BDD()
+        self.op = dict()  # namespace of operators
+        self.op_bdd = dict()
 
     def __str__(self):
         return ((
@@ -211,6 +215,51 @@ class Context(object):
             for d in enum._bitfields_to_int_iter(
                     bit_assignment, self.vars):
                 yield d
+
+    def define(self, e):
+        """Register operator definitions.
+
+        The string `e` must contain definitions. Example:
+
+        ```python
+        e = '''
+            a == x + y > 3
+            b == z - x <= 0
+            c == a /\ b
+            '''
+        ```
+
+        In the future, this method may merge with `add_expr`.
+        """
+        assert stx.isinstance_str(e), e
+        bv_defs = bv._parser.parse(e)
+        defs = _parser.parse(e)
+        for opdef, bv_opdef in zip(defs, bv_defs):
+            assert opdef.operator == '==', opdef
+            name_ast, expr_ast = opdef.operands
+            _, bv_ast = bv_opdef.operands
+            name = name_ast.value
+            if name in self.vars:
+                raise ValueError((
+                    'Attempted to define operator "{name}", '
+                    'but "{name}" already declared as variable: '
+                    '{old}').format(
+                        name=name, old=self.vars[name]))
+            if name in self.op:
+                raise ValueError((
+                    'Attempted to redefine operator "{name}". '
+                    'Previous definition as: "{old}"').format(
+                        name=name, old=self.op[name]))
+            s = bv_ast.flatten(
+                t=self.vars, defs=self.op_bdd)
+            assert stx.isinstance_str(s), s
+            # sensitive point:
+            #     operator expressions are stored before substitutions
+            #     operator BDDs are stored after operator substitutions
+            # operator definitions cannot change, so this should
+            # not cause problems as currently arranged.
+            self.op[name] = expr_ast.flatten()
+            self.op_bdd[name] = sym_bdd.add_expr(s, self.bdd)
 
     def add_expr(self, e):
         """Add first-order predicate.

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Test `omega.symbolic.fol`."""
 import logging
+import pprint
 
 from nose import tools as nt
 from omega.symbolic import fol as _fol
@@ -241,6 +242,44 @@ def test_pick_iter():
     gen = fol.pick_iter(u, care_vars=['x', 'y'])
     r = list(gen)
     assert len(r) == 4, r
+
+
+def test_define():
+    c = _fol.Context()
+    c.add_vars(dict(x=dict(type='int', dom=(9, 35))))
+    c.add_vars(dict(y=dict(type='int', dom=(1, 5))))
+    c.add_vars(dict(z=dict(type='int', dom=(-3, 10))))
+    e = '''
+        a == x + y > 3
+        b == z - x <= 0
+        c == a /\ b
+        '''
+    c.define(e)
+    # pprint.pprint(c.op)
+    # a
+    s = c.op['a']
+    s_ = '( ( x + y ) > 3 )'
+    assert s == s_, s
+    u = c.op_bdd['a']
+    u_ = c.add_expr(s_)
+    assert u == u_, u
+    # b
+    s = c.op['b']
+    s_ = '( ( z - x ) <= 0 )'
+    assert s == s_, s
+    u = c.op_bdd['b']
+    u_ = c.add_expr(s_)
+    assert u == u_, u
+    # c
+    s = c.op['c']
+    s_ = '( a /\ b )'
+    assert s == s_, s
+    u = c.op_bdd['c']
+    # caution:  operator names *have* been substituted in
+    # the BDD, unlike the expression in `c.op['c']` above.
+    s_ = '( ( ( x + y ) > 3 )  /\  ( ( z - x ) <= 0 ) )'
+    u_ = c.add_expr(s_)
+    assert u == u_, u
 
 
 def test_add_expr():

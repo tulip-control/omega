@@ -21,7 +21,7 @@ def ltl_to_automaton(f):
 
     Formula `f` must be in the form:
 
-      A -> G
+      A -+-> G
 
     where each of A, G is a conjunction of terms: `B`, `[]C`, `[]<>B`.
     For more details on `B, C`, see `split_gr1`.
@@ -30,7 +30,7 @@ def ltl_to_automaton(f):
     @rtype: `symbolic.Automaton`
     """
     t = parser.parse(f)
-    assert t.operator == '->'
+    assert t.operator == '-+->'
     env, sys = t.operands
     d = {'assume': split_gr1(env),
          'assert': split_gr1(sys)}

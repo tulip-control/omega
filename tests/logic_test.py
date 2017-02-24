@@ -5,7 +5,7 @@ from omega.logic import past
 from omega.logic import syntax as stx
 
 
-parser = past.Parser()
+parser = past.parser
 
 
 def test_flatten_previous_var():

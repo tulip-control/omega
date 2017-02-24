@@ -238,13 +238,8 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     return var
 
 
-class Parser(lexyacc.Parser):
-    """LTL parser that translates past to future."""
-
-    nodes = Nodes
-
-
-parser = Parser()
+# LTL parser that translates past to future.
+parser = lexyacc.Parser(nodes=Nodes)
 
 
 def translate(s, debug=False, until=False):

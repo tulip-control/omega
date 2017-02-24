@@ -40,8 +40,9 @@ class Lexer(astutils.Lexer):
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
         'ALWAYS', 'EVENTUALLY',
-        'ONCE', 'PRIME', 'DOT', 'AT',
-        'FORALL', 'EXISTS', 'RENAME', 'COLON', 'DEF']
+        'ONCE', 'PRIME', 'DOT', 'DOTS', 'AT',
+        'FORALL', 'EXISTS', 'RENAME', 'IN',
+        'COLON', 'DEF']
     misc = ['NAME', 'NUMBER']
 
     def t_NAME(self, t):
@@ -87,6 +88,8 @@ class Lexer(astutils.Lexer):
     t_RENAME = r'\\S'  # for arbitrary substitution (compose)
     # conjoin and quantify existentially
     t_COLON = r'\:'
+    # set theory
+    t_IN = r'\\in'
     # Boolean
     t_XOR = r'\^'
     # comparators
@@ -115,6 +118,7 @@ class Lexer(astutils.Lexer):
     t_ALWAYS = r'\[\]'
     t_EVENTUALLY = r'\<\>'
     t_DOT = r'\.'
+    t_DOTS = r'\.\.'
     t_PRIME = r"\'"
     # other
     t_AT = r'@'
@@ -148,13 +152,14 @@ class Parser(astutils.Parser):
         ('left', 'ALWAYS', 'EVENTUALLY', 'HISTORICALLY', 'ONCE'),
         ('left', 'UNTIL', 'WEAK_UNTIL', 'RELEASE', 'SINCE', 'TRIGGER'),
         ('left', 'EQUALS', 'NEQUALS'),
-        ('left', 'LT', 'LE', 'GT', 'GE'),
+        ('left', 'LT', 'LE', 'GT', 'GE', 'IN'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIV', 'MOD'),
         ('right', 'NOT', 'UMINUS'),
         ('left', 'RENAME'),
         ('left', 'FORALL', 'EXISTS'),
         ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
+        ('nonassoc', 'DOTS'),
         ('left', 'PRIME', 'DOT'))
     Lexer = Lexer
     nodes = Nodes
@@ -269,6 +274,14 @@ class Parser(astutils.Parser):
     def p_substitute(self, p):
         """expr : RENAME pairs COLON expr"""
         p[0] = self.nodes.Operator(p[1], p[2], p[4])
+
+    def p_in_range(self, p):
+        """expr : expr IN expr"""
+        p[0] = self.nodes.Binary(p[2], p[1], p[3])
+
+    def p_range(self, p):
+        """expr : number DOTS number"""
+        p[0] = self.nodes.Binary(p[2], p[1], p[3])
 
     def p_varlist_iter(self, p):
         """list : list COMMA expr"""

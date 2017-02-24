@@ -84,6 +84,22 @@ def test_substitution():
     assert e.value == 'False', e.value
 
 
+def test_range():
+    s = r'z \in 0 .. 2'
+    r = parser.parse(s).flatten()
+    r_ = r'( z \in ( 0 .. 2 ) )'
+    assert r == r_, r
+    s = r'''
+           z \in 0 .. 2
+        /\ y \in -45 .. 1
+        '''
+    r = parser.parse(s).flatten()
+    r_ = (
+        '( ( z \in ( 0 .. 2 ) )'
+        ' /\ ( y \in ( -45 .. 1 ) ) )')
+    assert r == r_, r
+
+
 def _assert_is_var_node(x, var):
     assert hasattr(x, 'type'), x
     assert x.type == 'var', x.type
@@ -91,4 +107,4 @@ def _assert_is_var_node(x, var):
 
 
 if __name__ == '__main__':
-    test_quantifiers()
+    test_range()

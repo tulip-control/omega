@@ -372,6 +372,9 @@ expr ::= expr '*' expr
        | '\E' list `:` expr  # exists
 
 
+       # a little set theory
+       | expr '\in' number '..' number  # in range of integers
+
        # propositional
 
        # TLA+ syntax
@@ -412,7 +415,7 @@ expr ::= expr '*' expr
        | '(' expr ')'
        | 'True'
        | 'False'
-       | [-] NUMBER
+       | number
        | variable
        | string
 
@@ -421,6 +424,7 @@ operator_def ::= NAME '==' expr  # operator definition
 list ::= NAME ["'"] [',' list]  # list of variables
 variable ::= NAME
 string ::= '"' NAME '"'
+number ::= [-] NUMBER
 
 NAME ::= [A-Za-z_][A-za-z0-9_:]*
 NUMBER ::= \d+  # integer

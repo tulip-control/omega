@@ -455,12 +455,14 @@ class Nodes(_Nodes):
         def flatten(self, *arg, **kw):
             """Prefix flattener."""
             logger.info('flatten "{s}"'.format(s=repr(self)))
+            op = self.operator
             x = self.operands[0].flatten(*arg, **kw)
             y = self.operands[1].flatten(*arg, **kw)
+            op = Nodes.opmap[op]
             assert isinstance(x, str), x
             assert isinstance(y, str), y
             return ' {op} {x} {y} '.format(
-                op=Nodes.opmap[self.operator], x=x, y=y)
+                op=op, x=x, y=y)
 
     class Var(_Nodes.Var):
         def flatten(self, prime=None, mem=None,

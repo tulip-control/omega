@@ -40,7 +40,9 @@ class Nodes(object):
             return ''.join([
                 self.operator,
                 '(',
-                ', '.join(x.flatten(*arg, **kw) for x in self.operands),
+                ', '.join(
+                    x.flatten(*arg, **kw)
+                    for x in self.operands),
                 ')'])
 
     class Unary(astutils.Operator):

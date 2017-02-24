@@ -458,6 +458,15 @@ class Nodes(_Nodes):
             op = self.operator
             x = self.operands[0].flatten(*arg, **kw)
             y = self.operands[1].flatten(*arg, **kw)
+            if self.operator == '..':
+                return (x, y)
+            if self.operator == r'\in':
+                assert len(y) == 2, y
+                e = x
+                a, b = y
+                x = flatten_comparator('<=', a, e, mem=list())
+                y = flatten_comparator('<=', e, b, mem=list())
+                op = '/\\'
             op = Nodes.opmap[op]
             assert isinstance(x, str), x
             assert isinstance(y, str), y

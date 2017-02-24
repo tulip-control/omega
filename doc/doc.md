@@ -402,7 +402,6 @@ expr ::= expr '*' expr
        | '<>' expr  # eventually
        | '-X' expr  # weak previous
        | '--X' expr  # strong previous
-       | expr '.' [NUMBER]  # previous [multiple]
        | '-[]' expr  # historically (dual of [])
        | '-<>' expr  # once (dual of <>)
        | expr 'U' expr  # strong until

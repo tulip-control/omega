@@ -40,7 +40,7 @@ class Lexer(astutils.Lexer):
         'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
         'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
         'ALWAYS', 'EVENTUALLY',
-        'ONCE', 'PRIME', 'DOT', 'DOTS', 'AT',
+        'ONCE', 'PRIME', 'DOTS', 'AT',
         'FORALL', 'EXISTS', 'RENAME', 'IN',
         'COLON', 'DEF']
     misc = ['NAME', 'NUMBER']
@@ -117,7 +117,6 @@ class Lexer(astutils.Lexer):
     t_ONCE = r'-\<\>'
     t_ALWAYS = r'\[\]'
     t_EVENTUALLY = r'\<\>'
-    t_DOT = r'\.'
     t_DOTS = r'\.\.'
     t_PRIME = r"\'"
     # other
@@ -160,7 +159,7 @@ class Parser(astutils.Parser):
         ('left', 'FORALL', 'EXISTS'),
         ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
         ('nonassoc', 'DOTS'),
-        ('left', 'PRIME', 'DOT'))
+        ('left', 'PRIME'))
     Lexer = Lexer
     nodes = Nodes
 
@@ -202,14 +201,6 @@ class Parser(astutils.Parser):
     def p_postfix_next(self, p):
         """expr : expr PRIME"""
         p[0] = self.nodes.Unary('X', p[1])
-
-    def p_postfix_previous(self, p):
-        """expr : expr DOT"""
-        p[0] = self.nodes.Unary('-X', p[1])
-
-    def p_postfix_multi_previous(self, p):
-        """expr : expr DOT number"""
-        p[0] = self.nodes.Unary('-X', p[1], p[2])
 
     def p_unary(self, p):
         """expr : NOT expr

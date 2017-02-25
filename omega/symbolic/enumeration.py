@@ -11,6 +11,7 @@ import math
 import natsort
 import networkx as nx
 
+from omega.symbolic import bdd as scope
 from omega.symbolic import symbolic
 
 
@@ -84,6 +85,7 @@ def print_nodes(
     @param dvars: table of unprimed variables
     @type bdd: `BDD`
     """
+    assert scope.is_state_predicate(u), u.support
     if u == bdd.false:
         print('empty set')
         return

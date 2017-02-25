@@ -10,7 +10,6 @@ import copy
 import logging
 import pprint
 
-import dd.bdd
 import natsort
 
 from omega.logic import bitvector as bv
@@ -19,6 +18,14 @@ from omega.symbolic import bdd as sym_bdd
 
 
 logger = logging.getLogger(__name__)
+try:
+    from dd import cudd as _bdd
+    logger.info('`omega.symbolic.symbolic` will use `dd.cudd`')
+except ImportError:
+    from dd import autoref as _bdd
+    logger.warn(
+        '`omega.symbolic.symbolic` failed to import `dd.cudd`.\n'
+        'Will use `dd.autoref`.')
 
 
 class Automaton(object):
@@ -142,7 +149,7 @@ class Automaton(object):
         self.unprime = dict()  # primed -> unprimed
         # aux
         # init only to aid static analysis
-        self.bdd = dd.bdd.BDD()
+        self.bdd = _bdd.BDD()
 
     def __copy__(self):
         a = Automaton()

@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import logging
 import ply.lex
 from omega.logic.ast import Nodes as _Nodes
+from omega.logic import syntax as stx
 
 
 logger = logging.getLogger(__name__)
@@ -258,3 +259,71 @@ def add_expr(e, bdd):
     tree = parser.parse(e)
     u = tree.flatten(bdd=bdd)
     return u
+
+
+def joint_support(nodes, fol):
+    """Return union of supports ."""
+    gen = (fol.support(u) for u in nodes)
+    return set().union(*gen)
+
+
+def support_issubset(u, vrs, fol):
+    """Return `support(u) <= vrs`.
+
+    Use this function to ensure that only the expected
+    variables occur in the expression that a BDD represents.
+    This check catches several errors early.
+
+    If `fol` is a `dd.cudd.BDD`, then variable names
+    will be bits instead of first-order.
+
+    @param vrs: `set` of variable names as `str`
+    """
+    support = fol.support(u)
+    return support.issubset(vrs)
+
+
+def is_state_predicate(u):
+    """Return `True` if `u` depends only on unprimed values."""
+    return not any(stx.isprimed(var) for var in u.support)
+
+
+def is_primed_state_predicate(u):
+    """Return `True` if `u` depends only on primed values."""
+    return all(stx.isprimed(var) for var in u.support)
+
+
+def is_proper_action(u):
+    """Return `True` if `u` depends on both primed and unprimed."""
+    r = u.support
+    return (
+        any(stx.isprimed(var) for var in r) and
+        any(not stx.isprimed(var) for var in r))
+
+
+def prime(u, fol):
+    """Prime variables in support of state predicate `u`."""
+    r = fol.support(u)
+    d = {var: stx.prime(var) for var in r}
+    return fol.replace(u, d)
+
+
+def unprime(u, fol):
+    """Unprime variables in support of `u`.
+
+    Assume only primed variables in support of `u`.
+    """
+    r = fol.support(u)
+    d = {var: stx.unprime(var) for var in r}
+    return fol.replace(u, d)
+
+
+def print_support(u, fol):
+    """Print separately unprimed and primed vars in support."""
+    support = fol.support(u)
+    primed_support = set(filter(stx.isprimed, support))
+    unprimed_support = support.difference(primed_support)
+    print('Unprimed variables in support:')
+    print(unprimed_support)
+    print('Primed variables in support:')
+    print(primed_support)

@@ -1,11 +1,12 @@
 import logging
 
 import dd.bdd
-
+from nose import tools as nt
 from omega.automata import TransitionSystem
 from omega.logic import bitvector as bv
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import bdd_iterative as bdd_trs
+from omega.symbolic import fol as _fol
 from omega.symbolic import logicizer
 from omega.symbolic import symbolic
 
@@ -321,3 +322,83 @@ def test_logicizer_env():
         "/\ (((k = 1)) => ((x') /\ ((k' = 2))))) \n"
         "/\ (((k = 2)) => ((k' = 1)))) \/ (k' = k)")
     assert s.endswith(e3), s
+
+
+def test_joint_support():
+    fol = setup()
+    r = sym_bdd.joint_support([fol.bdd.true], fol)
+    r_ = set()
+    assert r == r_, (r, r_)
+    u = fol.add_expr('x <= 3')
+    r = sym_bdd.joint_support([u], fol)
+    r_ = {'x'}
+    assert r == r_, (r, r_)
+    v = fol.add_expr('~ y')
+    r = sym_bdd.joint_support([v], fol)
+    r_ = {'y'}
+    assert r == r_, (r, r_)
+    r = sym_bdd.joint_support([u, v], fol)
+    r_ = {'x', 'y'}
+    assert r == r_, (r, r_)
+    u |= v
+    r = sym_bdd.joint_support([u], fol)
+    r_ = {'x', 'y'}
+    assert r == r_, (r, r_)
+
+
+def test_assert_support():
+    fol = setup()
+    u = fol.add_expr('x = -3 /\ ~ y')
+    assert sym_bdd.support_issubset(u, ['x', 'y'], fol)
+    assert not sym_bdd.support_issubset(u, ['x'], fol)
+
+
+def test_is_state_predicate():
+    fol = setup()
+    s = "x = -3  /\  ~ y"
+    u = fol.add_expr(s)
+    assert sym_bdd.is_state_predicate(u)
+    assert not sym_bdd.is_primed_state_predicate(u)
+    assert not sym_bdd.is_proper_action(u)
+    s = "x' = -3  /\  ~ y'"
+    u = fol.add_expr(s)
+    assert not sym_bdd.is_state_predicate(u)
+    assert sym_bdd.is_primed_state_predicate(u)
+    assert not sym_bdd.is_proper_action(u)
+    s = "x = -3  /\  ~ y'"
+    u = fol.add_expr(s)
+    assert not sym_bdd.is_state_predicate(u)
+    assert not sym_bdd.is_primed_state_predicate(u)
+    assert sym_bdd.is_proper_action(u)
+
+
+def test_prime_unprimed():
+    fol = setup()
+    s = "x = -3  /\  ~ y"
+    u = fol.add_expr(s)
+    r = sym_bdd.prime(u, fol)
+    s = "x' = -3  /\  ~ y'"
+    r_ = fol.add_expr(s)
+    assert r == r_, fol.bdd.to_expr(r)
+    with nt.assert_raises(AssertionError):
+        sym_bdd.prime(r, fol)
+    with nt.assert_raises(AssertionError):
+        sym_bdd.unprime(u, fol)
+    s = "x' = -3  /\  ~ y'"
+    u = fol.add_expr(s)
+    r = sym_bdd.unprime(u, fol)
+    s = "x = -3  /\  ~ y"
+    r_ = fol.add_expr(s)
+    assert r == r_, fol.bdd.to_expr(r)
+
+
+def setup():
+    fol = _fol.Context()
+    t = {
+        "x": dict(type='int', dom=(-4, 5)),
+        "y": dict(type='bool'),
+        "x'": dict(type='int', dom=(-4, 5)),
+        "y'": dict(type='bool')}
+    fol.add_vars(t)
+    print(fol.vars)
+    return fol

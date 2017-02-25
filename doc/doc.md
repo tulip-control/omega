@@ -293,7 +293,7 @@ The workflow for compiling a symbol table is shown below.
 ![bitblasting workflow](https://rawgithub.com/johnyf/binaries/master/omega/bitblasting.svg)
 
 The functions that prime and order variables are described in the [BDD section](#BDDizing).
-The resulting bitvector formulae are in [SlugsIn](https://github.com/LTLMoP/slugs/blob/master/doc/input_formats.md#slugsin) syntax, which uses prefix notation. Parsing and syntax is discussed in the [parsing section](#Parsing).
+The resulting bitvector formulae are in [SlugsIn](https://github.com/VerifiableRobotics/slugs/blob/master/doc/input_formats.md#slugsin) syntax, which uses prefix notation. Parsing and syntax is discussed in the [parsing section](#Parsing).
 
 
 ## BDDizing
@@ -337,7 +337,7 @@ The only temporal operator in the resulting formulae is “next”. Using the `b
 - parsed with the `symbolic.bdd.Parser` and:
 	- converted to `BDD`s with `bdd.BDDNodes`
 	- pretty-printed in infix for debugging purposes,
-- fed to a synthesizer that admits input in this syntax, for example [`slugs`](https://github.com/LTLMoP/slugs).
+- fed to a synthesizer that admits input in this syntax, for example [`slugs`](https://github.com/VerifiableRobotics/slugs).
 
 ![LTL -> BDD](https://rawgithub.com/johnyf/binaries/master/omega/ltl_to_bdd.svg)
 

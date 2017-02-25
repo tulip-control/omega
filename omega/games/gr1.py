@@ -22,6 +22,7 @@ Robert Konighofer
 #
 import logging
 import copy
+from omega.symbolic.bdd import is_state_predicate
 from omega.symbolic import fixpoint as fx
 from omega.symbolic import fol as _fol
 from omega.symbolic import symbolic
@@ -58,6 +59,7 @@ def solve_streett_game(aut, rank=1):
             z = bdd.apply('and', z, y)
             xijk.append(xjk)
             yij.append(yj)
+    assert is_state_predicate(z), z.support
     return z, yij, xijk
 
 
@@ -219,6 +221,7 @@ def solve_rabin_game(aut, rank=1):
         zk.append(z)
         yki.append(yi)
         xkijr.append(xijr)
+    assert is_state_predicate(z), z.support
     return zk, yki, xkijr
 
 

@@ -342,7 +342,6 @@ def _format_nx(g):
     @type g: `networkx.DiGraph`
     @rtype: `pydot.Graph`
     """
-    n = len(g.sorted_vars)
     h = nx.DiGraph()
     umap = dict()
     for u, d in g.nodes_iter(data=True):

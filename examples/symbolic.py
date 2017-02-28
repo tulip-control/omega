@@ -48,7 +48,7 @@ def semi_symbolic():
     t.bdd.dump('bdd.pdf', roots=[r])
     g = enum.action_to_steps(t, qinit='\A \A')
     h, _ = sym_enum._format_nx(g)
-    pd = nx.nx_pydot.to_pydot(h)
+    pd = nx.drawing.nx_pydot.to_pydot(h)
     pd.write_pdf('game_states.pdf')
     print('Enumerated strategy has {n} nodes.'.format(
         n=len(g)))

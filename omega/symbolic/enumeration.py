@@ -19,8 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 def dump_relation(
-        u, aut, care_source=None,
-        care_target=None, fname='edges.pdf'):
+        u, aut,
+        care_source=None,
+        care_target=None,
+        fname='edges.pdf'):
     """Dump graph of relation as PDF."""
     g = relation_to_graph(u, aut, care_source, care_target)
     h, umap = _format_nx(g)
@@ -30,8 +32,10 @@ def dump_relation(
 
 
 def relation_to_graph(
-        u, aut, care_source=None,
-        care_target=None, care_bits=None):
+        u, aut,
+        care_source=None,
+        care_target=None,
+        care_bits=None):
     """Return enumerated graph from relation.
 
     @param u: relation as BDD node
@@ -76,7 +80,8 @@ def relation_to_graph(
 
 
 def print_nodes(
-        u, dvars, bdd, care_set=None,
+        u, dvars, bdd,
+        care_set=None,
         care_bits=None):
     """Enumerate first-order models of a set.
 
@@ -96,7 +101,8 @@ def print_nodes(
 
 
 def print_edges(
-        u, aut, care_set=None,
+        u, aut,
+        care_set=None,
         care_bits=None):
     """Enumerate first-order models of a relation.
 
@@ -114,7 +120,10 @@ def print_edges(
                        care_bits)
 
 
-def _print_enumeration(u, bdd, t, care_set, care_bits):
+def _print_enumeration(
+        u, bdd, t,
+        care_set,
+        care_bits):
     """Print first-order models."""
     c = _enumerate_bdd(u, bdd, t, care_set, care_bits)
     r = list()
@@ -142,8 +151,10 @@ def _print_enumeration(u, bdd, t, care_set, care_bits):
 
 
 def _make_table(
-        u, aut, care_source=None,
-        care_target=None, care_bits=None):
+        u, aut,
+        care_source=None,
+        care_target=None,
+        care_bits=None):
     """Return symbol table with primed vars and care relation.
 
     The variables in `a.vars` should be unprimed.
@@ -175,7 +186,8 @@ def _care_relation(source, target, prime, bdd):
 
 
 def _enumerate_bdd(
-        u, bdd, t, care_set=None,
+        u, bdd, t,
+        care_set=None,
         care_bits=None):
     """Enumerate first-order models of BDD `u`.
 

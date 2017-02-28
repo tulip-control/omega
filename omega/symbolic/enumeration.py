@@ -142,16 +142,16 @@ def _print_enumeration(u, bdd, t, care_set, care_bits):
 
 
 def _make_table(
-        u, a, care_source=None,
+        u, aut, care_source=None,
         care_target=None, care_bits=None):
     """Return symbol table with primed vars and care relation.
 
     The variables in `a.vars` should be unprimed.
     """
-    bdd = a.bdd
+    bdd = aut.bdd
     care_relation = _care_relation(care_source, care_target,
-                                   a.prime, bdd)
-    t = symbolic._prime_and_order_table(a.vars)
+                                   aut.prime, bdd)
+    t = symbolic._prime_and_order_table(aut.vars)
     if care_bits is not None:
         assert scope.support_issubset(u, care_bits, bdd), (
             support, care_bits)

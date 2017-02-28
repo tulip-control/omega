@@ -336,17 +336,21 @@ def _find_or_add_model(model, umap, keys):
     return u
 
 
-def _format_nx(g):
+def _format_nx(g, keys=None):
     """Return graph ready to be dumped.
 
     @type g: `networkx.DiGraph`
+    @param keys: `list` of keys in node `dict` to show,
+        in same order. By default all keys are shown.
     @rtype: `pydot.Graph`
     """
     h = nx.DiGraph()
     umap = dict()
     for u, d in g.nodes_iter(data=True):
+        if keys is None:
+            keys = sorted(d)
         c = ['{var}={val}'.format(var=var, val=d[var])
-             for var in g.sorted_vars if var in d]
+             for var in keys if var in d]
         s = _square_conj(c)
         h.add_node(s)
         umap[u] = s

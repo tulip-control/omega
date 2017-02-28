@@ -94,11 +94,11 @@ def test_find_or_add_model():
 
 def test_format_nx():
     g = nx.DiGraph()
-    g.sorted_vars = ['x', 'y', 'w']
+    sorted_vars = ['x', 'y', 'w']
     g.add_node(0, x=5, y=3)
     g.add_node(1, w=True)
     g.add_edge(1, 0)
-    h, umap = enum._format_nx(g)
+    h, umap = enum._format_nx(g, sorted_vars)
     assert len(h) == len(g), (h.nodes(), g.nodes())
     assert len(h) == len(umap), (h.nodes(), umap)
     ux = r' (x=5) &and; (y=3) \l\l'

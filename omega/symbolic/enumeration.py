@@ -50,12 +50,7 @@ def relation_to_graph(
     c = _enumerate_bdd(u, aut.bdd, t,
                        care_relation, care_bits)
     # to nx graph
-    level_to_var = {d['level']: var
-                    for var, d in t.items()}
-    sorted_vars = [level_to_var[i]
-                   for i in range(len(level_to_var))]
     g = nx.DiGraph()
-    g.sorted_vars = sorted_vars
     # fix an order of keys for lookup
     keys = list(aut.vars)
     umap = dict()

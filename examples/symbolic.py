@@ -34,7 +34,7 @@ def semi_symbolic():
     a = logicizer.graph_to_logic(
         g, 'nd', ignore_initial=True, self_loops=False)
     a.init['env'] = ['nd = 1']
-    a.win['<>[]'].append('!x')
+    a.win['<>[]'].append('~ x')
     a.win['[]<>'].append('nd = 0')
     print(a)
     # compile to BDD

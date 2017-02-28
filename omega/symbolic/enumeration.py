@@ -90,8 +90,8 @@ def print_nodes(
         print('empty set')
         return
     if care_bits is not None:
-        support = bdd.support(u)
-        assert support.issubset(care_bits), (support, care_bits)
+        assert scope.support_issubset(u, care_bits, bdd), (
+            support, care_bits)
     _print_enumeration(u, bdd, dvars, care_set, care_bits)
 
 
@@ -153,9 +153,8 @@ def _make_table(
                                    a.prime, bdd)
     t = symbolic._prime_and_order_table(a.vars)
     if care_bits is not None:
-        # check `care_vars`
-        support = bdd.support(u)
-        assert support.issubset(care_bits), (support, care_bits)
+        assert scope.support_issubset(u, care_bits, bdd), (
+            support, care_bits)
     return t, care_relation
 
 

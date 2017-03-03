@@ -334,6 +334,8 @@ def _find_or_add_model(model, umap, keys):
 def _format_nx(g, keys=None):
     """Return graph ready to be dumped.
 
+    Nodes with same label over `keys` are identified.
+
     @type g: `networkx.DiGraph`
     @param keys: `list` of keys in node `dict` to show,
         in same order. By default all keys are shown.

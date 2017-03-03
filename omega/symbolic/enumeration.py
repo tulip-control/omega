@@ -384,4 +384,4 @@ def _square_conj(p, n=None, op=r'&and;'):
     # single line ?
     if n <= 2:
         c.pop(0)
-    return ''.join(c) + '\l'
+    return ''.join(c)

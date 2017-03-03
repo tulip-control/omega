@@ -101,8 +101,8 @@ def test_format_nx():
     h, umap = enum._format_nx(g, sorted_vars)
     assert len(h) == len(g), (h.nodes(), g.nodes())
     assert len(h) == len(umap), (h.nodes(), umap)
-    ux = r' (x=5) &and; (y=3) \l\l'
-    uy = r' (w=True) \l\l'
+    ux = r' (x=5) &and; (y=3) \l'
+    uy = r' (w=True) \l'
     assert h.has_edge(uy, ux), h.edges()
 
 
@@ -110,10 +110,10 @@ def test_square_conj():
     # single line
     c = ['a', 'b']
     s = enum._square_conj(c, 2, op='/\\')
-    s_ = r' (a) /\ (b) \l\l'
+    s_ = r' (a) /\ (b) \l'
     assert s == s_, s
     # multi-line conjunction
     c = ['a', 'b', 'c']
     s = enum._square_conj(c, 3, op='/\\')
-    s_ = r'/\ (a) /\ (b) \l/\ (c) \l'
+    s_ = r'/\ (a) /\ (b) \l/\ (c) '
     assert s == s_, s

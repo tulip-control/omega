@@ -45,7 +45,7 @@ def semi_symbolic():
     t = gr1.make_streett_transducer(z, yij, xijk, aut)
     # print t.bdd.to_expr(t.action['sys'][0])
     r = t.action['sys'][0]
-    t.bdd.dump('bdd.pdf', roots=[r])
+    # t.bdd.dump('bdd.pdf', roots=[r])
     g = enum.action_to_steps(t, qinit='\A \A')
     h, _ = sym_enum._format_nx(g)
     pd = nx.drawing.nx_pydot.to_pydot(h)

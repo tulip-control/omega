@@ -620,12 +620,12 @@ def test_is_realizable():
 
 
 def test_make_init():
-    internal_init = 1
-    win = 1
     t = symbolic.Automaton()
     t.vars['x'] = dict(type='bool', owner='sys')
     t = t.build()
     aut = t
+    internal_init = aut.bdd.true
+    win = aut.bdd.true
     aut.qinit = '???'
     with assert_raises(ValueError):
         gr1._make_init(internal_init, win, t, aut)

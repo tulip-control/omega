@@ -418,6 +418,8 @@ class Nodes(_Nodes):
                     u=u)
                 return r
             if self.operator == '@':
+                # priming of state predicate BDDs unsupported yet
+                assert not kw.get('prime'), kw
                 x = int(self.operands[0].value)
                 assert x != 0, x
                 return str(x)

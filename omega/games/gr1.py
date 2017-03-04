@@ -320,7 +320,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         cox_basin = fx.ue_preimage(env_action, sys_action,
                                    basin, t)
         rim = bdd.apply('diff', z, basin)
-        rim = bdd.apply('and', rim, -cox_basin)
+        rim = bdd.apply('and', rim, bdd.apply('not', cox_basin))
         # rho_2: pick persistence set
         s = "({c}' = {c}) & ({w} = {none})".format(
             c=c, w=w, none=n_holds)
@@ -354,12 +354,12 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                 p = bdd.false
                 for x in xr[1:]:
                     xstar = _controllable_action(x_basin, aut)
-                    q = bdd.apply('and', xstar, -x_basin)
+                    q = bdd.apply('and', xstar, bdd.apply('not', x_basin))
                     q = bdd.apply('and', x, q)
                     p = bdd.apply('or', p, q)
                     x_basin = x
                 p = bdd.apply('and', p, count)
-                p = bdd.apply('and', p, -goal)
+                p = bdd.apply('and', p, bdd.apply('not', goal))
                 v = bdd.apply('or', v, p)
         u = bdd.apply('and', u, v)
         rho_3 = bdd.apply('or', rho_3, u)

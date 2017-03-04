@@ -2,7 +2,6 @@
 import logging
 import pprint
 
-from dd import bdd as _bdd
 from dd import mdd
 from nose.tools import assert_raises
 
@@ -458,7 +457,7 @@ def test_streett_with_liveness_assumption():
     action_ = t.add_expr(s)
     sat = list(t.bdd.sat_iter(action))
     sys_action = aut.action['sys'][0]
-    sys_action = _bdd.copy_bdd(sys_action, aut.bdd, t.bdd)
+    sys_action = gr1._copy_bdd(sys_action, aut.bdd, t.bdd)
     u = t.bdd.apply('->', action, sys_action)
     assert u == t.bdd.true, u
     assert action == action_, (action, action_, pprint.pprint(sat))
@@ -476,7 +475,7 @@ def test_streett_with_liveness_assumption():
     zk, yki, xkijr = gr1.solve_rabin_game(aut_rabin)
     rabin_win_set = zk[-1]
     bdd = aut_rabin.bdd
-    streett_win_set = _bdd.copy_bdd(z, aut.bdd, bdd)
+    streett_win_set = gr1._copy_bdd(z, aut.bdd, bdd)
     assert rabin_win_set == bdd.apply('not', streett_win_set)
     with assert_raises(AssertionError):
         gr1.make_rabin_transducer(zk, yki, xkijr, aut_rabin)

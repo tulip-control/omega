@@ -176,7 +176,7 @@ def _care_relation(source, target, prime, bdd):
         care_relation = None
         return care_relation
     primed_target = bdd.rename(target, prime)
-    care_relation = bdd.apply('and', source, primed_target)
+    care_relation = source & primed_target
     return care_relation
 
 
@@ -192,7 +192,7 @@ def _enumerate_bdd(
     if u == bdd.false:
         return
     if care_set is not None:
-        u = bdd.apply('and', u, care_set)
+        u &= care_set
         logging.debug((
             'enumerating BDD node {u}, '
             'with care set = {c}').format(

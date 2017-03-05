@@ -33,16 +33,14 @@ def attractor(env_action, sys_action, target, aut,
     # a.uvars).difference(a.evars)
     # assert not unquantified, unquantified
     # ancestors
-    bdd = aut.bdd
     q = target
     qold = None
     while q != qold:
         qold = q
-        pred = ue_preimage(
-            env_action, sys_action, q, aut)
-        q = bdd.apply('or', qold, pred)
+        pred = ue_preimage(env_action, sys_action, q, aut)
+        q |= pred
         if inside is not None:
-            q = aut.bdd.apply('and', q, inside)
+            q &= inside
     logger.info('-- attractor')
     return q
 
@@ -56,16 +54,15 @@ def trap(env_action, sys_action, safe, aut,
     @rtype: BDD node
     """
     logger.info('++ cinv')
-    bdd = aut.bdd
-    q = bdd.true  # if `unless is not None`,
-                  # then `q = safe` is wrong
+    q = aut.bdd.true  # if `unless is not None`,
+                      # then `q = safe` is wrong
     qold = None
     while q != qold:
         qold = q
         pre = ue_preimage(env_action, sys_action, q, aut)
-        q = bdd.apply('and', safe, pre)
+        q = safe & pre
         if unless is not None:
-            q = bdd.apply('or', q, unless)
+            q |= unless
     logger.info('-- cinv')
     return q
 
@@ -94,12 +91,12 @@ def ue_preimage(env_action, sys_action, target, aut):
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
-        u = bdd.apply('->', env_action, u)
-        u = bdd.apply('and', sys_action, u)
+        u |= ~ env_action
+        u &= sys_action
     else:
         # env_action => (sys_action /\ target')
-        u = bdd.apply('and', sys_action, u)
-        u = bdd.apply('->', env_action, u)
+        u &= sys_action
+        u |= ~ env_action
     if aut.moore:
         # \E evars': \A uvars'
         u = bdd.forall(upvars, u)
@@ -128,8 +125,8 @@ def descendants(source, constrain, a, future=True):
     while q != qold:
         post = ee_image(q, a)
         qold = q
-        q = a.bdd.apply('or', qold, post)
-        q = a.bdd.apply('and', q, constrain)
+        q |= post
+        q &= constrain
     return q
 
 
@@ -140,8 +137,7 @@ def ee_image(source, a):
     assert u in a.bdd
     qvars = a.uevars
     bdd = a.bdd
-    u = bdd.apply('and', u, v)
-    u = bdd.quantify(u, qvars, forall=False)
+    u &= v
+    u = bdd.exist(qvars, u)
     u = bdd.rename(u, a.unprime)
-    image = u
-    return image
+    return u

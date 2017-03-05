@@ -31,10 +31,6 @@ from omega.symbolic import symbolic
 logger = logging.getLogger(__name__)
 
 
-# TODO:
-# - switch to `dd.autoref`
-
-
 def solve_streett_game(aut, rank=1):
     r"""Return winning set and iterants for Streett(1) game.
 
@@ -56,7 +52,7 @@ def solve_streett_game(aut, rank=1):
         yij = list()
         for goal in aut.win['[]<>']:
             y, yj, xjk = _attractor_under_assumptions(z, goal, aut)
-            z = bdd.apply('and', z, y)
+            z &= y
             xijk.append(xjk)
             yij.append(yj)
     assert is_state_predicate(z), z.support
@@ -73,17 +69,17 @@ def _attractor_under_assumptions(z, goal, aut):
     y = bdd.false
     yold = None
     cox_z = fx.ue_preimage(env_action, sys_action, z, aut)
-    g = bdd.apply('and', goal, cox_z)
+    g = goal & cox_z
     while y != yold:
         yold = y
         cox_y = fx.ue_preimage(env_action, sys_action, y, aut)
-        unless = bdd.apply('or', cox_y, g)
+        unless = cox_y | g
         xk = list()
         for safe in aut.win['<>[]']:
             x = fx.trap(env_action, sys_action,
                         safe, aut, unless=unless)
             xk.append(x)
-            y = bdd.apply('or', y, x)
+            y |= x
         yj.append(y)
         xjk.append(xk)
     return y, yj, xjk
@@ -128,10 +124,10 @@ def make_streett_transducer(z, yij, xijk, aut):
         ip = (i + 1) % len(goals)
         s = "({c} = {i}) & ({c}' = {ip})".format(c=c, i=i, ip=ip)
         u = t.add_expr(s)
-        u = bdd.apply('and', u, goal)
-        rho_1 = bdd.apply('or', u, rho_1)
+        u &= goal
+        rho_1 |= u
     zstar = _controllable_action(z, aut)
-    rho_1 = bdd.apply('and', rho_1, zstar)
+    rho_1 &= zstar
     # \rho_2: descent in basin
     rho_2 = bdd.false
     for i, yj in enumerate(yij):
@@ -142,12 +138,12 @@ def make_streett_transducer(z, yij, xijk, aut):
         for y in yj[1:]:
             # steps leading to next basin
             ystar = _controllable_action(basin, aut)
-            rim = bdd.apply('diff', y, basin)
-            u = bdd.apply('and', rim, ystar)
-            rho_2j = bdd.apply('or', rho_2j, u)
-            basin = bdd.apply('or', basin, y)
-        u = bdd.apply('and', rho_2j, count)
-        rho_2 = bdd.apply('or', rho_2, u)
+            rim = y & ~ basin
+            u = rim & ystar
+            rho_2j |= u
+            basin |= y
+        u = rho_2j & count
+        rho_2 |= u
     # \rho_3: persistence holds
     rho_3 = bdd.false
     for i, xjk in enumerate(xijk):
@@ -160,22 +156,22 @@ def make_streett_transducer(z, yij, xijk, aut):
             for x, hold in zip(xk, holds):
                 # steps leading to next wait
                 xstar = _controllable_action(x, aut)
-                stay = bdd.apply('diff', x, used)
-                used = bdd.apply('or', used, x)
-                u = bdd.apply('and', stay, xstar)
-                u = bdd.apply('and', u, hold)
-                rho_3j = bdd.apply('or', rho_3j, u)
-        u = bdd.apply('and', rho_3j, count)
-        rho_3 = bdd.apply('or', rho_3, u)
+                stay = x & ~ used
+                used |= x
+                u = stay & xstar
+                u &= hold
+                rho_3j |= u
+        u = rho_3j & count
+        rho_3 |= u
     # \rho
-    u = bdd.apply('or', rho_1, rho_2)
-    u = bdd.apply('or', rho_3, u)
+    u = rho_1 | rho_2
+    u |= rho_3
     # counter `c` limits
-    u = bdd.apply('and', t.action['sys'][0], u)
+    u &= t.action['sys'][0]
     # `sys_action` is already in the `\rho`
     # next is "useful" only if `env_action` depends on `y'`
     if not aut.plus_one:
-        u = bdd.apply('->', env_action, u)
+        u |= ~ env_action
         if aut.moore:
             u = bdd.forall(aut.upvars, u)
     assert u != bdd.false
@@ -215,7 +211,7 @@ def solve_rabin_game(aut, rank=1):
         yi = list()
         for hold in aut.win['<>[]']:
             y, xjr = _cycle_inside(zold, hold, aut)
-            z = bdd.apply('or', z, y)
+            z |= y
             xijr.append(xjr)
             yi.append(y)
         zk.append(z)
@@ -232,19 +228,19 @@ def _cycle_inside(z, hold, aut):
     (sys_action,) = aut.action['sys']
     cox_z = fx.ue_preimage(env_action, sys_action,
                            z, aut)
-    g = bdd.apply('or', cox_z, hold)
+    g = cox_z | hold
     y = bdd.true
     yold = None
     while y != yold:
         yold = y
         cox_y = fx.ue_preimage(env_action, sys_action,
                                y, aut)
-        inside = bdd.apply('and', cox_y, g)
+        inside = cox_y & g
         xjr = list()
         for goal in aut.win['[]<>']:
             x, xr = _attractor_inside(inside, goal, aut)
             xjr.append(xr)
-            y = bdd.apply('and', y, x)
+            y &= x
     return y, xjr
 
 
@@ -259,9 +255,9 @@ def _attractor_inside(inside, goal, aut):
         xold = x
         cox_x = fx.ue_preimage(
             env_action, sys_action, x, aut)
-        x = bdd.apply('or', cox_x, goal)
-        x = bdd.apply('and', x, inside)
-        x = bdd.apply('or', x, xold)
+        x = cox_x | goal
+        x &= inside
+        x |= xold
         xr.append(x)
     return x, xr
 
@@ -307,10 +303,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     basin = zk[0]
     for z in zk[1:]:
         zstar = _controllable_action(basin, aut)
-        rim = bdd.apply('diff', z, basin)
-        u = bdd.apply('and', rim, zstar)
-        u = bdd.apply('and', u, count)
-        rho_1 = bdd.apply('or', rho_1, u)
+        rim = z & ~ basin
+        u = rim & zstar
+        u &= count
+        rho_1 |= u
         basin = z
     rho_2 = bdd.false
     rho_3 = bdd.false
@@ -319,22 +315,22 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     for z, yi, xijr in zip(zk, yki, xkijr):
         cox_basin = fx.ue_preimage(env_action, sys_action,
                                    basin, t)
-        rim = bdd.apply('diff', z, basin)
-        rim = bdd.apply('and', rim, bdd.apply('not', cox_basin))
+        rim = z & ~ basin
+        rim &= ~ cox_basin
         # rho_2: pick persistence set
         s = "({c}' = {c}) & ({w} = {none})".format(
             c=c, w=w, none=n_holds)
         count = t.add_expr(s)
-        u = bdd.apply('and', rim, count)
+        u = rim & count
         v = bdd.false
         for i, y in enumerate(yi):
             s = "{w}' = {i}".format(w=w, i=i)
             count = t.add_expr(s)
             ystar = _controllable_action(y, aut)
-            q = bdd.apply('and', count, ystar)
-            v = bdd.apply('or', v, q)
-        u = bdd.apply('and', u, v)
-        rho_2 = bdd.apply('or', rho_2, u)
+            q = count & ystar
+            v |= q
+        u &= v
+        rho_2 |= u
         # rho_3: descent in recurrence basin
         s = (
             "({c}' = {c}) &"
@@ -342,7 +338,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = t.add_expr(s)
-        u = bdd.apply('and', rim, count)
+        u = rim & count
         v = bdd.false
         for i, xjr in enumerate(xijr):
             for j, (xr, goal) in enumerate(zip(xjr, goals)):
@@ -354,15 +350,15 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
                 p = bdd.false
                 for x in xr[1:]:
                     xstar = _controllable_action(x_basin, aut)
-                    q = bdd.apply('and', xstar, bdd.apply('not', x_basin))
-                    q = bdd.apply('and', x, q)
-                    p = bdd.apply('or', p, q)
+                    q = xstar & ~ x_basin
+                    q &= x
+                    p |= q
                     x_basin = x
-                p = bdd.apply('and', p, count)
-                p = bdd.apply('and', p, bdd.apply('not', goal))
-                v = bdd.apply('or', v, p)
-        u = bdd.apply('and', u, v)
-        rho_3 = bdd.apply('or', rho_3, u)
+                p &= count
+                p &= ~ goal
+                v |= p
+        u &= v
+        rho_3 |= u
         # rho_4: advance to next recurrence goal
         u = bdd.false
         for j, goal in enumerate(goals):
@@ -370,34 +366,34 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             s = "({c} = {j}) & ({c}' = {jp})".format(
                 c=c, j=j, jp=jp)
             count = t.add_expr(s)
-            p = bdd.apply('and', count, goal)
-            u = bdd.apply('or', u, p)
+            p = count & goal
+            u |= p
         s = (
             "({w} != {none}) &"
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = t.add_expr(s)
-        u = bdd.apply('and', u, count)
-        u = bdd.apply('and', u, rim)
+        u &= count
+        u &= rim
         v = bdd.false
         for i, y in enumerate(yi):
             s = "{w} = {i}".format(w=w, i=i)
             count = t.add_expr(s)
             ystar = _controllable_action(y, aut)
-            q = bdd.apply('and', count, ystar)
-            v = bdd.apply('or', v, q)
-        u = bdd.apply('and', u, v)
-        rho_4 = bdd.apply('or', rho_4, u)
+            q = count & ystar
+            v |= q
+        u &= v
+        rho_4 |= u
         # update
         basin = z
     # \rho
-    u = bdd.apply('or', rho_1, rho_2)
-    u = bdd.apply('or', rho_3, u)
-    u = bdd.apply('or', rho_4, u)
+    u = rho_1 | rho_2
+    u |= rho_3
+    u |= rho_4
     # counter limits
-    u = bdd.apply('and', t.action['sys'][0], u)
+    u &= t.action['sys'][0]
     if not aut.plus_one:
-        u = bdd.apply('->', env_action, u)
+        u |= ~ env_action
         if aut.moore:
             u = bdd.forall(aut.upvars, u)
     assert u != bdd.false
@@ -429,13 +425,13 @@ def is_realizable(z, aut):
     # realizable ?
     qinit = aut.qinit
     if qinit == '\A \A':
-        w = bdd.apply('->', env_init, sys_init)
+        w = ~ env_init | sys_init
         if w != bdd.true:
             print(
                 'WARNING: `qinit = "\A \A"` but '
                 'not `EnvInit => SysInit`')
         w = bdd.exist(aut.epvars, sys_action)
-        w = bdd.apply('->', env_init, w)
+        w |= ~ env_init
         if w != bdd.true:
             print(
                 "WARNING: `qinit = '\A \A'` but "
@@ -443,8 +439,8 @@ def is_realizable(z, aut):
         # \A env, sys:
         #    env_init => /\ sys_init
         #                /\ z
-        u = bdd.apply('and', sys_init, z)
-        u = bdd.apply('->', env_init, u)
+        u = sys_init & z
+        u |= ~ env_init
         r = (u == bdd.true)
         msg = (
             'some initial states are losing:\n'
@@ -453,8 +449,8 @@ def is_realizable(z, aut):
         # \E env, sys: /\ env_init
         #              /\ sys_init
         #              /\ z
-        u = bdd.apply('and', sys_init, z)
-        u = bdd.apply('and', env_init, u)
+        u = sys_init & z
+        u &= env_init
         u = bdd.exist(aut.uevars, u)
         r = (u == bdd.true)
         msg = (
@@ -467,9 +463,9 @@ def is_realizable(z, aut):
         #                          /\ sys_init
         #                          /\ z
         a = bdd.exist(evars, env_init)
-        u = bdd.apply('and', sys_init, z)
-        u = bdd.apply('and', env_init, u)
-        u = bdd.apply('->', a, u)
+        u = sys_init & z
+        u &= env_init
+        u |= ~ a
         u = bdd.exist(evars, u)
         u = bdd.forall(uvars, u)
         r = (u == bdd.true)
@@ -485,9 +481,9 @@ def is_realizable(z, aut):
         #                          /\ sys_init
         #                          /\ z
         a = bdd.exist(evars, env_init)
-        u = bdd.apply('and', sys_init, z)
-        u = bdd.apply('and', env_init, u)
-        u = bdd.apply('->', a, u)
+        u = sys_init & z
+        u &= env_init
+        u |= ~ a
         u = bdd.forall(uvars, u)
         u = bdd.exist(evars, u)
         r = (u == bdd.true)
@@ -517,12 +513,12 @@ def _controllable_action(target, aut):
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
-        u = bdd.apply('->', env_action, u)
-        u = bdd.apply('and', sys_action, u)
+        u |= ~ env_action
+        u &= sys_action
     else:
         # env_action => (sys_action /\ target')
-        u = bdd.apply('and', sys_action, u)
-        u = bdd.apply('->', env_action, u)
+        u &= sys_action
+        u |= ~ env_action
     if aut.moore:
         # \A uvars'
         u = bdd.forall(aut.upvars, u)
@@ -546,21 +542,21 @@ def _make_init(internal_init, win, t, aut):
     t.qinit = '\A \A'  # we synthesize `env_init` below
     (a,) = aut.init['env']
     (b,) = aut.init['sys']
-    u = bdd.apply('and', b, internal_init)
-    sys_init = bdd.apply('and', u, win)
+    u = b & internal_init
+    sys_init = u & win
     # setup fol context
     fol = _fol.Context()
     fol.bdd = bdd
     fol.vars = symbolic._prime_and_order_table(t.vars)
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
-        env_init = bdd.apply('and', a, sys_init)
+        env_init = a & sys_init
     elif qinit == '\E \A':
         env_bound = bdd.exist(aut.evars, a)
-        u = bdd.apply('and', a, sys_init)
-        u = bdd.apply('->', env_bound, u)
+        u = a & sys_init
+        u |= ~ env_bound
         sys_bound = bdd.forall(aut.uvars, u)
-        env_init = bdd.apply('and', env_bound, sys_bound)
+        env_init = env_bound & sys_bound
     else:
         raise ValueError(
             'unknown `qinit` value "{qinit}"'.format(
@@ -636,7 +632,7 @@ def trivial_winning_set(aut_streett):
     # find trivial win set
     # win_rabin_ = _copy_bdd(win_rabin,
     #                        aut_rabin.bdd, aut_streett.bdd)
-    trivial = aut_streett.bdd.apply('diff', win_streett, win_rabin)
+    trivial = win_streett & ~ win_rabin
     return trivial, aut_streett
 
 

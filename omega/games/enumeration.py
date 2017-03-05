@@ -85,7 +85,7 @@ def action_to_steps(aut, qinit='\A \A'):
                           for var, value in next_env.items()}
             v = fol.replace(visited, env_values)
             # prefer already visited nodes
-            v = bdd.apply('and', u, v)
+            v &= u
             if v == bdd.false:
                 log.info('cannot remain in visited nodes')
                 v = u
@@ -221,7 +221,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
     # pick `sys_0` so that it work for all
     # env assignments alowed by `env_init`
     only_env_init = fol.exist(aut.control['sys'], env_init)
-    u = fol.apply('->', only_env_init, env_init)
+    u = ~ only_env_init | env_init
     u = fol.forall(aut.control['env'], u)
     assert u != bdd.false
     sys_0 = fol.pick(u, care_vars=aut.control['sys'])
@@ -284,7 +284,7 @@ def _add_to_visited(values, visited, aut):
         c.append(s)
     s = stx.conj(c)
     u = aut.add_expr(s)
-    visited = bdd.apply('or', visited, u)
+    visited |= u
     return visited
 
 

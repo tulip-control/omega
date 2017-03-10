@@ -261,13 +261,18 @@ class Context(object):
             self.op[name] = expr_ast.flatten()
             self.op_bdd[name] = sym_bdd.add_expr(s, self.bdd)
 
-    def add_expr(self, e):
+    def add_expr(self, e, with_ops=False):
         """Add first-order predicate.
 
         A predicate is a Boolean-valued formula.
         """
         assert stx.isinstance_str(e), e
-        s = bv.bitblast(e, self.vars)
+        # optional because current implementation is slow
+        if with_ops:
+            defs = self.op
+        else:
+            defs = None
+        s = bv.bitblast(e, vrs=self.vars, defs=defs)
         assert stx.isinstance_str(s), s  # was `e` a predicate ?
         return sym_bdd.add_expr(s, self.bdd)
 

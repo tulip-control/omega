@@ -371,6 +371,8 @@ expr ::= expr '*' expr
        | '\A' qvars `:` expr  # forall
        | '\E' qvars `:` expr  # exists
 
+       # substitution
+       | 'LET' defs 'IN' expr
 
        # a little set theory
        | expr '\in' number '..' number  # in range of integers

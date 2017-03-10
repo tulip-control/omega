@@ -27,6 +27,8 @@ class Lexer(astutils.Lexer):
         'TRUE': 'TRUE',
         'True': 'TRUE',
         'true': 'TRUE',
+        'LET': 'LET',
+        'IN': 'IN_EXPR',
         'U': 'UNTIL',
         'W': 'WEAK_UNTIL',
         'V': 'RELEASE',
@@ -142,6 +144,7 @@ class Parser(astutils.Parser):
     # based on precedence in `spin.y`
     precedence = (
         ('nonassoc', 'DEF'),
+        ('nonassoc', 'LET_IN'),
         ('left', 'COLON'),
         ('left', 'EQUIV'),
         ('left', 'IMPLIES'),
@@ -186,11 +189,24 @@ class Parser(astutils.Parser):
         """unit : def"""
         p[0] = p[1]
 
+    def p_defs_iter(self, p):
+        """defs : defs def"""
+        p[1].append(p[2])
+        p[0] = p[1]
+
+    def p_defs_end(self, p):
+        """defs : def"""
+        p[0] = [p[1]]
+
     def p_operator_definition(self, p):
         """def : NAME DEF expr """
         name = p[1]
         u = self.nodes.Terminal(name, dtype='opname')
         p[0] = self.nodes.Binary('==', u, p[3])
+
+    def p_let_in(self, p):
+        """expr : LET defs IN_EXPR expr %prec LET_IN"""
+        p[0] = self.nodes.Operator(p[1], p[2], p[4])
 
     def p_nullary(self, p):
         """expr : TRUE

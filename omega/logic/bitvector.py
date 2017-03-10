@@ -31,16 +31,16 @@ KEYS = {'type', 'dom', 'signed', 'width', 'bitnames'}
 logger = logging.getLogger(__name__)
 
 
-def bitblast(f, t):
+def bitblast(f, vrs):
     """Flatten formula `f` to bitvector logic.
 
     @param f: quantified first-order action formula
     @type f: `str`
-    @param t: symbol table as returned by `bitblast_table`
-    @type t: `dict`
+    @param vrs: symbol table of variables as returned by `bitblast_table`
+    @type vrs: `dict`
     """
     tree = _parser.parse(f)
-    return tree.flatten(t=t)
+    return tree.flatten(t=vrs)
 
 
 def bitblast_table(table):

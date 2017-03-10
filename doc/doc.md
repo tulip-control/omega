@@ -386,8 +386,10 @@ expr ::= expr '*' expr
 
        # Promela syntax
        | '!' expr
-       | expr '&' expr | expr '&&' expr
-       | expr '|' expr | expr '||' expr
+       | expr '&' expr
+       | expr '&&' expr
+       | expr '|' expr
+       | expr '||' expr
        | expr '->' expr
        | expr '<->' expr
 

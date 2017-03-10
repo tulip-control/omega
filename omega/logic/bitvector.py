@@ -460,9 +460,9 @@ class Nodes(_Nodes):
             op = self.operator
             x = self.operands[0].flatten(*arg, **kw)
             y = self.operands[1].flatten(*arg, **kw)
-            if self.operator == '..':
+            if op == '..':
                 return (x, y)
-            if self.operator == r'\in':
+            elif op == r'\in':
                 assert len(y) == 2, y
                 e = x
                 a, b = y

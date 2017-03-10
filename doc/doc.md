@@ -353,7 +353,17 @@ as input, to make it easier to work at both levels of granularity.
 ```
 module ::= units
 units ::= unit [units]
-unit ::= operator_def
+unit ::= variable_declaration
+       | constant_declaration
+       | operator_def
+
+variable_declaration ::=
+    | 'VARIABLE' names
+    | 'VARIABLES' names
+
+constant_declaration ::=
+    | 'CONSTANT' names
+    | 'CONSTANTS' names
 
        # first-order
 expr ::= expr '*' expr
@@ -426,6 +436,7 @@ expr ::= expr '*' expr
 defs ::= operator_def [defs]
 operator_def ::= NAME '==' expr  # operator definition
 qvars ::= NAME ["'"] [',' qvars]  # list of quantified variables
+names ::= NAME [',' names]  # list of variable or constant names
 variable ::= NAME
 string ::= '"' NAME '"'
 number ::= [-] NUMBER

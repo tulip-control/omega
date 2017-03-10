@@ -19,6 +19,10 @@ class Lexer(astutils.Lexer):
     """Token rules to build LTL lexer."""
 
     reserved = {
+        'VARIABLE': 'VARIABLE',
+        'VARIABLES': 'VARIABLES',
+        'CONSTANT': 'CONSTANT',
+        'CONSTANTS': 'CONSTANTS',
         'ite': 'ITE',
         'X': 'NEXT',
         'FALSE': 'FALSE',
@@ -189,8 +193,23 @@ class Parser(astutils.Parser):
         p[0] = [p[1]]
 
     def p_unit(self, p):
-        """unit : def"""
+        """unit : def
+                | var_decl
+                | const_decl
+        """
         p[0] = p[1]
+
+    def p_variable_declaration(self, p):
+        """var_decl : VARIABLE list
+                    | VARIABLES list
+        """
+        p[0] = self.nodes.Operator(p[1], p[2])
+
+    def p_constant_declaration(self, p):
+        """const_decl : CONSTANT list
+                      | CONSTANTS list
+        """
+        p[0] = self.nodes.Operator(p[1], p[2])
 
     def p_defs_iter(self, p):
         """defs : defs def"""

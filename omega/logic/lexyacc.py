@@ -29,6 +29,9 @@ class Lexer(astutils.Lexer):
         'true': 'TRUE',
         'LET': 'LET',
         'IN': 'IN_EXPR',
+        'IF': 'IF',
+        'THEN': 'THEN',
+        'ELSE': 'ELSE',
         'U': 'UNTIL',
         'W': 'WEAK_UNTIL',
         'V': 'RELEASE',
@@ -144,7 +147,7 @@ class Parser(astutils.Parser):
     # based on precedence in `spin.y`
     precedence = (
         ('nonassoc', 'DEF'),
-        ('nonassoc', 'LET_IN'),
+        ('nonassoc', 'LET_IN', 'IF_THEN_ELSE'),
         ('left', 'COLON'),
         ('left', 'EQUIV'),
         ('left', 'IMPLIES'),
@@ -267,6 +270,10 @@ class Parser(astutils.Parser):
         """expr : expr TRUNCATE number"""
         # keep separate to allow overriding
         p[0] = self.nodes.Arithmetic(p[2], p[1], p[3])
+
+    def p_if_then_else(self, p):
+        """expr : IF expr THEN expr ELSE expr %prec IF_THEN_ELSE"""
+        p[0] = self.nodes.Operator('ite', p[2], p[4], p[6])
 
     def p_ternary_conditional(self, p):
         """expr : ITE LPAREN expr COMMA expr COMMA expr RPAREN"""

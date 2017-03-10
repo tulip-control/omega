@@ -397,6 +397,7 @@ expr ::= expr '*' expr
 
        # other
        | expr '^' expr  # xor
+       | 'IF' expr 'THEN' expr 'ELSE' expr  # TLA+ ternary conditional
        | 'ite' '(' expr ',' expr ',' expr ')'  # ternary conditional
 
        # temporal modal

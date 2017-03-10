@@ -458,8 +458,9 @@ class Nodes(_Nodes):
             """Prefix flattener."""
             logger.info('flatten "{s}"'.format(s=repr(self)))
             op = self.operator
-            x = self.operands[0].flatten(*arg, **kw)
-            y = self.operands[1].flatten(*arg, **kw)
+            x, y = self.operands
+            x = x.flatten(*arg, **kw)
+            y = y.flatten(*arg, **kw)
             if op == '..':
                 return (x, y)
             elif op == r'\in':

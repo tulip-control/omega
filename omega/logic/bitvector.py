@@ -417,6 +417,18 @@ class Nodes(_Nodes):
                     pairs=pairs,
                     u=u)
                 return r
+            if self.operator == 'LET':
+                # populate local scope
+                global_defs = kw.get('defs', dict())
+                defs = dict(global_defs)  # isolate context
+                local_defs, e = self.operands
+                kw = dict(kw)  # local scope instead
+                kw.pop('defs')
+                for op_def in local_defs:
+                    op_def.flatten(defs=defs, mem=mem, *arg, **kw)
+                # flatten expr in local scope
+                r = e.flatten(defs=defs, mem=mem, *arg, **kw)
+                return r
             if self.operator == '@':
                 # priming of state predicate BDDs unsupported yet
                 assert not kw.get('prime'), kw
@@ -459,6 +471,14 @@ class Nodes(_Nodes):
             logger.info('flatten "{s}"'.format(s=repr(self)))
             op = self.operator
             x, y = self.operands
+            if op == '==':
+                name = x.value
+                defs = kw['defs']  # must be in some context
+                assert name not in defs, (
+                    'attempted redefining "{name}"'.format(
+                        name=name))
+                defs[name] = y
+                return
             x = x.flatten(*arg, **kw)
             y = y.flatten(*arg, **kw)
             if op == '..':
@@ -483,7 +503,17 @@ class Nodes(_Nodes):
             name = self.value
             # operator definition ?
             if defs is not None and name in defs:
-                return str(defs[name])
+                u = defs[name]
+                # BDD ?
+                if hasattr(u, 'var'):
+                    return str(u)
+                # ast
+                return u.flatten(
+                    prime=prime, mem=mem, t=t, defs=defs,
+                    *arg, **kw)
+            assert name in t, (
+                '"{name}" neither var nor operator'.format(
+                    name=name))
             if _is_bool_var(name, t):
                 # Boolean scope ?
                 if name in t:

@@ -368,8 +368,8 @@ expr ::= expr '*' expr
        | expr '>=' expr
 
        # quantifiers
-       | '\A' list `:` expr  # forall
-       | '\E' list `:` expr  # exists
+       | '\A' qvars `:` expr  # forall
+       | '\E' qvars `:` expr  # exists
 
 
        # a little set theory
@@ -422,7 +422,7 @@ expr ::= expr '*' expr
 
 defs ::= operator_def [defs]
 operator_def ::= NAME '==' expr  # operator definition
-list ::= NAME ["'"] [',' list]  # list of variables
+qvars ::= NAME ["'"] [',' qvars]  # list of quantified variables
 variable ::= NAME
 string ::= '"' NAME '"'
 number ::= [-] NUMBER

@@ -150,8 +150,9 @@ class Parser(astutils.Parser):
     # lowest to highest
     # based on precedence in `spin.y`
     precedence = (
+        ('nonassoc', 'REDUCE_LIST'),
         ('nonassoc', 'DEF'),
-        ('nonassoc', 'LET_IN', 'IF_THEN_ELSE'),
+        ('nonassoc', 'LET_IN', 'IF_THEN_ELSE', 'CONJ_LIST'),
         ('left', 'COLON'),
         ('left', 'EQUIV'),
         ('left', 'IMPLIES'),
@@ -284,6 +285,23 @@ class Parser(astutils.Parser):
                 | expr MINUS expr
         """
         p[0] = self.nodes.Arithmetic(p[2], p[1], p[3])
+
+    # CAUTION: indentation ignored: use parentheses
+    def p_junction_list(self, p):
+        """expr : junc_list  %prec REDUCE_LIST"""
+        p[0] = p[1]
+
+    def p_junction_list_iter(self, p):
+        """junc_list : junc_list AND expr
+                     | junc_list OR expr
+        """
+        p[0] = self.nodes.Binary(p[2], p[1], p[3])
+
+    def p_conjunction_list_end(self, p):
+        """junc_list : AND expr
+                     | OR expr  %prec CONJ_LIST
+        """
+        p[0] = p[2]
 
     def p_truncator(self, p):
         """expr : expr TRUNCATE number"""

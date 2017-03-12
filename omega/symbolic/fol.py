@@ -448,6 +448,27 @@ def _refine_renaming(fol_rename, table):
     return bit_rename
 
 
+class Operator(_bdd.Function):
+    """Predicate over first-order variables.
+
+    Represented using a binary-decision diagram.
+    Pass the relevant `Context` upon instantiation:
+
+    ```python
+    c = Context()
+    v = Operator(u, c)
+    ```
+    """
+
+    def __init__(self, *arg, **kw):
+        self.fol = kw.pop('fol')
+        super(Operator, self).__init__(*arg, **kw)
+
+    @property
+    def support(self):
+        return self.fol.support(self.node)
+
+
 def _prime_bits_of_integers(ints, t):
     """Return bit priming for integers in `x`."""
     bit_rename = dict()

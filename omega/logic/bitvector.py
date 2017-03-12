@@ -346,12 +346,10 @@ def make_table(d, env_vars=None):
 
 def make_dummy_table():
     """Example of a symbol table."""
-    t = dict(x=dict(type='bool', owner='env'),
-             y=dict(type='bool', owner='sys'),
-             z=dict(type='int', owner='env',
-                    signed=False, width=2),
-             w=dict(type='int', owner='env',
-                    signed=False, width=2))
+    t = dict(x=dict(type='bool'),
+             y=dict(type='bool'),
+             z=dict(type='int', signed=False, width=2),
+             w=dict(type='int', signed=False, width=2))
     return t
 
 

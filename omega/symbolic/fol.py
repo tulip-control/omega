@@ -197,10 +197,7 @@ class Context(object):
 
     def pick(self, u, care_vars=None):
         """Return a satisfying assignment, or `None`."""
-        try:
-            return next(self.pick_iter(u, care_vars))
-        except StopIteration:
-            return None
+        return next(self.pick_iter(u, care_vars), None)
 
     def pick_iter(self, u, care_vars=None):
         """Generator of first-order satisfying assignments."""

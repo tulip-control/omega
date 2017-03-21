@@ -136,6 +136,16 @@ class Context(object):
         bit2int = bv.map_bits_to_integers(self.vars)
         return set(map(bit2int.__getitem__, supp))
 
+    def let(self, defs, u):
+        """Return substitution using `defs` in `u`.
+
+        @param defs: `dict` that maps variable names to BDD operators
+            or values.
+        @param u: BDD operator
+        @return: BDD operator
+        """
+        return self.replace(u, defs)
+
     def replace(self, u, vars_to_new):
         """Return substitution of var names by values or vars.
 

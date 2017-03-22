@@ -73,6 +73,20 @@ class Context(object):
             '{vars}').format(
                 vars=pprint.pformat(self.vars)))
 
+    def declare(self, **vrs):
+        """Declare variable identifiers given as keyword args.
+
+        Example:
+
+        ```python
+        c.declare(x=(2, 15), y='bool', z=(-3, 4))
+        ```
+
+        Wrapper of `self.add_vars` that may replace it.
+        """
+        d = bv.make_symbol_table(vrs)
+        self.add_vars(d)
+
     def add_vars(self, dvars):
         r"""Refine variables in `dvars`.
 

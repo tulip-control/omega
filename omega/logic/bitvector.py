@@ -324,7 +324,11 @@ def bitfields_to_ints(bit_state, t):
 
 
 def make_table(d, env_vars=None):
-    """Return symbol table from "simple" `dict`."""
+    """Return symbol table from "simple" `dict`.
+
+    @param env_vars: assign `owner` attribute to
+        `'env'` if in this set, otherwise to `'sys'`.
+    """
     if env_vars is None:
         env_vars = set()
     t = dict()
@@ -342,6 +346,18 @@ def make_table(d, env_vars=None):
             owner = 'sys'
         t[var] = dict(type=dtype, dom=dom, owner=owner)
     return t
+
+
+def make_symbol_table(vrs):
+    """Return table of declarations from "simple" `dict`."""
+    d = dict()
+    for var, dom in vrs.items():
+        if dom == 'bool':
+            d[var] = dict(type='bool')
+        else:
+            assert len(dom) == 2, dom
+            d[var] = dict(type='int', dom=dom)
+    return d
 
 
 def make_dummy_table():

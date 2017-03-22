@@ -530,15 +530,15 @@ class Nodes(_Nodes):
                 return u.flatten(
                     prime=prime, mem=mem, t=t, defs=defs,
                     *arg, **kw)
-            assert name in t, (
-                '"{name}" neither var nor operator'.format(
-                    name=name))
             if _is_bool_var(name, t):
                 # Boolean scope ?
                 if name in t:
                     assert mem is None, mem
                 return '{v}{prime}'.format(
                     v=name, prime=stx.PRIME if prime else '')
+            assert name in t, (
+                '"{name}" neither var nor operator'.format(
+                    name=name))
             # arithmetic context
             # must be integer variable
             # a refinement occurs here automatically
@@ -1111,7 +1111,6 @@ def _is_bool_var(name, t):
             name in t[int_var]['bitnames'])
         if is_bit:
             return True
-    _assert_var_in_table(name, t)
 
 
 def _assert_var_in_table(name, t):

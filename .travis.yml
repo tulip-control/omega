@@ -16,6 +16,16 @@ install:
 
 script:
   - cd tests/
+  - nosetests -e "cover*"
+  - cd ..
+  # install `dd.cudd`
+  - pip uninstall --yes dd
+  - pip download --no-dependencies dd>=0.5.1
+  - tar xzf dd-*.tar.gz
+  - cd dd-*/
+  - python setup.py install --fetch --cudd
+  - cd ..
+  - cd tests/
   - nosetests --with-coverage --cover-package=omega
 
 after_success:

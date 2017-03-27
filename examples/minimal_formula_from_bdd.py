@@ -14,13 +14,13 @@ def print_minimal_formula():
         y=dict(type='int', dom=(0, 14)))
     c.add_vars(vrs)
     s = '''
-           (x = 2  /\  y <= 15)
+        \/ (x = 2  /\  y <= 15)
         \/ (0 <= x  /\ x <= 3  /\ y >= 5)
         '''
     u = c.add_expr(s)
     s = '''
-           1 <= x  /\  x <= 5
-        /\ 0 <= y  /\  y <= 14
+        /\ (1 <= x  /\  x <= 5)
+        /\ (0 <= y  /\  y <= 14)
         '''
     care = c.add_expr(s)
     s = c.to_expr(u, care=care, show_dom=True)

@@ -38,7 +38,7 @@ def gr1_specification():
         1 <= x  /\  x <= 2
         ''']
     aut.action['sys'] = ['''
-           -3 <= y
+        /\ -3 <= y
         /\ y <= 3
         /\ y' = x - 3
         ''']

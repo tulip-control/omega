@@ -29,7 +29,7 @@ def test_attractor():
     ok = {0: True, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
         subs = {'loc': q}
-        v = fol.replace(u, subs)
+        v = fol.let(subs, u)
         assert (v == bdd.true) == value, v
     inside = aut.add_expr('loc > 0')
     u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
@@ -37,7 +37,7 @@ def test_attractor():
     ok = {0: False, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
         subs = {'loc': q}
-        v = fol.replace(u, subs)
+        v = fol.let(subs, u)
         assert (v == bdd.true) == value, v
 
 

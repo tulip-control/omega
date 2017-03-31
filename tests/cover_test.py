@@ -644,11 +644,11 @@ def test_orthotope_singleton():
     fol, _, px, qx, _, _ = setup_aut()
     r = cov._orthotope_signleton(px, fol)
     d = dict(a_x=3, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotope_signleton(qx, fol)
     d = dict(u_x=1, v_x=1, u_y=10, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.true
 
 
@@ -656,11 +656,11 @@ def test_orthotope_nonempty():
     fol, _, px, qx, _, _ = setup_aut()
     r = cov._orthotope_nonempty(px, fol)
     d = dict(a_x=3, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotope_nonempty(qx, fol)
     d = dict(u_x=0, v_x=6, u_y=0, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.true
 
 
@@ -670,19 +670,19 @@ def test_orthotope_contains_x():
     values = dict(x=2, y=2,
                   a_x=0, b_x=10,
                   a_y=1, b_y=2)
-    r = aut.replace(u, values)
+    r = aut.let(values, u)
     assert r == aut.true, r
     d = cov._parameter_varmap(abx, uvx)
     u = cov._orthotope_subseteq(d, aut)
     values = dict(
         a_x=0, b_x=3, a_y=1, b_y=2,
         u_x=0, v_x=5, u_y=0, v_y=2)
-    r = aut.replace(u, values)
+    r = aut.let(values, u)
     assert r == aut.true, r
     values = dict(
         a_x=0, b_x=3, a_y=1, b_y=2,
         u_x=0, v_x=2, u_y=0, v_y=2)
-    r = aut.replace(u, values)
+    r = aut.let(values, u)
     assert r == aut.false, r
 
 
@@ -691,15 +691,15 @@ def test_orthotope_subseteq():
     varmap = cov._parameter_varmap(px, qx)
     r = cov._orthotope_subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=1, v_x=1, u_y=2, v_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotope_subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=0, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.true
 
 
@@ -712,15 +712,15 @@ def test_orthotope_eq():
         'a_y = u_y /\ b_y = v_y')
     assert r == r_, (r, r_)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotope_eq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=1, v_x=2, u_y=0, v_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.true
 
 
@@ -729,21 +729,21 @@ def test_orthotopes_intersect():
     varmap = cov._parameter_varmap(px, qx)
     r = cov._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=7, v_y=10)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.false
     r = cov._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=1, v_y=2)
-    r = fol.replace(r, d)
+    r = fol.let(d, r)
     assert r == fol.true
 
 

@@ -306,7 +306,7 @@ def prime(u, fol):
     """Prime variables in support of state predicate `u`."""
     r = fol.support(u)
     d = {var: stx.prime(var) for var in r}
-    return fol.replace(u, d)
+    return fol.let(d, u)
 
 
 def unprime(u, fol):
@@ -316,7 +316,7 @@ def unprime(u, fol):
     """
     r = fol.support(u)
     d = {var: stx.unprime(var) for var in r}
-    return fol.replace(u, d)
+    return fol.let(d, u)
 
 
 def print_support(u, fol):

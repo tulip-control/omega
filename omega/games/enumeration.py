@@ -70,20 +70,20 @@ def action_to_steps(aut, qinit='\A \A'):
         log.debug('at node: {d}'.format(d=values))
         assert set(values) == varnames, (values, aut.vars)
         (u,) = aut.action['env']
-        u = fol.replace(u, values)
+        u = fol.let(values, u)
         # apply Mealy controller function
         env_iter = fol.pick_iter(
             u, care_vars=primed_vars['env'])
         (u,) = aut.action['sys']
-        sys = fol.replace(u, values)
+        sys = fol.let(values, u)
         for next_env in env_iter:
             log.debug('next_env: {r}'.format(r=next_env))
             # no effect if `aut.moore`
-            u = fol.replace(sys, next_env)
-            u = fol.replace(u, unprime_vars)
+            u = fol.let(next_env, sys)
+            u = fol.let(unprime_vars, u)
             env_values = {unprime_vars[var]: value
                           for var, value in next_env.items()}
-            v = fol.replace(visited, env_values)
+            v = fol.let(env_values, visited)
             # prefer already visited nodes
             v &= u
             if v == bdd.false:
@@ -98,7 +98,7 @@ def action_to_steps(aut, qinit='\A \A'):
             d = dict(env_values)
             d.update(sys_values)
             # assert
-            u = fol.replace(visited, d)
+            u = fol.let(d, visited)
             assert u == bdd.true or u == bdd.false
             assert remain == (u == bdd.true), remain
             # find or add node
@@ -196,12 +196,12 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     visited = bdd.false
     queue = list()
     for env_0 in env_iter:
-        u = fol.replace(env_init, env_0)
+        u = fol.let(env_0, env_init)
         sys_0 = fol.pick(u, care_vars=aut.control['sys'])
         d = dict(env_0)
         d.update(sys_0)
         # confirm `sys_0` picked properly
-        u = fol.replace(env_init, d)
+        u = fol.let(d, env_init)
         assert u == bdd.true, u
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)
@@ -235,7 +235,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
         d = dict(env_0)
         d.update(sys_0)
         # confirm `sys_0` works for all `env_0`
-        u = fol.replace(env_init, d)
+        u = fol.let(d, env_init)
         assert u == bdd.true, u
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)

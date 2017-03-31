@@ -102,45 +102,45 @@ def test_replace():
     # with vars
     u = fol.add_expr('x = 1')
     subs = {'x': 'y'}
-    u = fol.replace(u, subs)
+    u = fol.let(subs, u)
     u_ = fol.add_expr('y = 1')
     assert u == u_, (u, u_)
     u = fol.add_expr('x = 1')
     # with mismatched substitutions
     subs = {'x': 'z'}
     with nt.assert_raises(AssertionError):
-        fol.replace(u, subs)
+        fol.let(subs, u)
     subs = {'x': 'w'}
     with nt.assert_raises(AssertionError):
-        fol.replace(u, subs)
+        fol.let(subs, u)
     # with constants
     # Boolean
     u = fol.add_expr('w')
     subs = {'w': True}
-    u = fol.replace(u, subs)
+    u = fol.let(subs, u)
     assert u == fol.bdd.true
     u = fol.add_expr('w')
     subs = {'w': False}
-    u = fol.replace(u, subs)
+    u = fol.let(subs, u)
     assert u == fol.bdd.false
     # integer
     u = fol.add_expr('z = 2')
     subs = {'z': 2}
-    u = fol.replace(u, subs)
+    u = fol.let(subs, u)
     assert u == fol.bdd.true
     u = fol.add_expr('z = 2')
     subs = {'z': 3}
-    u = fol.replace(u, subs)
+    u = fol.let(subs, u)
     assert u == fol.bdd.false
     # outside coarse type bound
     u = fol.add_expr('z = 2')
     subs = {'z': 4}
     with nt.assert_raises(AssertionError):
-        fol.replace(u, subs)
+        fol.let(subs, u)
     # no effect
     u = fol.add_expr('w')
     subs = {'z': True}
-    v = fol.replace(u, subs)
+    v = fol.let(subs, u)
     assert u == v
 
 

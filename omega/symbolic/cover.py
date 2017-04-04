@@ -132,7 +132,6 @@ def _branch(
     # prune
     lb_core = _lower_bound(xcore, ycore, p_leq_q, p_to_q, fol)
     c = path_cost + lb_core
-    assert c > 0, c
     # set global lower bound only once at the top
     # because farther below in the search tree the
     # lower bounds are local, not global
@@ -145,7 +144,6 @@ def _branch(
         lb = cost_ess + lb_core
         log.info('==== _branch (recursive) ====\n')
         return None, lb
-    assert c < bab.upper_bound, (c, bab.upper_bound)
     assert xcore != fol.false
     assert ycore != fol.false
     # branch

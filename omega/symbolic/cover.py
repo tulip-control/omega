@@ -122,21 +122,22 @@ def _branch(
     #     + Cardinality(essential_right)
     #     + LowerBound(core_right)
     cost_ess = _cost(essential, p_to_q, fol)
+    lb_core = _lower_bound(xcore, ycore, p_leq_q, p_to_q, fol)
     path_cost += cost_ess
     if xcore == fol.false:
         log.info('terminal case (empty cyclic core)')
+        assert lb_core == 0, lb_core
         bab.upper_bound = path_cost
         lb = cost_ess
         log.info('==== _branch (recursive) ====\n')
         return essential, lb
-    # prune
-    lb_core = _lower_bound(xcore, ycore, p_leq_q, p_to_q, fol)
     c = path_cost + lb_core
     # set global lower bound only once at the top
     # because farther below in the search tree the
     # lower bounds are local, not global
     if bab.lower_bound is None:
         bab.lower_bound = c
+    # prune
     # C_left.path + C_left.lower >= global_upper_bound ?
     # C_right.path + C_right.lower >= global_upper_bound ?
     if c >= bab.upper_bound:

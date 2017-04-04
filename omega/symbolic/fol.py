@@ -131,7 +131,7 @@ class Context(object):
                     'attempted to redefine "{var}"'.format(
                         var=var))
         if common:
-            log.debug('attempted adding existing vars')
+            log.debug('attempted to add existing variables')
         dvars = {k: v for k, v in dvars.items()
                  if k not in common}
         if not dvars:

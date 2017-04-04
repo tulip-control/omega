@@ -124,13 +124,13 @@ def _branch(
     cost_ess = _cost(essential, p_to_q, fol)
     lb_core = _lower_bound(xcore, ycore, p_leq_q, p_to_q, fol)
     path_cost += cost_ess
+    sub_lb = cost_ess + lb_core
     if xcore == fol.false:
         log.info('terminal case (empty cyclic core)')
         assert lb_core == 0, lb_core
         bab.upper_bound = path_cost
-        lb = cost_ess
         log.info('==== _branch (recursive) ====\n')
-        return essential, lb
+        return essential, sub_lb
     c = path_cost + lb_core
     # set global lower bound only once at the top
     # because farther below in the search tree the
@@ -142,9 +142,8 @@ def _branch(
     # C_right.path + C_right.lower >= global_upper_bound ?
     if c >= bab.upper_bound:
         log.info('prune')
-        lb = cost_ess + lb_core
         log.info('==== _branch (recursive) ====\n')
-        return None, lb
+        return None, sub_lb
     assert xcore != fol.false
     assert ycore != fol.false
     # branch

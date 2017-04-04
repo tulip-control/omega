@@ -132,11 +132,11 @@ class Context(object):
                         var=var))
         if common:
             log.debug('attempted to add existing variables')
-        dvars = {k: v for k, v in dvars.items()
-                 if k not in self.vars}
-        if not dvars:
+        vrs = {k: v for k, v in dvars.items()
+               if k not in self.vars}
+        if not vrs:
             return
-        t = bv.bitblast_table(dvars)
+        t = bv.bitblast_table(vrs)
         self.vars.update(t)
         bits = bv.bit_table(t, t)
         for bit in bits:

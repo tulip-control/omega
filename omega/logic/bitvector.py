@@ -215,7 +215,6 @@ def bit_table(variables, table):
     @return: symbol table of bits
     @rtype: `dict` of `dict`
     """
-    assert variables, variables
     dout = dict()
     keys = {'type', 'dom', 'signed',
             'width', 'bitnames', 'init'}

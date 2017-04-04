@@ -9,10 +9,7 @@ from omega.symbolic import fol as _fol
 def print_minimal_formula():
     """How to see what expression a BDD represents."""
     c = _fol.Context()
-    vrs = dict(
-        x=dict(type='int', dom=(1, 5)),
-        y=dict(type='int', dom=(0, 14)))
-    c.add_vars(vrs)
+    c.declare(x=(1, 5), y=(0, 14))
     s = '''
         \/ (x = 2  /\  y <= 15)
         \/ (0 <= x  /\ x <= 3  /\ y >= 5)

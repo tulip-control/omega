@@ -261,6 +261,37 @@ def test_cyclic_core():
     cov.cyclic_core(f, care_set, aut)
 
 
+def test_cyclic_core_recursion():
+    fol = _fol.Context()
+    fol.declare(
+        x=(0, 1), y=(0, 1), z=(0, 1),
+        u=(0, 1), v=(0, 1), w=(0, 1))
+    s = r'''
+        (
+            \/ (z = 1  /\  y = 0)
+            \/ (x = 0  /\  z = 1)
+            \/ (y = 1  /\  x = 0)
+            \/ (y = 1  /\  z = 0)
+            \/ (x = 1  /\  z = 0)
+            \/ (x = 1  /\  y = 0)
+        ) \/
+        (
+            \/ (w = 1  /\  v = 0)
+            \/ (u = 0  /\  w = 1)
+            \/ (v = 1  /\  u = 0)
+            \/ (v = 1  /\  w = 0)
+            \/ (u = 1  /\  w = 0)
+            \/ (u = 1  /\  v = 0)
+        )
+        '''
+    f = fol.add_expr(s)
+    care_set = fol.true
+    cover = cov.minimize(f, care_set, fol)
+    n = cover.count(6*2)
+    assert n == 6, n
+    # print(fol.to_expr(f, show_dom=True))
+
+
 def test_max_transpose():
     fol = _fol.Context()
     # `p'` serves as `u`
@@ -1205,11 +1236,11 @@ def profile_functions_above():
 
 
 def configure_logging():
-    h = logging.StreamHandler()
+    h = logging.FileHandler('log.txt')
     formatter = logging.Formatter(
         '%(message)s')
     h.setFormatter(formatter)
-    logger = logging.getLogger('omega')
+    logger = logging.getLogger('omega.symbolic.cover')
     logger.setLevel(logging.INFO)
     logger.addHandler(h)
     logger = logging.getLogger('dd.bdd')
@@ -1234,4 +1265,4 @@ def main():
 
 
 if __name__ == '__main__':
-    run_expensive_functions_repeatedly()
+    test_cyclic_core_recursion()

@@ -1474,12 +1474,16 @@ def _add_prime_like_too(table):
     @rtype: `dict`
     """
     t = dict()
-    for var, d in table.items():
+    for var, dom in table.items():
         assert not stx.isprimed(var), var
-        assert 'bitnames' not in d, d  # precaution
         pvar = _prime_like(var)
-        t[var] = dict(d)
-        t[pvar] = dict(d)
+        if dom == 'bool':
+            r = 'bool'
+        else:
+            assert len(dom) == 2, dom
+            r = tuple(dom)
+        t[var] = r
+        t[pvar] = r
     return t
 
 

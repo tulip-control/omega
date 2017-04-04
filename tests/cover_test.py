@@ -1146,10 +1146,7 @@ def test_add_prime_like_too():
     assert t[xp] == t['x'], t
     assert t[yp] == t['y'], t
     with assert_raises(AssertionError):
-        table['x']['bitnames'] = 'whatever'
-        cov._add_prime_like_too(table)
-    with assert_raises(AssertionError):
-        table["x'"] = dict(table['x'])
+        table["x'"] = tuple(table['x'])
         cov._add_prime_like_too(table)
 
 

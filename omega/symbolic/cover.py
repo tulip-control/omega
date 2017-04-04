@@ -135,6 +135,8 @@ def _branch(
     # because farther below in the search tree the
     # lower bounds are local, not global
     if bab.lower_bound is None:
+        log.info(
+            'global lower bound: {lb}'.format(lb=branch_lb))
         bab.lower_bound = branch_lb
     # prune
     # C_left.path + C_left.lower >= global_upper_bound ?

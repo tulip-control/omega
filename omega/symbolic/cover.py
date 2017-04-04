@@ -286,13 +286,15 @@ def _print_cyclic_core(
     # print
     m = fol.count(x)
     n = fol.count(y)
-    log.info(
-        '({m}, {n}) implicants in (x, y)'.format(
+    log.info((
+        '(x={m}, y={n}) implicants of '
+        'covering problem').format(
             m=m, n=n))
     m = fol.count(xcore)
     n = fol.count(ycore)
-    log.info(
-        '({m}, {n}) implicants in cyclic core'.format(
+    log.info((
+        '(x={m}, y={n}) implicants after '
+        'removing essential elements').format(
             m=m, n=n))
     n = fol.count(essential)
     log.info('{n} primes are essential'.format(n=n))

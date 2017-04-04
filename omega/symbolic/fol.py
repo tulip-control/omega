@@ -136,8 +136,6 @@ class Context(object):
                  if k not in common}
         if not dvars:
             return
-        common = set(dvars).intersection(self.vars)
-        assert not common, common
         t = bv.bitblast_table(dvars)
         self.vars.update(t)
         bits = bv.bit_table(t, t)

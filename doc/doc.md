@@ -462,3 +462,7 @@ The token precedence (lowest to highest) and associativity (r = right, l = left,
 - `~`, `!` (r)
 - `X`, `-X`, `--X` (r)
 - `'`, `.` (l)
+
+
+This document is copyright 2015 by California Institute of Technology.
+All rights reserved. Licensed under BSD-3.

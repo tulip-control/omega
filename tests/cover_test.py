@@ -26,7 +26,6 @@ logger.setLevel(logging.ERROR)
 
 def test_scaling_equality():
     aut = _fol.Context()
-    aut.owners = {'sys', 'other'}
     x_vars = dict(
         x=dict(type='int', dom=(0, 10), owner='sys'),
         y=dict(type='int', dom=(0, 15), owner='sys'),
@@ -88,7 +87,6 @@ def test_branching():
     # aut.bdd.configure(
     #     max_memory=2 * _bdd.GB,
     #     max_cache_hard=2**25)
-    aut.owners = {'sys', 'other'}
     dvars = dict(
         x=dict(type='int', dom=(0, 10), owner='sys'),
         y=dict(type='int', dom=(0, 25), owner='sys'),
@@ -202,7 +200,6 @@ def _plot_orthotopes_for_robots_example(u, f, abx, xvars, aut):
 
 def test_cyclic_core_with_care_set():
     aut = _fol.Context()
-    aut.owners = {'other'}
     dvars = dict(
         x=dict(type='int', dom=(0, 17), owner='other'))
     aut.add_vars(dvars)
@@ -216,7 +213,6 @@ def test_cyclic_core_with_care_set():
 
 def test_cyclic_core():
     aut = _fol.Context()
-    aut.owners = {'sys', 'other'}
     dvars = dict(
         x=dict(type='int', dom=(0, 4), owner='sys'),
         y=dict(type='int', dom=(0, 4), owner='sys'),

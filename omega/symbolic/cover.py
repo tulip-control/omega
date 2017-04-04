@@ -382,7 +382,7 @@ def _max_transpose(p_is_signature, p_is_prime,
     assert support_issubset(p_is_prime, p_vars, fol)
     assert support_issubset(p_is_signature, p_vars, fol)
     # compute
-    u = _transpose(
+    u = _floor(
         p_is_signature, p_is_prime,
         u_leq_p, p_leq_u,
         p_to_q, fol, signatures=signatures)
@@ -392,9 +392,9 @@ def _max_transpose(p_is_signature, p_is_prime,
     return r
 
 
-def _transpose(p_is_signature, p_is_prime,
-               u_leq_p, p_leq_u,
-               p_to_q, fol, signatures=False):
+def _floor(p_is_signature, p_is_prime,
+           u_leq_p, p_leq_u,
+           p_to_q, fol, signatures=False):
     """Transpose primes (tau_X(Y)) or signatures (tau_Y(X)).
 
     @param p_is_prime: some primes, function of `p`

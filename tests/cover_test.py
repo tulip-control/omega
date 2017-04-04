@@ -320,7 +320,7 @@ def test_transpose():
     p_to_q = {'p': 'q'}
     u_leq_p = fol.add_expr("p_cp <= p")
     p_leq_u = fol.add_expr("p <= p_cp")
-    tau = cov._transpose(
+    tau = cov._floor(
         p_is_signature, p_is_prime,
         u_leq_p, p_leq_u,
         p_to_q, fol)

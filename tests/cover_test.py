@@ -134,7 +134,7 @@ def test_cyclic_core_using_robots_example():
     xcore, ycore, essential = cov.cyclic_core(f, care_set, aut)
     assert xcore == aut.false, xcore
     n_essential = aut.count(essential)
-    k = sum(1 for _ in aut.bdd.sat_iter(essential))
+    k = aut.count(essential)
     assert n_essential == k, (n_essential, k)
     assert n_essential == 7, n_essential
 

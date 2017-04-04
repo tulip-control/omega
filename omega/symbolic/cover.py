@@ -785,7 +785,7 @@ def prime_orthotopes(
     r = q_is_implicant & p_leq_q
     r = p_eq_q | ~ r
     r = fol.forall(q, r)
-    r = r & p_is_implicant
+    r &= p_is_implicant
     '''
     q = ', '.join(_collect_parameters(qx))
     s = (

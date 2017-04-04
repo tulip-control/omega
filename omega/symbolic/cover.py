@@ -273,6 +273,8 @@ def _print_cyclic_core(
 
     Assert support and covering properties.
     """
+    if log.getEffectiveLevel() > logging.INFO:
+        return
     # assert
     params = _collect_parameters(px)
     if essential != fol.false:

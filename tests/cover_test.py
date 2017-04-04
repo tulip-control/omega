@@ -1059,10 +1059,9 @@ def test_parameter_table():
     params = dict(u_x='x', v_x='x', u_y='y', v_y='y')
     for p, x in params.items():
         assert p in t, (p, t)
-        d = t[p]
-        d_ = table[x]
-        assert d['type'] == d_['type'], (d, d_)
-        assert d['dom'] == d_['dom'], (d, d_)
+        dom = t[p]
+        dom_ = table[x]['dom']
+        assert dom == dom_, (dom, dom_)
 
 
 def test_parameter_variables():

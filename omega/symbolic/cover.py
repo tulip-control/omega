@@ -1380,8 +1380,8 @@ def _parameter_table(x, table, a, b):
         name = _replace_prime(xj)
         aj = '{a}_{v}'.format(a=a, v=name)
         bj = '{b}_{v}'.format(b=b, v=name)
-        d[aj] = dict(type='int', dom=dom, owner=VAR_OWNER)
-        d[bj] = dict(type='int', dom=dom, owner=VAR_OWNER)
+        d[aj] = dom
+        d[bj] = dom
         assert "'" not in aj, aj
         assert "'" not in bj, bj
     assert len(d) == 2 * len(x), d

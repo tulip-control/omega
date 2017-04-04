@@ -13,12 +13,11 @@ log = logging.getLogger('omega.logic')
 log.setLevel(logging.WARNING)
 
 
-def test_add_vars():
+def test_declare():
     # Boolean-valued variable
     fol = _fol.Context()
     bdd = fol.bdd
-    d = dict(x=dict(type='bool'))
-    fol.add_vars(d)
+    fol.declare(x='bool')
     assert 'x' in fol.vars, fol.vars
     dx = fol.vars['x']
     assert 'type' in dx, dx
@@ -29,8 +28,7 @@ def test_add_vars():
     # integer-valued variable
     fol = _fol.Context()
     bdd = fol.bdd
-    d = dict(y=dict(type='int', dom=(0, 2)))
-    fol.add_vars(d)
+    fol.declare(y=(0, 2))
     assert 'y' in fol.vars, fol.vars
     dy = fol.vars['y']
     assert 'type' in dy, dy
@@ -44,27 +42,22 @@ def test_add_vars():
     # primed vars
     fol = _fol.Context()
     bdd = fol.bdd
-    d = {"y'": dict(type='int', dom=(0, 1))}
-    fol.add_vars(d)
+    d = {"y'": (0, 1)}
+    fol.declare(**d)
     assert "y'" in fol.vars, fol.vars
     assert "y_0'" in bdd.vars, bdd.vars
     assert "y'_0" not in bdd.vars, bdd.vars
     # adding same vars twice
     fol = _fol.Context()
-    d = dict(x=dict(type='bool'))
-    fol.add_vars(d)
-    fol.add_vars(d)
+    fol.declare(x='bool')
+    fol.declare(x='bool')
     # mismatch with existing var
-    d = dict(x=dict(type='int'))
     with nt.assert_raises(ValueError):
-        fol.add_vars(d)
+        fol.declare(x=(1, 5))
     # mixed new and existing
-    d = dict(x=dict(type='bool'),
-             y=dict(type='int', dom=(0, 5)))
-    fol.add_vars(d)
-    d['y']['dom'] = (3, 15)
+    fol.declare(x='bool', y=(0, 5))
     with nt.assert_raises(ValueError):
-        fol.add_vars(d)
+        fol.declare(x='bool', y=(3, 15))
 
 
 def test_support():
@@ -75,9 +68,7 @@ def test_support():
     r = fol.support(u)
     assert r == set(), r
     # single variable
-    d = dict(x=dict(type='int', dom=(0, 10)),
-             y=dict(type='bool'))
-    fol.add_vars(d)
+    fol.declare(x=(0, 10), y='bool')
     with nt.assert_raises(AssertionError):
         u = fol.add_expr('x')
     with nt.assert_raises(AssertionError):
@@ -94,11 +85,9 @@ def test_support():
 
 def test_replace():
     fol = _fol.Context()
-    fol.add_vars(dict(
-        x=dict(type='int', dom=(0, 12)),
-        y=dict(type='int', dom=(0, 12)),
-        z=dict(type='int', dom=(0, 3)),
-        w=dict(type='bool')))
+    fol.declare(
+        x=(0, 12), y=(0, 12),
+        z=(0, 3), w='bool')
     # with vars
     u = fol.add_expr('x = 1')
     subs = {'x': 'y'}
@@ -147,9 +136,7 @@ def test_replace():
 # requires `dd.cudd`
 def replace_with_bdd():
     fol = _fol.Context()
-    fol.add_vars(dict(
-        x=dict(type='bool'),
-        y=dict(type='bool')))
+    fol.declare(x='bool', y='bool')
     u = fol.add_expr('x => y')
     subs = {'x': fol.bdd.true}
     u = fol.replace_with_bdd(u, subs)
@@ -161,8 +148,7 @@ def test_quantifiers():
     """Test syntax for rigid quantification."""
     fol = _fol.Context()
     bdd = fol.bdd
-    d = dict(x=dict(type='int', dom=(0, 5), owner='sys'))
-    fol.add_vars(d)
+    fol.declare(x=(0, 5))
     # no `qvars`
     u = fol.add_expr('True')
     r = fol.exist(set(), u)
@@ -208,9 +194,7 @@ def test_quantifiers():
 
 def test_pick():
     fol = _fol.Context()
-    fol.add_vars(dict(
-        x=dict(type='bool'),
-        y=dict(type='int', dom=(0, 2))))
+    fol.declare(x='bool', y=(0, 2))
     u = fol.add_expr('x')
     p = fol.pick(u, care_vars=['x'])
     for i in range(10):
@@ -223,9 +207,7 @@ def test_pick():
 
 def test_pick_iter():
     fol = _fol.Context()
-    fol.add_vars(dict(
-        x=dict(type='bool'),
-        y=dict(type='int', dom=(0, 2))))
+    fol.declare(x='bool', y=(0, 2))
     u = fol.add_expr('True')
     gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
@@ -246,9 +228,9 @@ def test_pick_iter():
 
 def test_define():
     c = _fol.Context()
-    c.add_vars(dict(x=dict(type='int', dom=(9, 35))))
-    c.add_vars(dict(y=dict(type='int', dom=(1, 5))))
-    c.add_vars(dict(z=dict(type='int', dom=(-3, 10))))
+    c.declare(x=(9, 35))
+    c.declare(y=(1, 5))
+    c.declare(z=(-3, 10))
     e = '''
         a == x + y > 3
         b == z - x <= 0
@@ -287,9 +269,7 @@ def test_add_expr():
     bdd = fol.bdd
     u = fol.add_expr('False')
     assert u == bdd.false, bdd.to_expr(u)
-    d = dict(x=dict(type='int', dom=(0, 100)),
-             y=dict(type='int', dom=(5, 23)))
-    fol.add_vars(d)
+    fol.declare(x=(0, 100), y=(5, 23))
     u = fol.add_expr('x < y + 5')
     v = fol.add_expr('x - 5 < y')
     assert u == v, (u, v)
@@ -298,9 +278,7 @@ def test_add_expr():
 def test_to_expr():
     fol = _fol.Context()
     fol.bdd.configure(reordering=True)
-    d = dict(x=dict(type='int', dom=(-14, 100)),
-             y=dict(type='int', dom=(5, 23)))
-    fol.add_vars(d)
+    fol.declare(x=(-14, 100), y=(5, 23))
     u = fol.add_expr('(1 <= x) /\ (x <= 3)')
     s = fol.to_expr(u, show_limits=True)
     s_ = ' /\\ x \\in -128 .. 127\n /\\ (x \in 1 .. 3)'
@@ -317,8 +295,7 @@ def test_to_expr():
 def test_apply():
     fol = _fol.Context()
     bdd = fol.bdd
-    d = dict(x=dict(type='bool'))
-    fol.add_vars(d)
+    fol.declare(x='bool')
     u = fol.add_expr('x')
     v = fol.add_expr('! x')
     w = fol.apply('and', u, v)
@@ -330,9 +307,7 @@ def test_apply():
 def test_reorder():
     fol = _fol.Context()
     bdd = fol.bdd
-    d = dict(x=dict(type='int', dom=(0, 7)),
-             y=dict(type='int', dom=(0, 3)))
-    fol.add_vars(d)
+    fol.declare(x=(0, 7), y=(0, 3))
     top_bit = bdd.var_at_level(0)
     if top_bit.startswith('x'):
         var = 'y'

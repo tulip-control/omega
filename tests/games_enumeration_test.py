@@ -283,9 +283,7 @@ def test_add_new_node():
 
 def test_add_to_visited():
     c = _fol.Context()
-    c.add_vars(dict(
-        x=dict(type='bool', owner='sys'),
-        y=dict(type='int', dom=(0, 10), owner='sys')))
+    c.declare(x='bool', y=(0, 10))
     bdd = c.bdd
     values = dict(x=True, y=5)
     visited = bdd.false

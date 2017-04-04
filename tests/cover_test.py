@@ -26,18 +26,15 @@ logger.setLevel(logging.ERROR)
 
 def test_scaling_equality():
     aut = _fol.Context()
-    x_vars = dict(
-        x=dict(type='int', dom=(0, 10), owner='sys'),
-        y=dict(type='int', dom=(0, 15), owner='sys'),
-        z=dict(type='int', dom=(0, 15), owner='sys'))
-    aut.add_vars(x_vars)
+    x_vars = dict(x=(0, 10), y=(0, 15), z=(0, 15))
+    aut.declare(**x_vars)
     params = dict(pa='a', pb='b', qa='u', qb='v')
     p_dom = cov._parameter_table(
         x_vars, aut.vars, a=params['pa'], b=params['pb'])
     q_dom = cov._parameter_table(
         x_vars, aut.vars, a=params['qa'], b=params['qb'])
-    aut.add_vars(p_dom)
-    aut.add_vars(q_dom)
+    aut.declare(**p_dom)
+    aut.declare(**q_dom)
     px = cov._parameter_variables(x_vars, a=params['pa'], b=params['pb'])
     qx = cov._parameter_variables(x_vars, a=params['qa'], b=params['qb'])
     p_to_q = cov._renaming_between_parameters(px, qx)
@@ -61,10 +58,7 @@ def test_scaling_equality():
 
 def test_using_fol_context():
     c = _fol.Context()
-    t = dict(
-        x=dict(type='int', dom=(0, 5)),
-        y=dict(type='int', dom=(-4, 6)))
-    c.add_vars(t)
+    c.declare(x=(0, 5), y=(-4, 6))
     s = ('1 <= x /\ x <= 3 /\ -2 <= y /\ y <= 4')
     u = c.add_expr(s)
     care = c.true
@@ -87,11 +81,7 @@ def test_branching():
     # aut.bdd.configure(
     #     max_memory=2 * _bdd.GB,
     #     max_cache_hard=2**25)
-    dvars = dict(
-        x=dict(type='int', dom=(0, 10), owner='sys'),
-        y=dict(type='int', dom=(0, 25), owner='sys'),
-        z=dict(type='int', dom=(0, 25), owner='sys'))
-    aut.add_vars(dvars)
+    aut.declare(x=(0, 10), y=(0, 25), z=(0, 25))
     s = (
         '( '
         '(z = 1  /\  y <= 0)  \/ '
@@ -200,9 +190,7 @@ def _plot_orthotopes_for_robots_example(u, f, abx, xvars, aut):
 
 def test_cyclic_core_with_care_set():
     aut = _fol.Context()
-    dvars = dict(
-        x=dict(type='int', dom=(0, 17), owner='other'))
-    aut.add_vars(dvars)
+    aut.declare(x=(0, 17))
     # cover = {True}
     s = '(x < 15)'
     f = aut.add_expr(s)
@@ -213,11 +201,7 @@ def test_cyclic_core_with_care_set():
 
 def test_cyclic_core():
     aut = _fol.Context()
-    dvars = dict(
-        x=dict(type='int', dom=(0, 4), owner='sys'),
-        y=dict(type='int', dom=(0, 4), owner='sys'),
-        z=dict(type='int', dom=(0, 4), owner='sys'))
-    aut.add_vars(dvars)
+    aut.declare(x=(0, 4), y=(0, 4), z=(0, 4))
     # cover = single prime
     s = '(x < 3) /\ (y = 2)'
     f = aut.add_expr(s)
@@ -280,11 +264,8 @@ def test_cyclic_core():
 def test_max_transpose():
     fol = _fol.Context()
     # `p'` serves as `u`
-    dvars = {
-        'p': dict(type='int', dom=(0, 4)),
-        'q': dict(type='int', dom=(0, 4)),
-        "p_cp": dict(type='int', dom=(0, 4))}
-    fol.add_vars(dvars)
+    dvars = {'p': (0, 4), 'q': (0, 4), "p_cp": (0, 4)}
+    fol.declare(**dvars)
     s = '(p = 2) \/ (p = 4)'
     p_is_prime = fol.add_expr(s)
     s = '(p = 1) \/ (p = 3)'
@@ -308,11 +289,8 @@ def test_max_transpose():
 
 def test_transpose():
     fol = _fol.Context()
-    dvars = {
-        'p': dict(type='int', dom=(0, 4)),
-        'q': dict(type='int', dom=(0, 4)),
-        "p_cp": dict(type='int', dom=(0, 4))}
-    fol.add_vars(dvars)
+    dvars = {'p': (0, 4), 'q': (0, 4), "p_cp": (0, 4)}
+    fol.declare(**dvars)
     s = '(p = 1) \/ (p = 2) \/ (p = 4)'
     p_is_prime = fol.add_expr(s)
     s = '(p = 1) \/ (p = 3)'
@@ -331,11 +309,7 @@ def test_transpose():
 
 def test_contains_covered():
     fol = _fol.Context()
-    x_vars = dict(
-        u=dict(type='int', dom=(0, 4)),
-        p=dict(type='int', dom=(0, 4)),
-        q=dict(type='int', dom=(0, 4)))
-    fol.add_vars(x_vars)
+    fol.declare(u=(0, 4), p=(0, 4), q=(0, 4))
     s = 'u = 1 \/ u = 2 \/ u = 5'
     u_is_signature = fol.add_expr(s)
     s = 'u <= p'
@@ -416,12 +390,9 @@ def test_some_cover():
 
 def simple_covering_problem():
     fol = _fol.Context()
-    dvars = {
-        'p': dict(type='int', dom=(0, 4)),
-        'q': dict(type='int', dom=(0, 4)),
-        "p'": dict(type='int', dom=(0, 4))}
+    vrs = {'p': (0, 4), 'q': (0, 4), "p'": (0, 4)}
     # signatures
-    fol.add_vars(dvars)
+    fol.declare(**vrs)
     s = '(p = 1) \/ (p = 2) \/ (p = 4)'
     x = fol.add_expr(s)
     # primes
@@ -438,13 +409,9 @@ def simple_covering_problem():
 
 def test_partial_order():
     fol = _fol.Context()
-    vrs = dict(
-        x=dict(type='int', dom=(0, 4)),
-        w=dict(type='int', dom=(0, 4)),
-        w_cp=dict(type='int', dom=(0, 4)),
-        t=dict(type='int', dom=(0, 4)),
-        t_cp=dict(type='int', dom=(0, 4)))
-    fol.add_vars(vrs)
+    fol.declare(
+        x=(0, 4), w=(0, 4), w_cp=(0, 4),
+        t=(0, 4), t_cp=(0, 4))
     px = dict(x=dict(a='w', b='t'))
     u_leq_p, p_leq_u = cov._partial_order(px, fol)
     s = '(w <= w_cp) /\ (t_cp <= t)'
@@ -746,17 +713,14 @@ def test_orthotopes_intersect():
 def setup_aut(xmax=15, ymax=15):
     fol = _fol.Context()
     fol.bdd.configure(reordering=True)
-    x_vars = dict(
-        # CAUTION: remember that type hints (safety)
-        # needs to be added as care set
-        x=dict(type='int', dom=(0, xmax), owner='sys'),
-        y=dict(type='int', dom=(0, ymax), owner='env'))
-    fol.add_vars(x_vars)
+    # CAUTION: remember that type hints (safety)
+    # needs to be added as care set
+    fol.declare(x=(0, xmax), y=(0, ymax))
     x_vars = ['x', 'y']
     p_table = cov._parameter_table(x_vars, fol.vars, a='a', b='b')
     q_table = cov._parameter_table(x_vars, fol.vars, a='u', b='v')
-    fol.add_vars(p_table)
-    fol.add_vars(q_table)
+    fol.declare(**p_table)
+    fol.declare(**q_table)
     px = cov._parameter_variables(x_vars, a='a', b='b')
     qx = cov._parameter_variables(x_vars, a='u', b='v')
     return fol, x_vars, px, qx, p_table, q_table
@@ -807,10 +771,7 @@ def robots_example(fol):
 
 def test_dumps_cover():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(0, 4)),
-        y=dict(type='int', dom=(-5, 9)))
-    fol.add_vars(table)
+    fol.declare(x=(0, 4), y=(-5, 9))
     # care = TRUE
     s = '2 <= x  /\  x <= 4'
     u = fol.add_expr(s)
@@ -889,14 +850,9 @@ def test_vertical_op():
 
 def test_list_orthotope_expr():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)),
-        a_x=dict(type='int', dom=(-4, 5), owner='other'),
-        b_x=dict(type='int', dom=(-4, 5), owner='other'),
-        y=dict(type='int', dom=(-7, 15)),
-        a_y=dict(type='int', dom=(-7, 15), owner='other'),
-        b_y=dict(type='int', dom=(-7, 15), owner='other'))
-    fol.add_vars(table)
+    fol.declare(
+        x=(-4, 5), a_x=(-4, 5), b_x=(-4, 5),
+        y=(-7, 15), a_y=(-7, 15), b_y=(-7, 15))
     px, _ = dummy_parameters()
     f = fol.add_expr('x = 1')
     care = fol.true
@@ -968,10 +924,7 @@ def test_check_type_hint():
 
 def test_care_implies_type_hints():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)),
-        y=dict(type='int', dom=(-7, 15)))
-    fol.add_vars(table)
+    fol.declare(x=(-4, 5), y=(-7, 15))
     f = fol.add_expr('0 < x  /\  x < 4')
     care = fol.add_expr('-2 <= y  /\  y <= 4')
     r = cov._care_implies_type_hints(f, care, fol)
@@ -990,9 +943,7 @@ def test_care_implies_type_hints():
 
 def test_f_implies_care():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)))
-    fol.add_vars(table)
+    fol.declare(x=(-4, 5))
     f = fol.add_expr('0 < x  /\  x < 4')
     care = fol.add_expr('-2 <= x  /\  x <= 4')
     r = cov._f_implies_care(f, care, fol)
@@ -1050,10 +1001,7 @@ def test_bitfield_limits():
 
 def test_conjoin_type_hints():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)),
-        y=dict(type='int', dom=(-7, 15)))
-    fol.add_vars(table)
+    fol.declare(x=(-4, 5), y=(-7, 15))
     vrs = ['x']
     u = cov._conjoin_type_hints(vrs, fol)
     u_ = fol.add_expr('-4 <= x  /\  x <= 5')
@@ -1078,8 +1026,7 @@ def test_format_range():
 
 def test_orthotopes_iter():
     fol = _fol.Context()
-    t = dict(p=dict(type='int', dom=(2, 9)))
-    fol.add_vars(t)
+    fol.declare(p=(2, 9))
     # careful with the type hint
     u = fol.add_expr('(0 <= p) /\ (p <= 10)')
     c = list(cov._orthotopes_iter(u, fol))
@@ -1088,10 +1035,7 @@ def test_orthotopes_iter():
 
 def test_setup_aux_vars():
     fol = _fol.Context()
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)),
-        y=dict(type='int', dom=(-7, 15)))
-    fol.add_vars(table)
+    fol.declare(x=(-4, 5), y=(-7, 15))
     f = fol.add_expr('x = 2')
     care = fol.true
     vrs, px, qx, p_to_q = cov._setup_aux_vars(f, care, fol)
@@ -1187,9 +1131,7 @@ def test_replace_prime():
 
 
 def test_add_prime_like_too():
-    table = dict(
-        x=dict(type='int', dom=(-4, 5)),
-        y=dict(type='bool'))
+    table = dict(x=(-4, 5), y='bool')
     t = cov._add_prime_like_too(table)
     assert 'x' in t, t
     assert 'y' in t, t

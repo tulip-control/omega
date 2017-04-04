@@ -395,10 +395,10 @@ def test_prime_unprimed():
 def setup():
     fol = _fol.Context()
     t = {
-        "x": dict(type='int', dom=(-4, 5)),
-        "y": dict(type='bool'),
-        "x'": dict(type='int', dom=(-4, 5)),
-        "y'": dict(type='bool')}
-    fol.add_vars(t)
+        "x": (-4, 5),
+        "y": 'bool',
+        "x'": (-4, 5),
+        "y'": 'bool'}
+    fol.declare(**t)
     print(fol.vars)
     return fol

@@ -123,15 +123,7 @@ class Context(object):
           Priming is cared for by other modules.
         """
         assert dvars, dvars
-        # if any `dvars` not fresh, then must be same
-        common = set(dvars).intersection(self.vars)
-        for var in common:
-            for k, v in dvars[var].items():
-                assert self.vars[var][k] == v, (
-                    'attempted to redefine "{var}"'.format(
-                        var=var))
-        if common:
-            log.debug('attempted to add existing variables')
+        self._avoid_redeclaration(dvars)
         vrs = {k: v for k, v in dvars.items()
                if k not in self.vars}
         if not vrs:
@@ -141,6 +133,19 @@ class Context(object):
         bits = bv.bit_table(t, t)
         for bit in bits:
             self.bdd.add_var(bit)
+
+    def _avoid_redeclaration(self, dvars):
+        # if any `dvars` not fresh, then must be same
+        gen = (var for var in dvars if var in self.vars)
+        for var in gen:
+            old = self.vars[var]
+            for k, v in dvars[var].items():
+                if k in old and v == old[k]:
+                    continue
+                raise ValueError((
+                    'attempted to redeclare "{var}" '
+                    'where old: {old} and new: {new}').format(
+                        var=var, old=old, new=dvars[var]))
 
     def support(self, u):
         """Return FOL variables that `u` depends on."""

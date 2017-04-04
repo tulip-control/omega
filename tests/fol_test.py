@@ -56,14 +56,14 @@ def test_add_vars():
     fol.add_vars(d)
     # mismatch with existing var
     d = dict(x=dict(type='int'))
-    with nt.assert_raises(AssertionError):
+    with nt.assert_raises(ValueError):
         fol.add_vars(d)
     # mixed new and existing
     d = dict(x=dict(type='bool'),
              y=dict(type='int', dom=(0, 5)))
     fol.add_vars(d)
     d['y']['dom'] = (3, 15)
-    with nt.assert_raises(AssertionError):
+    with nt.assert_raises(ValueError):
         fol.add_vars(d)
 
 

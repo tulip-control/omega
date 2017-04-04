@@ -167,7 +167,7 @@ def _branch(
     # would need similar cumulative essentials +
     # picked primes info in order to update `bab.best_cover`
     log.info('==== _branch (recursive) ====\n')
-    return cover, None
+    return cover, sub_lb
 
 
 def _recurse(

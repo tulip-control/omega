@@ -1353,10 +1353,9 @@ def _setup_aux_vars(f, care, fol):
     assert not common, common
     common = x_vars.intersection(q_dom)
     assert not common, common
-    # works even if subclass of `Context`
-    # overrides `add_vars`
-    fol.add_vars(p_dom)
-    fol.add_vars(q_dom)
+    # works for primed variables too
+    fol.declare(**p_dom)
+    fol.declare(**q_dom)
     px = _parameter_variables(x_vars, a=params['pa'], b=params['pb'])
     qx = _parameter_variables(x_vars, a=params['qa'], b=params['qb'])
     assert set(px) == set(qx), (px, qx)

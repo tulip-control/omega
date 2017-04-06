@@ -1233,6 +1233,39 @@ def test_branch_and_bound_class():
     bab.upper_bound = 18
 
 
+def run_expensive_functions_repeatedly():
+    n = 10
+    for i in range(n):
+        test_cyclic_core()
+        test_branching()
+        test_orthotopes_using_robots_example()
+        test_cyclic_core_using_robots_example()
+        test_dumps_cover()
+        test_essential_orthotopes()
+        test_using_fol_context()
+        test_implicant_orthotopes()
+
+
+def profile_functions_above():
+    import cProfile, pstats
+    pr = cProfile.Profile()
+    pr.enable()
+    # run test functions
+    d = globals()
+    n = 0
+    for k, v in d.items():
+        if callable(v) and k.startswith('test_'):
+            print(v)
+            n += 1
+            v()
+    print('{n} test functions'.format(n=n))
+    pr.disable()
+    ps = pstats.Stats(pr)
+    ps = ps.strip_dirs()
+    ps = ps.sort_stats('cumtime')
+    ps.print_stats('cover_test', 10)
+
+
 def configure_logging():
     h = logging.StreamHandler()
     formatter = logging.Formatter(
@@ -1263,5 +1296,4 @@ def main():
 
 
 if __name__ == '__main__':
-    configure_logging()
-    test_essential_orthotopes()
+    run_expensive_functions_repeatedly()

@@ -246,6 +246,10 @@ def test_cyclic_core():
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
     # has cyclic core
+    logger = logging.getLogger('omega.symbolic.cover')
+    old_level = logger.getEffectiveLevel()
+    # in order to test `_print_cyclic_core`
+    logger.setLevel(logging.INFO)
     s = (
         '('
         '(z = 1  /\  y = 0)  \/ '
@@ -260,6 +264,7 @@ def test_cyclic_core():
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
+    logger.setLevel(old_level)
 
 
 def test_cyclic_core_recursion():
@@ -387,6 +392,8 @@ def test_lower_bound():
     n = cov._lower_bound(x, y, p_leq_q, p_to_q, fol)
     assert n >= 2, n
     assert n <= 2, n
+    n_ = cov._lower_bound_naive(x, y, p_leq_q, p_to_q, fol)
+    assert n == n_, (n, n_)
 
 
 def test_upper_bound():
@@ -394,6 +401,8 @@ def test_upper_bound():
     n = cov._upper_bound(x, y, p_leq_q, p_to_q, fol)
     assert n >= 2, n
     assert n <= 4, n
+    n_ = cov._upper_bound_naive(x, y, p_leq_q, p_to_q, fol)
+    assert n == n_, (n, n_)
 
 
 def test_independent_set():

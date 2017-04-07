@@ -16,4 +16,6 @@ dist/*
 *.html
 *.css
 *.pdf
-
+*.lprof
+*.tar
+*.gz

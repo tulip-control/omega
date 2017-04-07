@@ -18,6 +18,7 @@ from omega.symbolic import fol as _fol
 from omega.symbolic import cover as cov
 
 
+log = logging.getLogger(__name__)
 logger = logging.getLogger('dd')
 logger.setLevel(logging.ERROR)
 logger = logging.getLogger('omega')
@@ -40,7 +41,7 @@ def test_scaling_equality():
     p_to_q = cov._renaming_between_parameters(px, qx)
     x_as_x = {xj: dict(a=xj, b=xj) for xj in px}
     varmap = cov._parameter_varmap(px, x_as_x)
-    print('Number of variables: {n}'.format(n=len(varmap)))
+    log.info('Number of variables: {n}'.format(n=len(varmap)))
     u = cov._orthotope_subseteq(varmap, aut)
     #
     s = (
@@ -101,7 +102,7 @@ def test_branching():
     # care_set = aut.true
     cover = cov.minimize(f, care_set, aut)
     s = cov.dumps_cover(cover, f, care_set, aut)
-    print(s)
+    log.info(s)
 
 
 def test_cost():
@@ -146,25 +147,25 @@ def test_orthotopes_using_robots_example():
     n_primes = aut.count(u)
     k = aut.count(u)
     assert n_primes == k, (n_primes, k)
-    print('{n} prime implicants'.format(n=n_primes))
+    log.info('{n} prime implicants'.format(n=n_primes))
     u = cov.essential_orthotopes(f, abx, uvx, aut, xvars)
     support = aut.support(u)
     assert support == set(ab_table), (support, ab_table)
     n_essential = aut.count(u)
     k = aut.count(u)
     assert n_essential == k, (n_essential, k)
-    print('{n} essential prime implicants'.format(n=n_essential))
+    log.info('{n} essential prime implicants'.format(n=n_essential))
     assert n_essential == 7, n_essential
     # result: all primes are essential in this example
     #
     care = aut.true
     s = cov.dumps_cover(u, f, care, aut)
-    print(s)
-    print('BDD has {n} nodes'.format(n=len(aut.bdd)))
+    log.info(s)
+    log.info('BDD has {n} nodes'.format(n=len(aut.bdd)))
     # confirm that essential orthotopes cover exactly `f`
     c = cov._list_orthotope_expr(u, abx, aut, simple=True)
     s = stx.disj(c)
-    print(s)
+    log.info(s)
     z = aut.add_expr(s)
     z = aut.exist(['a_x', 'b_x', 'a_y', 'b_y'], z)
     assert aut.support(z) == aut.support(f)
@@ -173,7 +174,7 @@ def test_orthotopes_using_robots_example():
         _plot_orthotopes_for_robots_example(u, f, abx, xvars, aut)
     # pprint.pprint(aut.bdd.statistics())
     # pprint.pprint(aut.bdd.vars)
-    print('{n} nodes in manager'.format(n=len(aut.bdd)))
+    log.info('{n} nodes in manager'.format(n=len(aut.bdd)))
 
 
 def _plot_orthotopes_for_robots_example(u, f, abx, xvars, aut):
@@ -374,11 +375,11 @@ def test_maxima():
     m = cov._maxima(u, partial_order, p_eq_q, rename, aut)
     t1 = time.time()
     dt = t1 - t0
-    print('`maxima` time (sec): {dt:1.2f}'.format(dt=dt))
+    log.info('`maxima` time (sec): {dt:1.2f}'.format(dt=dt))
     # print result
     gen = aut.pick_iter(m, care_vars=['x'])
     c = list(gen)
-    print(c)
+    log.info(c)
 
 
 def test_lower_bound():

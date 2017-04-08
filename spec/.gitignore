@@ -1,0 +1,6 @@
+workspace/
+*.tex
+*.log
+*.dvi
+*.aux
+*.toolbox

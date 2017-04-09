@@ -448,8 +448,6 @@ def _maxima(u, bab, fol):
     r = fol.forall(bab.q_vars, r)
     r &= u
     '''
-    p_eq_q = stx.conj('{pj} = {qj}'.format(pj=pj, qj=qj)
-                      for pj, qj in p_to_q.items())
     q = ', '.join(bab.q_vars)
     s = (
         '@{u} /\ '

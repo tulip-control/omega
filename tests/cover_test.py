@@ -315,10 +315,11 @@ def test_max_transpose():
     p_leq_u = fol.add_expr("p <= p_cp")
     p_leq_q = fol.add_expr("p <= q")
     p_eq_q = fol.add_expr("p = q")  # /\ (0 = 0)
-    max_tau_x = cov._max_transpose(
-        p_is_signature, p_is_prime,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
+    bab = cov._BranchAndBound(
+        p_leq_q, p_leq_u, u_leq_p, p_eq_q,
         p_to_q, px, qx, fol)
+    max_tau_x = cov._max_transpose(
+        p_is_signature, p_is_prime, bab, fol)
     s = 'p = 3'
     max_tau_x_ = fol.add_expr(s)
     assert max_tau_x == max_tau_x_
@@ -333,12 +334,14 @@ def test_transpose():
     s = '(p = 1) \/ (p = 3)'
     p_is_signature = fol.add_expr(s)
     p_to_q = {'p': 'q'}
+    p_leq_q = fol.add_expr("p <= q")
     u_leq_p = fol.add_expr("p_cp <= p")
     p_leq_u = fol.add_expr("p <= p_cp")
+    bab = cov._BranchAndBound(
+        p_leq_q, p_leq_u, u_leq_p, None,
+        p_to_q, None, None, fol)
     tau = cov._floor(
-        p_is_signature, p_is_prime,
-        u_leq_p, p_leq_u,
-        p_to_q, fol)
+        p_is_signature, p_is_prime, bab, fol)
     s = 'p = 1 \/ p = 3'
     tau_ = fol.add_expr(s)
     assert tau == tau_
@@ -346,15 +349,17 @@ def test_transpose():
 
 def test_contains_covered():
     fol = _fol.Context()
-    fol.declare(u=(0, 4), p=(0, 4), q=(0, 4))
-    s = 'u = 1 \/ u = 2 \/ u = 5'
+    fol.declare(p_cp=(0, 4), p=(0, 4), q=(0, 4))
+    s = 'p_cp = 1 \/ p_cp = 2 \/ p_cp = 5'
     u_is_signature = fol.add_expr(s)
-    s = 'u <= p'
-    u_leq_p = fol.add_expr(s)
+    u_leq_p = fol.add_expr('p_cp <= p')
+    p_leq_q = fol.add_expr('p <= q')
     p_to_q = {'p': 'q'}
-    p_to_u = {'p': 'u'}
+    # p_to_u = {'p': 'u'}
+    bab = cov._BranchAndBound(
+        p_leq_q, None, None, None, p_to_q, None, None, fol)
     p_like_q = cov._contains_covered(
-        u_is_signature, u_leq_p, p_to_q, p_to_u, fol)
+        u_is_signature, u_leq_p, bab, fol)
     supp = fol.support(p_like_q)
     # pprint.pprint(list(fol.pick_iter(p_like_q, care_vars=supp)))
     s = (
@@ -366,23 +371,26 @@ def test_contains_covered():
 
 
 def test_maxima():
-    aut, x_vars, ab, uv, _, _ = setup_aut(5, 5)
+    fol, x_vars, ab, uv, _, _ = setup_aut(5, 5)
     s = 'x = 1 \/ x = 3 \/ x = 4'
-    u = aut.add_expr(s)
+    u = fol.add_expr(s)
     # x <= y
     s = '(x = 1 /\ y = 1) \/ (x = 1 /\ y = 3)'
-    partial_order = aut.add_expr(s)
-    rename = {'x': 'y'}
+    p_leq_q = fol.add_expr(s)
+    p_to_q = {'x': 'y'}
     r = stx.conj('{pj} = {qj}'.format(pj=pj, qj=qj)
-                      for pj, qj in rename.items())
-    p_eq_q = aut.add_expr(r)
+                      for pj, qj in p_to_q.items())
+    p_eq_q = fol.add_expr(r)
+    bab = cov._BranchAndBound(
+        p_leq_q, None, None, p_eq_q, p_to_q,
+        None, None, fol)
     t0 = time.time()
-    m = cov._maxima(u, partial_order, p_eq_q, rename, aut)
+    m = cov._maxima(u, bab, fol)
     t1 = time.time()
     dt = t1 - t0
     log.info('`maxima` time (sec): {dt:1.2f}'.format(dt=dt))
     # print result
-    gen = aut.pick_iter(m, care_vars=['x'])
+    gen = fol.pick_iter(m, care_vars=['x'])
     c = list(gen)
     log.info(c)
 
@@ -1198,8 +1206,13 @@ def test_prime_like():
 
 
 def test_branch_and_bound_class():
-    args = list(range(8))
-    bab = cov._BranchAndBound(*args)
+    fol = _fol.Context()
+    fol.declare(p=(0, 3), q=(5, 7))
+    p_leq_q = fol.add_expr('p <= q')
+    p_to_q = {'p': 'q'}
+    bab = cov._BranchAndBound(
+        p_leq_q, None, None, None,
+        p_to_q, None, None, fol)
     bab.lower_bound = 15
     with assert_raises(AssertionError):
         bab.upper_bound = 10

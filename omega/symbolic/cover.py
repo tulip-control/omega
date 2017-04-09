@@ -82,10 +82,7 @@ def minimize(f, care, fol):
     bab.upper_bound = _upper_bound(
         x, y, p_leq_q, p_to_q, fol)
     # assert covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol)
-    cover, _ = _traverse(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, path_cost, bab, fol)
+    cover, _ = _traverse(x, y, path_cost, bab, fol)
     if cover is None:
         cover = _some_cover(x, y, p_leq_q, p_to_q, fol)
     assert cover is not None
@@ -96,20 +93,15 @@ def minimize(f, care, fol):
     return cover
 
 
-def _traverse(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, path_cost, bab, fol):
+def _traverse(x, y, path_cost, bab, fol):
     """Compute cyclic core and terminate, prune, or recurse."""
     log.info('\n\n---- traverse ----')
     t0 = time.time()
     xcore, ycore, essential = _cyclic_core_fixpoint(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, fol)
+        x, y, bab, fol)
     _print_cyclic_core(
         x, y, xcore, ycore, essential,
-        t0, px, fol)
+        t0, bab.px, fol)
     # C_left.path =
     #     C.path + 1  (* already from `_recurse` *)
     # C_left.lower =
@@ -121,8 +113,9 @@ def _traverse(
     # C_right.lower =
     #     + Cardinality(essential_right)
     #     + LowerBound(core_right)
-    cost_ess = _cost(essential, p_to_q, fol)
-    lb_core = _lower_bound(xcore, ycore, p_leq_q, p_to_q, fol)
+    cost_ess = _cost(essential, bab.p_to_q, fol)
+    lb_core = _lower_bound(
+        xcore, ycore, bab.p_leq_q, bab.p_to_q, fol)
     sub_lb = cost_ess + lb_core
     branch_lb = path_cost + sub_lb
     if xcore == fol.false:
@@ -149,10 +142,7 @@ def _traverse(
     assert ycore != fol.false
     # branch
     longer_path_cost = path_cost + cost_ess
-    r = _branch(
-        xcore, ycore,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, longer_path_cost, bab, fol)
+    r = _branch(xcore, ycore, longer_path_cost, bab, fol)
     cover = r | essential
     # `path_cost` forwards shallower info
     # would need similar cumulative essentials +
@@ -161,14 +151,10 @@ def _traverse(
     return cover, sub_lb
 
 
-def _branch(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, path_cost, bab, fol):
+def _branch(x, y, path_cost, bab, fol):
     log.info('\n\n---- branch ----')
     d = fol.pick(y)
-    log.info('picked branching y:')
-    log.info(d)
+    log.info('picked branching y: {d}'.format(d=d))
     y_branch = fol.assign_from(d)
     in_ycore = ~ y_branch | y
     assert in_ycore == fol.true
@@ -176,25 +162,21 @@ def _branch(
     assert ynew != y
     # branch
     # r(p) == p <= y_branch
-    dq = {p_to_q[k]: v for k, v in d.items()}
-    r = fol.let(dq, p_leq_q)
+    dq = {bab.p_to_q[k]: v for k, v in d.items()}
+    r = fol.let(dq, bab.p_leq_q)
     x_minus_y = x & ~ r
     assert x_minus_y != x  # must prove always the case
     e0, lb_left = _traverse(
-        x_minus_y, ynew,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, path_cost + 1, bab, fol)
+        x_minus_y, ynew, path_cost + 1, bab, fol)
     # pruning with left lower bound (Thm.7 [Coudert 1994])
     if path_cost + lb_left >= bab.upper_bound:
         e1, _ = _traverse(
-            x, ynew,
-            u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-            p_to_q, px, qx, path_cost, bab, fol)
+            x, ynew, path_cost, bab, fol)
     else:
         e1 = None
     # pick cheaper
-    cost_0 = _cost(e0, p_to_q, fol)
-    cost_1 = _cost(e1, p_to_q, fol)
+    cost_0 = _cost(e0, bab.p_vars, fol)
+    cost_1 = _cost(e1, bab.p_vars, fol)
     if cost_0 < cost_1:
         # can be reached only if `e0 != None`
         e = e0 | y_branch
@@ -204,13 +186,13 @@ def _branch(
     return e
 
 
-def _cost(u, p_to_q, fol):
+def _cost(u, p_vars, fol):
     """Return numerical cost of cover `u`."""
     if u is None:
         return float('inf')
     # cost of each implicant = 1
     # cost of a cover = number of implicants it contains
-    assert support_issubset(u, p_to_q, fol)
+    assert support_issubset(u, p_vars, fol)
     n = fol.count(u)
     return n
 
@@ -232,6 +214,9 @@ def cyclic_core(f, care, fol):
     varmap = _parameter_varmap(px, qx)
     p_leq_q = _orthotope_subseteq(varmap, fol)
     p_eq_q = _orthotope_eq(varmap, fol)
+    bab = _BranchAndBound(
+        p_leq_q, p_leq_u, u_leq_p, p_eq_q,
+        p_to_q, px, qx, fol)
     # covering problem
     x = _embed_as_implicants(f, px, fol)
     y = prime_orthotopes(
@@ -243,9 +228,7 @@ def cyclic_core(f, care, fol):
     assert y != fol.false
     assert _covers(y, f, p_leq_q, p_to_q, px, fol)
     xcore, ycore, essential = _cyclic_core_fixpoint(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, fol)
+        x, y, bab, fol)
     if xcore == fol.false:
         assert _covers(essential, f, p_leq_q, p_to_q, px, fol)
     _print_cyclic_core(
@@ -293,47 +276,34 @@ def _print_cyclic_core(
     log.info('cyclic core took {dt:1.2f} sec'.format(dt=dt))
 
 
-def _cyclic_core_fixpoint(
-        x, y,
-        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-        p_to_q, px, qx, fol):
+def _cyclic_core_fixpoint(x, y, bab, fol):
     """Return cyclic core and essential elements."""
     log.debug('\n\n---- cyclic core fixpoint ----')
-    # assert
     assert x in fol.bdd, x
     assert y in fol.bdd, y
-    pvars = set(p_to_q)
-    assert support_issubset(x, pvars, fol)
-    assert support_issubset(y, pvars, fol)
+    assert support_issubset(x, bab.p_vars, fol)
+    assert support_issubset(y, bab.p_vars, fol)
     # compute
     essential = fol.false
-    xold = None
-    yold = None
+    xold, yold = None, None
     i = 0
     while x != xold or y != yold:
         log.debug('starting iteration {i}'.format(i=i))
         t0 = time.time()
-        xold = x
-        yold = y
-        x = _max_transpose(
-            x, y,
-            u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-            p_to_q, px, qx, fol,
-            signatures=True)
+        xold, yold = x, y
+        x = _max_transpose(x, y, bab, fol, signatures=True)
         e = x & y
         x = x & ~ e
         y = y & ~ e
         essential |= e
-        y = _max_transpose(
-            x, y,
-            u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-            p_to_q, px, qx, fol)
+        y = _max_transpose(x, y, bab, fol)
         t1 = time.time()
         dt = t1 - t0
         log.debug('iteration {i} took {dt:1.2f} sec'.format(
             i=i, dt=dt))
         i += 1
-    _assert_fixpoint(x, y, xold, yold, essential, pvars, fol)
+    _assert_fixpoint(
+        x, y, xold, yold, essential, bab.p_vars, fol)
     log.debug('==== cyclic core fixpoint ====\n')
     return x, y, essential
 
@@ -354,8 +324,7 @@ def _assert_fixpoint(x, y, xold, yold, essential, pvars, fol):
 
 
 def _max_transpose(p_is_signature, p_is_prime,
-                   u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-                   p_to_q, px, qx, fol, signatures=False):
+                   bab, fol, signatures=False):
     """Maximal transposed primes or signatures.
 
     (max tau_Y(X) or max tau_X(Y))
@@ -367,57 +336,50 @@ def _max_transpose(p_is_signature, p_is_prime,
     be refined by the same number of bits each.
     """
     log.info('---- max transpose ----')
-    # assert
-    p_vars = set(p_to_q)
-    assert support_issubset(p_is_prime, p_vars, fol)
-    assert support_issubset(p_is_signature, p_vars, fol)
+    assert support_issubset(p_is_prime, bab.p_vars, fol)
+    assert support_issubset(p_is_signature, bab.p_vars, fol)
     # compute
     u = _floor(
         p_is_signature, p_is_prime,
-        u_leq_p, p_leq_u,
-        p_to_q, fol, signatures=signatures)
-    r = _maxima(u, p_leq_q, p_eq_q, p_to_q, fol)
-    assert support_issubset(r, p_vars, fol)
+        bab, fol, signatures=signatures)
+    r = _maxima(u, bab, fol)
+    assert support_issubset(r, bab.p_vars, fol)
     log.info('==== max transpose ====')
     return r
 
 
 def _floor(p_is_signature, p_is_prime,
-           u_leq_p, p_leq_u,
-           p_to_q, fol, signatures=False):
+           bab, fol, signatures=False):
     """Transpose primes (tau_X(Y)) or signatures (tau_Y(X)).
 
     @param p_is_prime: some primes, function of `p`
     @param p_is_signature: function of `p`
-    @param p_to_q: mapping from `p` to `q`
     @param signatures: if `True`, then transpose signatures,
         otherwise primes.
     """
     log.info('---- tranpose ----')
+    p_leq_u = bab.p_leq_u
+    u_leq_p = bab.u_leq_p
     if signatures:
         p_is_signature, p_is_prime = p_is_prime, p_is_signature
         u_leq_p, p_leq_u = p_leq_u, u_leq_p
     # assert
-    p_vars = set(p_to_q)
-    assert support_issubset(p_is_prime, p_vars, fol)
-    assert support_issubset(p_is_signature, p_vars, fol)
+    assert support_issubset(p_is_prime, bab.p_vars, fol)
+    assert support_issubset(p_is_signature, bab.p_vars, fol)
     # p' used as u
-    p_to_u = {p: _prime_like(p) for p in p_vars}
-    u_is_signature = fol.let(p_to_u, p_is_signature)
+    u_is_signature = fol.let(bab.p_to_u, p_is_signature)
     # same coverage
     p_like_q = _contains_covered(
-        u_is_signature, u_leq_p, p_to_q, p_to_u, fol)
-    u_like_q = fol.let(p_to_u, p_like_q)
+        u_is_signature, u_leq_p, bab, fol)
+    u_like_q = fol.let(bab.p_to_u, p_like_q)
     # u_is_prime = fol.let(p_to_u, p_is_prime)
-    q_is_prime = fol.let(p_to_q, p_is_prime)
+    q_is_prime = fol.let(bab.p_to_q, p_is_prime)
     #
-    q = p_to_q.values()
-    u = p_to_u.values()
     r = ~ u_like_q | p_leq_u
-    r = fol.forall(u, r)
+    r = fol.forall(bab.u_vars, r)
     r &= p_like_q
     r &= q_is_prime
-    r = fol.exist(q, r)
+    r = fol.exist(bab.q_vars, r)
     '''
     q = ', '.join(iter(p_to_q.values()))
     u = ', '.join(iter(p_to_u.values()))
@@ -432,42 +394,32 @@ def _floor(p_is_signature, p_is_prime,
             p_leq_u=p_leq_u)
     r = fol.add_expr(s)
     '''
-    assert support_issubset(r, p_vars, fol)
+    assert support_issubset(r, bab.p_vars, fol)
     log.info('==== tranpose ====')
     return r
 
 
-def _contains_covered(u_is_signature, u_leq_p,
-                      p_to_q, p_to_u, fol):
+def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     """Return primes that cover all signatures under prime.
 
     Require that `p_to_u` be given explicitly,
     to avoid errors if support is empty.
 
     @param signatures: function of `u`
-    @param u_leq_p: partial order `u <= p`
-    @param p_to_q: mapping from `p` to `q`
-    @type rename: `dict`
     """
     log.info('---- contains covered ----')
     # assert
-    p_vars = set(p_to_q)
-    q_vars = set(p_to_q.values())
-    u_vars = set(p_to_u.values())
-    pq_vars = p_vars.union(q_vars)
-    pu_vars = p_vars.union(u_vars)
-    assert not p_vars & q_vars, (p_vars, q_vars)
-    assert not p_vars & u_vars, (p_vars, u_vars)
-    assert not u_vars & q_vars, (u_vars, q_vars)
-    assert support_issubset(u_is_signature, u_vars, fol)
+    pq_vars = bab.p_vars.union(bab.q_vars)
+    pu_vars = bab.p_vars.union(bab.u_vars)
+    assert support_issubset(u_is_signature, bab.u_vars, fol)
     assert support_issubset(u_leq_p, pu_vars, fol)
     # compute
-    u_leq_q = fol.let(p_to_q, u_leq_p)
+    u_leq_q = fol.let(bab.p_to_q, u_leq_p)
     r = u_is_signature & u_leq_q
     r = ~ r | u_leq_p
-    r = fol.forall(u_vars, r)
+    r = fol.forall(bab.u_vars, r)
     '''
-    uvars = ', '.join(u_vars)
+    uvars = ', '.join(bab.u_vars)
     s = (
         '\A {uvars}:  '
         '    (@{sig_u} /\ @{u_leq_q}) '
@@ -483,43 +435,33 @@ def _contains_covered(u_is_signature, u_leq_p,
     return r
 
 
-def _maxima(u, p_leq_q, p_eq_q, p_to_q, fol):
-    """Return maximal elements of `u` wrt `p_leq_q`.
+def _maxima(u, bab, fol):
+    """Return maximal elements of `u` wrt `bab.p_leq_q`.
 
-    @param u: function of `p`
-    @param p_leq_q: partial order `p <= q`
-        (anti-symmetry required: a quasi-order does not work.)
-    @param p_to_q: mapping from `p` to `q`
-    @type p_to_q: `dict`
+    @param u: function of `bab.p_vars`
     """
-    # assert
-    p_vars = set(p_to_q)
-    assert support_issubset(u, p_vars, fol)
-    q_vars = set(p_to_q.values())
-    pq_vars = p_vars.union(q_vars)
-    assert support_issubset(p_leq_q, pq_vars, fol)
-    # compute
-    v = fol.let(p_to_q, u)
+    assert support_issubset(u, bab.p_vars, fol)
+    v = fol.let(bab.p_to_q, u)
     #
-    r = v & p_leq_q
-    r = ~ r | p_eq_q
-    r = fol.forall(q_vars, r)
+    r = v & bab.p_leq_q
+    r = ~ r | bab.p_eq_q
+    r = fol.forall(bab.q_vars, r)
     r &= u
     '''
     p_eq_q = stx.conj('{pj} = {qj}'.format(pj=pj, qj=qj)
                       for pj, qj in p_to_q.items())
-    q = ', '.join(q_vars)
+    q = ', '.join(bab.q_vars)
     s = (
         '@{u} /\ '
         '\A {q}:  (@{v} /\ @{p_leq_q}) => ({p_eq_q})').format(
             u=u,
             v=v,
-            p_leq_q=p_leq_q,
-            p_eq_q=p_eq_q,
+            p_leq_q=bab.p_leq_q,
+            p_eq_q=bab.p_eq_q,
             q=q)
     r = fol.add_expr(s)
-    # '''
-    assert support_issubset(r, p_vars, fol)
+    '''
+    assert support_issubset(r, bab.p_vars, fol)
     return r
 
 
@@ -1489,11 +1431,27 @@ class _BranchAndBound(object):
 
     - `lower_bound`: global lower bound
     - `upper_bound`: global upper bound (feasible)
+    - `p_leq_q`: partial order `p <= q`
+        (anti-symmetry required: a quasi-order does not work.)
+    - `p_to_q`: mapping from `p` to `q`
+    - `u_leq_p`: partial order `u <= p`
     """
 
     def __init__(
             self, p_leq_q, p_leq_u, u_leq_p,
             p_eq_q, p_to_q, px, qx, fol):
+        p_vars = set(p_to_q)
+        q_vars = set(p_to_q.values())
+        p_to_u = {p: _prime_like(p) for p in p_vars}
+        u_vars = set(p_to_u.values())
+        assert not (p_vars & q_vars), (p_vars, q_vars)
+        assert not (p_vars & u_vars), (p_vars, u_vars)
+        assert not (u_vars & q_vars), (u_vars, q_vars)
+        self.p_vars = p_vars
+        self.q_vars = q_vars
+        self.u_vars = u_vars
+        pq_vars = p_vars.union(self.q_vars)
+        assert support_issubset(p_leq_q, pq_vars, fol)
         self._lower_bound = None
         self._upper_bound = None
         self.best_cover = None  # found so far
@@ -1502,6 +1460,7 @@ class _BranchAndBound(object):
         self.u_leq_p = u_leq_p
         self.p_eq_q = p_eq_q
         self.p_to_q = p_to_q
+        self.p_to_u = p_to_u
         self.px = px
         self.qx = qx
         self.fol = fol

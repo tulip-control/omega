@@ -1,0 +1,23 @@
+A TLA+ specification and proofs of relevant properties for
+an algorithm that computes the cyclic core of a minimal
+covering problem. This algorithm was originally proposed
+in the context of two-level logic minimization.
+
+The modules:
+
+FiniteSetTheorems,
+Functions,
+FunctionTheorems,
+NaturalsInduction,
+SequenceTheorems,
+TLAPS,
+WellFoundedInduction
+
+can be found in the distribution of TLAPS v1.4.3:
+
+http://tla.msr-inria.inria.fr/tlaps/dist/current/tlaps-1.4.3.tar.gz
+
+
+This document accompanies the dissertation available at:
+
+http://resolver.caltech.edu/CaltechTHESIS:12172017-171304566

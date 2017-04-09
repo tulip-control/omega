@@ -149,22 +149,11 @@ def _branch(
     assert ycore != fol.false
     # branch
     longer_path_cost = path_cost + cost_ess
-    e_cost = float('inf')
-    e = None
-    log.info('branching')
-    for d in fol.pick_iter(ycore):
-        r = _recurse(
-            d, xcore, ycore,
-            u_leq_p, p_leq_u, p_leq_q, p_eq_q,
-            p_to_q, px, qx, longer_path_cost, bab, fol)
-        if _cost(r, p_to_q, fol) < e_cost:
-            e = r
-        if bab.lower_bound == bab.upper_bound:
-            log.info(
-                'converged: upper = lower = {c}'.format(
-                    c=bab.upper_bound))
-            break
-    cover = e | essential
+    r = _recurse(
+        xcore, ycore,
+        u_leq_p, p_leq_u, p_leq_q, p_eq_q,
+        p_to_q, px, qx, longer_path_cost, bab, fol)
+    cover = r | essential
     # `path_cost` forwards shallower info
     # would need similar cumulative essentials +
     # picked primes info in order to update `bab.best_cover`
@@ -173,10 +162,11 @@ def _branch(
 
 
 def _recurse(
-        d, x, y,
+        x, y,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, path_cost, bab, fol):
     log.info('\n\n---- recurse ----')
+    d = fol.pick(y)
     log.info('picked branching y:')
     log.info(d)
     y_branch = fol.assign_from(d)

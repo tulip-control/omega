@@ -82,7 +82,7 @@ def minimize(f, care, fol):
     bab.upper_bound = _upper_bound(
         x, y, p_leq_q, p_to_q, fol)
     # assert covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol)
-    cover, _ = _branch(
+    cover, _ = _traverse(
         x, y,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, path_cost, bab, fol)
@@ -96,12 +96,12 @@ def minimize(f, care, fol):
     return cover
 
 
-def _branch(
+def _traverse(
         x, y,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, path_cost, bab, fol):
-    """Recursive call of `branch`."""
-    log.info('\n\n---- _branch (recursive) ----')
+    """Compute cyclic core and terminate, prune, or recurse."""
+    log.info('\n\n---- traverse ----')
     t0 = time.time()
     xcore, ycore, essential = _cyclic_core_fixpoint(
         x, y,
@@ -129,7 +129,7 @@ def _branch(
         log.info('terminal case (empty cyclic core)')
         assert lb_core == 0, lb_core
         bab.upper_bound = branch_lb
-        log.info('==== _branch (recursive) ====\n')
+        log.info('==== traverse ====\n')
         return essential, sub_lb
     # set global lower bound only once at the top
     # because farther below in the search tree the
@@ -143,13 +143,13 @@ def _branch(
     # C_right.path + C_right.lower >= global_upper_bound ?
     if branch_lb >= bab.upper_bound:
         log.info('prune')
-        log.info('==== _branch (recursive) ====\n')
+        log.info('==== traverse ====\n')
         return None, sub_lb
     assert xcore != fol.false
     assert ycore != fol.false
     # branch
     longer_path_cost = path_cost + cost_ess
-    r = _recurse(
+    r = _branch(
         xcore, ycore,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, longer_path_cost, bab, fol)
@@ -157,15 +157,15 @@ def _branch(
     # `path_cost` forwards shallower info
     # would need similar cumulative essentials +
     # picked primes info in order to update `bab.best_cover`
-    log.info('==== _branch (recursive) ====\n')
+    log.info('==== traverse ====\n')
     return cover, sub_lb
 
 
-def _recurse(
+def _branch(
         x, y,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, path_cost, bab, fol):
-    log.info('\n\n---- recurse ----')
+    log.info('\n\n---- branch ----')
     d = fol.pick(y)
     log.info('picked branching y:')
     log.info(d)
@@ -180,13 +180,13 @@ def _recurse(
     r = fol.let(dq, p_leq_q)
     x_minus_y = x & ~ r
     assert x_minus_y != x  # must prove always the case
-    e0, lb_left = _branch(
+    e0, lb_left = _traverse(
         x_minus_y, ynew,
         u_leq_p, p_leq_u, p_leq_q, p_eq_q,
         p_to_q, px, qx, path_cost + 1, bab, fol)
     # pruning with left lower bound (Thm.7 [Coudert 1994])
     if path_cost + lb_left >= bab.upper_bound:
-        e1, _ = _branch(
+        e1, _ = _traverse(
             x, ynew,
             u_leq_p, p_leq_u, p_leq_q, p_eq_q,
             p_to_q, px, qx, path_cost, bab, fol)
@@ -200,7 +200,7 @@ def _recurse(
         e = e0 | y_branch
     else:
         e = e1
-    log.info('==== recurse ====\n')
+    log.info('==== branch ====\n')
     return e
 
 

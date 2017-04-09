@@ -206,6 +206,7 @@ def _recurse(
     cost_0 = _cost(e0, p_to_q, fol)
     cost_1 = _cost(e1, p_to_q, fol)
     if cost_0 < cost_1:
+        # can be reached only if `e0 != None`
         e = e0 | y_branch
     else:
         e = e1

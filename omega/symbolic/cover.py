@@ -143,10 +143,10 @@ def _traverse(x, y, path_cost, bab, fol):
     # branch
     longer_path_cost = path_cost + cost_ess
     r = _branch(xcore, ycore, longer_path_cost, bab, fol)
+    # both branches pruned ?
+    if r is None:
+        return None, sub_lb
     cover = r | essential
-    # `path_cost` forwards shallower info
-    # would need similar cumulative essentials +
-    # picked primes info in order to update `bab.best_cover`
     log.info('==== traverse ====\n')
     return cover, sub_lb
 

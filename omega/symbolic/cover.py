@@ -114,13 +114,13 @@ def _traverse(x, y, path_cost, bab, fol):
     #     + Cardinality(essential_right)
     #     + LowerBound(core_right)
     cost_ess = _cost(essential, bab.p_to_q, fol)
-    lb_core = _lower_bound(
+    core_lb = _lower_bound(
         xcore, ycore, bab.p_leq_q, bab.p_to_q, fol)
-    sub_lb = cost_ess + lb_core
+    sub_lb = cost_ess + core_lb
     branch_lb = path_cost + sub_lb
     if xcore == fol.false:
         log.info('terminal case (empty cyclic core)')
-        assert lb_core == 0, lb_core
+        assert core_lb == 0, core_lb
         bab.upper_bound = branch_lb
         log.info('==== traverse ====\n')
         return essential, sub_lb

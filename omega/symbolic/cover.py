@@ -178,6 +178,7 @@ def _branch(x, y, path_cost, bab, fol):
     cost_1 = _cost(e1, bab.p_vars, fol)
     if cost_0 < cost_1:
         # can be reached only if `e0 != None`
+        assert e0 is not None, e0
         e = e0 | y_branch
     else:
         e = e1

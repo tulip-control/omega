@@ -1279,6 +1279,7 @@ def main():
     test_transpose()
     test_max_transpose()
     test_cyclic_core()
+    test_cyclic_core_recursion()
     test_cyclic_core_using_robots_example()
     test_cyclic_core_with_care_set()
     test_branching()
@@ -1288,4 +1289,5 @@ def main():
 
 
 if __name__ == '__main__':
-    test_cyclic_core_recursion()
+    configure_logging()
+    main()

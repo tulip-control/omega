@@ -156,8 +156,6 @@ def _branch(x, y, path_cost, bab, fol):
     d = fol.pick(y)
     log.info('picked branching y: {d}'.format(d=d))
     y_branch = fol.assign_from(d)
-    in_ycore = ~ y_branch | y
-    assert in_ycore == fol.true
     ynew = y & ~ y_branch
     assert ynew != y
     # branch

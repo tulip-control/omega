@@ -170,10 +170,10 @@ def _branch(x, y, path_cost, bab, fol):
         x_minus_y, ynew, path_cost + 1, bab, fol)
     # pruning with left lower bound (Thm.7 [Coudert 1994])
     if path_cost + lb_left >= bab.upper_bound:
+        e1 = None
+    else:
         e1, _ = _traverse(
             x, ynew, path_cost, bab, fol)
-    else:
-        e1 = None
     # pick cheaper
     cost_0 = _cost(e0, bab.p_vars, fol)
     cost_1 = _cost(e1, bab.p_vars, fol)

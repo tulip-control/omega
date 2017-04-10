@@ -103,13 +103,13 @@ def _traverse(x, y, path_cost, bab, fol):
         x, y, xcore, ycore, essential,
         t0, bab.px, fol)
     # C_left.path =
-    #     C.path + 1  (* already from `_recurse` *)
+    #     C.path + 1  (* already from `_branch` *)
     # C_left.lower =
     #     + Cardinality(essential_left)  (* `_cost` *)
     #     + LowerBound(core_left)  (* `lb` below *)
     #
     # C_right.path =
-    #     C.path  (* already from `_recurse` *)
+    #     C.path  (* already from `_branch` *)
     # C_right.lower =
     #     + Cardinality(essential_right)
     #     + LowerBound(core_right)
@@ -119,10 +119,10 @@ def _traverse(x, y, path_cost, bab, fol):
     sub_lb = cost_ess + core_lb
     branch_lb = path_cost + sub_lb
     if xcore == fol.false:
-        log.info('terminal case (empty cyclic core)')
         assert core_lb == 0, core_lb
         bab.upper_bound = branch_lb
-        log.info('==== traverse ====\n')
+        log.info('terminal case (empty cyclic core)\n'
+                 '==== traverse ====\n')
         return essential, sub_lb
     # set global lower bound only once at the top
     # because farther below in the search tree the
@@ -135,8 +135,7 @@ def _traverse(x, y, path_cost, bab, fol):
     # C_left.path + C_left.lower >= global_upper_bound ?
     # C_right.path + C_right.lower >= global_upper_bound ?
     if branch_lb >= bab.upper_bound:
-        log.info('prune')
-        log.info('==== traverse ====\n')
+        log.info('prune\n==== traverse ====\n')
         return None, sub_lb
     assert xcore != fol.false
     assert ycore != fol.false
@@ -145,6 +144,8 @@ def _traverse(x, y, path_cost, bab, fol):
     r = _branch(xcore, ycore, longer_path_cost, bab, fol)
     # both branches pruned ?
     if r is None:
+        log.info('both branches pruned\n'
+                 '==== traverse ====\n')
         return None, sub_lb
     cover = r | essential
     log.info('==== traverse ====\n')
@@ -158,10 +159,9 @@ def _branch(x, y, path_cost, bab, fol):
     y_branch = fol.assign_from(d)
     ynew = y & ~ y_branch
     assert ynew != y
-    # branch
     # r(p) == p <= y_branch
     dq = {bab.p_to_q[k]: v for k, v in d.items()}
-    r = fol.let(dq, bab.p_leq_q)
+    r = fol.let(dq, bab.p_leq_q)  # those x under y_branch
     x_minus_y = x & ~ r
     assert x_minus_y != x  # must prove always the case
     e0, left_lb = _traverse(

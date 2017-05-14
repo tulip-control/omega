@@ -287,7 +287,7 @@ def test_cyclic_core_recursion():
     f = fol.add_expr(s)
     care_set = fol.true
     cover = cov.minimize(f, care_set, fol)
-    n = cover.count(6*2)
+    n = fol.count(cover)
     assert n == 6, n
     # print(fol.to_expr(f, show_dom=True))
 

@@ -827,7 +827,7 @@ def _embed_as_implicants(f, px, fol):
     ax = {x: d['a'] for x, d in px.items()}
     bx = {x: d['b'] for x, d in px.items()}
     u = fol.let(ax, f)
-    v = _orthotope_signleton(px, fol)
+    v = _orthotope_singleton(px, fol)
     return u & v
 
 
@@ -839,10 +839,10 @@ def _embed_as_implicants_naive(f, px, fol):
     return fol.exist(x_as_ab, r & f)
 
 
-# slower than `_orthotope_signleton`
+# slower than `_orthotope_singleton`
 # needs `from omega.symbolic import fol as _fol`
 # @profile
-def _orthotope_signleton_wo_parsing(px, fol):
+def _orthotope_singleton_wo_parsing(px, fol):
     """Return BDD that orthotope contains single point."""
     a_b = {d['a']: d['b'] for d in px.values()}
     bitmap = _fol._refine_renaming(a_b, fol.vars)
@@ -858,7 +858,7 @@ def _orthotope_signleton_wo_parsing(px, fol):
     return r
 
 
-def _orthotope_signleton(px, fol):
+def _orthotope_singleton(px, fol):
     """Return BDD that orthotope contains single point."""
     s = stx.conj(
         '({a} = {b})'.format(

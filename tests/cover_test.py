@@ -654,11 +654,11 @@ def test_embed_as_implicants():
 
 def test_orthotope_singleton():
     fol, _, px, qx, _, _ = setup_aut()
-    r = cov._orthotope_signleton(px, fol)
+    r = cov._orthotope_singleton(px, fol)
     d = dict(a_x=3, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotope_signleton(qx, fol)
+    r = cov._orthotope_singleton(qx, fol)
     d = dict(u_x=1, v_x=1, u_y=10, v_y=10)
     r = fol.let(d, r)
     assert r == fol.true

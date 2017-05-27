@@ -164,12 +164,17 @@ def _branch(x, y, path_cost, bab, fol):
     r = fol.let(dq, bab.p_leq_q)  # those x under y_branch
     x_minus_y = x & ~ r
     assert x_minus_y != x  # must prove always the case
+    log.info('left branch')
     e0, left_lb = _traverse(
         x_minus_y, ynew, path_cost + 1, bab, fol)
     # pruning with left lower bound (Thm.7 [Coudert 1994])
     if path_cost + left_lb >= bab.upper_bound:
+        log.info(
+            'prune both left and right branches\n'
+            '==== branch ====\n')
         assert e0 is None, e0
         return None
+    log.info('right branch')
     e1, _ = _traverse(x, ynew, path_cost, bab, fol)
     # pick cheaper
     cost_0 = _cost(e0, bab.p_vars, fol)

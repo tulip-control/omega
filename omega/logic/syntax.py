@@ -321,6 +321,55 @@ def isinstance_str(s):
     return True
 
 
+def _replace_prime(var):
+    """Replace postfix prime with "_p"
+
+    To avoid parsing a parameter's name as if it is
+    two names with an operator in the middle.
+    This case arises for parameters that associated to
+    primed variables.
+
+    For example, when computing a minimal cover for
+    an action.
+    """
+    if not isprimed(var):
+        assert "'" not in var, var
+        return var
+    assert isprimed(var), var
+    unprimed = unprime(var)
+    # `'` even in the middle would split it when parsing
+    assert "'" not in unprimed, unprimed
+    var_p = '{unprimed}_p'.format(unprimed=unprimed)
+    assert "'" not in var_p, var_p
+    return var_p
+
+
+def _add_prime_like_too(table):
+    """Return new table of primed and unprimed vars.
+
+    All variables in `table` should be unprimed.
+
+    @type table: `dict`
+    @rtype: `dict`
+    """
+    t = dict()
+    for var, dom in table.items():
+        assert not isprimed(var), var
+        pvar = _prime_like(var)
+        if dom == 'bool':
+            r = 'bool'
+        else:
+            assert len(dom) == 2, dom
+            r = tuple(dom)
+        t[var] = r
+        t[pvar] = r
+    return t
+
+
+def _prime_like(var):
+    return '{var}_cp'.format(var=var)
+
+
 def vertical_op(c, latex=False, op='and'):
     """Return TLA conjunction with one conjunct per line."""
     assert op in {'and', 'or'}, op

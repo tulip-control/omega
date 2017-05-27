@@ -707,8 +707,8 @@ def _partial_order(px, fol):
     """Return `u <= p` and `p <= u`."""
     ux = {
         x: dict(
-            a=_prime_like(d['a']),
-            b=_prime_like(d['b']))
+            a=stx._prime_like(d['a']),
+            b=stx._prime_like(d['b']))
         for x, d in px.items()}
     varmap = _parameter_varmap(ux, px)
     u_leq_p = _orthotope_subseteq(varmap, fol)
@@ -1315,8 +1315,8 @@ def _setup_aux_vars(f, care, fol):
         x_vars, fol.vars, a=params['pa'], b=params['pb'])
     q_dom = _parameter_table(
         x_vars, fol.vars, a=params['qa'], b=params['qb'])
-    p_dom = _add_prime_like_too(p_dom)
-    q_dom = _add_prime_like_too(q_dom)
+    p_dom = stx._add_prime_like_too(p_dom)
+    q_dom = stx._add_prime_like_too(q_dom)
     common = x_vars.intersection(p_dom)
     assert not common, common
     common = x_vars.intersection(q_dom)
@@ -1344,7 +1344,7 @@ def _parameter_table(x, table, a, b):
         dtype = table[xj]['type']
         assert dtype in ('int', 'saturating'), dtype
         dom = table[xj]['dom']
-        name = _replace_prime(xj)
+        name = stx._replace_prime(xj)
         aj = '{a}_{v}'.format(a=a, v=name)
         bj = '{b}_{v}'.format(b=b, v=name)
         d[aj] = dom
@@ -1359,7 +1359,7 @@ def _parameter_variables(x_vars, a, b):
     """Return `dict` that maps each var x to a_x, b_x."""
     d = dict()
     for x in x_vars:
-        name = _replace_prime(x)
+        name = stx._replace_prime(x)
         a_x = '{a}_{v}'.format(v=name, a=a)
         b_x = '{b}_{v}'.format(v=name, b=b)
         d[x] = dict(a=a_x, b=b_x)
@@ -1409,55 +1409,6 @@ def _renaming_between_parameters(px, qx):
     return d
 
 
-def _replace_prime(var):
-    """Replace postfix prime with "_p"
-
-    To avoid parsing a parameter's name as if it is
-    two names with an operator in the middle.
-    This case arises for parameters that associated to
-    primed variables.
-
-    For example, when computing a minimal cover for
-    an action.
-    """
-    if not stx.isprimed(var):
-        assert "'" not in var, var
-        return var
-    assert stx.isprimed(var), var
-    unprimed = stx.unprime(var)
-    # `'` even in the middle would split it when parsing
-    assert "'" not in unprimed, unprimed
-    var_p = '{unprimed}_p'.format(unprimed=unprimed)
-    assert "'" not in var_p, var_p
-    return var_p
-
-
-def _add_prime_like_too(table):
-    """Return new table of primed and unprimed vars.
-
-    All variables in `table` should be unprimed.
-
-    @type table: `dict`
-    @rtype: `dict`
-    """
-    t = dict()
-    for var, dom in table.items():
-        assert not stx.isprimed(var), var
-        pvar = _prime_like(var)
-        if dom == 'bool':
-            r = 'bool'
-        else:
-            assert len(dom) == 2, dom
-            r = tuple(dom)
-        t[var] = r
-        t[pvar] = r
-    return t
-
-
-def _prime_like(var):
-    return '{var}_cp'.format(var=var)
-
-
 class _BranchAndBound(object):
     """A data structure that stores useful values.
 
@@ -1478,7 +1429,7 @@ class _BranchAndBound(object):
             p_eq_q, p_to_q, px, qx, fol):
         p_vars = set(p_to_q)
         q_vars = set(p_to_q.values())
-        p_to_u = {p: _prime_like(p) for p in p_vars}
+        p_to_u = {p: stx._prime_like(p) for p in p_vars}
         u_vars = set(p_to_u.values())
         assert not (p_vars & q_vars), (p_vars, q_vars)
         assert not (p_vars & u_vars), (p_vars, u_vars)

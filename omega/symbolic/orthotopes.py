@@ -15,42 +15,42 @@ from omega.symbolic import _type_hints as tyh
 log = logging.getLogger(__name__)
 
 
-def _partial_order(px, fol):
+def partial_order(px, fol):
     """Return `u <= p` and `p <= u`."""
     ux = {
         x: dict(
             a=stx._prime_like(d['a']),
             b=stx._prime_like(d['b']))
         for x, d in px.items()}
-    varmap = _parameter_varmap(ux, px)
-    u_leq_p = _orthotope_subseteq(varmap, fol)
-    varmap = _parameter_varmap(px, ux)
-    p_leq_u = _orthotope_subseteq(varmap, fol)
+    varmap = parameter_varmap(ux, px)
+    u_leq_p = subseteq(varmap, fol)
+    varmap = parameter_varmap(px, ux)
+    p_leq_u = subseteq(varmap, fol)
     return u_leq_p, p_leq_u
 
 
 def essential_orthotopes(f, px, qx, fol, xvars):
     """Return essential prime orthotopes of `f`."""
     log.info('---- essential orthotopes ----')
-    varmap = _parameter_varmap(px, qx)
-    p_leq_q = _orthotope_subseteq(varmap, fol)
-    p_eq_q = _orthotope_eq(varmap, fol)
-    p_is_prime = prime_orthotopes(
+    varmap = parameter_varmap(px, qx)
+    p_leq_q = subseteq(varmap, fol)
+    p_eq_q = eq(varmap, fol)
+    p_is_prime = prime_implicants(
         f, px, qx,
         p_leq_q, p_eq_q,
         fol, xvars)
     # add to quantify u, v, so that we can rename
     #
     # TODO: reimplement using `fol.Context.rename`
-    varmap = _parameter_varmap(qx, px)
-    q_leq_p = _orthotope_subseteq(varmap, fol)
-    q_is_prime = prime_orthotopes(
+    varmap = parameter_varmap(qx, px)
+    q_leq_p = subseteq(varmap, fol)
+    q_is_prime = prime_implicants(
         f, qx, px,
         q_leq_p, p_eq_q,
         fol, xvars)
-    x_in_q = _orthotope_contains_x(qx, fol)
+    x_in_q = x_in_implicant(qx, fol)
     x = ', '.join(px)
-    q = ', '.join(_collect_parameters(qx))
+    q = ', '.join(collect_parameters(qx))
     s = (
         '{p_is_prime} /\ '
         r'\E {x}:  ( '
@@ -73,7 +73,7 @@ def essential_orthotopes(f, px, qx, fol, xvars):
     return r
 
 
-def prime_orthotopes(
+def prime_implicants(
         f, px, qx,
         p_leq_q, p_eq_q,
         fol, xvars):
@@ -83,13 +83,13 @@ def prime_orthotopes(
     p_to_q = _renaming_between_parameters(px, qx)
     p_is_implicant = _implicant_orthotopes(f, px, fol, xvars)
     q_is_implicant = fol.let(p_to_q, p_is_implicant)
-    q = _collect_parameters(qx)
+    q = collect_parameters(qx)
     r = q_is_implicant & p_leq_q
     r = p_eq_q | ~ r
     r = fol.forall(q, r)
     r &= p_is_implicant
     '''
-    q = ', '.join(_collect_parameters(qx))
+    q = ', '.join(collect_parameters(qx))
     s = (
         '{p_is_implicant} /\ '
         r'\A {q}:  ( '
@@ -115,7 +115,7 @@ def _implicant_orthotopes(f, abx, fol, xvars):
     log.info('---- implicant orthotopes ----')
     assert support_issubset(f, xvars, fol)
     x = ', '.join(abx)
-    h = _orthotope_contains_x(abx, fol)
+    h = x_in_implicant(abx, fol)
     nonempty = _orthotope_nonempty(abx, fol)
     s = (
         '{nonempty} /\ '
@@ -126,7 +126,7 @@ def _implicant_orthotopes(f, abx, fol, xvars):
     return r
 
 
-def _embed_as_implicants(f, px, fol):
+def embed_as_implicants(f, px, fol):
     ax = {x: d['a'] for x, d in px.items()}
     bx = {x: d['b'] for x, d in px.items()}
     u = fol.let(ax, f)
@@ -137,8 +137,8 @@ def _embed_as_implicants(f, px, fol):
 def _embed_as_implicants_naive(f, px, fol):
     """Return product representation of minterms."""
     x_as_ab = {x: dict(a=x, b=x) for x in px}
-    varmap = _parameter_varmap(px, x_as_ab)
-    r = _orthotope_eq(varmap, fol)
+    varmap = parameter_varmap(px, x_as_ab)
+    r = eq(varmap, fol)
     return fol.exist(x_as_ab, r & f)
 
 
@@ -180,7 +180,7 @@ def _orthotope_nonempty(abx, fol):
     return r
 
 
-def _orthotope_contains_x(abx, fol):
+def x_in_implicant(abx, fol):
     """Return `x \in concretization(abx)`."""
     s = stx.conj((
         '({a} <= {x}) /\ '
@@ -191,7 +191,7 @@ def _orthotope_contains_x(abx, fol):
     return r
 
 
-def _orthotope_subseteq(varmap, fol):
+def subseteq(varmap, fol):
     r"""Return `ab \subseteq uv`.
 
     This is the partial order defined by the subset relation.
@@ -205,7 +205,7 @@ def _orthotope_subseteq(varmap, fol):
     return r
 
 
-def _orthotope_eq(varmap, fol):
+def eq(varmap, fol):
     """Return `ab = uv`."""
     s = stx.conj((
         '({a} = {u}) /\ '
@@ -215,7 +215,7 @@ def _orthotope_eq(varmap, fol):
     return r
 
 
-def _orthotopes_intersect(varmap, fol):
+def implicants_intersect(varmap, fol):
     """Return `ab \cap uv # \emptyset`.
 
     Equivalent to
@@ -274,7 +274,7 @@ def plot_orthotopes(u, abx, axvars, fol, ax):
         p.plot(ax=ax, color=color, alpha=0.5)
 
 
-def _list_orthotope_expr(
+def list_expr(
         cover, px, fol,
         simple=False,
         use_dom=False):
@@ -330,7 +330,7 @@ def _orthotopes_iter(u, fol):
     return c
 
 
-def _setup_aux_vars(f, care, fol):
+def setup_aux_vars(f, care, fol):
     """Add and return auxiliary variables.
 
     No BDD operations other than `support` are invoked.
@@ -429,7 +429,7 @@ def _map_parameters_to_vars(px):
     return d
 
 
-def _collect_parameters(px):
+def collect_parameters(px):
     """Return `set` of parameters from `px`."""
     c = set()
     c.update(d['a'] for d in px.values())
@@ -438,7 +438,7 @@ def _collect_parameters(px):
     return c
 
 
-def _parameter_varmap(px, qx):
+def parameter_varmap(px, qx):
     """Return map `{(a, b): (u, v), ... }`."""
     assert set(px) == set(qx), (px, qx)
     d = dict()

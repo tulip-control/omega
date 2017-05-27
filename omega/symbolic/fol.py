@@ -330,9 +330,9 @@ class Context(object):
         s = cov.dumps_cover(
             cover, u, care, self, **kw)
         # prepare to assert
-        _, px, _, _ = lat._setup_aux_vars(u, care, self)
-        r = lat._list_orthotope_expr(
-            cover, px, self, simple=True)
+        prm = lat.setup_aux_vars(u, care, self)
+        r = lat.list_expr(
+            cover, prm, self, simple=True)
         r = stx.disj(r)
         u_ = self.add_expr(r)
         # promise to match `u` only inside `care`

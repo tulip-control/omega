@@ -63,17 +63,17 @@ def minimize(f, care, fol):
         log.warning('f covers care set, so trivial cover')
     log.info('---- branching ----')
     path_cost = 0.0
-    x_vars, px, qx, p_to_q = lat._setup_aux_vars(f, care, fol)
-    u_leq_p, p_leq_u = lat._partial_order(px, fol)
-    varmap = lat._parameter_varmap(px, qx)
-    p_leq_q = lat._orthotope_subseteq(varmap, fol)
-    p_eq_q = lat._orthotope_eq(varmap, fol)
+    x_vars, px, qx, p_to_q = lat.setup_aux_vars(f, care, fol)
+    u_leq_p, p_leq_u = lat.partial_order(px, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    p_leq_q = lat.subseteq(varmap, fol)
+    p_eq_q = lat.eq(varmap, fol)
     # covering problem
     fcare = f | ~ care
     # the slack is introduced by having more primes
     # (those for `fcare`) to cover the same minterms (`f`)
-    x = lat._embed_as_implicants(f, px, fol)
-    y = lat.prime_orthotopes(
+    x = lat.embed_as_implicants(f, px, fol)
+    y = lat.prime_implicants(
         fcare, px, qx,
         p_leq_q, p_eq_q,
         fol, x_vars)
@@ -267,18 +267,18 @@ def cyclic_core(f, care, fol):
     assert f != fol.false, 'nothing to cover'
     assert f != fol.true or care != fol.true, (
         'no variables involved in problem')
-    x_vars, px, qx, p_to_q = lat._setup_aux_vars(f, care, fol)
+    x_vars, px, qx, p_to_q = lat.setup_aux_vars(f, care, fol)
     fcare = ~ care | f
-    u_leq_p, p_leq_u = lat._partial_order(px, fol)
-    varmap = lat._parameter_varmap(px, qx)
-    p_leq_q = lat._orthotope_subseteq(varmap, fol)
-    p_eq_q = lat._orthotope_eq(varmap, fol)
+    u_leq_p, p_leq_u = lat.partial_order(px, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    p_leq_q = lat.subseteq(varmap, fol)
+    p_eq_q = lat.eq(varmap, fol)
     bab = _BranchAndBound(
         p_leq_q, p_leq_u, u_leq_p, p_eq_q,
         p_to_q, px, qx, fol)
     # covering problem
-    x = lat._embed_as_implicants(f, px, fol)
-    y = lat.prime_orthotopes(
+    x = lat.embed_as_implicants(f, px, fol)
+    y = lat.prime_implicants(
         fcare, px, qx,
         p_leq_q, p_eq_q,
         fol, x_vars)
@@ -308,7 +308,7 @@ def _print_cyclic_core(
     if log.getEffectiveLevel() > logging.INFO:
         return
     # assert
-    params = lat._collect_parameters(px)
+    params = lat.collect_parameters(px)
     if essential != fol.false:
         assert support_issubset(essential, params, fol)
     if xcore != fol.false:
@@ -714,12 +714,12 @@ def _none_covered(
     """
     p = set(p_to_q)
     q = set(p_to_q.values())
-    varmap = lat._parameter_varmap(px, qx)
-    fq = lat._embed_as_implicants(f, qx, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    fq = lat.embed_as_implicants(f, qx, fol)
     # \A p:  \/ ~ cover(p)
     #        \/ ~ \E q:  /\ f(q)
     #                    /\ Intersect(p, q)
-    r = fq & lat._orthotopes_intersect(varmap, fol)
+    r = fq & lat.implicants_intersect(varmap, fol)
     r = ~ fol.exist(q, r)
     r |= ~ cover_p
     r = fol.forall(p, r)
@@ -737,7 +737,7 @@ def _covers(
     """
     p = set(p_to_q)
     q = set(p_to_q.values())
-    fp = lat._embed_as_implicants(f, px, fol)
+    fp = lat.embed_as_implicants(f, px, fol)
     cover_q = fol.let(p_to_q, cover_p)
     # \A p:  \/ ~ f(p)
     #        \/ \E q:  cover(q) /\ (p <= q)
@@ -766,10 +766,10 @@ def _concretize_implicants(implicants_p, px, fol):
     """Return covered set as function of `x`."""
     # assert
     x_vars = set(px)
-    p_vars = lat._collect_parameters(px)
+    p_vars = lat.collect_parameters(px)
     assert support_issubset(implicants_p, p_vars, fol)
     # concretize
-    x_in_p = lat._orthotope_contains_x(px, fol)
+    x_in_p = lat.x_in_implicant(px, fol)
     u = x_in_p & implicants_p
     covered_x = fol.exist(p_vars, u)
     assert support_issubset(covered_x, x_vars, fol)
@@ -802,7 +802,7 @@ def dumps_cover(
 
     @rtype: `str`
     """
-    x_vars, px, _, _ = lat._setup_aux_vars(f, care, fol)
+    x_vars, px, _, _ = lat.setup_aux_vars(f, care, fol)
     c = list()
     if show_limits:
         r = tyh._list_limits(x_vars, fol.vars)
@@ -814,7 +814,7 @@ def dumps_cover(
     else:
         log.info(
             'type hints omitted (care does not imply them)')
-    r = lat._list_orthotope_expr(
+    r = lat.list_expr(
         cover, px, fol, use_dom=show_dom)
     s = stx.vertical_op(r, op='or', latex=latex)
     c.append(s)

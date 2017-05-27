@@ -42,9 +42,9 @@ def test_scaling_equality():
     qx = lat._parameter_variables(x_vars, a=params['qa'], b=params['qb'])
     p_to_q = lat._renaming_between_parameters(px, qx)
     x_as_x = {xj: dict(a=xj, b=xj) for xj in px}
-    varmap = lat._parameter_varmap(px, x_as_x)
+    varmap = lat.parameter_varmap(px, x_as_x)
     log.info('Number of variables: {n}'.format(n=len(varmap)))
-    u = lat._orthotope_subseteq(varmap, aut)
+    u = lat.subseteq(varmap, aut)
     #
     s = (
         '( '
@@ -56,7 +56,7 @@ def test_scaling_equality():
         '(x >= 1  /\  y <= 0) '
         ') ')
     f = aut.add_expr(s)
-    lat._embed_as_implicants(f, px, aut)
+    lat.embed_as_implicants(f, px, aut)
 
 
 def test_using_fol_context():
@@ -137,10 +137,10 @@ def test_orthotopes_using_robots_example():
     # this predicate is constructed by `contract_maker`
     # for the robots example in ACC 2016
     f = robots_example(aut)
-    varmap = lat._parameter_varmap(abx, uvx)
-    ab_leq_uv = lat._orthotope_subseteq(varmap, aut)
-    ab_eq_uv = lat._orthotope_eq(varmap, aut)
-    u = lat.prime_orthotopes(
+    varmap = lat.parameter_varmap(abx, uvx)
+    ab_leq_uv = lat.subseteq(varmap, aut)
+    ab_eq_uv = lat.eq(varmap, aut)
+    u = lat.prime_implicants(
         f, abx, uvx,
         ab_leq_uv, ab_eq_uv,
         aut, xvars)
@@ -165,7 +165,7 @@ def test_orthotopes_using_robots_example():
     log.info(s)
     log.info('BDD has {n} nodes'.format(n=len(aut.bdd)))
     # confirm that essential orthotopes cover exactly `f`
-    c = lat._list_orthotope_expr(u, abx, aut, simple=True)
+    c = lat.list_expr(u, abx, aut, simple=True)
     s = stx.disj(c)
     log.info(s)
     z = aut.add_expr(s)
@@ -464,7 +464,7 @@ def test_partial_order():
         x=(0, 4), w=(0, 4), w_cp=(0, 4),
         t=(0, 4), t_cp=(0, 4))
     px = dict(x=dict(a='w', b='t'))
-    u_leq_p, p_leq_u = lat._partial_order(px, fol)
+    u_leq_p, p_leq_u = lat.partial_order(px, fol)
     s = '(w <= w_cp) /\ (t_cp <= t)'
     u_leq_p_ = fol.add_expr(s)
     assert u_leq_p == u_leq_p_
@@ -517,7 +517,7 @@ def test_prime_orthotopes():
     p_eq_q = fol.add_expr(s)
     # x in support(f)
     f = fol.add_expr('2 <= x  /\  x <= 4')
-    r = lat.prime_orthotopes(
+    r = lat.prime_implicants(
         f, px, qx, p_leq_q, p_eq_q, fol, xvars)
     s = '''
         /\ 2 = px  /\  qx = 4
@@ -527,7 +527,7 @@ def test_prime_orthotopes():
     assert r == r_, pprint.pformat(list(fol.pick_iter(r)))
     # x, y in support(f)
     f = fol.add_expr('1 <= x  /\  x <= 3  /\  y <= 3')
-    r = lat.prime_orthotopes(
+    r = lat.prime_implicants(
         f, px, qx, p_leq_q, p_eq_q, fol, xvars)
     s = '''
         /\ 1 = px  /\  qx = 3
@@ -603,8 +603,8 @@ def test_none_covered():
 
 def test_covers():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = lat._parameter_varmap(px, qx)
-    p_leq_q = lat._orthotope_subseteq(varmap, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    p_leq_q = lat.subseteq(varmap, fol)
     p_to_q = lat._renaming_between_parameters(px, qx)
     cover = fol.add_expr('a_x = 0  /\  b_x = 5')
     # not covered
@@ -639,7 +639,7 @@ def test_embed_as_implicants():
     fol, _, px, _, _, _ = setup_aut()
     u = fol.add_expr('2 <= x  /\  x <= 9')
     px = dict(x=px['x'])
-    r = lat._embed_as_implicants(u, px, fol)
+    r = lat.embed_as_implicants(u, px, fol)
     r_ = lat._embed_as_implicants_naive(u, px, fol)
     assert r == r_, (r, r_)
     v = fol.add_expr(
@@ -680,14 +680,14 @@ def test_orthotope_nonempty():
 
 def test_orthotope_contains_x():
     aut, _, abx, uvx, _, _ = setup_aut(15, 15)
-    u = lat._orthotope_contains_x(abx, aut)
+    u = lat.x_in_implicant(abx, aut)
     values = dict(x=2, y=2,
                   a_x=0, b_x=10,
                   a_y=1, b_y=2)
     r = aut.let(values, u)
     assert r == aut.true, r
-    d = lat._parameter_varmap(abx, uvx)
-    u = lat._orthotope_subseteq(d, aut)
+    d = lat.parameter_varmap(abx, uvx)
+    u = lat.subseteq(d, aut)
     values = dict(
         a_x=0, b_x=3, a_y=1, b_y=2,
         u_x=0, v_x=5, u_y=0, v_y=2)
@@ -702,14 +702,14 @@ def test_orthotope_contains_x():
 
 def test_orthotope_subseteq():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = lat._parameter_varmap(px, qx)
-    r = lat._orthotope_subseteq(varmap, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    r = lat.subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=1, v_x=1, u_y=2, v_y=3)
     r = fol.let(d, r)
     assert r == fol.false
-    r = lat._orthotope_subseteq(varmap, fol)
+    r = lat.subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=0, v_y=10)
@@ -719,8 +719,8 @@ def test_orthotope_subseteq():
 
 def test_orthotope_eq():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = lat._parameter_varmap(px, qx)
-    r = lat._orthotope_eq(varmap, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    r = lat.eq(varmap, fol)
     r_ = fol.add_expr(
         'a_x = u_x /\ b_x = v_x /\ '
         'a_y = u_y /\ b_y = v_y')
@@ -730,7 +730,7 @@ def test_orthotope_eq():
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = lat._orthotope_eq(varmap, fol)
+    r = lat.eq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=1, v_x=2, u_y=0, v_y=3)
@@ -740,20 +740,20 @@ def test_orthotope_eq():
 
 def test_orthotopes_intersect():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = lat._parameter_varmap(px, qx)
-    r = lat._orthotopes_intersect(varmap, fol)
+    varmap = lat.parameter_varmap(px, qx)
+    r = lat.implicants_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = lat._orthotopes_intersect(varmap, fol)
+    r = lat.implicants_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = lat._orthotopes_intersect(varmap, fol)
+    r = lat.implicants_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=1, v_y=2)
@@ -911,20 +911,20 @@ def test_list_orthotope_expr():
         '(a_x = 2) /\ (2 <= b_x) /\ (b_x <= 3) '
         '/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
-    r = lat._list_orthotope_expr(cover, px, fol)
+    r = lat.list_expr(cover, px, fol)
     r = set(r)
     r_ = {'(x = 2) /\ (y \in 1 .. 5)',
           '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
     assert r == r_, (r, r_)
     # simple syntax, for parsing back
     # (needed until able to parse `x \in a .. b` expressions)
-    r = lat._list_orthotope_expr(cover, px, fol, simple=True)
+    r = lat.list_expr(cover, px, fol, simple=True)
     r = set(r)
     r_ = {'(x = 2) /\ (1 <= y) /\ (y <= 5)',
           '(2 <= x) /\ (x <= 3) /\ (1 <= y) /\ (y <= 5)'}
     assert r == r_, (r, r_)
     # clipping on, but nothing to clip
-    r = lat._list_orthotope_expr(cover, px, fol, use_dom=True)
+    r = lat.list_expr(cover, px, fol, use_dom=True)
     r = set(r)
     r_ = {'(x = 2) /\ (y \in 1 .. 5)',
           '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
@@ -934,7 +934,7 @@ def test_list_orthotope_expr():
         '(a_x = -4) /\ (5 <= b_x)'
         '/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
-    r = lat._list_orthotope_expr(cover, px, fol, use_dom=True)
+    r = lat.list_expr(cover, px, fol, use_dom=True)
     r = set(r)
     r_ = {'(y \in 1 .. 5)'}
     assert r == r_, (r, r_)
@@ -944,9 +944,9 @@ def test_list_orthotope_expr():
         '/\ (a_y = 3 ) /\ (b_y = 1)')
     cover = fol.add_expr(s)
     with assert_raises(AssertionError):
-        lat._list_orthotope_expr(cover, px, fol, use_dom=True)
+        lat.list_expr(cover, px, fol, use_dom=True)
     with assert_raises(AssertionError):
-        lat._list_orthotope_expr(cover, px, fol)
+        lat.list_expr(cover, px, fol)
 
 
 def test_clip_subrange():
@@ -1095,7 +1095,7 @@ def test_setup_aux_vars():
     fol.declare(x=(-4, 5), y=(-7, 15))
     f = fol.add_expr('x = 2')
     care = fol.true
-    vrs, px, qx, p_to_q = lat._setup_aux_vars(f, care, fol)
+    vrs, px, qx, p_to_q = lat.setup_aux_vars(f, care, fol)
     vrs_ = {'x'}
     assert vrs == vrs_, (vrs, vrs_)
     px_ = dict(x=dict(a='a_x', b='b_x'))
@@ -1140,14 +1140,14 @@ def test_map_parameters_to_vars():
 
 def test_collect_parameters():
     px, _ = dummy_parameters()
-    c = lat._collect_parameters(px)
+    c = lat.collect_parameters(px)
     c_ = {'a_x', 'b_x', 'a_y', 'b_y'}
     assert c == c_, (c, c_)
 
 
 def test_parameter_varmap():
     px, qx = dummy_parameters()
-    d = lat._parameter_varmap(px, qx)
+    d = lat.parameter_varmap(px, qx)
     d_ = {('a_x', 'b_x'): ('u_x', 'v_x'),
           ('a_y', 'b_y'): ('u_y', 'v_y')}
     assert d == d_, (d, d_)

@@ -1074,43 +1074,14 @@ def dumps_cover(
             'type hints omitted (care does not imply them)')
     r = _list_orthotope_expr(
         cover, px, fol, use_dom=show_dom)
-    s = _vertical_op(r, op='or', latex=latex)
+    s = stx.vertical_op(r, op='or', latex=latex)
     c.append(s)
     n_expr = len(r)
     if care != fol.true:
         c.append('care expression')
-    s = _vertical_op(c, op='and', latex=latex)
+    s = stx.vertical_op(c, op='and', latex=latex)
     # could add option to find minimal cover for care too
     return s
-
-
-def _vertical_op(c, latex=False, op='and'):
-    """Return TLA conjunction with one conjunct per line."""
-    assert op in {'and', 'or'}, op
-    if not c:
-        r = 'TRUE' if op == 'and' else 'FALSE'
-        return r
-    # singleton ?
-    if len(c) == 1:
-        return c[0]
-    if latex:
-        pref = '  '
-        nl = r' \\' + '\n'
-    else:
-        pref = '/\\' if op == 'and' else '\/'
-        nl = '\n'
-    r = list()
-    for s in c:
-        t = s.split('\n')
-        t[0] = ' {p} {first}'.format(p=pref, first=t[0])
-        e = '\n    '.join(t)
-        r.append(e)
-    r = nl.join(r)
-    env = 'conj' if op == 'and' else 'disj'
-    if latex:
-        r = ('\\begin{' + env + '}\n' + r +
-             '\n\\end{' + env + '}')
-    return r
 
 
 def _list_orthotope_expr(

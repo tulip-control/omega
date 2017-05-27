@@ -319,3 +319,32 @@ def isinstance_str(s):
     except TypeError:
         return False
     return True
+
+
+def vertical_op(c, latex=False, op='and'):
+    """Return TLA conjunction with one conjunct per line."""
+    assert op in {'and', 'or'}, op
+    if not c:
+        r = 'TRUE' if op == 'and' else 'FALSE'
+        return r
+    # singleton ?
+    if len(c) == 1:
+        return c[0]
+    if latex:
+        pref = '  '
+        nl = r' \\' + '\n'
+    else:
+        pref = '/\\' if op == 'and' else '\/'
+        nl = '\n'
+    r = list()
+    for s in c:
+        t = s.split('\n')
+        t[0] = ' {p} {first}'.format(p=pref, first=t[0])
+        e = '\n    '.join(t)
+        r.append(e)
+    r = nl.join(r)
+    env = 'conj' if op == 'and' else 'disj'
+    if latex:
+        r = ('\\begin{' + env + '}\n' + r +
+             '\n\\end{' + env + '}')
+    return r

@@ -16,6 +16,8 @@ from omega.symbolic.prime import support_issubset
 from omega.symbolic import fol as _fol
 
 from omega.symbolic import cover as cov
+from omega.symbolic import orthotopes as lat
+from omega.symbolic import _type_hints as tyh
 
 
 log = logging.getLogger(__name__)
@@ -30,19 +32,19 @@ def test_scaling_equality():
     x_vars = dict(x=(0, 10), y=(0, 15), z=(0, 15))
     aut.declare(**x_vars)
     params = dict(pa='a', pb='b', qa='u', qb='v')
-    p_dom = cov._parameter_table(
+    p_dom = lat._parameter_table(
         x_vars, aut.vars, a=params['pa'], b=params['pb'])
-    q_dom = cov._parameter_table(
+    q_dom = lat._parameter_table(
         x_vars, aut.vars, a=params['qa'], b=params['qb'])
     aut.declare(**p_dom)
     aut.declare(**q_dom)
-    px = cov._parameter_variables(x_vars, a=params['pa'], b=params['pb'])
-    qx = cov._parameter_variables(x_vars, a=params['qa'], b=params['qb'])
-    p_to_q = cov._renaming_between_parameters(px, qx)
+    px = lat._parameter_variables(x_vars, a=params['pa'], b=params['pb'])
+    qx = lat._parameter_variables(x_vars, a=params['qa'], b=params['qb'])
+    p_to_q = lat._renaming_between_parameters(px, qx)
     x_as_x = {xj: dict(a=xj, b=xj) for xj in px}
-    varmap = cov._parameter_varmap(px, x_as_x)
+    varmap = lat._parameter_varmap(px, x_as_x)
     log.info('Number of variables: {n}'.format(n=len(varmap)))
-    u = cov._orthotope_subseteq(varmap, aut)
+    u = lat._orthotope_subseteq(varmap, aut)
     #
     s = (
         '( '
@@ -54,7 +56,7 @@ def test_scaling_equality():
         '(x >= 1  /\  y <= 0) '
         ') ')
     f = aut.add_expr(s)
-    cov._embed_as_implicants(f, px, aut)
+    lat._embed_as_implicants(f, px, aut)
 
 
 def test_using_fol_context():
@@ -135,10 +137,10 @@ def test_orthotopes_using_robots_example():
     # this predicate is constructed by `contract_maker`
     # for the robots example in ACC 2016
     f = robots_example(aut)
-    varmap = cov._parameter_varmap(abx, uvx)
-    ab_leq_uv = cov._orthotope_subseteq(varmap, aut)
-    ab_eq_uv = cov._orthotope_eq(varmap, aut)
-    u = cov.prime_orthotopes(
+    varmap = lat._parameter_varmap(abx, uvx)
+    ab_leq_uv = lat._orthotope_subseteq(varmap, aut)
+    ab_eq_uv = lat._orthotope_eq(varmap, aut)
+    u = lat.prime_orthotopes(
         f, abx, uvx,
         ab_leq_uv, ab_eq_uv,
         aut, xvars)
@@ -148,7 +150,7 @@ def test_orthotopes_using_robots_example():
     k = aut.count(u)
     assert n_primes == k, (n_primes, k)
     log.info('{n} prime implicants'.format(n=n_primes))
-    u = cov.essential_orthotopes(f, abx, uvx, aut, xvars)
+    u = lat.essential_orthotopes(f, abx, uvx, aut, xvars)
     support = aut.support(u)
     assert support == set(ab_table), (support, ab_table)
     n_essential = aut.count(u)
@@ -163,7 +165,7 @@ def test_orthotopes_using_robots_example():
     log.info(s)
     log.info('BDD has {n} nodes'.format(n=len(aut.bdd)))
     # confirm that essential orthotopes cover exactly `f`
-    c = cov._list_orthotope_expr(u, abx, aut, simple=True)
+    c = lat._list_orthotope_expr(u, abx, aut, simple=True)
     s = stx.disj(c)
     log.info(s)
     z = aut.add_expr(s)
@@ -462,7 +464,7 @@ def test_partial_order():
         x=(0, 4), w=(0, 4), w_cp=(0, 4),
         t=(0, 4), t_cp=(0, 4))
     px = dict(x=dict(a='w', b='t'))
-    u_leq_p, p_leq_u = cov._partial_order(px, fol)
+    u_leq_p, p_leq_u = lat._partial_order(px, fol)
     s = '(w <= w_cp) /\ (t_cp <= t)'
     u_leq_p_ = fol.add_expr(s)
     assert u_leq_p == u_leq_p_
@@ -477,7 +479,7 @@ def test_essential_orthotopes():
               y=dict(a='ay', b='by'))
     # x in support(f)
     f = fol.add_expr('1 < x  /\  x < 3')
-    r = cov.essential_orthotopes(f, px, qx, fol, xvars)
+    r = lat.essential_orthotopes(f, px, qx, fol, xvars)
     s = '''
         /\ px = 2  /\  qx = 2
         /\ py = 0  /\  qy = 15
@@ -490,7 +492,7 @@ def test_essential_orthotopes():
         /\ 4 < y  /\  y <= 17
         '''
     f = fol.add_expr(s)
-    r = cov.essential_orthotopes(f, px, qx, fol, xvars)
+    r = lat.essential_orthotopes(f, px, qx, fol, xvars)
     s = '''
         /\ px = 0  /\  qx = 2
         /\ py = 5  /\  qy = 15
@@ -515,7 +517,7 @@ def test_prime_orthotopes():
     p_eq_q = fol.add_expr(s)
     # x in support(f)
     f = fol.add_expr('2 <= x  /\  x <= 4')
-    r = cov.prime_orthotopes(
+    r = lat.prime_orthotopes(
         f, px, qx, p_leq_q, p_eq_q, fol, xvars)
     s = '''
         /\ 2 = px  /\  qx = 4
@@ -525,7 +527,7 @@ def test_prime_orthotopes():
     assert r == r_, pprint.pformat(list(fol.pick_iter(r)))
     # x, y in support(f)
     f = fol.add_expr('1 <= x  /\  x <= 3  /\  y <= 3')
-    r = cov.prime_orthotopes(
+    r = lat.prime_orthotopes(
         f, px, qx, p_leq_q, p_eq_q, fol, xvars)
     s = '''
         /\ 1 = px  /\  qx = 3
@@ -539,7 +541,7 @@ def test_implicant_orthotopes():
     xvars, abx, fol = setup_orthotope_vars()
     # x in support(f)
     f = fol.add_expr('x < 2')
-    r = cov._implicant_orthotopes(f, abx, fol, xvars)
+    r = lat._implicant_orthotopes(f, abx, fol, xvars)
     s = '''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy <= 15
@@ -554,7 +556,7 @@ def test_implicant_orthotopes():
     assert r != r_, fol.support(r)
     # x, y in support(f)
     f = fol.add_expr('x < 2  /\  y < 3')
-    r = cov._implicant_orthotopes(f, abx, fol, xvars)
+    r = lat._implicant_orthotopes(f, abx, fol, xvars)
     s = '''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy < 3
@@ -585,7 +587,7 @@ def setup_orthotope_vars():
 
 def test_none_covered():
     fol, _, px, qx, _, _ = setup_aut()
-    p_to_q = cov._renaming_between_parameters(px, qx)
+    p_to_q = lat._renaming_between_parameters(px, qx)
     cover = fol.add_expr('a_x = 0  /\  b_x = 5')
     # some x are covered
     f = fol.add_expr('5 <= x /\ x <= 10')
@@ -601,9 +603,9 @@ def test_none_covered():
 
 def test_covers():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = cov._parameter_varmap(px, qx)
-    p_leq_q = cov._orthotope_subseteq(varmap, fol)
-    p_to_q = cov._renaming_between_parameters(px, qx)
+    varmap = lat._parameter_varmap(px, qx)
+    p_leq_q = lat._orthotope_subseteq(varmap, fol)
+    p_to_q = lat._renaming_between_parameters(px, qx)
     cover = fol.add_expr('a_x = 0  /\  b_x = 5')
     # not covered
     f = fol.add_expr('1 <= x  /\  x <= 6')
@@ -637,8 +639,8 @@ def test_embed_as_implicants():
     fol, _, px, _, _, _ = setup_aut()
     u = fol.add_expr('2 <= x  /\  x <= 9')
     px = dict(x=px['x'])
-    r = cov._embed_as_implicants(u, px, fol)
-    r_ = cov._embed_as_implicants_naive(u, px, fol)
+    r = lat._embed_as_implicants(u, px, fol)
+    r_ = lat._embed_as_implicants_naive(u, px, fol)
     assert r == r_, (r, r_)
     v = fol.add_expr(
         '(a_x = 2  /\  b_x = 2) \/'
@@ -654,11 +656,11 @@ def test_embed_as_implicants():
 
 def test_orthotope_singleton():
     fol, _, px, qx, _, _ = setup_aut()
-    r = cov._orthotope_singleton(px, fol)
+    r = lat._orthotope_singleton(px, fol)
     d = dict(a_x=3, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotope_singleton(qx, fol)
+    r = lat._orthotope_singleton(qx, fol)
     d = dict(u_x=1, v_x=1, u_y=10, v_y=10)
     r = fol.let(d, r)
     assert r == fol.true
@@ -666,11 +668,11 @@ def test_orthotope_singleton():
 
 def test_orthotope_nonempty():
     fol, _, px, qx, _, _ = setup_aut()
-    r = cov._orthotope_nonempty(px, fol)
+    r = lat._orthotope_nonempty(px, fol)
     d = dict(a_x=3, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotope_nonempty(qx, fol)
+    r = lat._orthotope_nonempty(qx, fol)
     d = dict(u_x=0, v_x=6, u_y=0, v_y=10)
     r = fol.let(d, r)
     assert r == fol.true
@@ -678,14 +680,14 @@ def test_orthotope_nonempty():
 
 def test_orthotope_contains_x():
     aut, _, abx, uvx, _, _ = setup_aut(15, 15)
-    u = cov._orthotope_contains_x(abx, aut)
+    u = lat._orthotope_contains_x(abx, aut)
     values = dict(x=2, y=2,
                   a_x=0, b_x=10,
                   a_y=1, b_y=2)
     r = aut.let(values, u)
     assert r == aut.true, r
-    d = cov._parameter_varmap(abx, uvx)
-    u = cov._orthotope_subseteq(d, aut)
+    d = lat._parameter_varmap(abx, uvx)
+    u = lat._orthotope_subseteq(d, aut)
     values = dict(
         a_x=0, b_x=3, a_y=1, b_y=2,
         u_x=0, v_x=5, u_y=0, v_y=2)
@@ -700,14 +702,14 @@ def test_orthotope_contains_x():
 
 def test_orthotope_subseteq():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = cov._parameter_varmap(px, qx)
-    r = cov._orthotope_subseteq(varmap, fol)
+    varmap = lat._parameter_varmap(px, qx)
+    r = lat._orthotope_subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=1, v_x=1, u_y=2, v_y=3)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotope_subseteq(varmap, fol)
+    r = lat._orthotope_subseteq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=0, v_y=10)
@@ -717,8 +719,8 @@ def test_orthotope_subseteq():
 
 def test_orthotope_eq():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = cov._parameter_varmap(px, qx)
-    r = cov._orthotope_eq(varmap, fol)
+    varmap = lat._parameter_varmap(px, qx)
+    r = lat._orthotope_eq(varmap, fol)
     r_ = fol.add_expr(
         'a_x = u_x /\ b_x = v_x /\ '
         'a_y = u_y /\ b_y = v_y')
@@ -728,7 +730,7 @@ def test_orthotope_eq():
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotope_eq(varmap, fol)
+    r = lat._orthotope_eq(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=1, v_x=2, u_y=0, v_y=3)
@@ -738,20 +740,20 @@ def test_orthotope_eq():
 
 def test_orthotopes_intersect():
     fol, _, px, qx, _, _ = setup_aut()
-    varmap = cov._parameter_varmap(px, qx)
-    r = cov._orthotopes_intersect(varmap, fol)
+    varmap = lat._parameter_varmap(px, qx)
+    r = lat._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=4, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotopes_intersect(varmap, fol)
+    r = lat._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=7, v_y=10)
     r = fol.let(d, r)
     assert r == fol.false
-    r = cov._orthotopes_intersect(varmap, fol)
+    r = lat._orthotopes_intersect(varmap, fol)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
     d = dict(u_x=0, v_x=6, u_y=1, v_y=2)
@@ -766,12 +768,12 @@ def setup_aut(xmax=15, ymax=15):
     # needs to be added as care set
     fol.declare(x=(0, xmax), y=(0, ymax))
     x_vars = ['x', 'y']
-    p_table = cov._parameter_table(x_vars, fol.vars, a='a', b='b')
-    q_table = cov._parameter_table(x_vars, fol.vars, a='u', b='v')
+    p_table = lat._parameter_table(x_vars, fol.vars, a='a', b='b')
+    q_table = lat._parameter_table(x_vars, fol.vars, a='u', b='v')
     fol.declare(**p_table)
     fol.declare(**q_table)
-    px = cov._parameter_variables(x_vars, a='a', b='b')
-    qx = cov._parameter_variables(x_vars, a='u', b='v')
+    px = lat._parameter_variables(x_vars, a='a', b='b')
+    qx = lat._parameter_variables(x_vars, a='u', b='v')
     return fol, x_vars, px, qx, p_table, q_table
 
 
@@ -847,7 +849,7 @@ def test_dumps_cover():
         ' /\ (x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # care = type hints
-    care = cov._conjoin_type_hints(['x', 'y'], fol)
+    care = tyh._conjoin_type_hints(['x', 'y'], fol)
     cover = cov.minimize(u, care, fol)
     s = cov.dumps_cover(
         cover, u, care, fol,
@@ -862,29 +864,29 @@ def test_dumps_cover():
 
 def test_vertical_op():
     c = ['a', 'b', 'c']
-    s = cov._vertical_op(c)
+    s = stx.vertical_op(c)
     s_ = ' /\ a\n /\ b\n /\ c'
     assert s == s_, (s, s_)
     c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
-    s = cov._vertical_op(c)
+    s = stx.vertical_op(c)
     s_ = ' /\ /\ a\n    /\ b\n    /\ c\n /\ d\n /\ e'
     assert s == s_, (s, s_)
     c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
-    s = cov._vertical_op(c, op='or')
+    s = stx.vertical_op(c, op='or')
     s_ = ' \/ /\ a\n    /\ b\n    /\ c\n \/ d\n \/ e'
     assert s == s_, (s, s_)
     c = ['e']
-    s = cov._vertical_op(c)
+    s = stx.vertical_op(c)
     s_ = c[0]
     assert s == s_, (s, s_)
     c = ['/\ a\n/\ b\n/\ c']
-    s = cov._vertical_op(c)
+    s = stx.vertical_op(c)
     s_ = c[0]
     assert s == s_, (s, s_)
     c = ['a', 'b', 'c']
-    s = cov._vertical_op(c, op='and', latex=True)
+    s = stx.vertical_op(c, op='and', latex=True)
     c = [s, 'd', 'e']
-    s = cov._vertical_op(c, op='or', latex=True)
+    s = stx.vertical_op(c, op='or', latex=True)
     s_ = r'''\begin{disj}
     \begin{conj}
         a \\
@@ -909,20 +911,20 @@ def test_list_orthotope_expr():
         '(a_x = 2) /\ (2 <= b_x) /\ (b_x <= 3) '
         '/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
-    r = cov._list_orthotope_expr(cover, px, fol)
+    r = lat._list_orthotope_expr(cover, px, fol)
     r = set(r)
     r_ = {'(x = 2) /\ (y \in 1 .. 5)',
           '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
     assert r == r_, (r, r_)
     # simple syntax, for parsing back
     # (needed until able to parse `x \in a .. b` expressions)
-    r = cov._list_orthotope_expr(cover, px, fol, simple=True)
+    r = lat._list_orthotope_expr(cover, px, fol, simple=True)
     r = set(r)
     r_ = {'(x = 2) /\ (1 <= y) /\ (y <= 5)',
           '(2 <= x) /\ (x <= 3) /\ (1 <= y) /\ (y <= 5)'}
     assert r == r_, (r, r_)
     # clipping on, but nothing to clip
-    r = cov._list_orthotope_expr(cover, px, fol, use_dom=True)
+    r = lat._list_orthotope_expr(cover, px, fol, use_dom=True)
     r = set(r)
     r_ = {'(x = 2) /\ (y \in 1 .. 5)',
           '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
@@ -932,7 +934,7 @@ def test_list_orthotope_expr():
         '(a_x = -4) /\ (5 <= b_x)'
         '/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
-    r = cov._list_orthotope_expr(cover, px, fol, use_dom=True)
+    r = lat._list_orthotope_expr(cover, px, fol, use_dom=True)
     r = set(r)
     r_ = {'(y \in 1 .. 5)'}
     assert r == r_, (r, r_)
@@ -942,24 +944,24 @@ def test_list_orthotope_expr():
         '/\ (a_y = 3 ) /\ (b_y = 1)')
     cover = fol.add_expr(s)
     with assert_raises(AssertionError):
-        cov._list_orthotope_expr(cover, px, fol, use_dom=True)
+        lat._list_orthotope_expr(cover, px, fol, use_dom=True)
     with assert_raises(AssertionError):
-        cov._list_orthotope_expr(cover, px, fol)
+        lat._list_orthotope_expr(cover, px, fol)
 
 
 def test_clip_subrange():
     ab = (6, 9)
     dom = (0, 10)
-    r = cov._clip_subrange(ab, dom, 'x')
+    r = tyh._clip_subrange(ab, dom, 'x')
     assert r == ab, (r, ab)
     ab = (-5, 9)
     dom = (0, 10)
-    r = cov._clip_subrange(ab, dom, 'x')
+    r = tyh._clip_subrange(ab, dom, 'x')
     r_ = (0, 9)
     assert r == r_, (r, r_)
     ab = (6, 15)
     dom = (0, 10)
-    r = cov._clip_subrange(ab, dom, 'x')
+    r = tyh._clip_subrange(ab, dom, 'x')
     r_ = (6, 10)
     assert r == r_, (r, r_)
 
@@ -967,8 +969,8 @@ def test_clip_subrange():
 def test_check_type_hint():
     hint = dict(dom=(0, 50), width=6, signed=True)
     with assert_raises(AssertionError):
-        cov._check_type_hint(10, 0, hint, 'x')
-    cov._check_type_hint(2, 5, hint, 'y')
+        tyh._check_type_hint(10, 0, hint, 'x')
+    tyh._check_type_hint(2, 5, hint, 'y')
 
 
 def test_care_implies_type_hints():
@@ -1004,12 +1006,12 @@ def test_f_implies_care():
 
 def test_list_type_hints():
     with assert_raises(AssertionError):
-        cov._list_type_hints(list(), 'whatever')
+        tyh._list_type_hints(list(), 'whatever')
     table = dict(
         x=dict(type='int', dom=(-4, 5)),
         y=dict(type='int', dom=(-7, 15)))
     vrs = ['x', 'y']
-    r = cov._list_type_hints(vrs, table)
+    r = tyh._list_type_hints(vrs, table)
     r_ = [r'x \in -4 .. 5',
           r'y \in -7 .. 15']
     assert r == r_, (r, r_)
@@ -1019,10 +1021,10 @@ def test_list_limits():
     table = dict(
         x=dict(type='int', dom=(-4, 5), width=4, signed=True),
         y=dict(type='int', dom=(-7, 15), width=5, signed=True))
-    r = cov._list_limits(['x'], table)
+    r = tyh._list_limits(['x'], table)
     r_ = ['x \in -8 .. 7']
     assert r == r_, (r, r_)
-    r = cov._list_limits(['x', 'y'], table)
+    r = tyh._list_limits(['x', 'y'], table)
     r_ = ['x \in -8 .. 7', 'y \in -16 .. 15']
     assert r == r_, (r, r_)
 
@@ -1030,27 +1032,27 @@ def test_list_limits():
 def test_bitfield_limits():
     # positive
     hint = dict(width=1, signed=False, dom=(0, 0))
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (0, 1), r
     hint = dict(width=2, signed=False, dom=(1, 2))
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (0, 3), r
     hint = dict(width=10, signed=False, dom=(0, 12))
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (0, 1023), r
     # negative
     hint = dict(width=4, signed=False, dom=(-13, -2))
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (-16, -1), r
     # signed
     hint = dict(width=1, signed=True)
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (-1, 0), r
     hint = dict(width=2, signed=True)
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (-2, 1), r
     hint = dict(width=10, signed=True)
-    r = cov._bitfield_limits(hint)
+    r = tyh._bitfield_limits(hint)
     assert r == (-512, 511), r
 
 
@@ -1058,15 +1060,15 @@ def test_conjoin_type_hints():
     fol = _fol.Context()
     fol.declare(x=(-4, 5), y=(-7, 15))
     vrs = ['x']
-    u = cov._conjoin_type_hints(vrs, fol)
+    u = tyh._conjoin_type_hints(vrs, fol)
     u_ = fol.add_expr('-4 <= x  /\  x <= 5')
     assert u == u_, (u, u_)
     vrs = ['y']
-    u = cov._conjoin_type_hints(vrs, fol)
+    u = tyh._conjoin_type_hints(vrs, fol)
     u_ = fol.add_expr('-7 <= y  /\  y <= 15')
     assert u == u_, (u, u_)
     vrs = ['x', 'y']
-    u = cov._conjoin_type_hints(vrs, fol)
+    u = tyh._conjoin_type_hints(vrs, fol)
     u_ = fol.add_expr(
         '-4 <= x  /\  x <= 5 /\ '
         '-7 <= y  /\  y <= 15')
@@ -1074,7 +1076,7 @@ def test_conjoin_type_hints():
 
 
 def test_format_range():
-    r = cov._format_range('wqd', 'g', 'k')
+    r = tyh._format_range('wqd', 'g', 'k')
     r_ = 'wqd \in g .. k'
     assert r == r_, (r, r_)
 
@@ -1084,7 +1086,7 @@ def test_orthotopes_iter():
     fol.declare(p=(2, 9))
     # careful with the type hint
     u = fol.add_expr('(0 <= p) /\ (p <= 10)')
-    c = list(cov._orthotopes_iter(u, fol))
+    c = list(lat._orthotopes_iter(u, fol))
     assert len(c) == 11, c
 
 
@@ -1093,7 +1095,7 @@ def test_setup_aux_vars():
     fol.declare(x=(-4, 5), y=(-7, 15))
     f = fol.add_expr('x = 2')
     care = fol.true
-    vrs, px, qx, p_to_q = cov._setup_aux_vars(f, care, fol)
+    vrs, px, qx, p_to_q = lat._setup_aux_vars(f, care, fol)
     vrs_ = {'x'}
     assert vrs == vrs_, (vrs, vrs_)
     px_ = dict(x=dict(a='a_x', b='b_x'))
@@ -1110,7 +1112,7 @@ def test_parameter_table():
         x=dict(type='int', dom=(-4, 5)),
         y=dict(type='int', dom=(-7, 15)),
         z=dict(type='bool'))
-    t = cov._parameter_table(vrs, table, 'u', 'v')
+    t = lat._parameter_table(vrs, table, 'u', 'v')
     params = dict(u_x='x', v_x='x', u_y='y', v_y='y')
     for p, x in params.items():
         assert p in t, (p, t)
@@ -1121,7 +1123,7 @@ def test_parameter_table():
 
 def test_parameter_variables():
     x = ['x', 'y']
-    px = cov._parameter_variables(x, 'a', 'b')
+    px = lat._parameter_variables(x, 'a', 'b')
     px_ = dict(
         x=dict(a='a_x', b='b_x'),
         y=dict(a='a_y', b='b_y'))
@@ -1130,7 +1132,7 @@ def test_parameter_variables():
 
 def test_map_parameters_to_vars():
     px, _ = dummy_parameters()
-    d = cov._map_parameters_to_vars(px)
+    d = lat._map_parameters_to_vars(px)
     d_ = dict(a_x='x', b_x='x',
               a_y='y', b_y='y')
     assert d == d_, (d, d_)
@@ -1138,14 +1140,14 @@ def test_map_parameters_to_vars():
 
 def test_collect_parameters():
     px, _ = dummy_parameters()
-    c = cov._collect_parameters(px)
+    c = lat._collect_parameters(px)
     c_ = {'a_x', 'b_x', 'a_y', 'b_y'}
     assert c == c_, (c, c_)
 
 
 def test_parameter_varmap():
     px, qx = dummy_parameters()
-    d = cov._parameter_varmap(px, qx)
+    d = lat._parameter_varmap(px, qx)
     d_ = {('a_x', 'b_x'): ('u_x', 'v_x'),
           ('a_y', 'b_y'): ('u_y', 'v_y')}
     assert d == d_, (d, d_)
@@ -1153,7 +1155,7 @@ def test_parameter_varmap():
 
 def test_renaming_between_parameters():
     px, qx = dummy_parameters()
-    d = cov._renaming_between_parameters(px, qx)
+    d = lat._renaming_between_parameters(px, qx)
     d_ = dict(
         a_x='u_x', b_x='v_x',
         a_y='u_y', b_y='v_y')
@@ -1172,25 +1174,25 @@ def dummy_parameters():
 
 def test_replace_prime():
     pvar = "x'"
-    r = cov._replace_prime(pvar)
+    r = stx._replace_prime(pvar)
     assert r == "x_p", r
     with assert_raises(AssertionError):
-         cov._replace_prime("a'bc")
+         stx._replace_prime("a'bc")
     with assert_raises(AssertionError):
-         cov._replace_prime("a'bc'")
+         stx._replace_prime("a'bc'")
     # identity
     var = "x"
-    var_ = cov._replace_prime(var)
+    var_ = stx._replace_prime(var)
     assert var == var_, (var, var_)
 
 
 def test_add_prime_like_too():
     table = dict(x=(-4, 5), y='bool')
-    t = cov._add_prime_like_too(table)
+    t = stx._add_prime_like_too(table)
     assert 'x' in t, t
     assert 'y' in t, t
-    xp = cov._prime_like('x')
-    yp = cov._prime_like('y')
+    xp = stx._prime_like('x')
+    yp = stx._prime_like('y')
     assert xp != 'x', xp
     assert yp != 'y', yp
     assert xp in t, (xp, t)
@@ -1201,12 +1203,12 @@ def test_add_prime_like_too():
     assert t[yp] == t['y'], t
     with assert_raises(AssertionError):
         table["x'"] = tuple(table['x'])
-        cov._add_prime_like_too(table)
+        stx._add_prime_like_too(table)
 
 
 def test_prime_like():
     var = 'x'
-    pvar = cov._prime_like(var)
+    pvar = stx._prime_like(var)
     assert pvar != var, (pvar, var)
     assert pvar == 'x_cp', pvar
 

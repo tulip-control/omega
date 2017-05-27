@@ -298,11 +298,11 @@ def _list_orthotope_expr(
             b = px[x]['b']
             a = product[a]
             b = product[b]
-            _check_type_hint(a, b, fol.vars[x], x)
+            tyh._check_type_hint(a, b, fol.vars[x], x)
             # can `x` be ignored ?
             if use_dom:
                 dom = fol.vars[x]['dom']
-                a, b = _clip_subrange((a, b), dom, x)
+                a, b = tyh._clip_subrange((a, b), dom, x)
             if a is None and b is None:
                 continue
             if a == b:

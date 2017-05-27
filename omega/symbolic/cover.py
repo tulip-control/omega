@@ -22,6 +22,7 @@ import natsort
 from omega.logic import syntax as stx
 from omega.symbolic.prime import support_issubset
 from omega.symbolic.prime import joint_support
+from omega.symbolic import _type_hints as tyh
 # import polytope (inline)
 
 
@@ -803,11 +804,11 @@ def dumps_cover(
     x_vars, px, _, _ = _setup_aux_vars(f, care, fol)
     c = list()
     if show_limits:
-        r = _list_limits(x_vars, fol.vars)
+        r = tyh._list_limits(x_vars, fol.vars)
         c.extend(r)
     show_dom = show_dom and _care_implies_type_hints(f, care, fol)
     if show_dom:
-        r = _list_type_hints(x_vars, fol.vars)
+        r = tyh._list_type_hints(x_vars, fol.vars)
         c.extend(r)
     else:
         log.info(
@@ -827,7 +828,7 @@ def dumps_cover(
 def _care_implies_type_hints(f, care, fol):
     """Return `True` if `|= care => type_hints`."""
     vrs = joint_support([f, care], fol)
-    type_hints = _conjoin_type_hints(vrs, fol)
+    type_hints = tyh._conjoin_type_hints(vrs, fol)
     u = type_hints | ~ care
     return u == fol.true
 

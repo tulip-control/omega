@@ -37,6 +37,7 @@ from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import cover as cov
 from omega.symbolic import enumeration as enum
+from omega.symbolic import orthotopes as lat
 
 
 log = logging.getLogger(__name__)
@@ -329,8 +330,8 @@ class Context(object):
         s = cov.dumps_cover(
             cover, u, care, self, **kw)
         # prepare to assert
-        _, px, _, _ = cov._setup_aux_vars(u, care, self)
-        r = cov._list_orthotope_expr(
+        _, px, _, _ = lat._setup_aux_vars(u, care, self)
+        r = lat._list_orthotope_expr(
             cover, px, self, simple=True)
         r = stx.disj(r)
         u_ = self.add_expr(r)

@@ -877,6 +877,7 @@ class _BranchAndBound(object):
         self.u_leq_p = u_leq_p
         self.p_eq_q = p_eq_q
         self.p_to_q = p_to_q
+        self.q_to_p = {v: k for k, v in p_to_q.items()}
         self.p_to_u = p_to_u
         self.px = px
         self.qx = qx

@@ -726,10 +726,25 @@ def _none_covered(
     return r == fol.true
 
 
+def assert_is_a_cover_from_y(
+        cover_p, y, f, p_leq_q,
+        p_to_q, px, fol):
+    """Assert `IsACoverFrom(cover_p, X, y, IsUnder)`
+
+    The operator `IsACoverFrom` defined in the module
+    `spec/MinCover.tla`.
+    """
+    assert (y | ~ cover_p) == fol.true, 'needs unfloors'
+    assert _covers(cover_p, f, p_leq_q, p_to_q, px, fol)
+
+
 def _covers(
         cover_p, f, p_leq_q,
         p_to_q, px, fol):
     """Return `True` if `cover_p` covers `f`.
+
+    This is the operator `IsACover` defined in the
+    module `spec/MinCover.tla`.
 
     @param cover_p: primes, repr as `p`
     @param f: elements to cover, repr as `x`

@@ -270,6 +270,7 @@ def test_cyclic_core():
 
 
 def test_cyclic_core_recursion():
+    """Two cyclic cores, in orthogonal subspaces."""
     fol = _fol.Context()
     fol.declare(
         x=(0, 1), y=(0, 1), z=(0, 1),

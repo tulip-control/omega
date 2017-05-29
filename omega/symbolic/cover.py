@@ -245,6 +245,8 @@ def _traverse(x, y, path_cost, bab, fol):
 def _branch(x, y, path_cost, bab, fol):
     log.info('\n\n---- branch ----')
     d = fol.pick(y)
+    assert set(d) == bab.p_vars, d  # must be specific implicant
+        # This condition follows because Y is an antichain when we pick.
     log.info('picked branching y: {d}'.format(d=d))
     y_branch = fol.assign_from(d)
     ynew = y & ~ y_branch
@@ -641,7 +643,7 @@ def _independent_set(
     assert n >= 0, n
     while rem != fol.false:
         x0 = fol.pick(rem)
-        assert set(x0) <= p, x0
+        assert set(x0) == p, x0
         if not only_size:
             z |= fol.assign_from(x0)
         # umbrella of x0
@@ -689,14 +691,14 @@ def _some_cover(x, y, p_leq_q, p_to_q, fol, only_size=False):
     assert n >= 0, n
     while rem != fol.false:
         x0 = fol.pick(rem)  # x0
-        assert set(x0) <= p, x0
+        assert set(x0) == p, x0
         # ys that cover x0
         #
         # r(q) == /\ x0 <= q
         #         /\ y(q)
         r = yq & fol.let(x0, p_leq_q)
         y0 = fol.pick(r)
-        assert set(y0) <= q, y0
+        assert set(y0) == q, y0
         if not only_size:
             z |= fol.assign_from(y0)
         # x that y0 does not cover

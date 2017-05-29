@@ -88,6 +88,7 @@ def minimize(f, care, fol):
     if cover is None:
         cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol)
     assert cover is not None
+    cover = unfloors(cover, y, fol, bab)
     assert_is_a_cover_from_y(
         cover, y, f, p_leq_q, p_to_q, px, fol)
     low = care & ~ f
@@ -144,10 +145,42 @@ def _minimize_two_managers(f, care, fol):
     if cover is None:
         cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol_2)
     assert cover is not None
+    cover = unfloors(cover, y, fol_2, bab)
     log.info('==== branching ==== ')
     del p_eq_q, p_leq_q, u_leq_p, p_leq_u, fcare
     cover = fol_2.copy(cover, fol)
     return cover
+
+
+def unfloors(cover, y, fol, bab):
+    """Return a minimal cover using elements from y.
+
+    This operation inverts the effect of `Floors`,
+    which can result in elements that are below those in `y`.
+
+    This implementation is enumerative.
+    There is no loss of efficiency, because computing
+    an upper bound takes at least as long as enumerating
+    a minimal cover. After all, we compute a minimal cover
+    in order to print it, so it will be enumerated.
+    """
+    y_cover = fol.false
+    yq = fol.let(bab.p_to_q, y)
+    p_leq_y = bab.p_leq_q & yq
+    for dz in fol.pick_iter(cover):
+        # any min cover is an antichain,
+        # so `dz` must be specific implicant
+        assert set(dz) == bab.p_vars, dz
+        over = fol.let(dz, p_leq_y)  # ThoseOver(Y, z)
+        dy = fol.pick(over)
+        # y is a set of primes, so an antichain,
+        # so `dy` must be a specific implicant,
+        # not a partial assignment
+        assert set(dy) == bab.q_vars, dy
+        y = fol.assign_from(dy)
+        y_cover |= y
+    y_cover = fol.let(bab.q_to_p, y_cover)
+    return y_cover
 
 
 def _traverse(x, y, path_cost, bab, fol):

@@ -88,7 +88,8 @@ def minimize(f, care, fol):
     if cover is None:
         cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol)
     assert cover is not None
-    assert _covers(cover, f, p_leq_q, p_to_q, px, fol)
+    assert_is_a_cover_from_y(
+        cover, y, f, p_leq_q, p_to_q, px, fol)
     low = care & ~ f
     assert _none_covered(cover, low, p_to_q, px, qx, fol)
     log.info('==== branching ==== ')

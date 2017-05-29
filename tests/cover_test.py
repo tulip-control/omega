@@ -300,6 +300,36 @@ def test_cyclic_core_recursion():
     # print(fol.to_expr(f, show_dom=True))
 
 
+def test_needs_unfloors():
+    """Floors shrinks both primes to one smaller implicant.
+
+    The returned cover is a minimal cover, so the
+    assertion `_covers` in the function `cover.minimize` passes.
+    However, the returned cover is not made of primes from
+    the set `y` computed by calling `prime_implicants`.
+
+    Finding the primes takes into account the care set.
+    The resulting covering problem is such that shrinking happens.
+    Therefore, unfloors is necessary in this problem.
+    """
+    fol = _fol.Context()
+    fol.declare(x=(0, 1), y=(0, 1))
+    f = fol.add_expr('x = 0 /\ y = 0')
+    care = fol.add_expr('''
+        \/ (x = 0 /\ y = 0)
+        \/ (x = 1 /\ y = 1)
+        ''')
+    cover = cov.minimize(f, care, fol)
+    implicants = list(fol.pick_iter(cover))
+    assert len(implicants) == 1, implicants
+    (d,) = implicants
+    d_1 = dict(a_x=0, b_x=1, a_y=0, b_y=0)
+    d_2 = dict(a_x=0, b_x=0, a_y=0, b_y=1)
+    assert d == d_1 or d == d_2, d
+    # s = cov.dumps_cover(cover, f, care, fol)
+    # print(s)
+
+
 def test_max_transpose():
     fol = _fol.Context()
     # `p'` serves as `u`

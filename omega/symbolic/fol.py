@@ -176,7 +176,7 @@ class Context(object):
         @param vars_to_new: `dict` that maps each var name to
             a var (as `str`), or to a value (as `bool` or `int`).
         """
-        if not vars_to_new:
+        if len(vars_to_new) == 0:  # must be mapping, not `None`
             return u
         assert vars_to_new, vars_to_new
         for k in vars_to_new:
@@ -202,7 +202,7 @@ class Context(object):
 
     def exist(self, qvars, u):
         """Existentially quantify `qvars` in `u`."""
-        if not qvars:
+        if len(qvars) == 0:
             return u
         qbits = bv.bit_table(qvars, self.vars)
         return self.bdd.exist(qbits, u)

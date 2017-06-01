@@ -273,6 +273,32 @@ def _cost(u, prm, fol):
     return n
 
 
+def _no_duplicate(u_p, prm, fol):
+    """Return `True` if no doubly parameterized implicant in `u_p`."""
+    assert support_issubset(u_p, prm.p_vars, fol)
+    # checks that parameterization restricted to `u` is injective
+    # \A p, q \in u:  eq(p, q) => (p = q)
+    u_q = fol.let(prm.p_to_q, u_p)
+    eq_implicants = prm.p_eq_q
+    eq_parameters = _equality_of_pairs(prm.p_to_q.items(), fol)
+    bound = u_p & u_q
+    r = ~ bound | ~ eq_implicants | eq_parameters
+    r = fol.forall(prm.p_vars | prm.q_vars, r)
+    return r == fol.true
+
+
+def _equality_of_pairs(pairs, fol):
+    """Return `<< a1, a2, ... >> = << b1, b2, ... >>`.
+
+    @param pairs: iterable of 2-tuples of identifiers
+    """
+    s = stx.conj(
+        '({a} = {b})'.format(a=a, b=b)
+        for a, b in pairs)
+    r = fol.add_expr(s)
+    return r
+
+
 def cyclic_core(f, care, fol):
     """Shallow minimal cover, only up to cyclic core."""
     log.info('cyclic core computation')

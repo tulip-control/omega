@@ -29,28 +29,17 @@ def partial_order(px, fol):
     return u_leq_p, p_leq_u
 
 
-def essential_orthotopes(f, px, qx, fol, xvars):
+def essential_orthotopes(f, prm, fol):
     """Return essential prime orthotopes of `f`."""
     log.info('---- essential orthotopes ----')
-    varmap = parameter_varmap(px, qx)
-    p_leq_q = subseteq(varmap, fol)
-    p_eq_q = eq(varmap, fol)
-    p_is_prime = prime_implicants(
-        f, px, qx,
-        p_leq_q, p_eq_q,
-        fol, xvars)
+    p_is_prime = prime_implicants(f, prm, fol)
+    q_is_prime = fol.let(prm.p_to_q, p_is_prime)
     # add to quantify u, v, so that we can rename
-    #
-    # TODO: reimplement using `fol.Context.rename`
-    varmap = parameter_varmap(qx, px)
-    q_leq_p = subseteq(varmap, fol)
-    q_is_prime = prime_implicants(
-        f, qx, px,
-        q_leq_p, p_eq_q,
-        fol, xvars)
-    x_in_q = x_in_implicant(qx, fol)
-    x = ', '.join(px)
-    q = ', '.join(collect_parameters(qx))
+    x_in_p = x_in_implicant(prm, fol)
+    x_in_q = fol.let(prm.p_to_q, x_in_p)
+    # del x_in_p
+    x = ', '.join(prm._px)
+    q = ', '.join(prm.q_vars)
     s = (
         '{p_is_prime} /\ '
         r'\E {x}:  ( '
@@ -65,7 +54,7 @@ def essential_orthotopes(f, px, qx, fol, xvars):
         ')').format(
             p_is_prime=p_is_prime,
             q_is_prime=q_is_prime,
-            p_eq_q=p_eq_q,
+            p_eq_q=prm.p_eq_q,
             x_in_q=x_in_q,
             f=f, x=x, q=q)
     r = fol.add_expr(s)

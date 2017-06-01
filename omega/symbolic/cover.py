@@ -63,36 +63,28 @@ def minimize(f, care, fol):
         log.warning('f covers care set, so trivial cover')
     log.info('---- branching ----')
     path_cost = 0.0
-    x_vars, px, qx, p_to_q = lat.setup_aux_vars(f, care, fol)
-    u_leq_p, p_leq_u = lat.partial_order(px, fol)
-    varmap = lat.parameter_varmap(px, qx)
-    p_leq_q = lat.subseteq(varmap, fol)
-    p_eq_q = lat.eq(varmap, fol)
+    prm = lat.setup_aux_vars(f, care, fol)
+    lat.setup_lattice(prm, fol)
     # covering problem
     fcare = f | ~ care
     # the slack is introduced by having more primes
     # (those for `fcare`) to cover the same minterms (`f`)
-    x = lat.embed_as_implicants(f, px, fol)
-    y = lat.prime_implicants(
-        fcare, px, qx,
-        p_leq_q, p_eq_q,
-        fol, x_vars)
-    bab = _BranchAndBound(
-        p_leq_q, p_leq_u, u_leq_p,
-        p_eq_q, p_to_q, px, qx, fol)
+    x = lat.embed_as_implicants(f, prm, fol)
+    y = lat.prime_implicants(fcare, prm, fol)
+    bab = _BranchAndBound(prm, fol)
     # initialize upper bound
     bab.upper_bound = _upper_bound(
-        x, y, p_leq_q, p_to_q, fol)
-    # assert covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol)
+        x, y, prm.p_leq_q, prm.p_to_q, fol)
+    # assert covers(bab.best_cover, f, prm, fol)
     cover, _ = _traverse(x, y, path_cost, bab, fol)
     if cover is None:
-        cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol)
+        cover, _ = _some_cover(x, y, prm.p_leq_q, p_to_q, fol)
     assert cover is not None
     cover = unfloors(cover, y, fol, bab)
     assert_is_a_cover_from_y(
-        cover, y, f, p_leq_q, p_to_q, px, fol)
+        cover, y, f, prm, fol)
     low = care & ~ f
-    assert _none_covered(cover, low, p_to_q, px, qx, fol)
+    assert _none_covered(cover, low, prm, fol)
     log.info('==== branching ==== ')
     return cover
 
@@ -107,47 +99,36 @@ def _minimize_two_managers(f, care, fol):
         log.warning('f covers care set, so trivial cover')
     log.info('---- branching ----')
     path_cost = 0.0
-    x_vars, px, qx, p_to_q = _setup_aux_vars(f, care, fol)
+    # x_vars, px, qx, p_to_q
+    prm = lat.setup_aux_vars(f, care, fol)
     # manager where optimization happens
     fol_2 = type(fol)()
     fol_2.add_vars(fol.vars)
     # x (to be covered)
     log.info('embed implicants')
-    x = _embed_as_implicants(f, px, fol)
+    x = lat.embed_as_implicants(f, prm, fol)
     x = fol.copy(x, fol_2)
     # covering problem
     fcare = f | ~ care
-    # relations
-    log.info('partial order')
-    u_leq_p, p_leq_u = _partial_order(px, fol_2)
-    varmap = _parameter_varmap(px, qx)
-    log.info('subseteq relation')
-    p_leq_q = _orthotope_subseteq(varmap, fol_2)
-    log.info('equality relation')
-    p_eq_q = _orthotope_eq(varmap, fol_2)
+    lat.setup_lattice(prm, fol_2)
     # y (to use in cover)
     log.info('primes')
     fcare_2 = fol.copy(fcare, fol_2)
-    y = prime_orthotopes(
-        fcare_2, px, qx,
-        p_leq_q, p_eq_q,
-        fol_2, x_vars)
+    y = lat.prime_implicants(fcare_2, prm, fol_2)
     del fcare_2
-    bab = _BranchAndBound(
-        p_leq_q, p_leq_u, u_leq_p,
-        p_eq_q, p_to_q, px, qx, fol_2)
+    bab = _BranchAndBound(prm, fol_2)
     # initialize upper bound
     bab.upper_bound = _upper_bound(
-        x, y, p_leq_q, p_to_q, fol_2)
-    # assert _covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol_2)
+        x, y, prm.p_leq_q, prm.p_to_q, fol_2)
+    # assert _covers(bab.best_cover, f, prm, fol_2)
     log.info('traverse')
     cover, _ = _traverse(x, y, path_cost, bab, fol_2)
     if cover is None:
-        cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol_2)
+        cover, _ = _some_cover(x, y, prm.p_leq_q, prm.p_to_q, fol_2)
     assert cover is not None
     cover = unfloors(cover, y, fol_2, bab)
     log.info('==== branching ==== ')
-    del p_eq_q, p_leq_q, u_leq_p, p_leq_u, fcare
+    del fcare, prm, bab
     cover = fol_2.copy(cover, fol)
     return cover
 
@@ -191,7 +172,7 @@ def _traverse(x, y, path_cost, bab, fol):
         x, y, bab, fol)
     _print_cyclic_core(
         x, y, xcore, ycore, essential,
-        t0, bab.px, fol)
+        t0, bab.prm, fol)
     # C_left.path =
     #     C.path + 1  (* already from `_branch` *)
     # C_left.lower =
@@ -203,7 +184,7 @@ def _traverse(x, y, path_cost, bab, fol):
     # C_right.lower =
     #     + Cardinality(essential_right)
     #     + LowerBound(core_right)
-    cost_ess = _cost(essential, bab.p_to_q, fol)
+    cost_ess = _cost(essential, bab.prm, fol)
     core_lb = _lower_bound(
         xcore, ycore, bab.p_leq_q, bab.p_to_q, fol)
     sub_lb = cost_ess + core_lb
@@ -269,8 +250,8 @@ def _branch(x, y, path_cost, bab, fol):
     log.info('right branch')
     e1, _ = _traverse(x, ynew, path_cost, bab, fol)
     # pick cheaper
-    cost_0 = _cost(e0, bab.p_vars, fol)
-    cost_1 = _cost(e1, bab.p_vars, fol)
+    cost_0 = _cost(e0, bab.prm, fol)
+    cost_1 = _cost(e1, bab.prm, fol)
     if cost_0 < cost_1:
         # can be reached only if `e0 != None`
         assert e0 is not None, e0
@@ -281,13 +262,13 @@ def _branch(x, y, path_cost, bab, fol):
     return e
 
 
-def _cost(u, p_vars, fol):
+def _cost(u, prm, fol):
     """Return numerical cost of cover `u`."""
     if u is None:
         return float('inf')
     # cost of each implicant = 1
     # cost of a cover = number of implicants it contains
-    assert support_issubset(u, p_vars, fol)
+    assert support_issubset(u, prm.p_vars, fol)
     n = fol.count(u)
     return n
 
@@ -303,32 +284,24 @@ def cyclic_core(f, care, fol):
     assert f != fol.false, 'nothing to cover'
     assert f != fol.true or care != fol.true, (
         'no variables involved in problem')
-    x_vars, px, qx, p_to_q = lat.setup_aux_vars(f, care, fol)
+    prm = lat.setup_aux_vars(f, care, fol)
+    lat.setup_lattice(prm, fol)
     fcare = ~ care | f
-    u_leq_p, p_leq_u = lat.partial_order(px, fol)
-    varmap = lat.parameter_varmap(px, qx)
-    p_leq_q = lat.subseteq(varmap, fol)
-    p_eq_q = lat.eq(varmap, fol)
-    bab = _BranchAndBound(
-        p_leq_q, p_leq_u, u_leq_p, p_eq_q,
-        p_to_q, px, qx, fol)
+    bab = _BranchAndBound(prm, fol)
     # covering problem
-    x = lat.embed_as_implicants(f, px, fol)
-    y = lat.prime_implicants(
-        fcare, px, qx,
-        p_leq_q, p_eq_q,
-        fol, x_vars)
+    x = lat.embed_as_implicants(f, prm, fol)
+    y = lat.prime_implicants(fcare, prm, fol)
     # assert problem is feasible
     assert x != fol.false
     assert y != fol.false
-    assert _covers(y, f, p_leq_q, p_to_q, px, fol)
+    assert _covers(y, f, prm, fol)
     xcore, ycore, essential = _cyclic_core_fixpoint(
         x, y, bab, fol)
     if xcore == fol.false:
-        assert _covers(essential, f, p_leq_q, p_to_q, px, fol)
+        assert _covers(essential, f, prm, fol)
     _print_cyclic_core(
         x, y, xcore, ycore, essential,
-        t0, px, fol)
+        t0, bab.prm, fol)
     s = dumps_cover(essential, f, care, fol)
     log.info(s)
     return xcore, ycore, essential
@@ -336,7 +309,7 @@ def cyclic_core(f, care, fol):
 
 def _print_cyclic_core(
         x, y, xcore, ycore, essential,
-        t0, px, fol):
+        t0, prm, fol):
     """Print results of cyclic core computation.
 
     Assert support and covering properties.
@@ -344,13 +317,12 @@ def _print_cyclic_core(
     if log.getEffectiveLevel() > logging.INFO:
         return
     # assert
-    params = lat.collect_parameters(px)
     if essential != fol.false:
-        assert support_issubset(essential, params, fol)
+        assert support_issubset(essential, prm.p_vars, fol)
     if xcore != fol.false:
-        assert support_issubset(xcore, params, fol)
+        assert support_issubset(xcore, prm.p_vars, fol)
     if ycore != fol.false:
-        assert support_issubset(ycore, params, fol)
+        assert support_issubset(ycore, prm.p_vars, fol)
     # print
     m = fol.count(x)
     n = fol.count(y)
@@ -497,8 +469,9 @@ def _floor(p_is_signature, p_is_prime,
 def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     """Return primes that cover all signatures under prime.
 
-    Require that `p_to_u` be given explicitly,
-    to avoid errors if support is empty.
+    CAUTION: keep `u_leq_p` in the arguments,
+    because the function `_floor` swaps with `p_leq_u`
+    before calling `_contains_covered`.
 
     In the proof, this operator is equivalent to:
         `IsAbove(p, ThoseUnder(u_is_signature, q, Leq))`
@@ -742,41 +715,36 @@ def _cover_refines(xp, yq, p_leq_q, p, q, fol):
 
 
 def _none_covered(
-        cover_p, f,
-        p_to_q, px, qx, fol):
+        cover_p, f, prm, fol):
     """Return `True` if `cover_p` covers no minterm in `f`.
 
     Arguments similar to `covers`.
     """
-    p = set(p_to_q)
-    q = set(p_to_q.values())
-    varmap = lat.parameter_varmap(px, qx)
-    fq = lat.embed_as_implicants(f, qx, fol)
+    fp = lat.embed_as_implicants(f, prm, fol)
+    fq = fol.let(prm.p_to_q, fp)
     # \A p:  \/ ~ cover(p)
     #        \/ ~ \E q:  /\ f(q)
     #                    /\ Intersect(p, q)
-    r = fq & lat.implicants_intersect(varmap, fol)
-    r = ~ fol.exist(q, r)
+    r = fq & lat.implicants_intersect(prm, fol)
+    r = ~ fol.exist(prm.q_vars, r)
     r |= ~ cover_p
-    r = fol.forall(p, r)
+    r = fol.forall(prm.p_vars, r)
     return r == fol.true
 
 
 def assert_is_a_cover_from_y(
-        cover_p, y, f, p_leq_q,
-        p_to_q, px, fol):
+        cover_p, y, f, prm, fol):
     """Assert `IsACoverFrom(cover_p, X, y, IsUnder)`
 
     The operator `IsACoverFrom` defined in the module
     `spec/MinCover.tla`.
     """
     assert (y | ~ cover_p) == fol.true, 'needs unfloors'
-    assert _covers(cover_p, f, p_leq_q, p_to_q, px, fol)
+    assert _covers(cover_p, f, prm, fol)
 
 
 def _covers(
-        cover_p, f, p_leq_q,
-        p_to_q, px, fol):
+        cover_p, f, prm, fol):
     """Return `True` if `cover_p` covers `f`.
 
     This is the operator `IsACover` defined in the
@@ -784,46 +752,39 @@ def _covers(
 
     @param cover_p: primes, repr as `p`
     @param f: elements to cover, repr as `x`
-    @param px: mapping from `p` to intervals
     """
-    p = set(p_to_q)
-    q = set(p_to_q.values())
-    fp = lat.embed_as_implicants(f, px, fol)
-    cover_q = fol.let(p_to_q, cover_p)
+    fp = lat.embed_as_implicants(f, prm, fol)
+    cover_q = fol.let(prm.p_to_q, cover_p)
     # \A p:  \/ ~ f(p)
     #        \/ \E q:  cover(q) /\ (p <= q)
-    r = cover_q & p_leq_q
-    r = fol.exist(q, r)
+    r = cover_q & prm.p_leq_q
+    r = fol.exist(prm.q_vars, r)
     r |= ~ fp
-    r = fol.forall(p, r)
+    r = fol.forall(prm.p_vars, r)
     return r == fol.true
 
 
-def _covers_naive(cover_p, f, px, fol):
+def _covers_naive(cover_p, f, prm, fol):
     """Return `True` if `cover_p` covers `f`.
 
     Same as `covers`. Here the computation happens over
     the concrete variables (`x`), so it is less efficient.
     """
-    x_vars = set(px)
-    assert support_issubset(f, x_vars, fol)
+    assert support_issubset(f, prm.x_vars, fol)
     # concretize
-    x_in_cover = _concretize_implicants(cover_p, px, fol)
+    x_in_cover = _concretize_implicants(cover_p, prm, fol)
     covered = ~ f | x_in_cover
     return covered == fol.true
 
 
-def _concretize_implicants(implicants_p, px, fol):
+def _concretize_implicants(implicants_p, prm, fol):
     """Return covered set as function of `x`."""
-    # assert
-    x_vars = set(px)
-    p_vars = lat.collect_parameters(px)
-    assert support_issubset(implicants_p, p_vars, fol)
+    assert support_issubset(implicants_p, prm.p_vars, fol)
     # concretize
-    x_in_p = lat.x_in_implicant(px, fol)
+    x_in_p = lat.x_in_implicant(prm, fol)
     u = x_in_p & implicants_p
-    covered_x = fol.exist(p_vars, u)
-    assert support_issubset(covered_x, x_vars, fol)
+    covered_x = fol.exist(prm.p_vars, u)
+    assert support_issubset(covered_x, prm.x_vars, fol)
     return covered_x
 
 
@@ -853,20 +814,20 @@ def dumps_cover(
 
     @rtype: `str`
     """
-    x_vars, px, _, _ = lat.setup_aux_vars(f, care, fol)
+    prm = lat.setup_aux_vars(f, care, fol)
     c = list()
     if show_limits:
-        r = tyh._list_limits(x_vars, fol.vars)
+        r = tyh._list_limits(prm.x_vars, fol.vars)
         c.extend(r)
     show_dom = show_dom and _care_implies_type_hints(f, care, fol)
     if show_dom:
-        r = tyh._list_type_hints(x_vars, fol.vars)
+        r = tyh._list_type_hints(prm.x_vars, fol.vars)
         c.extend(r)
     else:
         log.info(
             'type hints omitted (care does not imply them)')
     r = lat.list_expr(
-        cover, px, fol, use_dom=show_dom)
+        cover, prm, fol, use_dom=show_dom)
     s = stx.vertical_op(r, op='or', latex=latex)
     c.append(s)
     n_expr = len(r)
@@ -905,33 +866,22 @@ class _BranchAndBound(object):
     - `u_leq_p`: partial order `u <= p`
     """
 
-    def __init__(
-            self, p_leq_q, p_leq_u, u_leq_p,
-            p_eq_q, p_to_q, px, qx, fol):
-        p_vars = set(p_to_q)
-        q_vars = set(p_to_q.values())
-        p_to_u = {p: stx._prime_like(p) for p in p_vars}
-        u_vars = set(p_to_u.values())
-        assert not (p_vars & q_vars), (p_vars, q_vars)
-        assert not (p_vars & u_vars), (p_vars, u_vars)
-        assert not (u_vars & q_vars), (u_vars, q_vars)
-        self.p_vars = p_vars
-        self.q_vars = q_vars
-        self.u_vars = u_vars
-        pq_vars = p_vars.union(self.q_vars)
-        assert support_issubset(p_leq_q, pq_vars, fol)
+    def __init__(self, prm, fol):
         self._lower_bound = None
         self._upper_bound = None
         self.best_cover = None  # found so far
-        self.p_leq_q = p_leq_q
-        self.p_leq_u = p_leq_u
-        self.u_leq_p = u_leq_p
-        self.p_eq_q = p_eq_q
-        self.p_to_q = p_to_q
-        self.q_to_p = {v: k for k, v in p_to_q.items()}
-        self.p_to_u = p_to_u
-        self.px = px
-        self.qx = qx
+        # flat is better than nested
+        self.p_vars = prm.p_vars
+        self.q_vars = prm.q_vars
+        self.u_vars = prm.u_vars
+        self.p_to_q = prm.p_to_q
+        self.q_to_p = prm.q_to_p
+        self.p_to_u = prm.p_to_u
+        self.p_leq_q = prm.p_leq_q
+        self.p_leq_u = prm.p_leq_u
+        self.u_leq_p = prm.u_leq_p
+        self.p_eq_q = prm.p_eq_q
+        self.prm = prm
         self.fol = fol
 
     def _assert_invariant(self, lower=None, upper=None):

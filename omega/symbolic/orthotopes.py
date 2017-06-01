@@ -73,23 +73,18 @@ def essential_orthotopes(f, px, qx, fol, xvars):
     return r
 
 
-def prime_implicants(
-        f, px, qx,
-        p_leq_q, p_eq_q,
-        fol, xvars):
+def prime_implicants(f, prm, fol):
     """Return dominators of implicants."""
     log.info('----- prime orthotopes ----')
-    assert support_issubset(f, xvars, fol)
-    p_to_q = _renaming_between_parameters(px, qx)
-    p_is_implicant = _implicant_orthotopes(f, px, fol, xvars)
-    q_is_implicant = fol.let(p_to_q, p_is_implicant)
-    q = collect_parameters(qx)
-    r = q_is_implicant & p_leq_q
-    r = p_eq_q | ~ r
-    r = fol.forall(q, r)
+    assert support_issubset(f, prm.x_vars, fol)
+    p_is_implicant = _implicant_orthotopes(f, prm, fol)
+    q_is_implicant = fol.let(prm.p_to_q, p_is_implicant)
+    r = q_is_implicant & prm.p_leq_q
+    r = prm.p_eq_q | ~ r
+    r = fol.forall(prm.q_vars, r)
     r &= p_is_implicant
     '''
-    q = ', '.join(collect_parameters(qx))
+    q = ', '.join(prm.q_vars)
     s = (
         '{p_is_implicant} /\ '
         r'\A {q}:  ( '
@@ -98,25 +93,26 @@ def prime_implicants(
         ')').format(
             p_is_implicant=p_is_implicant,
             q_is_implicant=q_is_implicant,
-            p_leq_q=p_leq_q,
-            p_eq_q=p_eq_q,
-            q=q)
+            p_leq_q=prm.p_leq_q,
+            p_eq_q=prm.p_eq_q,
+            q=prm.q_vars)
     r = fol.add_expr(s)
     '''
     log.info('==== prime orthotopes ====')
     return r
 
 
-def _implicant_orthotopes(f, abx, fol, xvars):
+def _implicant_orthotopes(f, prm, fol):
     """Return orthotopes that imply `f`.
 
     Caution: `fol` type hints are ignored.
     """
     log.info('---- implicant orthotopes ----')
-    assert support_issubset(f, xvars, fol)
-    x = ', '.join(abx)
-    h = x_in_implicant(abx, fol)
-    nonempty = _orthotope_nonempty(abx, fol)
+    x_vars = prm.x_vars
+    assert support_issubset(f, x_vars, fol)
+    x = ', '.join(x_vars)
+    h = x_in_implicant(prm, fol)
+    nonempty = _orthotope_nonempty(prm._px, fol)
     s = (
         '{nonempty} /\ '
         '\A {x}:  {h} => {f} ').format(
@@ -126,7 +122,8 @@ def _implicant_orthotopes(f, abx, fol, xvars):
     return r
 
 
-def embed_as_implicants(f, px, fol):
+def embed_as_implicants(f, prm, fol):
+    px = prm._px
     ax = {x: d['a'] for x, d in px.items()}
     bx = {x: d['b'] for x, d in px.items()}
     u = fol.let(ax, f)
@@ -180,13 +177,15 @@ def _orthotope_nonempty(abx, fol):
     return r
 
 
-def x_in_implicant(abx, fol):
-    """Return `x \in concretization(abx)`."""
-    s = stx.conj((
-        '({a} <= {x}) /\ '
-        '({x} <= {b})').format(
+def x_in_implicant(prm, fol):
+    r"""Return `x \in concretization(prm)`."""
+    px = prm._px
+    s = stx.conj('''
+           ({a} <= {x})
+        /\ ({x} <= {b})
+        '''.format(
             x=x, a=d['a'], b=d['b'])
-        for x, d in abx.items())
+        for x, d in px.items())
     r = fol.add_expr(s)
     return r
 
@@ -197,25 +196,32 @@ def subseteq(varmap, fol):
     This is the partial order defined by the subset relation.
     In the general formulation `\sqsubseteq`.
     """
-    s = stx.conj((
-        '({u} <= {a}) /\ '
-        '({b} <= {v})').format(a=a, b=b, u=u, v=v)
+    s = stx.conj('''
+           ({u} <= {a})
+        /\ ({b} <= {v})
+        '''.format(a=a, b=b, u=u, v=v)
             for (a, b), (u, v) in varmap.items())
     r = fol.add_expr(s)
     return r
 
 
 def eq(varmap, fol):
-    """Return `ab = uv`."""
-    s = stx.conj((
-        '({a} = {u}) /\ '
-        '({b} = {v})').format(a=a, b=b, u=u, v=v)
+    """Return `ab = uv`.
+
+    The parameterization defines an injective mapping from
+    parameter assignments to orthotopes. This is why equality
+    of orthotopes is equivalent to equality of parameter values.
+    """
+    s = stx.conj('''
+           ({a} = {u})
+        /\ ({b} = {v})
+        '''.format(a=a, b=b, u=u, v=v)
         for (a, b), (u, v) in varmap.items())
     r = fol.add_expr(s)
     return r
 
 
-def implicants_intersect(varmap, fol):
+def implicants_intersect(prm, fol):
     """Return `ab \cap uv # \emptyset`.
 
     Equivalent to
@@ -228,10 +234,11 @@ def implicants_intersect(varmap, fol):
     avoids quantification over `x`.
     """
     # disjoint intervals in at least one dimension
-    s = stx.disj((
-        '({b} < {u}) \/ '
-        '({v} < {a})').format(a=a, b=b, u=u, v=v)
-            for (a, b), (u, v) in varmap.items())
+    s = stx.disj('''
+           ({b} < {u})
+        \/ ({v} < {a})
+        '''.format(a=a, b=b, u=u, v=v)
+            for (a, b), (u, v) in prm._varmap.items())
     r = fol.add_expr(s)
     return ~ r
 
@@ -275,7 +282,7 @@ def plot_orthotopes(u, abx, axvars, fol, ax):
 
 
 def list_expr(
-        cover, px, fol,
+        cover, prm, fol,
         simple=False,
         use_dom=False):
     """Return `list` of `str`, each an orthotope in `cover`.
@@ -285,6 +292,7 @@ def list_expr(
     @param use_dom: omit conjuncts that contain dom of var
         assumes that `|= care => type_hints`
     """
+    px = prm._px
     xp = _map_parameters_to_vars(px)
     support = fol.support(cover)
     keys = {xp[k] for k in support}
@@ -368,9 +376,11 @@ def setup_aux_vars(f, care, fol):
     # aux vars for orthotope representation
     params = dict(pa='a', pb='b', qa='u', qb='v')
     p_dom = _parameter_table(
-        x_vars, fol.vars, a=params['pa'], b=params['pb'])
+        x_vars, fol.vars,
+        a_name=params['pa'], b_name=params['pb'])
     q_dom = _parameter_table(
-        x_vars, fol.vars, a=params['qa'], b=params['qb'])
+        x_vars, fol.vars,
+        a_name=params['qa'], b_name=params['qb'])
     p_dom = stx._add_prime_like_too(p_dom)
     q_dom = stx._add_prime_like_too(q_dom)
     common = x_vars.intersection(p_dom)
@@ -380,15 +390,54 @@ def setup_aux_vars(f, care, fol):
     # works for primed variables too
     fol.declare(**p_dom)
     fol.declare(**q_dom)
-    px = _parameter_variables(x_vars, a=params['pa'], b=params['pb'])
-    qx = _parameter_variables(x_vars, a=params['qa'], b=params['qb'])
+    px = _map_vars_to_parameters(
+        x_vars, a_name=params['pa'], b_name=params['pb'])
+    qx = _map_vars_to_parameters(
+        x_vars, a_name=params['qa'], b_name=params['qb'])
     assert set(px) == set(qx), (px, qx)
     p_to_q = _renaming_between_parameters(px, qx)
+    q_to_p = {v: k for k, v in p_to_q.items()}
+    p_to_u = {p: stx._prime_like(p) for p in p_to_q}
+    p_vars = set(p_to_q)
+    q_vars = set(p_to_q.values())
+    u_vars = set(p_to_u.values())
     log.debug('x vars: {x_vars}'.format(x_vars=x_vars))
-    return x_vars, px, qx, p_to_q
+    assert not (p_vars & q_vars), (p_vars, q_vars)
+    assert not (p_vars & u_vars), (p_vars, u_vars)
+    assert not (u_vars & q_vars), (u_vars, q_vars)
+    varmap = parameter_varmap(px, qx)
+    # package
+    prm = Parameters()
+    prm._px = px
+    prm._qx = qx
+    prm._varmap = varmap
+    prm.x_vars = x_vars
+    prm.p_vars = p_vars
+    prm.q_vars = q_vars
+    prm.u_vars = u_vars
+    prm.p_to_q = p_to_q
+    prm.q_to_p = q_to_p
+    prm.p_to_u = p_to_u
+    return prm
 
 
-def _parameter_table(x, table, a, b):
+def setup_lattice(prm, fol):
+    """Store the lattice BDDs in `prm`."""
+    log.info('partial order')
+    u_leq_p, p_leq_u = partial_order(prm._px, fol)
+    log.info('subseteq')
+    p_leq_q = subseteq(prm._varmap, fol)
+    log.info('eq')
+    p_eq_q = eq(prm._varmap, fol)
+    pq_vars = prm.p_vars.union(prm.q_vars)
+    assert support_issubset(p_leq_q, pq_vars, fol)
+    prm.u_leq_p = u_leq_p
+    prm.p_leq_u = p_leq_u
+    prm.p_leq_q = p_leq_q
+    prm.p_eq_q = p_eq_q
+
+
+def _parameter_table(x, table, a_name, b_name):
     """Return symbol table that defines parameters.
 
     Supports integer-valued variables only.
@@ -401,23 +450,23 @@ def _parameter_table(x, table, a, b):
         assert dtype in ('int', 'saturating'), dtype
         dom = table[xj]['dom']
         name = stx._replace_prime(xj)
-        aj = '{a}_{v}'.format(a=a, v=name)
-        bj = '{b}_{v}'.format(b=b, v=name)
-        d[aj] = dom
-        d[bj] = dom
+        aj = '{a}_{v}'.format(a=a_name, v=name)
+        bj = '{b}_{v}'.format(b=b_name, v=name)
+        d[aj] = tuple(dom)
+        d[bj] = tuple(dom)
         assert "'" not in aj, aj
         assert "'" not in bj, bj
     assert len(d) == 2 * len(x), d
     return d
 
 
-def _parameter_variables(x_vars, a, b):
+def _map_vars_to_parameters(x_vars, a_name, b_name):
     """Return `dict` that maps each var x to a_x, b_x."""
     d = dict()
     for x in x_vars:
         name = stx._replace_prime(x)
-        a_x = '{a}_{v}'.format(v=name, a=a)
-        b_x = '{b}_{v}'.format(v=name, b=b)
+        a_x = '{a}_{v}'.format(a=a_name, v=name)
+        b_x = '{b}_{v}'.format(b=b_name, v=name)
         d[x] = dict(a=a_x, b=b_x)
     return d
 
@@ -462,4 +511,27 @@ def _renaming_between_parameters(px, qx):
         v = qx[x]['b']
         d[a] = u
         d[b] = v
+        assert a != b, (a, b)
+        assert u != v, (u, v)
+        assert a != u, (a, u)
     return d
+
+
+class Parameters(object):
+    """Stores parameters values and lattice definition."""
+
+    def __init__(self):
+        self._px = None
+        self._qx = None
+        self._varmap = None
+        self.x_vars = None
+        self.p_vars = None
+        self.q_vars = None
+        self.u_vars = None
+        self.p_to_q = None
+        self.q_to_p = None
+        self.p_to_u = None
+        self.u_leq_p = None
+        self.p_leq_u = None
+        self.p_leq_q = None
+        self.p_eq_q = None

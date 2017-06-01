@@ -575,7 +575,7 @@ def test_prime_orthotopes():
         /\ 0 = py  /\  qy = 15
         '''
     r_ = fol.add_expr(s)
-    assert r == r_, pprint.pformat(list(fol.pick_iter(r)))
+    assert r == r_, fol.count(r)  # pprint.pformat(list(fol.pick_iter(r)))
     # x, y in support(f)
     f = fol.add_expr('1 <= x  /\  x <= 3  /\  y <= 3')
     r = lat.prime_implicants(f, prm, fol)

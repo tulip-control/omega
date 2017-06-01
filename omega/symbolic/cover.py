@@ -263,11 +263,16 @@ def _branch(x, y, path_cost, bab, fol):
 
 
 def _cost(u, prm, fol):
-    """Return numerical cost of cover `u`."""
+    """Return numerical cost of cover `u`.
+
+    ASSUME that no two assignments that satisfy `u`
+    represent the same implicant (no duplicates).
+    """
     if u is None:
         return float('inf')
     # cost of each implicant = 1
     # cost of a cover = number of implicants it contains
+    assert _no_duplicate(u, prm, fol)
     assert support_issubset(u, prm.p_vars, fol)
     n = fol.count(u)
     return n

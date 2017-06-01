@@ -262,6 +262,34 @@ def _branch(x, y, path_cost, bab, fol):
     return e
 
 
+def _cost_enumerative(u, prm, fol):
+    """Compute cost of cover `u` by enumerating it."""
+    if u is None:
+        return float('inf')
+    eq = prm.eq
+    cover = list()
+    params = prm.p_vars
+    for p in fol.pick_iter(u, params):
+        # equal to existing ?
+        r = fol.false
+        for w in cover:
+            w.update(p)
+            r = fol.let(w, eq)
+            if r == fol.true:
+                break
+        # skip if same prime
+        if r == fol.true:
+            continue
+        cover.append(p)
+    n = len(cover)
+    print('enumerative cost: {n}'.format(n=n))
+    count = fol.count(u)
+    assert n <= count, (n, count)
+    if n < count:
+        print('Cost(u) < fol.count(u)')
+    return n
+
+
 def _cost(u, prm, fol):
     """Return numerical cost of cover `u`.
 

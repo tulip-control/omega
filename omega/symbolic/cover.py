@@ -478,6 +478,9 @@ def _floor(p_is_signature, p_is_prime,
            bab, fol, signatures=False):
     """Transpose primes (tau_X(Y)) or signatures (tau_Y(X)).
 
+    Floor(S) = Join(S)
+    Ceil(S) = Meet(S)
+
     @param p_is_prime: some primes, function of `p`
     @param p_is_signature: function of `p`
     @param signatures: if `True`, then transpose signatures,

@@ -18,6 +18,7 @@ from itertools import cycle
 import logging
 import time
 
+import humanize
 import natsort
 from omega.logic import syntax as stx
 from omega.symbolic.prime import support_issubset
@@ -388,18 +389,22 @@ def _print_cyclic_core(
     log.info((
         '(x={m}, y={n}) implicants of '
         'covering problem').format(
-            m=m, n=n))
+            m=humanize.intcomma(m),
+            n=humanize.intcomma(n)))
     m = fol.count(xcore)
     n = fol.count(ycore)
     log.info((
         '(x={m}, y={n}) implicants after '
         'removing essential elements').format(
-            m=m, n=n))
+            m=humanize.intcomma(m),
+            n=humanize.intcomma(n)))
     n = fol.count(essential)
-    log.info('{n} primes are essential'.format(n=n))
+    log.info('{n} primes are essential'.format(
+        n=humanize.intcomma(n)))
     t1 = time.time()
     dt = t1 - t0
-    log.info('cyclic core took {dt:1.2f} sec'.format(dt=dt))
+    log.info('cyclic core took {dt}'.format(
+        dt=humanize.naturaldelta(dt)))
 
 
 def _cyclic_core_fixpoint(x, y, bab, fol):

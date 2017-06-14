@@ -918,6 +918,14 @@ def _f_implies_care(f, care, fol):
     return (care | ~ f) == fol.true
 
 
+def _comma_sorted(c):
+    """Return container `c` as comma separated list.
+
+    The items are listed as sorted by `natsort`.
+    """
+    return ', '.join(natsort.natsorted(c))
+
+
 class _BranchAndBound(object):
     """A data structure that stores useful values.
 

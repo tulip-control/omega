@@ -23,6 +23,7 @@ VERSION_TEXT = (
     "version = '{version}'\n")
 install_requires = [
     'dd >= 0.5.3',
+    'humanize >= 0.5.1',
     'natsort >= 3.5.3',
     'networkx >= 2.0',
     'ply >= 3.6',

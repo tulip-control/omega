@@ -901,6 +901,15 @@ def dumps_cover(
     if care != fol.true:
         c.append('care expression')
     s = stx.vertical_op(c, op='and', latex=latex)
+    f_vars = fol.support(f)
+    care_vars = fol.support(care)
+    s = (
+        '(* `f` depends on:  {f_vars} *)\n'
+        '(* `care` depends on:  {care_vars} *)\n'
+        '(* The minimal cover is: *)\n{s}').format(
+            f_vars=_comma_sorted(f_vars),
+            care_vars=_comma_sorted(care_vars),
+            s=s)
     # could add option to find minimal cover for care too
     return s
 

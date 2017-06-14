@@ -76,6 +76,9 @@ def test_using_fol_context():
     assert 'x \in 1 .. 3' in s, s
     assert 'y \in -2 .. 4' in s, s
     s_ = '''\
+(* `f` depends on:  x, y *)
+(* `care` depends on:   *)
+(* The minimal cover is: *)
  /\ x \in 0 .. 7
  /\ y \in -8 .. 7
  /\ (x \in 1 .. 3) /\ (y \in -2 .. 4)'''
@@ -901,6 +904,9 @@ def test_dumps_cover():
     cover = cov.minimize(u, care, fol)
     s = cov.dumps_cover(cover, u, care, fol)
     s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:   *)\n'
+        '(* The minimal cover is: *)\n'
         '(x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # care doesn't imply type hints
@@ -908,6 +914,9 @@ def test_dumps_cover():
         cover, u, care, fol,
         show_dom=True)
     s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:   *)\n'
+        '(* The minimal cover is: *)\n'
         '(x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # with limits
@@ -916,6 +925,9 @@ def test_dumps_cover():
         show_dom=True,
         show_limits=True)
     s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:   *)\n'
+        '(* The minimal cover is: *)\n'
         ' /\ x \in 0 .. 7\n'
         ' /\ (x \in 2 .. 4)')
     assert s == s_, (s, s_)
@@ -926,6 +938,9 @@ def test_dumps_cover():
         cover, u, care, fol,
         show_dom=True)
     s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:  x, y *)\n'
+        '(* The minimal cover is: *)\n'
         ' /\ x \in 0 .. 4\n'
         ' /\ y \in -5 .. 9\n'
         ' /\ (x \in 2 .. 4)\n'

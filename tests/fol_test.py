@@ -281,11 +281,18 @@ def test_to_expr():
     fol.declare(x=(-14, 100), y=(5, 23))
     u = fol.add_expr('(1 <= x) /\ (x <= 3)')
     s = fol.to_expr(u, show_limits=True)
-    s_ = ' /\\ x \\in -128 .. 127\n /\\ (x \in 1 .. 3)'
+    s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:   *)\n'
+        '(* The minimal cover is: *)\n'
+        ' /\\ x \\in -128 .. 127\n /\\ (x \in 1 .. 3)')
     assert s == s_, (s, s_)
     care = fol.add_expr('(-14 <= x)  /\  (x <= 100)')
     s = fol.to_expr(u, care=care, show_dom=True)
     s_ = (
+        '(* `f` depends on:  x *)\n'
+        '(* `care` depends on:  x *)\n'
+        '(* The minimal cover is: *)\n'
         ' /\\ x \\in -14 .. 100\n'
         ' /\\ (x \in 1 .. 3)\n'
         ' /\\ care expression')

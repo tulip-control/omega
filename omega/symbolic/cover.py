@@ -909,13 +909,26 @@ def _care_implies_type_hints(f, care, fol):
     """Return `True` if `|= care => type_hints`."""
     vrs = joint_support([f, care], fol)
     type_hints = tyh._conjoin_type_hints(vrs, fol)
-    u = type_hints | ~ care
-    return u == fol.true
+    r = type_hints | ~ care
+    if r != fol.true:
+        vrs = fol.support(r)
+        s = ('`care => type_hints` fails '
+             'for variables: {vrs}').format(
+                vrs=_comma_sorted(vrs))
+        log.warning(s)
+    return r == fol.true
 
 
 def _f_implies_care(f, care, fol):
     """Return `True` if `|= f => care`."""
-    return (care | ~ f) == fol.true
+    r = care | ~ f
+    if r != fol.true:
+        vrs = fol.support(r)
+        s = ('`f => care` fails '
+             'for variables: {vrs}').format(
+                vrs=_comma_sorted(vrs))
+        log.warning(s)
+    return r == fol.true
 
 
 def _comma_sorted(c):

@@ -433,6 +433,8 @@ def _int_to_bit_assignment(var, value, table):
     Skips the parser, compared to `_assignment_to_bdd`.
     """
     assert var in table, var
+    # We could log whether `value` is within the type hints,
+    # but there are valid use cases outside the type hints.
     var_bits = bv.var_to_twos_complement(var, table)
     int_bits = bv.int_to_twos_complement(value)
     p, q = bv.equalize_width(var_bits, int_bits)

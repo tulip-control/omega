@@ -43,15 +43,19 @@ def solve_streett_game(aut, rank=1):
     aut.assert_consistent(built=True)
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
+    (env_action,) = aut.action['env']
+    (sys_action,) = aut.action['sys']
     bdd = aut.bdd
     z = bdd.true
     zold = None
     while z != zold:
         zold = z
+        cox_z = fx.ue_preimage(env_action, sys_action, z, aut)
         xijk = list()
         yij = list()
         for goal in aut.win['[]<>']:
-            y, yj, xjk = _attractor_under_assumptions(z, goal, aut)
+            goal &= cox_z
+            y, yj, xjk = _attractor_under_assumptions(goal, aut)
             z &= y
             xijk.append(xjk)
             yij.append(yj)
@@ -59,7 +63,7 @@ def solve_streett_game(aut, rank=1):
     return z, yij, xijk
 
 
-def _attractor_under_assumptions(z, goal, aut):
+def _attractor_under_assumptions(goal, aut):
     """Targeting `goal`, under unconditional assumptions."""
     bdd = aut.bdd
     (env_action,) = aut.action['env']
@@ -68,12 +72,10 @@ def _attractor_under_assumptions(z, goal, aut):
     yj = list()
     y = bdd.false
     yold = None
-    cox_z = fx.ue_preimage(env_action, sys_action, z, aut)
-    g = goal & cox_z
     while y != yold:
         yold = y
         cox_y = fx.ue_preimage(env_action, sys_action, y, aut)
-        unless = cox_y | g
+        unless = cox_y | goal
         xk = list()
         for safe in aut.win['<>[]']:
             x = fx.trap(env_action, sys_action,

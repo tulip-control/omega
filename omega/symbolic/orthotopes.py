@@ -273,7 +273,7 @@ def plot_orthotopes(u, abx, axvars, fol, ax):
 def list_expr(
         cover, prm, fol,
         simple=False,
-        use_dom=False):
+        use_dom=False, latex=False):
     """Return `list` of `str`, each an orthotope in `cover`.
 
     @param simple: if `True`, then return expression
@@ -311,9 +311,16 @@ def list_expr(
                 s = '({x} \in {a} .. {b})'
             s = s.format(x=x, a=a, b=b)
             w.append(s)
-        s = ' /\ '.join(w)
-        if not s:
-            s = 'TRUE'
+        # conjoin as one triplet per line
+        lines = w
+        n_tail = len(lines) % 3
+        tail = lines[-n_tail:]
+        lines = lines[:-n_tail]
+        i = iter(lines)
+        triplets = list(zip(i, i, i))
+        lines = [' /\ '.join(t) for t in triplets]
+        lines.append(' /\ '.join(tail))
+        s = stx.vertical_op(lines, latex=latex, op='and')
         r.append(s)
     r = natsort.natsorted(r)  # reproducible vertical listing
     return r

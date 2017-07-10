@@ -894,7 +894,7 @@ def dumps_cover(
         log.info(
             'type hints omitted (care does not imply them)')
     r = lat.list_expr(
-        cover, prm, fol, use_dom=show_dom)
+        cover, prm, fol, use_dom=show_dom, latex=latex)
     s = stx.vertical_op(r, op='or', latex=latex)
     c.append(s)
     n_expr = len(r)

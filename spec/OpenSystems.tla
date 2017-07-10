@@ -29,7 +29,9 @@ WhilePlusHalf(A(_, _), G(_, _), x, y) ==
 (* An operator that forms an open system from the closed system that the
 temporal property P(x, y) describes.
 *)
-Unzip(P(_, _), x, y) == WhilePlusHalf(P, P, x, y)
+Unzip(P(_, _), x, y) ==
+    LET A(u, v) == WhilePlusHalf(P, P, v, u)  (* swap to y, x *)
+    IN WhilePlusHalf(A, P, x, y)
 
 ================================================================================
 (* Copyright 2016-2017 by California Institute of Technology. *)

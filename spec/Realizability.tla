@@ -32,31 +32,31 @@ IsAFiniteFcn(f) == /\ IsAFunction(f)
 
 ------------------------- MODULE Inner ---------------------------------------
 VARIABLES x, y
-CONSTANTS f, g, m0
+CONSTANTS f, g, mem0
 
-Realization(m) ==
+Realization(mem) ==
     LET
-        v == << m, x, y >>
+        v == << mem, x, y >>
         A == /\ x' = f[v]
-             /\ m' = g[v]
+             /\ mem' = g[v]
     IN
-        /\ m = m0
+        /\ mem = mem0
         /\ [][ mu(v, v') => A ]_v
-        /\ WF_<< m, x >> ( mu(v, v') /\ A)
+        /\ WF_<< mem, x >> ( mu(v, v') /\ A)
 
 Realize ==
         /\ IsAFiniteFcn(f) /\ IsAFiniteFcn(g)
-        /\ (\EE m:  Realization(m)) => phi(x, y)
+        /\ (\EE mem:  Realization(mem)) => phi(x, y)
 ==============================================================================
 
-Inner(f, g, m0, x, y) == INSTANCE Inner
+Inner(f, g, mem0, x, y) == INSTANCE Inner
 
-IsRealization(f, g, m0) ==
+IsRealization(f, g, mem0) ==
     \AA x, y:
-        Inner(f, g, m0, x, y)!Realize
+        Inner(f, g, mem0, x, y)!Realize
 
 IsRealizable ==
-    \E f, g, m0:
-        IsRealization(f, g, m0)
+    \E f, g, mem0:
+        IsRealization(f, g, mem0)
 
 ==============================================================================

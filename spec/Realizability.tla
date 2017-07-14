@@ -10,8 +10,7 @@ References
 
 Ioannis Filippidis, Richard M. Murray
     "Formalizing synthesis in TLA+"
-    Technical Report CaltechCDSTR:2016.004
-    California Institute of Technology, Pasadena, CA, 2016
+    Technical Report, California Institute of Technology, 2016
     http://resolver.caltech.edu/CaltechCDSTR:2016.004
 
 Leslie Lamport

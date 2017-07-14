@@ -26,8 +26,9 @@ STATE mu(_, _)
 TEMPORAL phi(_, _)
 *)
 
-IsAFunction(f) ==
-    f = [u \in DOMAIN f |-> f[u]]
+IsAFunction(f) == f = [u \in DOMAIN f |-> f[u]]
+IsAFiniteFcn(f) == /\ IsAFunction(f)
+                   /\ IsFiniteSet(DOMAIN f)
 
 ------------------------- MODULE Inner ---------------------------------------
 VARIABLES x, y
@@ -44,8 +45,7 @@ Realization(m) ==
         /\ WF_<< m, x >> ( mu(v, v') /\ A)
 
 Realize ==
-        /\ IsAFunction(f) /\ IsFiniteSet(DOMAIN f)
-        /\ IsAFunction(g) /\ IsFiniteSet(DOMAIN g)
+        /\ IsAFiniteFcn(f) /\ IsAFiniteFcn(g)
         /\ (\EE m:  Realization(m)) => phi(x, y)
 ==============================================================================
 

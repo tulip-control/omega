@@ -2,7 +2,7 @@
 (* A definition of what it means for a function to realize a property.
 
 A synthesizer first proves:
-  THEOREM Realizability(phi, mu)!IsRealizable
+  THEOREM Realizability!IsRealizable(Phi, e)
 
 
 References
@@ -20,11 +20,6 @@ Leslie Lamport
     http://lamport.org/tla/notes/91-04-21.txt
 *)
 EXTENDS FiniteSets
-CONSTANTS phi(_, _), mu(_, _)
-(*
-STATE mu(_, _)
-TEMPORAL phi(_, _)
-*)
 
 IsAFunction(f) == f = [u \in DOMAIN f |-> f[u]]
 IsAFiniteFcn(f) == /\ IsAFunction(f)
@@ -34,29 +29,28 @@ IsAFiniteFcn(f) == /\ IsAFunction(f)
 VARIABLES x, y
 CONSTANTS f, g, mem0
 
-Realization(mem) ==
+Realization(mem, e(_, _)) ==
     LET
         v == << mem, x, y >>
         A == /\ x' = f[v]
              /\ mem' = g[v]
     IN
         /\ mem = mem0
-        /\ [][ mu(v, v') => A ]_v
-        /\ WF_<< mem, x >> ( mu(v, v') /\ A)
+        /\ [][ e(v, v') => A ]_v
+        /\ WF_<< mem, x >> ( e(v, v') /\ A)
 
-Realize ==
+Realize(Phi(_, _), e(_, _)) ==
         /\ IsAFiniteFcn(f) /\ IsAFiniteFcn(g)
-        /\ (\EE mem:  Realization(mem)) => phi(x, y)
+        /\ (\EE mem:  Realization(mem, e)) => Phi(x, y)
 ==============================================================================
 
 Inner(f, g, mem0, x, y) == INSTANCE Inner
 
-IsRealization(f, g, mem0) ==
+IsARealization(f, g, mem0, Phi(_, _), e(_, _)) ==
     \AA x, y:
-        Inner(f, g, mem0, x, y)!Realize
+        Inner(f, g, mem0, x, y)!Realize(Phi, e)
 
-IsRealizable ==
+IsRealizable(Phi(_, _), e(_, _)) ==
     \E f, g, mem0:
-        IsRealization(f, g, mem0)
-
+        IsARealization(f, g, mem0, Phi, e)
 ==============================================================================

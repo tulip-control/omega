@@ -20,12 +20,15 @@ WhilePlus(A(_, _), G(_, _), x, y) ==
 (* A variant of the WhilePlus operator. *)
 WhilePlusHalf(A(_, _), G(_, _), x, y) ==
     \AA b:
+        LET
+            SamePrefix(u, v) == [] (b => (<< u, v >> = << x, y >>))
+        IN
             \/ ~ /\ MayUnstep(b)
                  /\ \EE u, v:  /\ A(u, v)
-                               /\ [] (b => (<< u, v >> = << x, y >>))
+                               /\ SamePrefix(u, v)
             \/ \EE u, v:
                 /\ G(u, v) /\ (v = y)
-                /\ [] (b => (<< u, v >> = << x, y >>))
+                /\ SamePrefix(u, v)
                 /\ [][ b => (v' = y') ]_<< b, v, y >>
 
 (* An operator that forms an open system from the closed system that the

@@ -1,13 +1,15 @@
 ------------------------------- MODULE OpenSystems -----------------------------
 (* Operators for creating open systems. *)
 
+(* Variable b starts in BOOLEAN and changes at most once to FALSE. *)
+MayUnstep(b) == /\ b \in BOOLEAN
+                /\ [][b' = FALSE]_b
 
 (* The TLA+ operator -+-> expressed within the logic [1, p.337].
 [1] Leslie Lamport, "Specifying systems", Addison-Wesley, 2002
 *)
 WhilePlus(A(_, _), G(_, _), x, y) ==
-    \AA b:  \/ ~ /\ b \in BOOLEAN
-                 /\ [][b' = FALSE]_b
+    \AA b:  \/ ~ /\ MayUnstep(b)
                  /\ \EE u, v:  /\ A(u, v)
                                /\ [] (b => (<< u, v >> = << x, y >>))
             \/ \EE u, v:
@@ -17,8 +19,8 @@ WhilePlus(A(_, _), G(_, _), x, y) ==
 
 (* A variant of the WhilePlus operator. *)
 WhilePlusHalf(A(_, _), G(_, _), x, y) ==
-    \AA b:  \/ ~ /\ b \in BOOLEAN     (* b starts in BOOLEAN and *)
-                 /\ [][b' = FALSE]_b  (* if b ever changes, it becomes FALSE *)
+    \AA b:
+            \/ ~ /\ MayUnstep(b)
                  /\ \EE u, v:  /\ A(u, v)
                                /\ [] (b => (<< u, v >> = << x, y >>))
             \/ \EE u, v:

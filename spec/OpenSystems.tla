@@ -12,13 +12,23 @@ Unstep(b) == /\ MayUnstep(b)
 [1] Leslie Lamport, "Specifying systems", Addison-Wesley, 2002
 *)
 WhilePlus(A(_, _), G(_, _), x, y) ==
-    \AA b:  \/ ~ /\ MayUnstep(b)
-                 /\ \EE u, v:  /\ A(u, v)
-                               /\ [] (b => (<< u, v >> = << x, y >>))
-            \/ \EE u, v:
-                /\ G(u, v)
-                /\ << u, v >> = << x, y >>
-                /\ [][ b => (<< u', v' >> = << x', y' >>) ]_<< b, u, v, x, y >>
+    \AA b:
+        LET
+            SamePrefix(u, v) == [] (b => (<< u, v >> = << x, y >>))
+            Front ==
+                \EE u, v:  /\ A(u, v)
+                           /\ SamePrefix(u, v)
+            FrontPlus == \EE u, v:
+                LET
+                    vars == << b, x, y, u, v >>
+                    Init == << u, v >> = << x, y >>
+                    Next == b => (<< u', v' >> = << x', y' >>)
+                    Plus == [][ Next ]_vars
+                IN
+                    /\ G(u, v)
+                    /\ Init /\ Plus
+        IN
+            (MayUnstep(b) /\ Front) => FrontPlus
 
 (* A variant of the WhilePlus operator. *)
 WhilePlusHalf(A(_, _), G(_, _), x, y) ==
@@ -27,13 +37,15 @@ WhilePlusHalf(A(_, _), G(_, _), x, y) ==
             SamePrefix(u, v) == [] (b => (<< u, v >> = << x, y >>))
             PlusHalf(v) == /\ v = y
                            /\ [][ b => (v' = y') ]_<< b, v, y >>
+            Front ==
+                \EE u, v:  /\ A(u, v)
+                           /\ SamePrefix(u, v)
+            FrontPlusHalf ==
+                \EE u, v:  /\ G(u, v)
+                           /\ SamePrefix(u, v)
+                           /\ PlusHalf(v)
         IN
-            \/ ~ /\ MayUnstep(b)
-                 /\ \EE u, v:  /\ A(u, v)
-                               /\ SamePrefix(u, v)
-            \/ \EE u, v:  /\ G(u, v)
-                          /\ SamePrefix(u, v)
-                          /\ PlusHalf(v)
+            (MayUnstep(b) /\ Front) => FrontPlusHalf
 
 (* An operator that forms an open system from the closed system that the
 temporal property P(x, y) describes.

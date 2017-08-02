@@ -487,9 +487,9 @@ def _make_section_map(aut):
     return sections
 
 
-def _section_len(formulae):
+def _section_len(formulas):
     """Return sum of `len` of `str` in `formulas`."""
-    return sum(len(s) for s in formulae)
+    return sum(len(s) for s in formulas)
 
 
 def _to_bdd(a, b, bdd):

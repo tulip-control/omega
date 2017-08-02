@@ -29,9 +29,10 @@ class Lexer(object):
     """Token rules for slugsin lexer."""
 
     operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION',
-                 'FORALL', 'EXISTS', 'RENAME', 'DIV']
+                 'FORALL', 'EXISTS', 'RENAME', 'DIV', 'AT']
     identifiers = ['NAME', 'NUMBER']
 
+    t_AT = r'@'
     t_NUMBER = r'[-]*\d+'
     t_NAME = r"[A-Za-z_][A-Za-z0-9_']*"
     t_FORALL = r'\\A'
@@ -114,6 +115,8 @@ class Parser(object):
             return self.nodes.Register(u.value)
         elif t == 'NAME':
             return self.nodes.Var(tok.value)
+        elif t == 'AT':
+            return self._recurse()
         elif t == 'NUMBER':
             return self.nodes.Num(tok.value)
         else:

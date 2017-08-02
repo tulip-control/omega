@@ -1,4 +1,4 @@
-"""Utilities for creating formulae."""
+"""Utilities for creating formulas."""
 # Copyright 2015 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #

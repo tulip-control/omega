@@ -343,7 +343,7 @@ class TransitionSystem(_SystemGraph):
 
     def assert_consistent(self):
         """Return `True` if attributes are conformant."""
-        # TODO: check type consistency of formulae
+        # TODO: check type consistency of formulas
         super(TransitionSystem, self).assert_consistent()
         assert self.owner in {'env', 'sys'}
         assert set(self.env_vars).issubset(self.vars)

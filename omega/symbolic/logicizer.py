@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def graph_to_logic(g, nodevar, ignore_initial,
                    receptive=False, self_loops=False):
-    """Flatten labeled graph to temporal logic formulae.
+    """Flatten labeled graph to temporal logic formulas.
 
     @param g: `TransitionSystem`
 
@@ -35,7 +35,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
         ensure receptiveness at each node.
     @param self_loops: if `True`, then add all self-loops
 
-    @return: temporal formulae representing `g`.
+    @return: temporal formulas representing `g`.
     @rtype: `Automaton`
     """
     assert g.assert_consistent()

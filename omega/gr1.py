@@ -45,7 +45,7 @@ def ltl_to_automaton(f):
 
 
 def split_gr1(s):
-    """Return `dict` of GR(1) subformulae.
+    """Return `dict` of GR(1) subformulas.
 
     The formula `f` is assumed to be a conjunction of expressions
     of the form:
@@ -57,7 +57,7 @@ def split_gr1(s):
     @param f: temporal logic formula
     @type f: `str` or AST
 
-    @return: conjunctions of formulae A, B as `str`,
+    @return: conjunctions of formulas A, B as `str`,
     grouped by keys:
         `'init', '[]', '[]<>'`
     @rtype: `dict` of `str`: `list` of `str`
@@ -228,7 +228,7 @@ def split_gr1_old(f):
     d['init'] = [init]
     safe = conj(u.flatten() for u in reversed(d['[]']))
     d['[]'] = [safe]
-    # flatten individual progress formulae
+    # flatten individual progress formulas
     d['[]<>'] = [u.flatten() for u in d['[]<>']]
     return d
 

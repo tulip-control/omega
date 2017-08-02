@@ -67,8 +67,8 @@ class Automaton(object):
       `{'<>[]': list(),
         '[]<>': list()}`
 
-    Add formulae (as strings) to these lists.
-    Call the method `build` to convert these formulae to BDD nodes,
+    Add formulas (as strings) to these lists.
+    Call the method `build` to convert these formulas to BDD nodes,
     and generate the below.
 
 
@@ -127,7 +127,7 @@ class Automaton(object):
         self.moore = True
         self.plus_one = True
         self.qinit = '\A \A'
-        # formulae
+        # formulas
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())
         self.win = {'<>[]': list(), '[]<>': list()}
@@ -229,9 +229,9 @@ class Automaton(object):
         return repr(d)
 
     def build(self):
-        """Return `Automaton` with formulae as BDD nodes.
+        """Return `Automaton` with formulas as BDD nodes.
 
-        Bitblast variables and formulae,
+        Bitblast variables and formulas,
         add bits to `self.bdd`,
         and populate primed and unprimed bits.
 
@@ -273,7 +273,7 @@ class Automaton(object):
             assert self.uevars
 
     def update(self, attr, d):
-        """Add formulae from `dict` `d`."""
+        """Add formulas from `dict` `d`."""
         r = getattr(self, attr)
         if attr in ('init', 'action'):
             r['env'].extend(d['env'])
@@ -332,7 +332,7 @@ def fill_blanks(aut, as_bdd=False, rabin=False):
 
 
 def _bitblast(aut):
-    """Return `Automaton` with bitvector formulae.
+    """Return `Automaton` with bitvector formulas.
 
     For each integer, the corresponding list of
     bitnames is added to the symbol table (attr `vars`).
@@ -409,7 +409,7 @@ def _bitblast_owner(aut, a, owner, t):
 
 
 def _bitvector_to_bdd(aut):
-    """Return `Automaton` with BDD formulae.
+    """Return `Automaton` with BDD formulas.
 
     @type aut: `Automaton`
     """
@@ -488,7 +488,7 @@ def _make_section_map(aut):
 
 
 def _section_len(formulae):
-    """Return sum of `len` of `str` in `formulae`."""
+    """Return sum of `len` of `str` in `formulas`."""
     return sum(len(s) for s in formulae)
 
 

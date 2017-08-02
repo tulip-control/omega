@@ -152,7 +152,7 @@ def _flatten_previous(op, x, testers, context,
     """Translate expression with "previous" as main operator."""
     # propagate ?
     # (if child is terminal)
-    # added benefit: shares some history vars among subformulae
+    # added benefit: shares some history vars among subformulas
     strong = (op == '--X')
     propagate = (
         len(x) == 1)
@@ -256,7 +256,7 @@ def translate(s, debug=False, until=False):
     If formula `s` is an action (in the sense of TLA),
     then the returned formula `c` is also an action.
 
-    Note that if two subformulae are identical,
+    Note that if two subformulas are identical,
     then a fresh variable will be used for each one.
     The only exception are variables, for example "-X p".
 

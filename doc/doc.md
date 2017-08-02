@@ -7,7 +7,7 @@ At the interface with humans, a formula is represented as a string. Deeper,
 they are converted to [binary decision diagrams (BDDs)](
     https://github.com/johnyf/dd)
 for certain operations. An assignment to variables is represented by as
-a `dict`. In most places where formulae are used in data structures,
+a `dict`. In most places where formulas are used in data structures,
 an assignment can also be used, provided that the data structure is fed to
 a suitable algorithm. Partial assignments leave the unassigned variables free
 ([open world semantics](https://en.wikipedia.org/wiki/Open-world_assumption)).
@@ -37,14 +37,14 @@ For convenience, there are two flavors:
 - `automata.Automaton`: describes a language of (in)finite trees (sequences).
   This represents an [alternating automaton](http://doi.org/10.1007/3-540-60915-6_6)
   with the desired acceptance condition (Buchi, Rabin, Streett, Muller, parity,
-  etc.), variables as alphabet, and formulae as guards labeling edges.
+  etc.), variables as alphabet, and formulas as guards labeling edges.
   A set of `universal_nodes` marks those nodes where path quantification is
   universal.
 
 - `automata.TransitionSystem`: describes a transition relation of a discrete
-  system. Nodes can be labeled with state predicates (formulae over unprimed
+  system. Nodes can be labeled with state predicates (formulas over unprimed
   variables), and edges with [actions](http://dx.doi.org/10.1145/177492.177726)
-  (formulae over primed variables). Some variables can be universally
+  (formulas over primed variables). Some variables can be universally
   quantified (inputs), the rest existentially (outputs). A transition system
   can be viewed as an automaton with trivial acceptance condition
   (e.g., Buchi with all nodes accepting). It can also be viewed as
@@ -86,7 +86,7 @@ equivalent.
 
 ## Symbolic automata
 
-These automata are described by formulae that are represented as strings or
+These automata are described by formulas that are represented as strings or
 BDDs. The user-defined attributes are:
 
 - initial condition,
@@ -97,7 +97,7 @@ These are inspired by
 [TLA](https://en.wikipedia.org/wiki/Temporal_logic_of_actions),
 [fair discrete systems](http://doi.org/10.1007/BFb0055036),
 [game structures](http://dx.doi.org/10.1016/j.jcss.2011.08.007),
-[automaton formulae](http://dx.doi.org/10.1007/978-3-662-10778-2), and
+[automaton formulas](http://dx.doi.org/10.1007/978-3-662-10778-2), and
 the design of [`tulip.spec.form.GRSpec`](
   https://github.com/tulip-control/tulip-control/blob/1c1ef990cfb042ec4984c9048dcd5c3644d70949/tulip/spec/form.py#L260).
 In addition, variables are defined in the attributed `vars`. The variables in
@@ -165,7 +165,7 @@ Humans are not intended to define variables in this way, because it is
 cumbersome. Instead, [convert](#Converting-labeled-graphs-to-symbolic-automata)
 a semi-symbolic automaton, or use `bitvector.make_table`.
 
-By indexing formulae by player, an `Automaton` can serve also as a multi-player
+By indexing formulas by player, an `Automaton` can serve also as a multi-player
 game structure.
 
 
@@ -173,12 +173,12 @@ game structure.
 
 A symbolic automaton provides a “context” for symbolic computation, in the
 sense of a [symbol table](https://en.wikipedia.org/wiki/Symbol_table),
-together with a translator from first-order formulae (user friendly) to BDDs.
+together with a translator from first-order formulas (user friendly) to BDDs.
 This establishes a more direct route between a human and the symbolic
 representation.
 
 Use the method `Automaton.build` to generated primed variables, a variable
-order, initialize `Automaton.bdd`, bitblast the formulae attributes, and
+order, initialize `Automaton.bdd`, bitblast the formulas attributes, and
 populate the convenience attributes (detailed in `symbolic.Automaton.__doc__`).
 Using the earlier example:
 
@@ -215,7 +215,7 @@ SYS WIN
 ```
 
 These integers are (negated) BDD nodes in `Automaton.bdd`.
-Notice that the same data structure is re-used with different formulae
+Notice that the same data structure is re-used with different formulas
 representation (strings vs BDDs).
 
 One of the most useful methods is `add_expr`. It takes a first-order formula
@@ -252,7 +252,7 @@ why they are noted in the table.
 
 A `TransitionSystem` can be converted to a `symbolic.Automaton` by invoking
 the function `symbolic.logicizer.graph_to_logic`. The result is a description
-of the same labeled graph, but entirely with formulae. An integer variable
+of the same labeled graph, but entirely with formulas. An integer variable
 (named as desired) is added to represent the nodes that were enumerated in
 the `TransitionSystem`.
 
@@ -324,11 +324,11 @@ A comparison of detailed and bitblasted tables:
 ## Bitblasting
 
 The function `logic.bitvector.bitblast` translates (unquantified) first-order
-logic (FOL) formulae to bitvector logic. The table of variables is refined
+logic (FOL) formulas to bitvector logic. The table of variables is refined
 from detailed to bitblasted by `logic.bitvector.bitblast_table`.
 The bitblaster returns also some safety constraints:
 
-- formulae that constrain saturating integers
+- formulas that constrain saturating integers
   (derived from `'type'` and `'dom'`)
 
 - initial conditions (derived from `'init'`)
@@ -375,8 +375,8 @@ variables.
 
 Besides integer and Boolean variables defined in the bitblasted symbol table,
 the `bitvector.bitblast` recognizes also bits of bitfields associated with
-integers in the symbol table. This allows mixing first-order formulae with
-propositional formulae that either:
+integers in the symbol table. This allows mixing first-order formulas with
+propositional formulas that either:
 
 - are obtained by calling `BDD.to_expr`, to represent the result of some BDD
   operation (e.g., quantification can conveniently be performed with BDDs)
@@ -391,7 +391,7 @@ The workflow for compiling a symbol table is shown below.
 The functions that prime and order variables are described in the
 [BDD section](
   #BDDizing).
-The resulting bitvector formulae are in [SlugsIn](
+The resulting bitvector formulas are in [SlugsIn](
   https://github.com/VerifiableRobotics/slugs/blob/master/doc/input_formats.md#slugsin)
 syntax, which uses prefix notation. Parsing and syntax is discussed in the
 [parsing section](
@@ -453,11 +453,11 @@ using [temporal testers](http://doi.org/10.1007/BFb0055036) in
 
 If the result belongs syntactically to the [GR(1) fragment](http://dx.doi.org/10.1007/11609773_24), then `gr1.ltl_to_automaton`
 can be used to split the temporal formula into an initial condition, an action,
-and a weak fairness formulae. These are stored in a `symbolic.Automaton`.
+and a weak fairness formulas. These are stored in a `symbolic.Automaton`.
 
-The only temporal operator in the resulting formulae is “next”. Using the
+The only temporal operator in the resulting formulas is “next”. Using the
 `bitvector` module, these can be bitblasted, producing propositional logic (PL)
-formulae in SlugsIn syntax. These can be:
+formulas in SlugsIn syntax. These can be:
 
 - parsed with the `symbolic.bdd.Parser` and:
 	- converted to `BDD`s with `bdd.BDDNodes`

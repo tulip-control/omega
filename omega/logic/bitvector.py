@@ -142,7 +142,7 @@ def type_invariants(table):
 
 
 def _init_to_logic(var, d):
-    """Return logic formulae for initial condition."""
+    """Return logic formulas for initial condition."""
     if d['type'] == 'bool':
         op = '<=>'
     else:
@@ -1033,7 +1033,7 @@ def ite_function(a, b, c, start):
 def ite_connective(a, b, c):
     """Return memory buffer for ternary conditional operator.
 
-    Note that economizes by avoiding rewrite formulae.
+    Note that economizes by avoiding rewrite formulas.
     In Boolean context, the arguments a, b, c will always
     be variables of type bit, or Boolean constants,
     or the result of expressions as a memory buffer.

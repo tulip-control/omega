@@ -452,7 +452,7 @@ class Nodes(_Nodes):
                 assert not kw.get('prime'), kw
                 x = int(self.operands[0].value)
                 assert x != 0, x
-                return str(x)
+                return '@' + str(x)
             if self.operator != 'ite':
                 return super(Nodes.Operator, self).flatten(
                     mem=mem, *arg, **kw)

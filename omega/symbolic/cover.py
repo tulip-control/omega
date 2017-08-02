@@ -387,8 +387,8 @@ def _floor(p_is_signature, p_is_prime,
     q = ', '.join(iter(p_to_q.values()))
     u = ', '.join(iter(p_to_u.values()))
     s = (
-        '\E {q}:  @{q_is_prime} /\ @{p_like_q} /\ '
-        '    \A {u}:  @{u_like_q} => @{p_leq_u}').format(
+        '\E {q}:  {q_is_prime} /\ {p_like_q} /\ '
+        '    \A {u}:  {u_like_q} => {p_leq_u}').format(
             q=q,
             u=u,
             q_is_prime=q_is_prime,
@@ -425,8 +425,8 @@ def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     uvars = ', '.join(bab.u_vars)
     s = (
         '\A {uvars}:  '
-        '    (@{sig_u} /\ @{u_leq_q}) '
-        '        => @{u_leq_p}').format(
+        '    ({sig_u} /\ {u_leq_q}) '
+        '        => {u_leq_p}').format(
         uvars=uvars,
         sig_u=u_is_signature,
         u_leq_q=u_leq_q,
@@ -453,8 +453,8 @@ def _maxima(u, bab, fol):
     '''
     q = ', '.join(bab.q_vars)
     s = (
-        '@{u} /\ '
-        '\A {q}:  (@{v} /\ @{p_leq_q}) => ({p_eq_q})').format(
+        '{u} /\ '
+        '\A {q}:  ({v} /\ {p_leq_q}) => ({p_eq_q})').format(
             u=u,
             v=v,
             p_leq_q=bab.p_leq_q,
@@ -683,15 +683,15 @@ def essential_orthotopes(f, px, qx, fol, xvars):
     x = ', '.join(px)
     q = ', '.join(_collect_parameters(qx))
     s = (
-        '@{p_is_prime} /\ '
+        '{p_is_prime} /\ '
         r'\E {x}:  ( '
-        '    @{f} /\ '
+        '    {f} /\ '
         r'    \A {q}:  ( '
         '        ( '
-        '            @{q_is_prime} /\ '
-        '            ~ @{p_eq_q} '
+        '            {q_is_prime} /\ '
+        '            ~ {p_eq_q} '
         '        ) '
-        '        => ~ @{x_in_q}'
+        '        => ~ {x_in_q}'
         '    )'
         ')').format(
             p_is_prime=p_is_prime,
@@ -722,10 +722,10 @@ def prime_orthotopes(
     '''
     q = ', '.join(_collect_parameters(qx))
     s = (
-        '@{p_is_implicant} /\ '
+        '{p_is_implicant} /\ '
         r'\A {q}:  ( '
-        '     (@{q_is_implicant} /\ @{p_leq_q})'
-        '     => @{p_eq_q}'
+        '     ({q_is_implicant} /\ {p_leq_q})'
+        '     => {p_eq_q}'
         ')').format(
             p_is_implicant=p_is_implicant,
             q_is_implicant=q_is_implicant,
@@ -749,8 +749,8 @@ def _implicant_orthotopes(f, abx, fol, xvars):
     h = _orthotope_contains_x(abx, fol)
     nonempty = _orthotope_nonempty(abx, fol)
     s = (
-        '@{nonempty} /\ '
-        '\A {x}:  @{h} => @{f} ').format(
+        '{nonempty} /\ '
+        '\A {x}:  {h} => {f} ').format(
             x=x, h=h, f=f, nonempty=nonempty)
     r = fol.add_expr(s)
     log.info('==== implicant orthotopes ====')

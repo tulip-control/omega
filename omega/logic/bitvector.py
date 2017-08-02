@@ -453,6 +453,16 @@ class Nodes(_Nodes):
                 x = int(self.operands[0].value)
                 assert x != 0, x
                 return '@' + str(x)
+            if self.operator == '/\\':
+                ops = [
+                    u.flatten(mem=mem, *arg, **kw)
+                    for u in self.operands]
+                return stx.conj_prefix(ops)
+            if self.operator == r'\/':
+                ops = [
+                    u.flatten(mem=mem, *arg, **kw)
+                    for u in self.operands]
+                return stx.disj_prefix(ops)
             if self.operator != 'ite':
                 return super(Nodes.Operator, self).flatten(
                     mem=mem, *arg, **kw)

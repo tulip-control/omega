@@ -386,7 +386,7 @@ class Parser(astutils.Parser):
 
     def p_string(self, p):
         """expr : DQUOTES NAME DQUOTES"""
-        p[0] = self.nodes.Str(p[2])
+        p[0] = self.nodes.Str('"' + p[2] + '"')
 
 
 def _rewrite_tables(outputdir='./'):

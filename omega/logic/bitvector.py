@@ -535,6 +535,9 @@ class Nodes(_Nodes):
                 # BDD ?
                 if hasattr(u, 'var'):
                     return str(u)
+                # list at arithmetic level ?
+                if isinstance(u, list):
+                    return u
                 # ast
                 return u.flatten(
                     prime=prime, mem=mem, t=t, defs=defs,

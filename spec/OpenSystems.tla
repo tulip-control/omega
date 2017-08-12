@@ -7,6 +7,9 @@ MayUnstep(b) == /\ b \in BOOLEAN
 (* Variable b starts in BOOLEAN and becomes FALSE with at most one change. *)
 Unstep(b) == /\ MayUnstep(b)
              /\ <>(b = FALSE)
+(* Variable b starts TRUE and changes once to FALSE. *)
+MustUnstep(b) == /\ b = TRUE
+                 /\ Unstep(b)
 
 (* The TLA+ operator -+-> expressed within the logic [1, p.337].
 [1] Leslie Lamport, "Specifying systems", Addison-Wesley, 2002

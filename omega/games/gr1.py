@@ -222,8 +222,7 @@ def _cycle_inside(z, hold, aut):
     """Cycling through goals, while staying in `hold`."""
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
-    cox_z = fx.step(env_action, sys_action,
-                           z, aut)
+    cox_z = fx.step(env_action, sys_action, z, aut)
     g = cox_z | hold
     y = aut.true
     yold = None

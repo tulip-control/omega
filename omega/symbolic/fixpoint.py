@@ -112,15 +112,15 @@ def preimage(trans, target, qvars, automaton, forall):
         qvars, automaton.bdd, forall)
 
 
-def descendants(source, constrain, a, future=True):
+def descendants(source, constrain, aut, future=True):
     """Existential descendants of `source` in `constrain`."""
     if future:
-        q = ee_image(source, a)
+        q = ee_image(source, aut)
     else:
         q = source
     qold = None
     while q != qold:
-        post = ee_image(q, a)
+        post = ee_image(q, aut)
         qold = q
         q |= post
         q &= constrain

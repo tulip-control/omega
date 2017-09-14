@@ -43,8 +43,8 @@ def solve_streett_game(aut, rank=1):
     aut.assert_consistent(built=True)
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     z = aut.true
     zold = None
     while z != zold:
@@ -64,8 +64,8 @@ def solve_streett_game(aut, rank=1):
 
 def _attractor_under_assumptions(goal, aut):
     """Targeting `goal`, under unconditional assumptions."""
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     xjk = list()
     yj = list()
     y = aut.false
@@ -109,10 +109,10 @@ def make_streett_transducer(z, yij, xijk, aut):
     t.plus_one = aut.plus_one
     t.vars = dvars
     t = t.build()
-    (env_init,) = aut.init['env']
-    (sys_init,) = aut.init['sys']
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_init = aut.init['env']
+    sys_init = aut.init['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     holds = aut.win['<>[]']
     goals = aut.win['[]<>']
     # compute strategy from iterates
@@ -220,8 +220,8 @@ def solve_rabin_game(aut, rank=1):
 
 def _cycle_inside(z, hold, aut):
     """Cycling through goals, while staying in `hold`."""
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     cox_z = fx.step(env_action, sys_action, z, aut)
     g = cox_z | hold
     y = aut.true
@@ -239,8 +239,8 @@ def _cycle_inside(z, hold, aut):
 
 
 def _attractor_inside(inside, goal, aut):
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     xr = list()
     x = aut.false
     xold = None
@@ -278,10 +278,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     t.plus_one = aut.plus_one
     t.vars = dvars
     t = t.build()
-    (env_init,) = aut.init['env']
-    (sys_init,) = aut.init['sys']
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_init = aut.init['env']
+    sys_init = aut.init['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     goals = aut.win['[]<>']
     t.action['env'] = [env_action]
     # compute strategy from iterates
@@ -404,9 +404,9 @@ def is_realizable(z, aut):
     @param z: bdd node
     @param type: compiled `symbolic.Automaton`
     """
-    (env_init,) = aut.init['env']
-    (sys_init,) = aut.init['sys']
-    (sys_action,) = aut.action['sys']
+    env_init = aut.init['env']
+    sys_init = aut.init['sys']
+    sys_action = aut.action['sys']
     evars = aut.evars
     uvars = aut.uvars
     # common errors
@@ -496,8 +496,8 @@ def _controllable_action(target, aut):
 
     Compared to CPre, this has "half" the quantification.
     """
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     u = bdd.rename(target, aut.prime)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
@@ -555,8 +555,8 @@ def _make_init(internal_init, win, t, aut):
 
 def _warn_moore_mealy(aut):
     """Warn the user if they define actions suspect of error."""
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     moore = aut.moore
     env_support = bdd.support(env_action)
     sys_support = bdd.support(sys_action)

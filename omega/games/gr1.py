@@ -22,6 +22,7 @@ Robert Konighofer
 #
 import logging
 import copy
+from omega.symbolic import bdd as sym_bdd
 from omega.symbolic.bdd import is_state_predicate
 from omega.symbolic import fixpoint as fx
 from omega.symbolic import fol as _fol
@@ -488,7 +489,7 @@ def _controllable_action(target, aut):
     """
     env_action = aut.action['env']
     sys_action = aut.action['sys']
-    u = bdd.rename(target, aut.prime)
+    u = sym_bdd.prime(target, aut)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
         u |= ~ env_action

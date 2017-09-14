@@ -49,8 +49,8 @@ def trap(env_action, sys_action, safe, aut,
     @rtype: BDD node
     """
     logger.info('++ cinv')
-    q = aut.bdd.true  # if `unless is not None`,
-                      # then `q = safe` is wrong
+    q = aut.true  # if `unless is not None`,
+                  # then `q = safe` is wrong
     qold = None
     while q != qold:
         qold = q

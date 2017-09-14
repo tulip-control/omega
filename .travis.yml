@@ -20,7 +20,7 @@ script:
   - cd ..
   # install `dd.cudd`
   - pip uninstall --yes dd
-  - pip download --no-dependencies dd>=0.5.1
+  - pip download --no-dependencies dd>=0.5.2
   - tar xzf dd-*.tar.gz
   - cd dd-*/
   - python setup.py install --fetch --cudd

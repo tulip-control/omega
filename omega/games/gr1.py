@@ -503,22 +503,20 @@ def _controllable_action(target, aut):
     return u
 
 
-def _make_init(internal_init, win, t, aut):
+def _make_init(internal_init, win, aut):
     """Return initial conditions for implementation.
 
     Depending on `aut.qinit`,
-    synthesize the initial condition `t.env_init`
+    synthesize the initial condition `aut.env_init`
     using the winning states `win`.
 
     @param internal_init: initial condition for
         internal variables.
     """
-    evars = t.evars
-    uvars = t.uvars
     qinit = aut.qinit
-    t.qinit = '\A \A'  # we synthesize `env_init` below
-    (a,) = aut.init['env']
-    (b,) = aut.init['sys']
+    # impl qinit = '\A \A'  # we synthesize `env_init` below
+    a = aut.init['env']
+    b = aut.init['sys']
     u = b & internal_init
     sys_init = u & win
     # setup fol context
@@ -539,8 +537,8 @@ def _make_init(internal_init, win, t, aut):
                 qinit=qinit))
     assert env_init != aut.false
     assert sys_init != aut.false
-    t.init['env'] = [env_init]
-    t.init['sys'] = [sys_init]
+    aut.init['impl_env'] = env_init
+    aut.init['impl_sys'] = sys_init
 
 
 def _warn_moore_mealy(aut):

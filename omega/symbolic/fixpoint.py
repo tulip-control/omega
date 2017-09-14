@@ -9,6 +9,7 @@
 #
 import logging
 from dd import bdd as _bdd
+from omega.symbolic.bdd import is_state_predicate
 
 
 SYS = 'sys'  # default player for existential image
@@ -24,14 +25,7 @@ def attractor(env_action, sys_action, target, aut,
     @param inside: remain in this set
     """
     logger.info('++ attractor')
-    # no free primed vars must remain after quantification
-    # support = a.bdd.support(a.action)
-    # support = {a.bdd.vars[k] for k in support}
-    # primed_support = set(k for k in map(a.prime.get, support)
-    # if k is not None)
-    # unquantified = primed_support.difference(
-    # a.uvars).difference(a.evars)
-    # assert not unquantified, unquantified
+    assert is_state_predicate(target), aut.support(target)
     # ancestors
     q = target
     qold = None
@@ -41,6 +35,7 @@ def attractor(env_action, sys_action, target, aut,
         q |= pred
         if inside is not None:
             q &= inside
+    assert is_state_predicate(q), aut.support(q)
     logger.info('-- attractor')
     return q
 

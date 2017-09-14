@@ -636,7 +636,7 @@ def _assert_support_moore(aut):
         return
     u = aut.action['impl']
     s = aut.bdd.support(u)
-    upvars_in_support = s.intersection(aut.upvars)
+    upvars_in_support = s.intersection(aut.varlist["env'"])
     assert not upvars_in_support, upvars_in_support
 
 

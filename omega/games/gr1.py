@@ -376,7 +376,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     if not aut.plus_one:
         u |= ~ env_action
         if aut.moore:
-            u = aut.forall(aut.upvars, u)
+            u = aut.forall(aut.varlist["env'"], u)
     assert u != aut.false
     aut.action['impl'] = u
     symbolic._assert_support_moore(t)
@@ -397,8 +397,8 @@ def is_realizable(z, aut):
     env_init = aut.init['env']
     sys_init = aut.init['sys']
     sys_action = aut.action['sys']
-    evars = aut.evars
-    uvars = aut.uvars
+    evars = aut.varlist['sys']
+    uvars = aut.varlist['env']
     # common errors
     assert env_init != aut.false, 'vacuous spec'
     # realizable ?
@@ -409,7 +409,7 @@ def is_realizable(z, aut):
             print(
                 'WARNING: `qinit = "\A \A"` but '
                 'not `EnvInit => SysInit`')
-        w = bdd.exist(aut.epvars, sys_action)
+        w = aut.exist(aut.varlist["sys'"], sys_action)
         w |= ~ env_init
         if w != aut.true:
             print(
@@ -430,7 +430,7 @@ def is_realizable(z, aut):
         #              /\ z
         u = sys_init & z
         u &= env_init
-        u = bdd.exist(aut.uevars, u)
+        u = aut.exist(evars + uvars, u)
         r = (u == aut.true)
         msg = (
             'no winning state satisfies:\n'
@@ -441,12 +441,12 @@ def is_realizable(z, aut):
         #    (\E sys: env_init) => /\ env_init
         #                          /\ sys_init
         #                          /\ z
-        a = bdd.exist(evars, env_init)
+        a = aut.exist(evars, env_init)
         u = sys_init & z
         u &= env_init
         u |= ~ a
-        u = bdd.exist(evars, u)
-        u = bdd.forall(uvars, u)
+        u = aut.exist(evars, u)
+        u = aut.forall(uvars, u)
         r = (u == aut.true)
         msg = (
             'cannot for each x pick a y:\n'
@@ -459,12 +459,12 @@ def is_realizable(z, aut):
         #    (\E sys: env_init) => /\ env_init
         #                          /\ sys_init
         #                          /\ z
-        a = bdd.exist(evars, env_init)
+        a = aut.exist(evars, env_init)
         u = sys_init & z
         u &= env_init
         u |= ~ a
-        u = bdd.forall(uvars, u)
-        u = bdd.exist(evars, u)
+        u = aut.forall(uvars, u)
+        u = aut.exist(evars, u)
         r = (u == aut.true)
         msg = (
             'cannot pick y that works for all x:\n'
@@ -499,7 +499,7 @@ def _controllable_action(target, aut):
         u |= ~ env_action
     if aut.moore:
         # \A uvars'
-        u = bdd.forall(aut.upvars, u)
+        u = aut.forall(aut.varlist["env'"], u)
     return u
 
 
@@ -528,17 +528,17 @@ def _make_init(internal_init, win, t, aut):
     if qinit in ('\A \A', '\A \E', '\E \E'):
         env_init = a & sys_init
     elif qinit == '\E \A':
-        env_bound = bdd.exist(aut.evars, a)
+        env_bound = aut.exist(aut.varlist['sys'], a)
         u = a & sys_init
         u |= ~ env_bound
-        sys_bound = bdd.forall(aut.uvars, u)
+        sys_bound = aut.forall(aut.varlist['env'], u)
         env_init = env_bound & sys_bound
     else:
         raise ValueError(
             'unknown `qinit` value "{qinit}"'.format(
                 qinit=qinit))
-    assert env_init != bdd.false
-    assert sys_init != bdd.false
+    assert env_init != aut.false
+    assert sys_init != aut.false
     t.init['env'] = [env_init]
     t.init['sys'] = [sys_init]
 
@@ -548,10 +548,12 @@ def _warn_moore_mealy(aut):
     env_action = aut.action['env']
     sys_action = aut.action['sys']
     moore = aut.moore
-    env_support = bdd.support(env_action)
-    sys_support = bdd.support(sys_action)
-    env_depends_on_primed_sys = env_support.intersection(aut.epvars)
-    sys_depends_on_primed_env = sys_support.intersection(aut.upvars)
+    env_support = aut.support(env_action)
+    sys_support = aut.support(sys_action)
+    env_depends_on_primed_sys = env_support.intersection(
+        aut.varlist["sys'"])
+    sys_depends_on_primed_env = sys_support.intersection(
+        aut.varlist["env'"])
     r = True
     if moore and sys_depends_on_primed_env:
         r = False

@@ -104,7 +104,7 @@ def test_ee_image():
 
 
 def test_cpre_moore_plus_one():
-    cpre = fx.ue_preimage
+    cpre = fx.step
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
@@ -209,7 +209,7 @@ def test_cpre_moore_plus_one():
 
 
 def test_cpre_moore_circular():
-    cpre = fx.ue_preimage
+    cpre = fx.step
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
@@ -314,7 +314,7 @@ def test_cpre_moore_circular():
 
 
 def test_cpre_mealy_plus_one():
-    cpre = fx.ue_preimage
+    cpre = fx.step
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
@@ -443,7 +443,7 @@ def test_cpre_mealy_plus_one():
 
 
 def test_cpre_mealy_circular():
-    cpre = fx.ue_preimage
+    cpre = fx.step
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
@@ -470,7 +470,7 @@ def test_cpre_mealy_circular():
     assert u == bdd.false
 
 
-def test_ue_preimage():
+def test_step():
     a = symbolic.Automaton()
     a.vars = dict(x=dict(type='bool', owner='env'),
                   y=dict(type='bool', owner='sys'))
@@ -483,13 +483,13 @@ def test_ue_preimage():
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     target = aut.add_expr('y')
-    u = fx.ue_preimage(env_action, sys_action, target, aut)
+    u = fx.step(env_action, sys_action, target, aut)
     assert u == aut.bdd.false, aut.bdd.to_expr(u)
     aut.epvars = list(aut.uepvars)
     aut.upvars = list()
-    u = fx.ue_preimage(env_action, sys_action, target, aut)
+    u = fx.step(env_action, sys_action, target, aut)
     assert u == aut.bdd.true, aut.bdd.to_expr(u)
 
 
 if __name__ == '__main__':
-    test_ue_preimage()
+    test_step()

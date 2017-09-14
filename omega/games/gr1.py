@@ -95,20 +95,14 @@ def make_streett_transducer(z, yij, xijk, aut):
     winning = z
     assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)
-    # add goal counter var
-    c = '_goal'
-    dvars = copy.deepcopy(aut.vars)
+    # declare goal counter var
     n_goals = len(aut.win['[]<>'])
-    dvars[c] = dict(
-        type='saturating',
-        dom=(0, n_goals - 1),
-        owner='sys')
+    c = '_goal'
+    c_max = n_goals - 1
+    vrs = {c: (0, c_max)}
+    aut.declare_variables(**vrs)
+    aut.varlist['sys'].append(c)
     # compile transducer with refined shared BDD
-    t = symbolic.Automaton()
-    t.moore = aut.moore
-    t.plus_one = aut.plus_one
-    t.vars = dvars
-    t = t.build()
     env_init = aut.init['env']
     sys_init = aut.init['sys']
     env_action = aut.action['env']
@@ -165,23 +159,23 @@ def make_streett_transducer(z, yij, xijk, aut):
     u = rho_1 | rho_2
     u |= rho_3
     # counter `c` limits
-    u &= t.action['sys'][0]
+    s = '{c} \in 0..{n}'.format(c=c, n=c_max)
+    u &= aut.add_expr(s)
     # `sys_action` is already in the `\rho`
     # next is "useful" only if `env_action` depends on `y'`
     if not aut.plus_one:
         u |= ~ env_action
         if aut.moore:
-            u = bdd.forall(aut.upvars, u)
-    assert u != bdd.false
-    t.action['env'] = [env_action]
-    t.action['sys'] = [u]
-    symbolic._assert_support_moore(t)
+            u = aut.forall(aut.varlist["env'"], u)
+    assert u != aut.false
+    aut.action['impl'] = u
+    symbolic._assert_support_moore(aut)
     # initial condition for counter
     # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
-    count = t.add_expr(s)
-    _make_init(count, winning, t, aut)
-    return t
+    count = aut.add_expr(s)
+    _make_init(count, winning, aut)
+    return aut.action['impl']
 
 
 def solve_rabin_game(aut, rank=1):
@@ -270,20 +264,15 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     c = '_goal'
     n_w = n_holds - 1 + 1  # last value used as "none"
     n_c = n_goals - 1
-    dvars[w] = dict(type='saturating', dom=(0, n_w), owner='sys')
-    dvars[c] = dict(type='saturating', dom=(0, n_c), owner='sys')
+    vrs = {w: (0, n_w), c: (0, n_c)}
+    aut.declare_variables(**vrs)
+    aut.varlist['sys'].extend([w, c])
     # compile
-    t = symbolic.Automaton()
-    t.moore = aut.moore
-    t.plus_one = aut.plus_one
-    t.vars = dvars
-    t = t.build()
     env_init = aut.init['env']
     sys_init = aut.init['sys']
     env_action = aut.action['env']
     sys_action = aut.action['sys']
     goals = aut.win['[]<>']
-    t.action['env'] = [env_action]
     # compute strategy from iterates
     # \rho_1: descent in persistence basin
     s = "({c}' = {c}) & ({w}' = {none})".format(
@@ -381,21 +370,22 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u |= rho_3
     u |= rho_4
     # counter limits
-    u &= t.action['sys'][0]
+    s = '({w} \in 0..{n_w}) /\ ({c} \in 0..{n_c})'.format(
+        w=w, n_w=n_w, c=c, n_c=n_c)
+    u &= aut.add_expr(s)
     if not aut.plus_one:
         u |= ~ env_action
         if aut.moore:
-            u = bdd.forall(aut.upvars, u)
-    assert u != bdd.false
-    t.action['env'] = [env_action]
-    t.action['sys'] = [u]
+            u = aut.forall(aut.upvars, u)
+    assert u != aut.false
+    aut.action['impl'] = u
     symbolic._assert_support_moore(t)
     # initial condition for counter
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
-    count = t.add_expr(s)
-    _make_init(count, winning, t, aut)
-    return t
+    count = aut.add_expr(s)
+    _make_init(count, winning, aut)
+    return aut.action['impl']
 
 
 def is_realizable(z, aut):

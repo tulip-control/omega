@@ -634,7 +634,7 @@ def _assert_support_moore(aut):
     """Raise `AssertionError` if Moore that depends on `env'`."""
     if not aut.moore:
         return
-    (u,) = aut.action['sys']
+    u = aut.action['impl']
     s = aut.bdd.support(u)
     upvars_in_support = s.intersection(aut.upvars)
     assert not upvars_in_support, upvars_in_support

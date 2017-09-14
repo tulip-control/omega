@@ -127,13 +127,10 @@ def descendants(source, constrain, aut, future=True):
     return q
 
 
-def ee_image(source, a):
+def ee_image(source, aut):
     """Existential image."""
-    u = a.action[SYS][0]
-    v = source
-    qvars = a.uevars
-    bdd = a.bdd
-    u &= v
-    u = bdd.exist(qvars, u)
-    u = bdd.rename(u, a.unprime)
+    u = aut.action[SYS]
+    qvars = aut.varlist['env'] + aut.varlist['sys']
+    u = aut.exist(qvars, u & source)
+    u = sym_bdd.unprime(u, aut)
     return u

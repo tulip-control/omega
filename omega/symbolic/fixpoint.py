@@ -49,6 +49,7 @@ def trap(env_action, sys_action, safe, aut,
     @rtype: BDD node
     """
     logger.info('++ cinv')
+    assert is_state_predicate(safe), aut.support(safe)
     q = aut.true  # if `unless is not None`,
                   # then `q = safe` is wrong
     qold = None
@@ -58,6 +59,7 @@ def trap(env_action, sys_action, safe, aut,
         q = safe & pre
         if unless is not None:
             q |= unless
+    assert is_state_predicate(q), aut.support(q)
     logger.info('-- cinv')
     return q
 

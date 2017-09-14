@@ -50,7 +50,7 @@ def solve_streett_game(aut, rank=1):
     zold = None
     while z != zold:
         zold = z
-        cox_z = fx.ue_preimage(env_action, sys_action, z, aut)
+        cox_z = fx.step(env_action, sys_action, z, aut)
         xijk = list()
         yij = list()
         for goal in aut.win['[]<>']:
@@ -74,7 +74,7 @@ def _attractor_under_assumptions(goal, aut):
     yold = None
     while y != yold:
         yold = y
-        cox_y = fx.ue_preimage(env_action, sys_action, y, aut)
+        cox_y = fx.step(env_action, sys_action, y, aut)
         unless = cox_y | goal
         xk = list()
         for safe in aut.win['<>[]']:
@@ -228,15 +228,14 @@ def _cycle_inside(z, hold, aut):
     bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
-    cox_z = fx.ue_preimage(env_action, sys_action,
+    cox_z = fx.step(env_action, sys_action,
                            z, aut)
     g = cox_z | hold
     y = bdd.true
     yold = None
     while y != yold:
         yold = y
-        cox_y = fx.ue_preimage(env_action, sys_action,
-                               y, aut)
+        cox_y = fx.step(env_action, sys_action, y, aut)
         inside = cox_y & g
         xjr = list()
         for goal in aut.win['[]<>']:
@@ -255,8 +254,7 @@ def _attractor_inside(inside, goal, aut):
     xold = None
     while x != xold:
         xold = x
-        cox_x = fx.ue_preimage(
-            env_action, sys_action, x, aut)
+        cox_x = fx.step(env_action, sys_action, x, aut)
         x = cox_x | goal
         x &= inside
         x |= xold
@@ -315,8 +313,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     rho_4 = bdd.false
     basin = bdd.false
     for z, yi, xijr in zip(zk, yki, xkijr):
-        cox_basin = fx.ue_preimage(env_action, sys_action,
-                                   basin, t)
+        cox_basin = fx.step(env_action, sys_action,
+                            basin, t)
         rim = z & ~ basin
         rim &= ~ cox_basin
         # rho_2: pick persistence set

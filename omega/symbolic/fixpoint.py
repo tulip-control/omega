@@ -19,7 +19,7 @@ def attractor(env_action, sys_action, target, aut,
               inside=None):
     """Return attractor for `target`.
 
-    Keyword args as `ue_preimage`.
+    Keyword args as `step`.
 
     @param inside: remain in this set
     """
@@ -37,7 +37,7 @@ def attractor(env_action, sys_action, target, aut,
     qold = None
     while q != qold:
         qold = q
-        pred = ue_preimage(env_action, sys_action, q, aut)
+        pred = step(env_action, sys_action, q, aut)
         q |= pred
         if inside is not None:
             q &= inside
@@ -59,7 +59,7 @@ def trap(env_action, sys_action, safe, aut,
     qold = None
     while q != qold:
         qold = q
-        pre = ue_preimage(env_action, sys_action, q, aut)
+        pre = step(env_action, sys_action, q, aut)
         q = safe & pre
         if unless is not None:
             q |= unless
@@ -67,7 +67,7 @@ def trap(env_action, sys_action, safe, aut,
     return q
 
 
-def ue_preimage(env_action, sys_action, target, aut):
+def step(env_action, sys_action, target, aut):
     r"""Return controllable predecessor set.
 
     Preimage with alternating quantification.

@@ -519,9 +519,6 @@ def _make_init(internal_init, win, aut):
     b = aut.init['sys']
     u = b & internal_init
     sys_init = u & win
-    # setup fol context
-    fol = _fol.Context()
-    fol.vars = symbolic._prime_and_order_table(t.vars)
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
         env_init = a & sys_init

@@ -45,7 +45,6 @@ def solve_streett_game(aut, rank=1):
     assert len(aut.win['[]<>']) > 0
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
-    bdd = aut.bdd
     z = aut.true
     zold = None
     while z != zold:
@@ -65,7 +64,6 @@ def solve_streett_game(aut, rank=1):
 
 def _attractor_under_assumptions(goal, aut):
     """Targeting `goal`, under unconditional assumptions."""
-    bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     xjk = list()
@@ -110,8 +108,6 @@ def make_streett_transducer(z, yij, xijk, aut):
     t.moore = aut.moore
     t.plus_one = aut.plus_one
     t.vars = dvars
-    bdd = aut.bdd
-    t.bdd = bdd
     t = t.build()
     (env_init,) = aut.init['env']
     (sys_init,) = aut.init['sys']
@@ -201,7 +197,6 @@ def solve_rabin_game(aut, rank=1):
     # TODO: can these assertions be removed elegantly ?
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
-    bdd = aut.bdd
     z = aut.false
     zold = None
     zk = list()
@@ -225,7 +220,6 @@ def solve_rabin_game(aut, rank=1):
 
 def _cycle_inside(z, hold, aut):
     """Cycling through goals, while staying in `hold`."""
-    bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     cox_z = fx.step(env_action, sys_action,
@@ -246,7 +240,6 @@ def _cycle_inside(z, hold, aut):
 
 
 def _attractor_inside(inside, goal, aut):
-    bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     xr = list()
@@ -285,8 +278,6 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     t.moore = aut.moore
     t.plus_one = aut.plus_one
     t.vars = dvars
-    bdd = aut.bdd
-    t.bdd = bdd
     t = t.build()
     (env_init,) = aut.init['env']
     (sys_init,) = aut.init['sys']
@@ -414,7 +405,6 @@ def is_realizable(z, aut):
     @param z: bdd node
     @param type: compiled `symbolic.Automaton`
     """
-    bdd = aut.bdd
     (env_init,) = aut.init['env']
     (sys_init,) = aut.init['sys']
     (sys_action,) = aut.action['sys']
@@ -507,7 +497,6 @@ def _controllable_action(target, aut):
 
     Compared to CPre, this has "half" the quantification.
     """
-    bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     u = bdd.rename(target, aut.prime)
@@ -535,7 +524,6 @@ def _make_init(internal_init, win, t, aut):
     @param internal_init: initial condition for
         internal variables.
     """
-    bdd = t.bdd
     evars = t.evars
     uvars = t.uvars
     qinit = aut.qinit
@@ -546,7 +534,6 @@ def _make_init(internal_init, win, t, aut):
     sys_init = u & win
     # setup fol context
     fol = _fol.Context()
-    fol.bdd = bdd
     fol.vars = symbolic._prime_and_order_table(t.vars)
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
@@ -569,7 +556,6 @@ def _make_init(internal_init, win, t, aut):
 
 def _warn_moore_mealy(aut):
     """Warn the user if they define actions suspect of error."""
-    bdd = aut.bdd
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     moore = aut.moore

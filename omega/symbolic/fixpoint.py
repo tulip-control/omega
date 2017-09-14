@@ -85,7 +85,6 @@ def step(env_action, sys_action, target, aut):
                       /\ target
     """
     # TODO: use efficient substitution
-    bdd = aut.bdd
     epvars = aut.epvars
     upvars = aut.upvars
     u = bdd.rename(target, aut.prime)
@@ -134,7 +133,6 @@ def ee_image(source, a):
     """Existential image."""
     u = a.action[SYS][0]
     v = source
-    assert u in a.bdd
     qvars = a.uevars
     bdd = a.bdd
     u &= v

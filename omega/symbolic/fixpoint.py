@@ -9,6 +9,7 @@
 #
 import logging
 from dd import bdd as _bdd
+from omega.symbolic import bdd as sym_bdd
 from omega.symbolic.bdd import is_state_predicate
 
 
@@ -70,8 +71,8 @@ def step(env_action, sys_action, target, aut):
     Preimage with alternating quantification.
     Quantifier order: If `aut.moore`:
 
-      - \E epvars: \A upvars, else
-      - \A upvars: \E epvars
+      - \E yp: \A xp, else
+      - \A xp: \E yp
 
     Implication causality: If `aut.plus_one`:
 
@@ -82,9 +83,9 @@ def step(env_action, sys_action, target, aut):
                       /\ target
     """
     # TODO: use efficient substitution
-    epvars = aut.epvars
-    upvars = aut.upvars
-    u = bdd.rename(target, aut.prime)
+    yp = aut.varlist["sys'"]
+    xp = aut.varlist["env'"]
+    u = sym_bdd.prime(target, aut)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
         u |= ~ env_action
@@ -94,13 +95,13 @@ def step(env_action, sys_action, target, aut):
         u &= sys_action
         u |= ~ env_action
     if aut.moore:
-        # \E evars': \A uvars'
-        u = bdd.forall(upvars, u)
-        u = bdd.exist(epvars, u)
+        # \E y': \A x'
+        u = aut.forall(xp, u)
+        u = aut.exist(yp, u)
     else:
-        # \A uvars': \E evars'
-        u = bdd.exist(epvars, u)
-        u = bdd.forall(upvars, u)
+        # \A x': \E y'
+        u = aut.exist(yp, u)
+        u = aut.forall(xp, u)
     return u
 
 

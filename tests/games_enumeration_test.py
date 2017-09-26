@@ -195,7 +195,7 @@ def test_forall_exist_init():
     varnames = set(a.vars)
     assert set(d0) == varnames, d0
     assert set(d1) == varnames, d1
-    # \A \E: for each `x`, pick some `y`
+    # \A \E:  for each `x`, pick some `y`
     assert d0['x'] == d0['y'], d0
     assert d1['x'] == d1['y'], d1
     assert d0['x'] != d1['x'], (d0, d1)

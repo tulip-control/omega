@@ -176,7 +176,7 @@ def _exist_init(g, aut, umap, keys):
 
 
 def _forall_exist_init(g, aut, umap, keys):
-    r"""Enumerate initial states with \A env: \E sys vars.
+    r"""Enumerate initial states with \A env:  \E sys vars.
 
     Note that each initial "state" is a class of
     initial states in ZF set theory.
@@ -202,7 +202,7 @@ def _forall_exist_init(g, aut, umap, keys):
 
 
 def _exist_forall_init(g, aut, umap, keys):
-    r"""Enumerate initial states with \E sys: \A env vars."""
+    r"""Enumerate initial states with \E sys:  \A env vars."""
     # this function can be merged with `_forall_exist_init`
     # by constraining initial sys assignments,
     # then enumerating the same way

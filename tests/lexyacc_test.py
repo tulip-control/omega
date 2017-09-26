@@ -6,7 +6,7 @@ parser = lexyacc.Parser()
 
 
 def test_quantifiers():
-    s = '\E x: True'
+    s = '\E x:  True'
     t = parser.parse(s)
     assert hasattr(t, 'operator'), t
     assert t.type == 'operator', t
@@ -19,7 +19,7 @@ def test_quantifiers():
     assert hasattr(e, 'type'), e
     assert e.type == 'bool', e.type
     assert e.value == 'True', e.value
-    s = '\E x, y: False'
+    s = '\E x, y:  False'
     t = parser.parse(s)
     assert hasattr(t, 'type'), t
     assert t.type == 'operator', t.type
@@ -33,10 +33,10 @@ def test_quantifiers():
     assert hasattr(e, 'type'), e
     assert e.type == 'bool', e.type
     assert e.value == 'False', e.value
-    s = '\A y: True'
+    s = '\A y:  True'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
-    s = '\A x, y, z: (x \/ ~ y) /\ z'
+    s = '\A x, y, z:  (x \/ ~ y) /\ z'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
     assert len(t.operands) == 2, t.operands

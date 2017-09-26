@@ -411,7 +411,7 @@ def is_realizable(z, aut):
         if w != aut.true:
             print(
                 "WARNING: `qinit = '\A \A'` but "
-                "not `EnvInit => (\E y': SysNext)`")
+                "not `EnvInit => (\E y':  SysNext)`")
         # \A env, sys:
         #    env_init => /\ sys_init
         #                /\ z
@@ -420,11 +420,11 @@ def is_realizable(z, aut):
         r = (u == aut.true)
         msg = (
             'some initial states are losing:\n'
-            '`\A x, y: EnvInit => (SysInit /\ Win)`')
+            '`\A x, y:  EnvInit => (SysInit /\ Win)`')
     elif qinit == '\E \E':
-        # \E env, sys: /\ env_init
-        #              /\ sys_init
-        #              /\ z
+        # \E env, sys:  /\ env_init
+        #               /\ sys_init
+        #               /\ z
         u = sys_init & z
         u &= env_init
         u = aut.exist(evars + uvars, u)
@@ -434,10 +434,10 @@ def is_realizable(z, aut):
             '`EnvInit /\ SysInit /\ Win`')
     elif qinit == '\A \E':
         assert not aut.moore
-        # \A env: \E sys:
-        #    (\E sys: env_init) => /\ env_init
-        #                          /\ sys_init
-        #                          /\ z
+        # \A env:  \E sys:
+        #    (\E sys:  env_init) => /\ env_init
+        #                           /\ sys_init
+        #                           /\ z
         a = aut.exist(evars, env_init)
         u = sys_init & z
         u &= env_init
@@ -447,15 +447,15 @@ def is_realizable(z, aut):
         r = (u == aut.true)
         msg = (
             'cannot for each x pick a y:\n'
-            '`\A x: \E y:\n'
-            '    (\E y: EnvInit) => /\ EnvInit\n'
-            '                       /\ SysInit\n'
-            '                       /\ Win`')
+            '`\A x:  \E y:\n'
+            '    (\E y:  EnvInit) => /\ EnvInit\n'
+            '                        /\ SysInit\n'
+            '                        /\ Win`')
     elif qinit == '\E \A':
-        # \E sys: \A env:
-        #    (\E sys: env_init) => /\ env_init
-        #                          /\ sys_init
-        #                          /\ z
+        # \E sys:  \A env:
+        #    (\E sys:  env_init) => /\ env_init
+        #                           /\ sys_init
+        #                           /\ z
         a = aut.exist(evars, env_init)
         u = sys_init & z
         u &= env_init
@@ -465,10 +465,10 @@ def is_realizable(z, aut):
         r = (u == aut.true)
         msg = (
             'cannot pick y that works for all x:\n'
-            '`\E y: \A x:\n'
-            '    (\E y: EnvInit) => /\ EnvInit\n'
-            '                       /\ SysInit\n'
-            '                       /\ Win`')
+            '`\E y:  \A x:\n'
+            '    (\E y:  EnvInit) => /\ EnvInit\n'
+            '                        /\ SysInit\n'
+            '                        /\ Win`')
     else:
         raise ValueError(
             'unknown `qinit` value "{qinit}"'.format(

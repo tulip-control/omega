@@ -71,8 +71,8 @@ def step(env_action, sys_action, target, aut):
     Preimage with alternating quantification.
     Quantifier order: If `aut.moore`:
 
-      - \E yp: \A xp, else
-      - \A xp: \E yp
+      - \E yp:  \A xp, else
+      - \A xp:  \E yp
 
     Implication causality: If `aut.plus_one`:
 
@@ -95,11 +95,11 @@ def step(env_action, sys_action, target, aut):
         u &= sys_action
         u |= ~ env_action
     if aut.moore:
-        # \E y': \A x'
+        # \E y':  \A x'
         u = aut.forall(xp, u)
         u = aut.exist(yp, u)
     else:
-        # \A x': \E y'
+        # \A x':  \E y'
         u = aut.exist(yp, u)
         u = aut.forall(xp, u)
     return u

@@ -455,7 +455,7 @@ def test_streett_with_liveness_assumption():
         "( (_goal = 0) & (_goal' = 0) ) & "
         "( (y != 2) & (y != 3) )")
     action_ = t.add_expr(s)
-    sat = list(t.bdd.sat_iter(action))
+    sat = list(t.bdd.pick_iter(action))
     sys_action = aut.action['sys'][0]
     sys_action = gr1._copy_bdd(sys_action, aut.bdd, t.bdd)
     u = t.bdd.apply('->', action, sys_action)

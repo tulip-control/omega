@@ -234,8 +234,8 @@ class Context(object):
             care_bits = bv.bit_table(care_vars, self.vars)
         else:
             care_bits = set()
-        for bit_assignment in self.bdd.sat_iter(
-                u, care_bits=care_bits):
+        for bit_assignment in self.bdd.pick_iter(
+                u, care_vars=care_bits):
             for d in enum._bitfields_to_int_iter(
                     bit_assignment, self.vars):
                 yield d

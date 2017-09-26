@@ -198,7 +198,7 @@ def _enumerate_bdd(
             'with care set = {c}').format(
                 u=u, c=care_set))
     c = list()
-    for dbit in bdd.sat_iter(u, care_bits):
+    for dbit in bdd.pick_iter(u, care_bits):
         dint = _bitfields_to_int_iter(dbit, t)
         c.extend(dint)
     return c

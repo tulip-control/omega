@@ -263,7 +263,6 @@ def _add_new_node(d, g, queue, umap, keys):
 
 def _add_to_visited(values, visited, aut):
     """Return BDD `visted` updated with assignment `values`."""
-    bdd = aut.bdd
     c = list()
     for var, value in values.items():
         t = aut.vars[var]['type']

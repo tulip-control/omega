@@ -28,24 +28,24 @@ log = logging.getLogger(__name__)
 def action_to_steps(aut, qinit='\A \A'):
     r"""Return enumerated graph with steps as edges.
 
-    Only `aut.env_init` considered.
-    The predicate `aut.sys_init` is ignored.
+    Only `aut.init['env']` considered.
+    The predicate `aut.init['sys']` is ignored.
 
     `qinit` has different meaning that in `omega.games.gr1`.
-    Nonetheless, for synthesized `env_init`,
+    Nonetheless, for synthesized `aut.init['env']`,
     the meaning of `qinit` here yields the expected result.
 
     Enumeration is done based on `qinit`:
 
-    - `'\A \A'`: pick all states that satisfy `env_init`
-    - `'\E \E'`: pick one state that satisfies `env_init`
-    - `'\A \E'`: for all states that satisfy `env_init`,
+    - `'\A \A'`: pick all states that satisfy `aut.init['env']`
+    - `'\E \E'`: pick one state that satisfies `aut.init['env']`
+    - `'\A \E'`: for all states that satisfy `aut.init['env']`,
       pick a unique state for each env state `x`
     - `'\E \A'`: pick a sys state `u` and enumerate all
-      states that satisfy `env_init` and `y = u`
+      states that satisfy `aut.init['env']` and `y = u`
     """
     assert set(aut.players) == {'env', 'sys'}, aut.players
-    assert aut.action['sys'][0] != bdd.false
+    assert aut.action['sys'] != aut.false
     fol = _fol.Context()
     fol.vars = symbolic._prime_and_order_table(aut.vars)
     # fol.add_vars(table)
@@ -66,12 +66,12 @@ def action_to_steps(aut, qinit='\A \A'):
         values = g.node[node]
         log.debug('at node: {d}'.format(d=values))
         assert set(values) == varnames, (values, aut.vars)
-        (u,) = aut.action['env']
+        u = aut.action['env']
         u = aut.let(values, u)
         # apply Mealy controller function
         env_iter = aut.pick_iter(
             u, care_vars=primed_vars['env'])
-        (u,) = aut.action['sys']
+        u = aut.action['sys']
         assert u != aut.false
         sys = aut.let(values, u)
         for next_env in env_iter:
@@ -147,7 +147,7 @@ def _init_search(g, fol, aut, umap, keys, qinit):
 
 def _forall_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
-    (env_init,) = aut.init['env']
+    env_init = aut.init['env']
     assert env_init != aut.false
     init_iter = aut.pick_iter(
         env_init, care_vars=aut.vars)
@@ -161,7 +161,7 @@ def _forall_init(g, fol, aut, umap, keys):
 
 def _exist_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
-    (env_init,) = aut.init['env']
+    env_init = aut.init['env']
     assert env_init != aut.false
     d = aut.pick(env_init, care_vars=aut.vars)
     visited = aut.false
@@ -177,7 +177,7 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     Note that each initial "state" is a class of
     initial states in ZF set theory.
     """
-    (env_init,) = aut.init['env']
+    env_init = aut.init['env']
     assert env_init != aut.false
     only_env_init = aut.exist(aut.control['sys'], env_init)
     env_iter = aut.pick_iter(
@@ -202,7 +202,7 @@ def _exist_forall_init(g, fol, aut, umap, keys):
     # this function can be merged with `_forall_exist_init`
     # by constraining initial sys assignments,
     # then enumerating the same way
-    (env_init,) = aut.init['env']
+    env_init = aut.init['env']
     assert env_init != aut.false
     # pick `sys_0` so that it work for all
     # env assignments alowed by `env_init`

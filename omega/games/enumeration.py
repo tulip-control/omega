@@ -46,7 +46,6 @@ def action_to_steps(aut, qinit='\A \A'):
     """
     assert set(aut.players) == {'env', 'sys'}, aut.players
     assert aut.action['sys'] != aut.false
-    fol = _fol.Context()
     fol.vars = symbolic._prime_and_order_table(aut.vars)
     # fol.add_vars(table)
     control, primed_vars = _split_vars_per_quantifier(
@@ -57,7 +56,7 @@ def action_to_steps(aut, qinit='\A \A'):
     keys = list(aut.vars)  # fix an order for tupling
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
-    queue, visited = _init_search(g, fol, aut, umap, keys, qinit)
+    queue, visited = _init_search(g, aut, umap, keys, qinit)
     varnames = set(aut.vars)
     symbolic._assert_support_moore(aut)
     # search
@@ -127,25 +126,25 @@ def _split_vars_per_quantifier(dvars, players):
     return control, primed_vars
 
 
-def _init_search(g, fol, aut, umap, keys, qinit):
+def _init_search(g, aut, umap, keys, qinit):
     """Enumerate initial states according to `qinit`."""
     # danger of blowup due to sparsity
     # implement enumerated equivalent to compare
     if qinit == '\A \E':
-        queue, visited = _forall_exist_init(g, fol, aut, umap, keys)
+        queue, visited = _forall_exist_init(g, aut, umap, keys)
     elif qinit == '\A \A':
-        queue, visited = _forall_init(g, fol, aut, umap, keys)
+        queue, visited = _forall_init(g, aut, umap, keys)
     elif qinit == '\E \E':
-        queue, visited = _exist_init(g, fol, aut, umap, keys)
+        queue, visited = _exist_init(g, aut, umap, keys)
     elif qinit == '\E \A':
-        queue, visited = _exist_forall_init(g, fol, aut, umap, keys)
+        queue, visited = _exist_forall_init(g, aut, umap, keys)
     else:
         raise Exception('unknown qinit "{q}"'.format(q=qinit))
     log.info('{n} initial nodes'.format(n=len(queue)))
     return queue, visited
 
 
-def _forall_init(g, fol, aut, umap, keys):
+def _forall_init(g, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
     env_init = aut.init['env']
     assert env_init != aut.false
@@ -159,7 +158,7 @@ def _forall_init(g, fol, aut, umap, keys):
     return queue, visited
 
 
-def _exist_init(g, fol, aut, umap, keys):
+def _exist_init(g, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
     env_init = aut.init['env']
     assert env_init != aut.false
@@ -171,7 +170,7 @@ def _exist_init(g, fol, aut, umap, keys):
     return queue, visited
 
 
-def _forall_exist_init(g, fol, aut, umap, keys):
+def _forall_exist_init(g, aut, umap, keys):
     r"""Enumerate initial states with \A env: \E sys vars.
 
     Note that each initial "state" is a class of
@@ -197,7 +196,7 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     return queue, visited
 
 
-def _exist_forall_init(g, fol, aut, umap, keys):
+def _exist_forall_init(g, aut, umap, keys):
     r"""Enumerate initial states with \E sys: \A env vars."""
     # this function can be merged with `_forall_exist_init`
     # by constraining initial sys assignments,

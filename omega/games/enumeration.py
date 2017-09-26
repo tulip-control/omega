@@ -112,16 +112,16 @@ def action_to_steps(aut, qinit='\A \A'):
 
 
 def _split_vars_per_quantifier(dvars, players):
-    """Return controllability `dict` and primed vars `dict`."""
-    control = {owner: set() for owner in players}
-    primed_vars = {owner: set() for owner in players}
-    for var, d in dvars.items():
-        pvar = stx.prime(var)
-        owner = d['owner']
-        assert owner in players, (owner, players)
-        control[owner].add(var)
-        primed_vars[owner].add(pvar)
-    return control, primed_vars
+    """Return controllability `dict` and primed vars `dict`.
+
+    @return: (control, primed_vars)
+
+        - control: `dict` that maps
+          player name -> set of vars
+
+        - primed_vars: `dict` that maps
+          player name -> set of primed vars
+    """
 
 
 def _init_search(g, aut, umap, keys, qinit):

@@ -217,7 +217,7 @@ class Context(object):
         assert set(care_vars) >= support, (care_vars, support)
         bits = _refine_vars(care_vars, self.vars)
         n = len(bits)
-        c = self.bdd.sat_len(u, n)
+        c = self.bdd.count(u, n)
         assert c == int(c), c
         assert c >= 0, c
         return c

@@ -46,7 +46,6 @@ def action_to_steps(aut, qinit='\A \A'):
     """
     assert set(aut.players) == {'env', 'sys'}, aut.players
     aut.assert_consistent(built=True)
-    bdd = aut.bdd
     assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()
     fol.bdd = bdd
@@ -76,6 +75,7 @@ def action_to_steps(aut, qinit='\A \A'):
             u, care_vars=primed_vars['env'])
         (u,) = aut.action['sys']
         sys = fol.let(values, u)
+        assert u != aut.false
         for next_env in env_iter:
             log.debug('next_env: {r}'.format(r=next_env))
             # no effect if `aut.moore`
@@ -86,21 +86,21 @@ def action_to_steps(aut, qinit='\A \A'):
             v = fol.let(env_values, visited)
             # prefer already visited nodes
             v &= u
-            if v == bdd.false:
+            if v == aut.false:
                 log.info('cannot remain in visited nodes')
                 v = u
                 remain = False
             else:
                 remain = True
-            assert v != bdd.false
+            assert v != aut.false
             sys_values = fol.pick(
                 v, care_vars=aut.control['sys'])
             d = dict(env_values)
             d.update(sys_values)
             # assert
             u = fol.let(d, visited)
-            assert u == bdd.true or u == bdd.false
-            assert remain == (u == bdd.true), remain
+            assert u == aut.true or u == aut.false
+            assert remain == (u == aut.true), remain
             # find or add node
             if remain:
                 next_node = _find_node(d, umap, keys)
@@ -151,12 +151,11 @@ def _forall_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
     aut.assert_consistent(built=True)
     assert fol.bdd is aut.bdd
-    bdd = fol.bdd
     (env_init,) = aut.init['env']
-    assert env_init != bdd.false
+    assert env_init != aut.false
     init_iter = fol.pick_iter(
         env_init, care_vars=aut.vars)
-    visited = bdd.false
+    visited = aut.false
     queue = list()
     for d in init_iter:
         _add_new_node(d, g, queue, umap, keys)
@@ -168,11 +167,10 @@ def _exist_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
     aut.assert_consistent(built=True)
     assert fol.bdd is aut.bdd
-    bdd = fol.bdd
     (env_init,) = aut.init['env']
-    assert env_init != bdd.false
+    assert env_init != aut.false
     d = fol.pick(env_init, care_vars=aut.vars)
-    visited = bdd.false
+    visited = aut.false
     queue = list()
     _add_new_node(d, g, queue, umap, keys)
     visited = _add_to_visited(d, visited, aut)
@@ -187,13 +185,12 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     """
     aut.assert_consistent(built=True)
     assert fol.bdd is aut.bdd
-    bdd = fol.bdd
     (env_init,) = aut.init['env']
-    assert env_init != bdd.false
+    assert env_init != aut.false
     only_env_init = fol.exist(aut.control['sys'], env_init)
     env_iter = fol.pick_iter(
         only_env_init, care_vars=aut.control['env'])
-    visited = bdd.false
+    visited = aut.false
     queue = list()
     for env_0 in env_iter:
         u = fol.let(env_0, env_init)
@@ -202,7 +199,7 @@ def _forall_exist_init(g, fol, aut, umap, keys):
         d.update(sys_0)
         # confirm `sys_0` picked properly
         u = fol.let(d, env_init)
-        assert u == bdd.true, u
+        assert u == aut.true, u
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)
     return queue, visited
@@ -215,28 +212,27 @@ def _exist_forall_init(g, fol, aut, umap, keys):
     # then enumerating the same way
     aut.assert_consistent(built=True)
     assert fol.bdd is aut.bdd
-    bdd = fol.bdd
     (env_init,) = aut.init['env']
-    assert env_init != bdd.false
+    assert env_init != aut.false
     # pick `sys_0` so that it work for all
     # env assignments alowed by `env_init`
     only_env_init = fol.exist(aut.control['sys'], env_init)
     u = ~ only_env_init | env_init
     u = fol.forall(aut.control['env'], u)
-    assert u != bdd.false
+    assert u != aut.false
     sys_0 = fol.pick(u, care_vars=aut.control['sys'])
     # iterate over env initial assignments
     # independently of sys
     env_iter = fol.pick_iter(
         only_env_init, care_vars=aut.control['env'])
-    visited = bdd.false
+    visited = aut.false
     queue = list()
     for env_0 in env_iter:
         d = dict(env_0)
         d.update(sys_0)
         # confirm `sys_0` works for all `env_0`
         u = fol.let(d, env_init)
-        assert u == bdd.true, u
+        assert u == aut.true, u
         _add_new_node(d, g, queue, umap, keys)
         visited = _add_to_visited(d, visited, aut)
     return queue, visited

@@ -596,7 +596,7 @@ def _prime_and_order_table(t):
         j = 2 * i
         dtype = d['type']
         if dtype in ('int', 'saturating'):
-            bits = d['bitnames']
+            bits = list(d['bitnames'])
         elif dtype == 'bool':
             bits = [var]
         m = 2**len(bits)
@@ -604,8 +604,8 @@ def _prime_and_order_table(t):
         pbits = [stx.prime(bit) for bit in bits]
         k = j + 1
         # copy attr
-        dvars[var] = dict(d)
-        dvars[primed] = dict(d)
+        dvars[var] = copy.deepcopy(d)
+        dvars[primed] = copy.deepcopy(d)
         # update attr
         dvars[var].update(level=j, len=m, bitnames=bits)
         dvars[primed].update(level=k, len=m, bitnames=pbits)

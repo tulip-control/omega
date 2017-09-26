@@ -216,7 +216,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
             continue
         post = list()
         sys = list()
-        for u, v, d in g.out_edges_iter(u, data=True):
+        for u, v, d in g.out_edges(u, data=True):
             # action
             t = dict(d)
             t[stx.prime(nodevar)] = v

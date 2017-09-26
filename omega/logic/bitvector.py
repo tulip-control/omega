@@ -280,7 +280,7 @@ def bitfield_to_int_states(g, t):
     @rtype: `networkx.Digraph`
     """
     h = nx.DiGraph()
-    for u, d in g.nodes_iter(data=True):
+    for u, d in g.nodes(data=True):
         bit_state = d['state']
         int_state = bitfields_to_ints(bit_state, t)
         h.add_node(u, state=int_state)

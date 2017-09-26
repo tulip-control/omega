@@ -46,7 +46,7 @@ def test_bitfield_to_int_states():
     assert set(h) == {0, 1, 2}
     assert set(h.edges()) == {(0, 1), (1, 2), (2, 1)}
     z = [dict(x=1, y=3), dict(x=0, y=-2), dict(x=1, y=-1)]
-    for u, d in h.nodes_iter(data=True):
+    for u, d in h.nodes(data=True):
         assert z[u] == d['state']
 
 

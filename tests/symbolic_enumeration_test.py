@@ -23,7 +23,7 @@ def test_relation_to_graph():
     assert len(g) == 3, g.nodes()
     keys = ('x', 'y')
     r = {tuple(d[k] for k in keys)
-         for k, d in g.nodes_iter(data=True)}
+         for k, d in g.nodes(data=True)}
     r_ = {(4, True), (0, False), (0, True)}
     assert r == r_, r
 

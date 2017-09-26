@@ -203,7 +203,7 @@ class Automaton(_SystemGraph):
     def to_pydot(self):
         # TODO: initial nodes
         g = nx.MultiDiGraph()
-        for u, d in self.nodes_iter(data=True):
+        for u, d in self.nodes(data=True):
             if u in self.universal_nodes:
                 shape = 'box'
             else:
@@ -325,7 +325,7 @@ class TransitionSystem(_SystemGraph):
 
     def to_pydot(self):
         g = nx.MultiDiGraph()
-        for u, d in self.nodes_iter(data=True):
+        for u, d in self.nodes(data=True):
             label = ', '.join(
                 '{k} = {v}'.format(k=k, v=v)
                 for k, v in d.items()
@@ -347,7 +347,7 @@ class TransitionSystem(_SystemGraph):
         super(TransitionSystem, self).assert_consistent()
         assert self.owner in {'env', 'sys'}
         assert set(self.env_vars).issubset(self.vars)
-        for u, d in self.nodes_iter(data=True):
+        for u, d in self.nodes(data=True):
             for k, v in d.items():
                 if k in self.vars:
                     _check_value(v, self.vars[k])
@@ -366,7 +366,7 @@ class TransitionSystem(_SystemGraph):
 def _dumps_nodes(g):
     """Return string of graph `g` nodes."""
     r = list()
-    for u, d in g.nodes_iter(data=True):
+    for u, d in g.nodes(data=True):
         s = '\t Node: {u}, {values}\n'.format(
             u=u,
             values=', '.join(

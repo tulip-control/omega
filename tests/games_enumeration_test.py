@@ -27,7 +27,7 @@ def test_action_to_steps():
     # (infinitely many)
     states = {
         enum._node_tuple(d, keys)
-        for u, d in g.nodes_iter(data=True)}
+        for u, d in g.nodes(data=True)}
     assert tuple([True, 1]) in states, states
     r = {p for p in states if p[0] is True}
     assert len(r) == 2

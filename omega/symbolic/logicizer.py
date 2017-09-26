@@ -122,7 +122,7 @@ def _node_var_trans(g, nodevar, dvars):
     # no AP labels ?
     if not dvars:
         return (init, trans)
-    for u, d in g.nodes_iter(data=True):
+    for u, d in g.nodes(data=True):
         pre = _assign(nodevar, u, dvars)
         r = _to_action(d, dvars)
         if r == 'True':

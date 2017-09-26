@@ -343,7 +343,7 @@ def _format_nx(g, keys=None):
     """
     h = nx.DiGraph()
     umap = dict()
-    for u, d in g.nodes_iter(data=True):
+    for u, d in g.nodes(data=True):
         if keys is None:
             keys = sorted(d)
         c = ['{var}={val}'.format(var=var, val=d[var])

@@ -13,6 +13,7 @@ Leslie Lamport
 # All rights reserved. Licensed under BSD-3.
 #
 import collections
+from itertools import chain
 import logging
 
 import networkx as nx
@@ -47,9 +48,7 @@ def action_to_steps(aut, qinit='\A \A'):
     assert 'env' in aut.players, aut.players
     assert 'sys' in aut.players, aut.players
     assert aut.action['sys'] != aut.false
-    control, primed_vars = _split_vars_per_quantifier(
-        aut.vars, aut.players)
-    aut.control = control
+    primed_vars = _primed_vars_per_quantifier(aut.varlist)
     unprime_vars = {stx.prime(var): var for var in aut.vars}
     keys = list(aut.vars)  # fix an order for tupling
     umap = dict()  # map assignments -> node numbers
@@ -89,7 +88,7 @@ def action_to_steps(aut, qinit='\A \A'):
                 remain = True
             assert v != aut.false
             sys_values = aut.pick(
-                v, care_vars=aut.control['sys'])
+                v, care_vars=aut.varlist['sys'])
             d = dict(env_values)
             d.update(sys_values)
             # assert
@@ -111,17 +110,18 @@ def action_to_steps(aut, qinit='\A \A'):
     return g
 
 
-def _split_vars_per_quantifier(dvars, players):
-    """Return controllability `dict` and primed vars `dict`.
+def _primed_vars_per_quantifier(varlist):
+    """Return `dict` that maps each player to set of primed vars.
 
-    @return: (control, primed_vars)
-
-        - control: `dict` that maps
-          player name -> set of vars
-
-        - primed_vars: `dict` that maps
+    @return: `dict` that maps
           player name -> set of primed vars
     """
+    assert 'env' in varlist, varlist
+    assert 'sys' in varlist, varlist
+    primed_vars = dict(
+        env={stx.prime(var) for var in varlist['env']},
+        sys={stx.prime(var) for var in varlist['sys']})
+    return primed_vars
 
 
 def _init_search(g, aut, umap, keys, qinit):
@@ -147,7 +147,8 @@ def _forall_init(g, aut, umap, keys):
     env_init = aut.init['env']
     assert env_init != aut.false
     init_iter = aut.pick_iter(
-        env_init, care_vars=aut.vars)
+        env_init,
+        care_vars=chain(aut.varlist['env'], aut.varlist['sys']))
     visited = aut.false
     queue = list()
     for d in init_iter:
@@ -160,7 +161,9 @@ def _exist_init(g, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
     env_init = aut.init['env']
     assert env_init != aut.false
-    d = aut.pick(env_init, care_vars=aut.vars)
+    d = aut.pick(
+        env_init,
+        care_vars=chain(aut.varlist['env'], aut.varlist['sys']))
     visited = aut.false
     queue = list()
     _add_new_node(d, g, queue, umap, keys)
@@ -176,14 +179,14 @@ def _forall_exist_init(g, aut, umap, keys):
     """
     env_init = aut.init['env']
     assert env_init != aut.false
-    only_env_init = aut.exist(aut.control['sys'], env_init)
+    only_env_init = aut.exist(aut.varlist['sys'], env_init)
     env_iter = aut.pick_iter(
-        only_env_init, care_vars=aut.control['env'])
+        only_env_init, care_vars=aut.varlist['env'])
     visited = aut.false
     queue = list()
     for env_0 in env_iter:
         u = aut.let(env_0, env_init)
-        sys_0 = aut.pick(u, care_vars=aut.control['sys'])
+        sys_0 = aut.pick(u, care_vars=aut.varlist['sys'])
         d = dict(env_0)
         d.update(sys_0)
         # confirm `sys_0` picked properly
@@ -203,15 +206,15 @@ def _exist_forall_init(g, aut, umap, keys):
     assert env_init != aut.false
     # pick `sys_0` so that it work for all
     # env assignments alowed by `env_init`
-    only_env_init = aut.exist(aut.control['sys'], env_init)
+    only_env_init = aut.exist(aut.varlist['sys'], env_init)
     u = ~ only_env_init | env_init
-    u = aut.forall(aut.control['env'], u)
+    u = aut.forall(aut.varlist['env'], u)
     assert u != aut.false
-    sys_0 = aut.pick(u, care_vars=aut.control['sys'])
+    sys_0 = aut.pick(u, care_vars=aut.varlist['sys'])
     # iterate over env initial assignments
     # independently of sys
     env_iter = aut.pick_iter(
-        only_env_init, care_vars=aut.control['env'])
+        only_env_init, care_vars=aut.varlist['env'])
     visited = aut.false
     queue = list()
     for env_0 in env_iter:

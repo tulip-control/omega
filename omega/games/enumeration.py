@@ -56,6 +56,7 @@ def action_to_steps(aut, qinit='\A \A'):
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
     queue, visited = _init_search(g, aut, umap, keys, qinit)
+    g.initial_nodes = set(queue)
     varnames = set(keys)
     symbolic._assert_support_moore(aut)
     # search

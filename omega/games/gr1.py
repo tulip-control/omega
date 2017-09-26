@@ -41,7 +41,6 @@ def solve_streett_game(aut, rank=1):
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
         'first call `Automaton.build`')
-    aut.assert_consistent(built=True)
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
     env_action = aut.action['env']
@@ -92,7 +91,6 @@ def make_streett_transducer(z, yij, xijk, aut):
     An auxiliary variable `_goal` is added,
     to represent the counter of recurrence goals.
     """
-    aut.assert_consistent(built=True)
     winning = z
     assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)
@@ -188,7 +186,6 @@ def solve_rabin_game(aut, rank=1):
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
         'first call `Automaton.build`')
-    aut.assert_consistent(built=True)
     # TODO: can these assertions be removed elegantly ?
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
@@ -251,7 +248,6 @@ def _attractor_inside(inside, goal, aut):
 
 def make_rabin_transducer(zk, yki, xkijr, aut):
     """Return O/I transducer for Rabin(1) game."""
-    aut.assert_consistent(built=True)
     winning = zk[-1]
     assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)

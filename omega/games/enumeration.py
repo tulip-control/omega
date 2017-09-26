@@ -45,7 +45,6 @@ def action_to_steps(aut, qinit='\A \A'):
       states that satisfy `env_init` and `y = u`
     """
     assert set(aut.players) == {'env', 'sys'}, aut.players
-    aut.assert_consistent(built=True)
     assert aut.action['sys'][0] != bdd.false
     fol = _fol.Context()
     fol.vars = symbolic._prime_and_order_table(aut.vars)
@@ -148,7 +147,6 @@ def _init_search(g, fol, aut, umap, keys, qinit):
 
 def _forall_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
-    aut.assert_consistent(built=True)
     (env_init,) = aut.init['env']
     assert env_init != aut.false
     init_iter = aut.pick_iter(
@@ -163,7 +161,6 @@ def _forall_init(g, fol, aut, umap, keys):
 
 def _exist_init(g, fol, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
-    aut.assert_consistent(built=True)
     (env_init,) = aut.init['env']
     assert env_init != aut.false
     d = aut.pick(env_init, care_vars=aut.vars)
@@ -180,7 +177,6 @@ def _forall_exist_init(g, fol, aut, umap, keys):
     Note that each initial "state" is a class of
     initial states in ZF set theory.
     """
-    aut.assert_consistent(built=True)
     (env_init,) = aut.init['env']
     assert env_init != aut.false
     only_env_init = aut.exist(aut.control['sys'], env_init)
@@ -206,7 +202,6 @@ def _exist_forall_init(g, fol, aut, umap, keys):
     # this function can be merged with `_forall_exist_init`
     # by constraining initial sys assignments,
     # then enumerating the same way
-    aut.assert_consistent(built=True)
     (env_init,) = aut.init['env']
     assert env_init != aut.false
     # pick `sys_0` so that it work for all

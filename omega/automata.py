@@ -213,7 +213,7 @@ class Automaton(_SystemGraph):
             else:
                 peripheries = 1
             g.add_node(u, shape=shape, peripheries=peripheries)
-        for u, v, d in self.edges_iter(data=True):
+        for u, v, d in self.edges(data=True):
             label = ', '.join(
                 '{k} = {v}'.format(k=k, v=v)
                 for k, v in d.items()
@@ -255,7 +255,7 @@ class Automaton(_SystemGraph):
             assert len(s) == 2
         else:
             raise Exception('Unknown acceptance: {a}'.format(a=a))
-        for u, v, d in self.edges_iter(data=True):
+        for u, v, d in self.edges(data=True):
             t = self.alphabet
             r = self.directions
             if u in self.universal_nodes:
@@ -332,7 +332,7 @@ class TransitionSystem(_SystemGraph):
                 if k in self.vars)
             label = '"{u}\n{label}"'.format(u=u, label=label)
             g.add_node(u, label=label, shape='box', **d)
-        for u, v, d in self.edges_iter(data=True):
+        for u, v, d in self.edges(data=True):
             f = d.get('formula')
             if f is None:
                 label = '""'
@@ -351,7 +351,7 @@ class TransitionSystem(_SystemGraph):
             for k, v in d.items():
                 if k in self.vars:
                     _check_value(v, self.vars[k])
-        for u, v, d in self.edges_iter(data=True):
+        for u, v, d in self.edges(data=True):
             for k, v in d.items():
                 # primed ?
                 if k.endswith("'"):

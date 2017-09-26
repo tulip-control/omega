@@ -351,7 +351,7 @@ def _format_nx(g, keys=None):
         s = _square_conj(c)
         h.add_node(s)
         umap[u] = s
-    for u, v in g.edges_iter():
+    for u, v in g.edges():
         us = umap[u]
         vs = umap[v]
         h.add_edge(us, vs)

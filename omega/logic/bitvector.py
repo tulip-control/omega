@@ -284,7 +284,7 @@ def bitfield_to_int_states(g, t):
         bit_state = d['state']
         int_state = bitfields_to_ints(bit_state, t)
         h.add_node(u, state=int_state)
-    for u, v in g.edges_iter():
+    for u, v in g.edges():
         h.add_edge(u, v)
     assert len(g) == len(h), (len(g), len(h))
     # remove deadends, where env looses

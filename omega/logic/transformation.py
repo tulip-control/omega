@@ -29,7 +29,7 @@ class Tree(nx.MultiDiGraph):
         # need to override networkx.DiGraph.__str__
         return ('Abstract syntax tree as graph with edges:\n' +
                 str([(str(u), str(v))
-                    for u, v, k in self.edges_iter(keys=True)]))
+                    for u, v, k in self.edges(keys=True)]))
 
     @property
     def variables(self):
@@ -64,7 +64,7 @@ class Tree(nx.MultiDiGraph):
         else:
             w.operands = [self.to_recursive_ast(v)
                           for _, v, _ in sorted(
-                              self.edges_iter(u, keys=True),
+                              self.edges(u, keys=True),
                               key=lambda x: x[2])]
             assert len(u.operands) == len(w.operands)
         return w
@@ -75,7 +75,7 @@ class Tree(nx.MultiDiGraph):
         AST nodes are not copied.
         """
         assert not self.succ.get(leaf)
-        for u, v, k in tree.edges_iter(keys=True):
+        for u, v, k in tree.edges(keys=True):
             self.add_edge(u, v, key=k)
         # replace old leaf with subtree root
         ine = self.in_edges(leaf, keys=True)
@@ -118,6 +118,6 @@ def ast_to_labeled_graph(tree, detailed):
         if detailed:
             label += '\n' + str(type(u).__name__)
         g.add_node(id(u), label=label)
-    for u, v, k in tree.edges_iter(keys=True):
+    for u, v, k in tree.edges(keys=True):
         g.add_edge(id(u), id(v), label=k)
     return g

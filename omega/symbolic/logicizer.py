@@ -156,7 +156,7 @@ def _sys_trans(g, nodevar, dvars):
             sys_trans.append('({pre}) -> False'.format(pre=pre))
             continue
         post = list()
-        for u, v, d in g.edges_iter(u, data=True):
+        for u, v, d in g.edges(u, data=True):
             t = dict(d)
             t[stx.prime(nodevar)] = v
             r = _to_action(t, dvars)
@@ -177,7 +177,7 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
             continue
         # collect possible next env actions
         c = set()
-        for u, w, d in g.edges_iter(u, data=True):
+        for u, w, d in g.edges(u, data=True):
             t = _to_action(d, denv)
             if not t:
                 continue

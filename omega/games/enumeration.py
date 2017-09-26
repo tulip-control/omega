@@ -44,7 +44,8 @@ def action_to_steps(aut, qinit='\A \A'):
     - `'\E \A'`: pick a sys state `u` and enumerate all
       states that satisfy `aut.init['env']` and `y = u`
     """
-    assert set(aut.players) == {'env', 'sys'}, aut.players
+    assert 'env' in aut.players, aut.players
+    assert 'sys' in aut.players, aut.players
     assert aut.action['sys'] != aut.false
     fol.vars = symbolic._prime_and_order_table(aut.vars)
     control, primed_vars = _split_vars_per_quantifier(

@@ -50,11 +50,12 @@ def action_to_steps(aut, qinit='\A \A'):
     assert aut.action['sys'] != aut.false
     primed_vars = _primed_vars_per_quantifier(aut.varlist)
     unprime_vars = {stx.prime(var): var for var in aut.vars}
-    keys = list(aut.vars)  # fix an order for tupling
+    # fix an order for tupling
+    keys = list(k for k in aut.vars if not stx.isprimed(k))
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
     queue, visited = _init_search(g, aut, umap, keys, qinit)
-    varnames = set(aut.vars)
+    varnames = set(keys)
     symbolic._assert_support_moore(aut)
     # search
     while queue:

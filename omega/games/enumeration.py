@@ -51,7 +51,6 @@ def action_to_steps(aut, qinit='\A \A'):
     control, primed_vars = _split_vars_per_quantifier(
         aut.vars, aut.players)
     aut.control = control
-    # prime_vars = {var: stx.prime(var) for var in aut.vars}
     unprime_vars = {stx.prime(var): var for var in aut.vars}
     keys = list(aut.vars)  # fix an order for tupling
     umap = dict()  # map assignments -> node numbers

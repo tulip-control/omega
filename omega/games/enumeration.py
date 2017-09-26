@@ -71,6 +71,7 @@ def action_to_steps(aut, qinit='\A \A'):
         u = aut.action['sys']
         assert u != aut.false
         sys = aut.let(values, u)
+        assert sys != aut.false
         for next_env in env_iter:
             log.debug('next_env: {r}'.format(r=next_env))
             # no effect if `aut.moore`

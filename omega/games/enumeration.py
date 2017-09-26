@@ -47,7 +47,6 @@ def action_to_steps(aut, qinit='\A \A'):
     assert set(aut.players) == {'env', 'sys'}, aut.players
     assert aut.action['sys'] != aut.false
     fol.vars = symbolic._prime_and_order_table(aut.vars)
-    # fol.add_vars(table)
     control, primed_vars = _split_vars_per_quantifier(
         aut.vars, aut.players)
     aut.control = control

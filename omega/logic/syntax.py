@@ -283,6 +283,16 @@ def _plus(x, y):
     return x + y
 
 
+def prime_vars(vrs):
+    """Return `list` of primed variables from `vrs`."""
+    return [prime(var) for var in vrs]
+
+
+def unprime_vars(vrs):
+    """Return `list` of primed variables from `vrs`."""
+    return [unprime(var) for var in vrs]
+
+
 def prime(var):
     """Return primed variable."""
     assert not isprimed(var), var

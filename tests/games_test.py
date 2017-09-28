@@ -5,7 +5,8 @@ import pprint
 from dd import mdd
 from nose.tools import assert_raises
 
-from omega.symbolic import symbolic, enumeration
+from omega.symbolic import enumeration
+from omega.symbolic import symbolic
 from omega.games import gr1
 
 

@@ -1,5 +1,9 @@
 """Symbolic automaton.
 
+
+DEPRECATED: use `omega.symbolic.temporal` instead.
+
+
 Including bitblasting of first-order to bitvector logic,
 and transformation to BDD nodes.
 """
@@ -9,6 +13,7 @@ and transformation to BDD nodes.
 import copy
 import logging
 import pprint
+import warnings
 
 import natsort
 
@@ -23,7 +28,7 @@ try:
     logger.info('`omega.symbolic.symbolic` will use `dd.cudd`')
 except ImportError:
     from dd import autoref as _bdd
-    logger.warn(
+    logger.warning(
         '`omega.symbolic.symbolic` failed to import `dd.cudd`.\n'
         'Will use `dd.autoref`.')
 
@@ -122,6 +127,10 @@ class Automaton(object):
     """
 
     def __init__(self):
+        warnings.warn(
+            'Deprecated; use the class '
+            '`omega.symbolic.temporal.Automaton` instead.',
+            category=PendingDeprecationWarning)
         self.players = {'env': 0, 'sys': 1}  # name -> turn
         self.vars = dict()
         self.moore = True

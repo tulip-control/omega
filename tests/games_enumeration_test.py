@@ -175,7 +175,7 @@ def test_forall_exist_init():
     assert q1 in g, (q1, g)
     d0 = g.node[q0]
     d1 = g.node[q1]
-    varnames = set(a.vars)
+    varnames = set(keys)
     assert set(d0) == varnames, d0
     assert set(d1) == varnames, d1
     # \A \E:  for each `x`, pick some `y`
@@ -221,7 +221,7 @@ def test_exist_forall_init():
     assert q1 in g, (q1, g)
     d0 = g.node[q0]
     d1 = g.node[q1]
-    varnames = set(a.vars)
+    varnames = set(keys)
     assert set(d0) == varnames, d0
     assert set(d1) == varnames, d1
     # \E \A picks same `y` for all initial states

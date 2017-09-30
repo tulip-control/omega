@@ -45,8 +45,6 @@ def action_to_steps(aut, qinit='\A \A'):
     - `'\E \A'`: pick a sys state `u` and enumerate all
       states that satisfy `aut.init['env']` and `y = u`
     """
-    assert 'env' in aut.players, aut.players
-    assert 'sys' in aut.players, aut.players
     assert aut.action['sys'] != aut.false
     primed_vars = _primed_vars_per_quantifier(aut.varlist)
     unprime_vars = {stx.prime(var): var for var in aut.vars

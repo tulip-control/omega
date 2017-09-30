@@ -176,8 +176,8 @@ def test_forall_exist_init():
     d0 = g.node[q0]
     d1 = g.node[q1]
     varnames = set(keys)
-    assert set(d0) == varnames, d0
-    assert set(d1) == varnames, d1
+    assert set(d0) == varnames, (d0, varnames)
+    assert set(d1) == varnames, (d1, varnames)
     # \A \E:  for each `x`, pick some `y`
     assert d0['x'] == d0['y'], d0
     assert d1['x'] == d1['y'], d1
@@ -222,8 +222,8 @@ def test_exist_forall_init():
     d0 = g.node[q0]
     d1 = g.node[q1]
     varnames = set(keys)
-    assert set(d0) == varnames, d0
-    assert set(d1) == varnames, d1
+    assert set(d0) == varnames, (d0, varnames)
+    assert set(d1) == varnames, (d1, varnames)
     # \E \A picks same `y` for all initial states
     assert d0['y'] is True, d0
     assert d1['y'] is True, d1

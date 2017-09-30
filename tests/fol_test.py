@@ -77,7 +77,7 @@ def test_support():
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == {'x'}, r
-    s = '(x < 2) | ! y'
+    s = '(x < 2) \/ ~ y'
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == {'x', 'y'}, r
@@ -150,10 +150,10 @@ def test_quantifiers():
     bdd = fol.bdd
     fol.declare(x=(0, 5))
     # no `qvars`
-    u = fol.add_expr('True')
+    u = fol.add_expr('TRUE')
     r = fol.exist(set(), u)
     assert r == u, (r, u)
-    u = fol.add_expr('False')
+    u = fol.add_expr('FALSE')
     r = fol.exist(set(), u)
     assert r == u, (r, u)
     u = fol.add_expr('x = 5')
@@ -184,7 +184,7 @@ def test_quantifiers():
     u = fol.add_expr('x > 5')
     u = fol.exist(['x'], u)
     assert u == bdd.true
-    u = fol.add_expr('(6 <= x) & (x < 8)')
+    u = fol.add_expr('(6 <= x) /\ (x < 8)')
     u = fol.exist(['x'], u)
     assert u == bdd.true
     u = fol.add_expr('x > 7')
@@ -297,7 +297,7 @@ def test_apply():
     bdd = fol.bdd
     fol.declare(x='bool')
     u = fol.add_expr('x')
-    v = fol.add_expr('! x')
+    v = fol.add_expr(' ~ x')
     w = fol.apply('and', u, v)
     assert w == bdd.false
     w = fol.apply('or', u, v)

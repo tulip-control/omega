@@ -57,7 +57,7 @@ def test_flatten_previous_boolean():
 def test_flatten_previous_boolean_expr():
     testers = dict()
     context = 'bool'
-    # "-X (x & y)"
+    # "-X (x /\ y)"
     x = past.Nodes.Var('x')
     y = past.Nodes.Var('y')
     conj = past.Nodes.Binary('/\\', x, y)
@@ -83,7 +83,7 @@ def test_flatten_previous_boolean_expr():
 def test_flatten_nested_previous():
     testers = dict()
     context = 'bool'
-    # "-X (q & -X (3 = (p + 3)))"
+    # "-X (q /\ -X (3 = (p + 3)))"
     p = past.Nodes.Var('p')
     q = past.Nodes.Var('q')
     n = past.Nodes.Num('3')
@@ -219,7 +219,7 @@ def test_context_checks():
         tree.flatten(testers=dict,
                      context='bool')
     # arithmetic
-    s = 'x & y'
+    s = 'x /\ y'
     tree = parser.parse(s)
     tree.flatten(testers=dict,
                  context='bool')
@@ -227,7 +227,7 @@ def test_context_checks():
         tree.flatten(testers=dict,
                      context='arithmetic')
     # nested
-    s = 'y & (y + 3)'
+    s = 'y /\ (y + 3)'
     tree = parser.parse(s)
     with assert_raises(AssertionError):
         tree.flatten(testers=dict,

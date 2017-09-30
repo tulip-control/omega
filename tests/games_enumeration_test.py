@@ -16,7 +16,7 @@ def test_action_to_steps():
     aut.varlist['sys'] = ['y']
     keys = ('x', 'y')
     aut.init['env'] = aut.add_expr('x /\ (y = 1)')
-    aut.action['sys'] = aut.add_expr("y' != y")
+    aut.action['sys'] = aut.add_expr("y' /= y")
     aut.action['env'] = aut.true
     aut.qinit = '\A \A'
     aut.moore = True
@@ -66,7 +66,7 @@ def test_forall_init():
         x=(3, 5), y='bool', z='bool')
     aut.varlist = dict(env=['x'], sys=['y', 'z'])
     # single initial state
-    s = '(x = 4) & ! y & z'
+    s = '(x = 4) /\ ~ y /\ z'
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g = nx.DiGraph()
@@ -107,7 +107,7 @@ def test_exist_init():
     aut.declare_variables(x=(0, 2), y='bool', z='bool')
     aut.varlist = dict(env={'x'}, sys={'y', 'z'})
     # single initial state
-    s = '(x = 1) & y & z'
+    s = '(x = 1) /\ y /\ z'
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g = nx.DiGraph()
@@ -123,7 +123,7 @@ def test_exist_init():
     d_ = dict(x=1, y=True, z=True)
     assert d == d_, d
     # multiple initial states: should pick one
-    s = '(x = 1) & y'
+    s = '(x = 1) /\ y'
     aut.init['env'] = aut.add_expr(s)
     a = aut.build()
     g = nx.DiGraph()
@@ -146,7 +146,7 @@ def test_forall_exist_init():
     aut.declare_variables(x='bool', y='bool')
     aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
-    s = 'x & y'
+    s = 'x /\ y'
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g = nx.DiGraph()
@@ -162,7 +162,7 @@ def test_forall_exist_init():
     d_ = dict(x=True, y=True)
     assert d ==d_, (d, d_)
     # multiple initial states
-    s = 'x <-> y'
+    s = 'x <=> y'
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g = nx.DiGraph()
@@ -192,7 +192,7 @@ def test_exist_forall_init():
     aut.declare_variables(x='bool', y='bool')
     aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
-    s = 'x & ! y'
+    s = 'x /\ ~ y'
     aut.init['env'] = aut.add_expr(s)
     a = aut.build()
     g = nx.DiGraph()
@@ -267,7 +267,7 @@ def test_add_to_visited():
     values = dict(x=True, y=5)
     visited = bdd.false
     new_visited = enum._add_to_visited(values, visited, c)
-    s = 'x & (y = 5)'
+    s = 'x /\ (y = 5)'
     u = c.add_expr(s)
     assert new_visited == u
 

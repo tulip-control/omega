@@ -17,8 +17,6 @@ def test_attractor():
     g.add_path([0, 1, 2, 3])
     g.add_edge(4, 1, formula='x')
     a = logicizer.graph_to_logic(g, 'loc', True)
-    symbolic.fill_blanks(a)
-    aut = a.build()
     target = aut.add_expr('loc = 2')
     u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
                      target, aut)
@@ -43,8 +41,6 @@ def test_descendants():
     g = TransitionSystem()
     g.add_path([0, 1, 2])
     a = logicizer.graph_to_logic(g, 'pc', True)
-    symbolic.fill_blanks(a)
-    aut = a.build()
     source = aut.add_expr('pc = 0')
     constrain = aut.true
     v = fx.descendants(source, constrain, aut)
@@ -55,8 +51,6 @@ def test_ee_image_only_sys():
     g = TransitionSystem()
     g.add_path([0, 1, 2])
     a = logicizer.graph_to_logic(g, 'pc', True)
-    symbolic.fill_blanks(a)
-    aut = a.build()
     u = aut.add_expr('pc = 0')
     v = fx.ee_image(u, aut)
     v_ = aut.add_expr('pc = 1')
@@ -73,8 +67,6 @@ def test_ue_image_no_constrain():
     g.add_edge(0, 1, formula='x')
     g.add_edge(0, 2, formula='!x')
     a = logicizer.graph_to_logic(g, 'pc', True)
-    symbolic.fill_blanks(a)
-    aut = a.build()
     # source constrained to x
     source = aut.add_expr('x & (pc = 0)')
     u = fx.ee_image(source, aut)
@@ -93,8 +85,6 @@ def test_ee_image():
     g.add_edge(0, 1, formula='!x')
     g.add_edge(0, 2, formula='x')
     a = logicizer.graph_to_logic(g, 'pc', True)
-    symbolic.fill_blanks(a)
-    aut = a.build()
     source = aut.add_expr('pc = 0')
     u = fx.ee_image(source, aut)
     u_ = aut.add_expr('(pc = 1) | (pc = 2)')
@@ -470,7 +460,6 @@ def test_step():
                   y=dict(type='bool', owner='sys'))
     a.action['env'] = ["True"]
     a.action['sys'] = ["x' => !y'"]
-    symbolic.fill_blanks(a)
     a.moore = False
     a.plus_one = False
     aut = a.build()

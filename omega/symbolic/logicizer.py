@@ -41,9 +41,8 @@ def graph_to_logic(
     """
     assert g.assert_consistent()
     assert len(g) > 0
-    t = _vars_to_symbol_table(g, nodevar)
-    # add primed copies -- same `dict` value
-    dvars = dict(t)
+    dvars = dict(g.vars)
+    dvars[nodevar] = _nodevar_dom(g)
     p, _ = _prime_dict(dvars)
     dvars.update(p)
     # convert to logic
@@ -83,36 +82,10 @@ def graph_to_logic(
     return a
 
 
-def _vars_to_symbol_table(g, nodevar):
-    """Return `dict` of integer and Boolean variables.
-
-    Conforms to `openpromela.bitvector` input:
-      - type: 'bool' or 'saturating'
-      - dom: (min, max)
-      - owner: 'env' or 'sys'
-    """
-    t = dict()
-    for var, dom in g.vars.items():
-        # type and domain
-        if dom == 'bool':
-            dtype = 'bool'
-            dom = None
-        elif dom == 'boolean':
-            raise Exception('replace "boolean" with "bool"')
-        else:
-            assert isinstance(dom, tuple), (var, dom)
-            dtype = 'saturating'
-        # owner
-        if var in g.env_vars:
-            owner = 'env'
-        else:
-            owner = 'sys'
-        t[var] = dict(type=dtype, dom=dom, owner=owner)
+def _nodevar_dom(g):
+    """Return range of current node index."""
     assert all(isinstance(u, int) for u in g)
-    dtype = 'saturating'
-    dom = (min(g), max(g))
-    t[nodevar] = dict(type=dtype, dom=dom, owner=g.owner)
-    return t
+    return (min(g), max(g))
 
 
 def _node_var_trans(g, nodevar, dvars):
@@ -262,13 +235,13 @@ def _assign(k, v, dvars):
     @type v: `str` or `int`
     @type dvars: `dict`
     """
-    dtype = dvars[k]['type']
-    if dtype in ('int', 'saturating', 'modwrap'):
-        s = '{k} = {v}'.format(k=k, v=v)
-    elif dtype == 'str':
-        s = '{k} = "{v}"'.format(k=k, v=v)
-    elif dtype == 'bool':
+    typ = dvars[k]
+    if typ == 'bool':
         s = '{k} <=> {v}'.format(k=k, v=v)
+    elif isinstance(typ, tuple) and len(typ) == 2:  # integer
+        s = '{k} = {v}'.format(k=k, v=v)
+    elif isinstance(typ, list):  # string enumeration
+        s = '{k} = "{v}"'.format(k=k, v=v)
     else:
         raise Exception('variable type hint is: {dtype}'.format(
             dtype=dtype))

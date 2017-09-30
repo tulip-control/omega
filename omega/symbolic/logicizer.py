@@ -49,8 +49,7 @@ def graph_to_logic(g, nodevar, ignore_initial,
     init = _init_from_ts(g.initial_nodes, nodevar,
                          dvars, ignore_initial)
     tmp_init, nodepred = _node_var_trans(g, nodevar, dvars)
-    sys_tran = list()
-    env_tran = list()
+    sys_tran, env_tran = list(), list()
     if g.owner == 'sys':
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)

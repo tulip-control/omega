@@ -20,12 +20,10 @@ def test_attractor():
     target = aut.add_expr('loc = 2')
     u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
                      target, aut)
-    fol = _fol.Context()
-    fol.add_vars(aut.vars)
     ok = {0: True, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
         subs = dict(loc=q)
-        v = fol.let(subs, u)
+        v = aut.let(subs, u)
         assert (v == aut.true) == value, v
     inside = aut.add_expr('loc > 0')
     u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
@@ -33,7 +31,7 @@ def test_attractor():
     ok = {0: False, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
         subs = dict(loc=q)
-        v = fol.let(subs, u)
+        v = aut.let(subs, u)
         assert (v == aut.true) == value, v
 
 

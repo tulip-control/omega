@@ -71,7 +71,7 @@ class Lexer(astutils.Lexer):
         return t
 
     def t_NEQUALS(self, t):
-        r'\!\='
+        r'\!\=|/\='
         # symbol `#` already marks comments
         return t
 

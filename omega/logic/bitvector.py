@@ -383,7 +383,7 @@ class Nodes(_Nodes):
         'X': '',
         # 'G': '[]', 'F': '<>',
         '<': '<', '<=': '<=', '=': '=',
-        '>=': '>=', '>': '>', '!=': '!=',
+        '>=': '>=', '>': '>', '!=': '!=', '/=': '!=',
         '+': '+', '-': '-'}
 
     class Operator(_Nodes.Operator):
@@ -627,12 +627,12 @@ def flatten_comparator(operator, x, y, mem):
     assert len(p) == len(q), (p, q)
     logger.debug('p = {p}\nq = {q}'.format(p=p, q=q))
     negate = False
-    if operator in {'=', '!='}:
+    if operator in {'=', '!=', '/='}:
         r = inequality(p, q, mem)
         if operator == '=':
             negate = True
         else:
-            assert operator == '!=', operator
+            assert operator == '!=' or operator == '/=', operator
     elif operator in {'<', '<=', '>=', '>'}:
         swap = False
         if operator == '<=':
@@ -659,7 +659,7 @@ def flatten_comparator(operator, x, y, mem):
 
 
 def inequality(p, q, mem):
-    """Return bitvector propositional formula for '!='."""
+    """Return bitvector propositional formula for '/='."""
     assert len(p) == len(q), (p, q)
     return ' '.join('| ^ {a} {b}'.format(a=a, b=b)
                     for a, b in zip(p, q)) + ' 0'

@@ -35,6 +35,11 @@ logger = logging.getLogger(__name__)
 def solve_streett_game(aut, rank=1):
     r"""Return winning set and iterants for Streett(1) game.
 
+    Expects "env" and "sys" players. Writes:
+
+      - `aut.varlist["env'"]`
+      - `aut.varlist["sys'"]`
+
     @param aut: compiled game with <>[] \/ []<> winning
     @type aut: `symbolic.Automaton`
     """
@@ -45,6 +50,7 @@ def solve_streett_game(aut, rank=1):
     assert len(aut.win['[]<>']) > 0
     env_action = aut.action['env']
     sys_action = aut.action['sys']
+    aut.build()
     z = aut.true
     zold = None
     while z != zold:
@@ -189,6 +195,7 @@ def solve_rabin_game(aut, rank=1):
     # TODO: can these assertions be removed elegantly ?
     assert len(aut.win['<>[]']) > 0
     assert len(aut.win['[]<>']) > 0
+    aut.build()
     z = aut.false
     zold = None
     zk = list()

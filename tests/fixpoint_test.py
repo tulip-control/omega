@@ -24,7 +24,7 @@ def test_attractor():
     fol.add_vars(aut.vars)
     ok = {0: True, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
-        subs = {'loc': q}
+        subs = dict(loc=q)
         v = fol.let(subs, u)
         assert (v == aut.true) == value, v
     inside = aut.add_expr('loc > 0')
@@ -32,7 +32,7 @@ def test_attractor():
                      target, aut, inside=inside)
     ok = {0: False, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
-        subs = {'loc': q}
+        subs = dict(loc=q)
         v = fol.let(subs, u)
         assert (v == aut.true) == value, v
 

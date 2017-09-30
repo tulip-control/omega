@@ -6,7 +6,7 @@ from dd import mdd
 from nose.tools import assert_raises
 
 from omega.symbolic import enumeration
-from omega.symbolic import symbolic
+from omega.symbolic import temporal as symbolic
 from omega.games import gr1
 
 

@@ -454,8 +454,8 @@ def test_step():
     target = aut.add_expr('y')
     u = fx.step(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    aut.epvars = list(aut.uepvars)
-    aut.upvars = list()
+    aut.varlist["sys'"] = ["x'", "y'"]
+    aut.varlist["env'"] = list()
     u = fx.step(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
 

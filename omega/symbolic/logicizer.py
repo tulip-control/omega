@@ -270,7 +270,7 @@ def _assign(k, v, dvars):
     elif dtype == 'bool':
         s = '{k} <=> {v}'.format(k=k, v=v)
     else:
-        raise Exception('dtype is: {dtype}'.format(
+        raise Exception('variable type hint is: {dtype}'.format(
             dtype=dtype))
     return _pstr(s)
 

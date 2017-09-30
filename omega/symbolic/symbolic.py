@@ -639,11 +639,10 @@ def assert_primed_adjacent(prime, bdd):
             'the given BDD.').format(x=x, y=y, i=i, j=j)
 
 
-def _assert_support_moore(aut):
+def _assert_support_moore(u, aut):
     """Raise `AssertionError` if Moore that depends on `env'`."""
     if not aut.moore:
         return
-    u = aut.action['impl']
     s = aut.bdd.support(u)
     upvars_in_support = s.intersection(aut.varlist["env'"])
     assert not upvars_in_support, upvars_in_support

@@ -58,7 +58,7 @@ def action_to_steps(aut, qinit='\A \A'):
     queue, visited = _init_search(g, aut, umap, keys, qinit)
     g.initial_nodes = set(queue)
     varnames = set(keys)
-    symbolic._assert_support_moore(aut)
+    symbolic._assert_support_moore(aut.action['sys'], aut)
     # search
     while queue:
         node = queue.pop()

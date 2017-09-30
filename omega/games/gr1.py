@@ -174,7 +174,7 @@ def make_streett_transducer(z, yij, xijk, aut):
             u = aut.forall(aut.varlist["env'"], u)
     assert u != aut.false
     aut.action['impl'] = u
-    symbolic._assert_support_moore(aut)
+    symbolic._assert_support_moore(u, aut)
     # initial condition for counter
     # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
@@ -383,7 +383,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             u = aut.forall(aut.varlist["env'"], u)
     assert u != aut.false
     aut.action['impl'] = u
-    symbolic._assert_support_moore(t)
+    symbolic._assert_support_moore(u, aut)
     # initial condition for counter
     s = '({c} = 0) & ({w} = {none})'.format(
         c=c, w=w, none=n_holds)

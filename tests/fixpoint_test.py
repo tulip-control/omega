@@ -16,9 +16,12 @@ def test_attractor():
     g.env_vars.add('x')
     g.add_path([0, 1, 2, 3])
     g.add_edge(4, 1, formula='x')
-    a = logicizer.graph_to_logic(g, 'loc', True)
+    aut = logicizer.graph_to_logic(g, 'loc', True)
+    aut.plus_one = True
+    aut.moore = True
+    aut.build()
     target = aut.add_expr('loc = 2')
-    u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
+    u = fx.attractor(aut.action['env'], aut.action['sys'],
                      target, aut)
     ok = {0: True, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
@@ -26,7 +29,7 @@ def test_attractor():
         v = aut.let(subs, u)
         assert (v == aut.true) == value, v
     inside = aut.add_expr('loc > 0')
-    u = fx.attractor(aut.action['env'][0], aut.action['sys'][0],
+    u = fx.attractor(aut.action['env'], aut.action['sys'],
                      target, aut, inside=inside)
     ok = {0: False, 1: True, 2: True, 3: False, 4: False}
     for q, value in ok.items():
@@ -38,7 +41,7 @@ def test_attractor():
 def test_descendants():
     g = TransitionSystem()
     g.add_path([0, 1, 2])
-    a = logicizer.graph_to_logic(g, 'pc', True)
+    aut = logicizer.graph_to_logic(g, 'pc', True)
     source = aut.add_expr('pc = 0')
     constrain = aut.true
     v = fx.descendants(source, constrain, aut)
@@ -48,7 +51,7 @@ def test_descendants():
 def test_ee_image_only_sys():
     g = TransitionSystem()
     g.add_path([0, 1, 2])
-    a = logicizer.graph_to_logic(g, 'pc', True)
+    aut = logicizer.graph_to_logic(g, 'pc', True)
     u = aut.add_expr('pc = 0')
     v = fx.ee_image(u, aut)
     v_ = aut.add_expr('pc = 1')
@@ -64,7 +67,7 @@ def test_ue_image_no_constrain():
     g.env_vars = {'x'}
     g.add_edge(0, 1, formula='x')
     g.add_edge(0, 2, formula='!x')
-    a = logicizer.graph_to_logic(g, 'pc', True)
+    aut = logicizer.graph_to_logic(g, 'pc', True)
     # source constrained to x
     source = aut.add_expr('x & (pc = 0)')
     u = fx.ee_image(source, aut)
@@ -82,7 +85,7 @@ def test_ee_image():
     g.add_edge(0, 1, formula='x')
     g.add_edge(0, 1, formula='!x')
     g.add_edge(0, 2, formula='x')
-    a = logicizer.graph_to_logic(g, 'pc', True)
+    aut = logicizer.graph_to_logic(g, 'pc', True)
     source = aut.add_expr('pc = 0')
     u = fx.ee_image(source, aut)
     u_ = aut.add_expr('(pc = 1) | (pc = 2)')
@@ -91,18 +94,19 @@ def test_ee_image():
 
 def test_cpre_moore_plus_one():
     cpre = fx.step
-    a = symbolic.Automaton()
-    a.vars = dict(x=dict(type='bool', owner='env'),
-                  y=dict(type='bool', owner='sys'))
-    a.moore = True
-    a.plus_one = True
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist['env'] = ['x']
+    aut.varlist['sys'] = ['y']
+    aut.moore = True
+    aut.plus_one = True
+    aut.build()
     # no env
     # y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true
@@ -116,11 +120,10 @@ def test_cpre_moore_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false
     # y
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr('y')
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     y =  aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -136,11 +139,10 @@ def test_cpre_moore_plus_one():
     assert u == y, _to_expr(u, aut)
     # with env
     # x => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr('y')
     y =  aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -152,11 +154,10 @@ def test_cpre_moore_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x' => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x' => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
@@ -167,21 +168,19 @@ def test_cpre_moore_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x' => y' with assumption
-    a.action['env'] = ["! x'"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("! x'")
+    aut.action['sys'] = aut.add_expr("x' => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     # `plus_one` cannot depend on `x`
     target = aut.add_expr('! y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x => y' with assumption
-    a.action['env'] = ["! x'"]
-    a.action['sys'] = ["x => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr(" ~ x'")
+    aut.action['sys'] = aut.add_expr("x => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
@@ -195,18 +194,19 @@ def test_cpre_moore_plus_one():
 
 def test_cpre_moore_circular():
     cpre = fx.step
-    a = symbolic.Automaton()
-    a.vars = dict(x=dict(type='bool', owner='env'),
-                  y=dict(type='bool', owner='sys'))
-    a.moore = True
-    a.plus_one = False
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist['env'] = ['x']
+    aut.varlist['sys'] = ['y']
+    aut.moore = True
+    aut.plus_one = False
+    aut.build()
     # no env
     # y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true
@@ -220,11 +220,10 @@ def test_cpre_moore_circular():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false
     # y
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("y")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     y = aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -240,11 +239,10 @@ def test_cpre_moore_circular():
     assert u == y, _to_expr(u, aut)
     # with env
     # x => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr('y')
     y =  aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -256,11 +254,10 @@ def test_cpre_moore_circular():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x' => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x' => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
@@ -271,21 +268,19 @@ def test_cpre_moore_circular():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x' => y' with assumption
-    a.action['env'] = ["x"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("x")
+    aut.action['sys'] = aut.add_expr("x' => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     # circular
     target = aut.add_expr('! y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr('! x'), _to_expr(u, aut)
     # x => y' with assumption
-    a.action['env'] = ["! x'"]
-    a.action['sys'] = ["x => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("! x'")
+    aut.action['sys'] = aut.add_expr("x => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr('! y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr('! x'), _to_expr(u, aut)
@@ -299,18 +294,19 @@ def test_cpre_moore_circular():
 
 def test_cpre_mealy_plus_one():
     cpre = fx.step
-    a = symbolic.Automaton()
-    a.vars = dict(x=dict(type='bool', owner='env'),
-                  y=dict(type='bool', owner='sys'))
-    a.moore = False
-    a.plus_one = True
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist['env'] = ['x']
+    aut.varlist['sys'] = ['y']
+    aut.moore = False
+    aut.plus_one = True
+    aut.build()
     # no env
     # y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true
@@ -324,11 +320,10 @@ def test_cpre_mealy_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false
     # y
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["y"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("y")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     y =  aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -344,11 +339,10 @@ def test_cpre_mealy_plus_one():
     assert u == y, _to_expr(u, aut)
     # with env
     # x => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr('y')
     y =  aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
@@ -360,11 +354,10 @@ def test_cpre_mealy_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x' => y'
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x' => y'")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
@@ -378,48 +371,43 @@ def test_cpre_mealy_plus_one():
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     # x' => y' with assumption
-    a.action['env'] = ["! x'"]
-    a.action['sys'] = ["x' => y'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr(" ~ x' ")
+    aut.action['sys'] = aut.add_expr(" x' => y' ")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     # `plus_one` cannot depend on `x`
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     # x => y' with assumption
-    a.action['env'] = ["! x'"]
-    a.action['sys'] = ["False"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr(" ~ x' ")
+    aut.action['sys'] = aut.false
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     # x => y' with assumption
-    a.action['env'] = ["x'"]
-    a.action['sys'] = ["x'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("x' ")
+    aut.action['sys'] = aut.add_expr("x' ")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
     #
-    a.action['env'] = ["x'"]
-    a.action['sys'] = ["True"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("x' ")
+    aut.action['sys'] = aut.true
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     #
-    a.action['env'] = ["x'"]
-    a.action['sys'] = ["x & y"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("x' ")
+    aut.action['sys'] = aut.add_expr("x /\ y")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr('x /\ y'), _to_expr(u, aut)
@@ -427,42 +415,42 @@ def test_cpre_mealy_plus_one():
 
 def test_cpre_mealy_circular():
     cpre = fx.step
-    a = symbolic.Automaton()
-    a.vars = dict(x=dict(type='bool', owner='env'),
-                  y=dict(type='bool', owner='sys'))
-    a.moore = False
-    a.plus_one = False
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist['env'] = ['x']
+    aut.varlist['sys'] = ['y']
+    aut.moore = False
+    aut.plus_one = False
+    aut.build()
     #
-    a.action['env'] = ["x'"]
-    a.action['sys'] = ["x'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.add_expr("x' ")
+    aut.action['sys'] = aut.add_expr("x' ")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true
     #
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x'"]
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x' ")
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false
 
 
 def test_step():
-    a = symbolic.Automaton()
-    a.vars = dict(x=dict(type='bool', owner='env'),
-                  y=dict(type='bool', owner='sys'))
-    a.action['env'] = ["True"]
-    a.action['sys'] = ["x' => !y'"]
-    a.moore = False
-    a.plus_one = False
-    aut = a.build()
-    (env_action,) = aut.action['env']
-    (sys_action,) = aut.action['sys']
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist = dict(env=['x'], sys=['y'])
+    aut.action['env'] = aut.true
+    aut.action['sys'] = aut.add_expr("x' => !y'")
+    aut.moore = False
+    aut.plus_one = False
+    aut.build()
+    env_action = aut.action['env']
+    sys_action = aut.action['sys']
     target = aut.add_expr('y')
     u = fx.step(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)

@@ -263,7 +263,7 @@ def _add_to_visited(values, visited, aut):
             if bool(value):
                 c.append(var)
             else:
-                c.append('! ' + var)
+                c.append(' ~ ' + var)
             continue
         # integer
         assert t in ('int', 'saturating', 'modwrap'), t

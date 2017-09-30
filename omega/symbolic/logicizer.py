@@ -16,8 +16,9 @@ from omega.symbolic.symbolic import Automaton
 logger = logging.getLogger(__name__)
 
 
-def graph_to_logic(g, nodevar, ignore_initial,
-                   receptive=False, self_loops=False):
+def graph_to_logic(
+        g, nodevar, ignore_initial,
+        receptive=False, self_loops=False):
     """Flatten labeled graph to temporal logic formulas.
 
     @param g: `TransitionSystem`
@@ -133,8 +134,9 @@ def _node_var_trans(g, nodevar, dvars):
     return (init, trans)
 
 
-def _init_from_ts(initial_nodes, nodevar,
-                  dvars, ignore_initial=False):
+def _init_from_ts(
+        initial_nodes, nodevar,
+        dvars, ignore_initial=False):
     """Return initial condition."""
     if ignore_initial:
         return list()

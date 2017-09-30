@@ -6,20 +6,22 @@ import networkx as nx
 
 from omega.games import enumeration as enum
 from omega.symbolic import fol as _fol
-from omega.symbolic import symbolic
+from omega.symbolic import temporal as symbolic
 
 
 def test_action_to_steps():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='bool', owner='env'),
-        y=dict(type='int', dom=(0, 17), owner='sys'))
+    aut.declare_variables(x='bool', y=(0, 17))
+    aut.varlist['env'] = ['x']
+    aut.varlist['sys'] = ['y']
     keys = ('x', 'y')
-    aut.init['env'] = ['x & (y = 1)']
-    aut.action['sys'] = ["y' != y"]
+    aut.init['env'] = aut.add_expr('x /\ (y = 1)')
+    aut.action['sys'] = aut.add_expr("y' != y")
+    aut.action['env'] = aut.true
     aut.qinit = '\A \A'
-    a = aut.build()
-    g = enum.action_to_steps(a, qinit=a.qinit)
+    aut.moore = True
+    aut.build()
+    g = enum.action_to_steps(aut, qinit=aut.qinit)
     # 36 states reachable, but should enumerate fewer
     assert len(g) == 4, g.nodes()
     # these are state projections (partial assignments)
@@ -35,55 +37,44 @@ def test_action_to_steps():
     assert len(r) == 2
 
 
-def test_split_vars_per_quantifier():
-    dvars = dict(x=dict(owner='bob'),
-                 y=dict(owner='alice'),
-                 z=dict(owner='alice'))
-    players = {'bob', 'alice'}
-    control, primed_vars = enum._split_vars_per_quantifier(
-        dvars, players)
-    control_ = dict(bob={'x'}, alice={'y', 'z'})
-    assert control == control_, control
-    primed_vars_ = dict(bob={"x'"}, alice={"y'", "z'"})
+def test__primed_vars_per_quantifier():
+    varlist = dict(env=['x'], sys=['y', 'z'])
+    primed_vars = enum._primed_vars_per_quantifier(varlist)
+    primed_vars_ = dict(env={"x'"}, sys={"y'", "z'"})
     assert primed_vars == primed_vars_, primed_vars
 
 
 def test_init_search():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='bool', owner='sys'))
-    control = dict(env=set(), sys={'x'})
-    aut.init['env'] = ['True']
-    a = aut.build()
-    a.control = control
+    aut.declare_variables(x='bool')
+    aut.varlist = dict(env=[], sys=['x'])
+    aut.init['env'] = aut.true
+    aut.build()
     g = nx.DiGraph()
-    fol = _init_context(a)
+    fol = _init_context(aut)
     umap = dict()
     keys = ['x']
     qinit = '\A \E'
     queue, visited = enum._init_search(
-        g, fol, a, umap, keys, qinit)
+        g, aut, umap, keys, qinit)
     assert len(queue) == 1, queue
 
 
 def test_forall_init():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='int', dom=(3, 5), owner='env'),
-        y=dict(type='bool', owner='sys'),
-        z=dict(type='bool', owner='sys'))
-    control = dict(env={'x'}, sys={'y', 'z'})
+    aut.declare_variables(
+        x=(3, 5), y='bool', z='bool')
+    aut.varlist = dict(env=['x'], sys=['y', 'z'])
     # single initial state
     s = '(x = 4) & ! y & z'
-    aut.init['env'] = [s]
-    a = aut.build()
-    a.control = control
+    aut.init['env'] = aut.add_expr(s)
+    aut.build()
     g = nx.DiGraph()
-    fol = _init_context(a)
+    fol = _init_context(aut)
     umap = dict()
     keys = ('x', 'z', 'y')
     queue, visited = enum._forall_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
@@ -92,13 +83,12 @@ def test_forall_init():
     assert d == d_, d
     # multiple initial states: should pick all
     s = '(x < 5) & ! z'
-    aut.init['env'] = [s]
-    a = aut.build()
-    a.control = control
+    aut.init['env'] = aut.add_expr(s)
+    aut.build()
     g= nx.DiGraph()
     umap = dict()
     queue, visited = enum._forall_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 4, queue
     varnames = {'x', 'y', 'z'}
     for q in queue:
@@ -112,22 +102,18 @@ def test_forall_init():
 
 def test_exist_init():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='int', dom=(0, 2), owner='env'),
-        y=dict(type='bool', owner='sys'),
-        z=dict(type='bool', owner='sys'))
-    control = dict(env={'x'}, sys={'y', 'z'})
+    aut.declare_variables(x=(0, 2), y='bool', z='bool')
+    aut.varlist = dict(env={'x'}, sys={'y', 'z'})
     # single initial state
     s = '(x = 1) & y & z'
-    aut.init['env'] = [s]
-    a = aut.build()
-    a.control = control
+    aut.init['env'] = aut.add_expr(s)
+    aut.build()
     g = nx.DiGraph()
-    fol = _init_context(a)
+    fol = _init_context(aut)
     umap = dict()
     keys = ('y', 'x', 'z')
     queue, visited = enum._exist_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
@@ -136,13 +122,12 @@ def test_exist_init():
     assert d == d_, d
     # multiple initial states: should pick one
     s = '(x = 1) & y'
-    aut.init['env'] = [s]
+    aut.init['env'] = aut.add_expr(s)
     a = aut.build()
-    a.control = control
     g = nx.DiGraph()
     umap = dict()
     queue, visited = enum._exist_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
@@ -156,21 +141,18 @@ def test_exist_init():
 
 def test_forall_exist_init():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='bool', owner='env'),
-        y=dict(type='bool', owner='sys'))
-    control = dict(env={'x'}, sys={'y'})
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
     s = 'x & y'
-    aut.init['env'] = [s]
-    a = aut.build()
-    a.control = control
+    aut.init['env'] = aut.add_expr(s)
+    aut.build()
     g = nx.DiGraph()
-    fol = _init_context(a)
+    fol = _init_context(aut)
     umap = dict()
     keys = ('x', 'y')
     queue, visited = enum._forall_exist_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
@@ -179,13 +161,12 @@ def test_forall_exist_init():
     assert d ==d_, (d, d_)
     # multiple initial states
     s = 'x <-> y'
-    aut.init['env'] = [s]
-    a = aut.build()
-    a.control = control
+    aut.init['env'] = aut.add_expr(s)
+    aut.build()
     g = nx.DiGraph()
     umap = dict()
     queue, visited = enum._forall_exist_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 2, queue
     q0, q1 = queue
     assert q0 in g, (q0, g)
@@ -206,21 +187,18 @@ def test_forall_exist_init():
 
 def test_exist_forall_init():
     aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='bool', owner='env'),
-        y=dict(type='bool', owner='sys'))
-    control = dict(env={'x'}, sys={'y'})
+    aut.declare_variables(x='bool', y='bool')
+    aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
     s = 'x & ! y'
-    aut.init['env'] = [s]
+    aut.init['env'] = aut.add_expr(s)
     a = aut.build()
-    a.control = control
     g = nx.DiGraph()
-    fol = _init_context(a)
+    fol = _init_context(aut)
     umap = dict()
     keys = ('x', 'y')
     queue, visited = enum._exist_forall_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
@@ -229,13 +207,12 @@ def test_exist_forall_init():
     assert d == d_, (d, d_)
     # multiple initial states
     s = 'y'
-    aut.init['env'] = [s]
+    aut.init['env'] = aut.add_expr(s)
     a = aut.build()
-    a.control = control
     g = nx.DiGraph()
     umap = dict()
     queue, visited = enum._exist_forall_init(
-        g, fol, a, umap, keys)
+        g, aut, umap, keys)
     assert len(queue) == 2, queue
     q0, q1 = queue
     assert q0 in g, (q0, g)

@@ -153,7 +153,7 @@ def _sys_trans(g, nodevar, dvars):
         # no successors ?
         if not g.succ.get(u):
             logger.debug('node: {u} is deadend !'.format(u=u))
-            sys_trans.append('({pre}) -> False'.format(pre=pre))
+            sys_trans.append('({pre}) => False'.format(pre=pre))
             continue
         post = list()
         for u, v, d in g.edges(u, data=True):

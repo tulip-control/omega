@@ -81,7 +81,7 @@ def _split_gr1(u, context, gf=None):
         if context == 'init':
             return u
         else:
-            return Nodes.Bool('True')
+            return Nodes.Bool('TRUE')
     # operator
     if u.operator == '/\\':
         v, w = u.operands
@@ -91,11 +91,11 @@ def _split_gr1(u, context, gf=None):
     assert u.operator != '/\\', u.operator
     if context == 'init':
         if u.operator == '[]':
-            return Nodes.Bool('True')
+            return Nodes.Bool('TRUE')
         else:
             return u
     if u.operator != '[]':
-        return Nodes.Bool('True')
+        return Nodes.Bool('TRUE')
     assert u.operator == '[]'
     (v,) = u.operands
     # terminal ?
@@ -103,12 +103,12 @@ def _split_gr1(u, context, gf=None):
         if context == 'action':
             return v
         else:
-            return Nodes.Bool('True')
+            return Nodes.Bool('TRUE')
     assert hasattr(v, 'operator'), v
     if context == 'action':
         # GF ?
         if v.operator == '<>':
-            return Nodes.Bool('True')
+            return Nodes.Bool('TRUE')
         return v
     elif context == 'win':
         if v.operator != '<>':

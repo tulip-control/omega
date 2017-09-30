@@ -2,7 +2,7 @@
 
 Re-implementation of `tulip.synth`.
 """
-# Copyright 2015 by California Institute of Technology
+# Copyright 2015-2017 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
 from __future__ import absolute_import
@@ -10,7 +10,7 @@ import logging
 import warnings
 
 from omega.logic import syntax as stx
-from omega.symbolic.symbolic import Automaton
+from omega.symbolic import temporal as trl
 
 
 logger = logging.getLogger(__name__)
@@ -37,8 +37,32 @@ def graph_to_logic(
     @param self_loops: if `True`, then add all self-loops
 
     @return: temporal formulas representing `g`.
-    @rtype: `Automaton`
+    @rtype: `temporal.Automaton`
     """
+    (env_init, env_tran,
+     sys_init, sys_tran) = _graph_to_formulas(
+        g, nodevar, ignore_initial,
+        receptive=receptive, self_loops=self_loops)
+    # package as automaton
+    dom = _nodevar_dom(g)
+    aut = trl.Automaton()
+    aut.declare_variables(**g.vars, **{nodevar: dom})
+    aut.varlist['env'] = list(g.env_vars)
+    aut.varlist['sys'] = [k for k in g.vars if k not in g.env_vars]
+    aut.varlist[g.owner].append(nodevar)
+    aut.init.update(
+        env=_add_expr(env_init, aut),
+        sys=_add_expr(sys_init, aut))
+    aut.action.update(
+        env=_add_expr(env_tran, aut),
+        sys=_add_expr(sys_tran, aut))
+    return aut
+
+
+def _graph_to_formulas(
+        g, nodevar, ignore_initial,
+        receptive=False, self_loops=False):
+    """Return strings of init and actions."""
     assert g.assert_consistent()
     assert len(g) > 0
     dvars = dict(g.vars)
@@ -73,13 +97,12 @@ def graph_to_logic(
         env_tran.extend(nodepred)
     else:
         raise Exception('owner is neither "sys" nor "env".')
-    a = Automaton()
-    a.vars = t
-    a.init['env'].extend(env_init)
-    a.init['sys'].extend(sys_init)
-    a.action['env'].extend(env_tran)
-    a.action['sys'].extend(sys_tran)
-    return a
+    return env_init, env_tran, sys_init, sys_tran
+
+
+def _add_expr(c, aut):
+    """Return BDD for conjunction of expressions in `c`."""
+    return aut.add_expr(stx.conj(c))
 
 
 def _nodevar_dom(g):

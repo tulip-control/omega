@@ -4,6 +4,7 @@ import dd.bdd
 from nose import tools as nt
 from omega.automata import TransitionSystem
 from omega.logic import bitvector as bv
+from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import bdd_iterative as bdd_trs
 from omega.symbolic import fol as _fol
@@ -303,18 +304,13 @@ def test_logicizer_env():
     g.add_edge(0, 1, x=True)
     g.add_edge(1, 2, formula="x'")
     g.add_edge(2, 1)
-    aut = logicizer.graph_to_logic(
+    (env_init, env_act,
+     sys_init, sys_act) = logicizer._graph_to_formulas(
         g,
         nodevar='k',
         ignore_initial=True,
         self_loops=True)
-    assert 'x' in aut.vars, aut.vars
-    assert 'k' in aut.vars, aut.vars
-    xtype = aut.vars['x']['type']
-    ktype = aut.vars['k']['type']
-    assert xtype == 'bool', xtype
-    assert ktype == 'saturating', ktype
-    (s,) = aut.action['env']
+    s = stx.conj(env_act)
     e1 = "(((((k = 0)) => (((x <=> True)) /\ ((k' = 1)))) \n"
     e2 = "(((((k = 0)) => (((k' = 1)) /\ ((x <=> True)))) \n"
     assert s.startswith(e1) or s.startswith(e2), s
@@ -322,6 +318,15 @@ def test_logicizer_env():
         "/\ (((k = 1)) => ((x') /\ ((k' = 2))))) \n"
         "/\ (((k = 2)) => ((k' = 1)))) \/ (k' = k)")
     assert s.endswith(e3), s
+    # test automaton
+    aut = logicizer.graph_to_logic(
+        g, nodevar='k', ignore_initial=True)
+    assert 'x' in aut.vars, aut.vars
+    assert 'k' in aut.vars, aut.vars
+    xtype = aut.vars['x']['type']
+    ktype = aut.vars['k']['type']
+    assert xtype == 'bool', xtype
+    assert ktype == 'int', ktype
 
 
 def test_joint_support():

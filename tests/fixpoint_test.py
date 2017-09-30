@@ -491,5 +491,9 @@ def test_step():
     assert u == aut.bdd.true, aut.bdd.to_expr(u)
 
 
+def _to_expr(u, aut):
+    return aut.bdd.to_expr(u)
+
+
 if __name__ == '__main__':
     test_step()

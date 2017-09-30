@@ -131,7 +131,7 @@ class Automaton(object):
             'Deprecated; use the class '
             '`omega.symbolic.temporal.Automaton` instead.',
             category=PendingDeprecationWarning)
-        self.players = {'env': 0, 'sys': 1}  # name -> turn
+        self.players = dict(env=0, sys=1)  # name -> turn
         self.vars = dict()
         self.moore = True
         self.plus_one = True

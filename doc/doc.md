@@ -1189,6 +1189,8 @@ The token precedence (lowest to highest) and associativity
 - `X`, `-X`, `--X` (r)
 - `'`, `.` (l)
 
+Comments start at `(*` and close at `*)`, which can appear on different lines.
+
 
 ## The deprecated class `omega.symbolic.symbolic.Automaton`
 

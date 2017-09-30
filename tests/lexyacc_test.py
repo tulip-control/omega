@@ -100,6 +100,24 @@ def test_range():
     assert r == r_, r
 
 
+def test_multiline_tla_comment():
+    # on single line
+    s = '(* this is a comment *) a = 1'
+    r = parser.parse(s).flatten()
+    r_ = '( a = 1 )'
+    assert r == r_, r
+    # spread over multiple lines
+    s = '(* hohoho \n bar bar foo *) a = 1'
+    r = parser.parse(s).flatten()
+    r_ = '( a = 1 )'
+    assert r == r_, r
+    # repeated
+    s = '(* foo *) a = 1 (* bar *)'
+    r = parser.parse(s).flatten()
+    r_ = '( a = 1 )'
+    assert r == r_, r
+
+
 def _assert_is_var_node(x, var):
     assert hasattr(x, 'type'), x
     assert x.type == 'var', x.type

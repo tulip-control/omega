@@ -137,6 +137,10 @@ class Lexer(astutils.Lexer):
         r'\#.*'
         return
 
+    def t_multiline_comment(self, t):
+        r'\(\*[\s\S]*?\*\)'
+        return
+
     def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += t.value.count("\n")

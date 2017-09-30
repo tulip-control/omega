@@ -114,7 +114,7 @@ def test_cpre_moore_plus_one():
     target = aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true
-    target = aut.add_expr('! y')
+    target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false
     # y
@@ -133,7 +133,7 @@ def test_cpre_moore_plus_one():
     target = aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == y, _to_expr(u, aut)
-    target = aut.add_expr('! y')
+    target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == y, _to_expr(u, aut)
     # with env
@@ -187,10 +187,10 @@ def test_cpre_moore_plus_one():
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
-    target = aut.add_expr('x & ! y')
+    target = aut.add_expr('x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    target = aut.add_expr('! x & ! y')
+    target = aut.add_expr(' ~ x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
 
@@ -373,10 +373,10 @@ def test_cpre_mealy_plus_one():
     target = aut.add_expr('y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
-    target = aut.add_expr('! y')
+    target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    target = aut.add_expr('! x | y')
+    target = aut.add_expr(' ~ x \/ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     # x' => y' with assumption
@@ -386,7 +386,7 @@ def test_cpre_mealy_plus_one():
     (env_action,) = aut.action['env']
     (sys_action,) = aut.action['sys']
     # `plus_one` cannot depend on `x`
-    target = aut.add_expr('! y')
+    target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     # x => y' with assumption

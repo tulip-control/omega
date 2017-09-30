@@ -82,7 +82,9 @@ def test_forall_init():
     d_ = dict(x=4, y=False, z=True)
     assert d == d_, d
     # multiple initial states: should pick all
-    s = '(x < 5) & ! z'
+    s = (
+        '(x \in 3..5) /\ (x < 5) '
+        '/\ ~ z /\ (z <=> TRUE \/ z <=> FALSE)')
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g= nx.DiGraph()

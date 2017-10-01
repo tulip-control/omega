@@ -119,7 +119,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     rho_1 = aut.false
     for i, goal in enumerate(goals):
         ip = (i + 1) % len(goals)
-        s = "({c} = {i}) & ({c}' = {ip})".format(c=c, i=i, ip=ip)
+        s = "({c} = {i}) /\ ({c}' = {ip})".format(c=c, i=i, ip=ip)
         u = aut.add_expr(s)
         u &= goal
         rho_1 |= u
@@ -128,7 +128,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_2: descent in basin
     rho_2 = aut.false
     for i, yj in enumerate(yij):
-        s = "({c} = {i}) & ({c}' = {i})".format(c=c, i=i)
+        s = "({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
         count = aut.add_expr(s)
         rho_2j = aut.false
         basin = yj[0]
@@ -144,7 +144,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_3: persistence holds
     rho_3 = aut.false
     for i, xjk in enumerate(xijk):
-        s = "({c} = {i}) & ({c}' = {i})".format(c=c, i=i)
+        s = "({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
         count = aut.add_expr(s)
         rho_3j = aut.false
         used = aut.false
@@ -279,7 +279,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     goals = aut.win['[]<>']
     # compute strategy from iterates
     # \rho_1: descent in persistence basin
-    s = "({c}' = {c}) & ({w}' = {none})".format(
+    s = "({c}' = {c}) /\ ({w}' = {none})".format(
         c=c, w=w, none=n_holds)
     count = aut.add_expr(s)
     rho_1 = aut.false
@@ -301,7 +301,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rim = z & ~ basin
         rim &= ~ cox_basin
         # rho_2: pick persistence set
-        s = "({c}' = {c}) & ({w} = {none})".format(
+        s = "({c}' = {c}) /\ ({w} = {none})".format(
             c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
         u = rim & count
@@ -316,8 +316,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rho_2 |= u
         # rho_3: descent in recurrence basin
         s = (
-            "({c}' = {c}) &"
-            "({w} != {none}) &"
+            "({c}' = {c}) /\ "
+            "({w} /= {none}) /\ "
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
@@ -326,7 +326,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, xjr in enumerate(xijr):
             for j, (xr, goal) in enumerate(zip(xjr, goals)):
                 s = (
-                    "({c} = {j}) &"
+                    "({c} = {j}) /\ "
                     " ({w} = {i})").format(c=c, w=w, i=i, j=j)
                 count = aut.add_expr(s)
                 x_basin = xr[0]
@@ -346,13 +346,13 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         u = aut.false
         for j, goal in enumerate(goals):
             jp = (j + 1) % len(goals)
-            s = "({c} = {j}) & ({c}' = {jp})".format(
+            s = "({c} = {j}) /\ ({c}' = {jp})".format(
                 c=c, j=j, jp=jp)
             count = aut.add_expr(s)
             p = count & goal
             u |= p
         s = (
-            "({w} != {none}) &"
+            "({w} /= {none}) /\ "
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
@@ -385,7 +385,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     aut.action['impl'] = u
     symbolic._assert_support_moore(u, aut)
     # initial condition for counter
-    s = '({c} = 0) & ({w} = {none})'.format(
+    s = '({c} = 0) /\ ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = aut.add_expr(s)
     _make_init(count, winning, aut)

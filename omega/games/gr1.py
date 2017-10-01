@@ -22,11 +22,13 @@ Robert Konighofer
 #
 import logging
 import copy
+
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic.bdd import is_state_predicate
 from omega.symbolic import fixpoint as fx
 from omega.symbolic import fol as _fol
 from omega.symbolic import symbolic
+from omega.symbolic import temporal as trl
 
 
 logger = logging.getLogger(__name__)
@@ -590,21 +592,20 @@ def trivial_winning_set(aut_streett):
         - `trivial`: node in `aut_streett.bdd`
         - `aut_streett`: `symbolic.Automaton`
     """
-    aut_rabin = symbolic.Automaton()
-    for var, d in aut_streett.vars.items():
-        d = d.copy()
-        owner = d['owner']
-        owner = 'env' if owner == 'sys' else 'sys'
-        d['owner'] = owner
-        aut_rabin.vars[var] = d
+    aut_rabin = trl.default_rabin_automaton()
+    aut_rabin.bdd = aut_streett.bdd
+    aut_rabin.vars = copy.deepcopy(aut_streett.vars)
+    # swap vars and actions
+    aut_rabin.varlist['env'] = list(aut_streett.varlist['sys'])
+    aut_rabin.varlist['sys'] = list(aut_streett.varlist['env'])
     aut_rabin.action['env'] = aut_streett.action['sys']
     aut_rabin.action['sys'] = aut_streett.action['env']
-    win = ['!({w})'.format(w=w) for w in aut_streett.win['<>[]']]
+    aut_rabin.init['env'] = aut_streett.init['sys']
+    aut_rabin.init['sys'] = aut_streett.init['env']
+    win = [~ w for w in aut_streett.win['<>[]']]
     aut_rabin.win['[]<>'] = win
-    symbolic.fill_blanks(aut_rabin, rabin=True)
-    aut_rabin.bdd = aut_streett.bdd
-    aut_streett = aut_streett.build()
-    aut_rabin = aut_rabin.build()
+    # needed because we changed bdd
+    aut_rabin.win['<>[]'] = [aut_rabin.true]
     # solve
     win_streett, _, _ = solve_streett_game(aut_streett)
     zk, _, _ = solve_rabin_game(aut_rabin)

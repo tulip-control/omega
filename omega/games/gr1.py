@@ -35,6 +35,10 @@ logger = logging.getLogger(__name__)
 def solve_streett_game(aut, rank=1):
     r"""Return winning set and iterants for Streett(1) game.
 
+    The returned value takes into account actions and
+    liveness, not initial conditions (i.e., it is the
+    fixpoint before reasoning about initial conditions).
+
     Expects "env" and "sys" players. Writes:
 
       - `aut.varlist["env'"]`

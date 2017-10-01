@@ -47,7 +47,7 @@ def solve_streett_game(aut, rank=1):
       - `aut.varlist["sys'"]`
 
     @param aut: compiled game with <>[] \/ []<> winning
-    @type aut: `symbolic.Automaton`
+    @type aut: `temporal.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
@@ -98,7 +98,7 @@ def _attractor_under_assumptions(goal, aut):
 
 
 def make_streett_transducer(z, yij, xijk, aut):
-    """Return I/O `symbolic.Automaton` implementing strategy.
+    """Return I/O `temporal.Automaton` implementing strategy.
 
     An auxiliary variable `_goal` is added,
     to represent the counter of recurrence goals.
@@ -193,7 +193,7 @@ def solve_rabin_game(aut, rank=1):
     """Return winning set and iterants for Rabin(1) game.
 
     @param aut: compiled game with <>[] & []<> winning
-    @type aut: `symbolic.Automaton`
+    @type aut: `temporal.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
@@ -402,7 +402,7 @@ def is_realizable(z, aut):
     """Return `True` if, and only if, `aut` wins from `z`.
 
     @param z: bdd node
-    @param type: compiled `symbolic.Automaton`
+    @param type: compiled `temporal.Automaton`
     """
     env_init = aut.init['env']
     sys_init = aut.init['sys']
@@ -590,7 +590,7 @@ def trivial_winning_set(aut_streett):
 
     @return: `(trivial, aut_streett)` where:
         - `trivial`: node in `aut_streett.bdd`
-        - `aut_streett`: `symbolic.Automaton`
+        - `aut_streett`: `temporal.Automaton`
     """
     aut_rabin = trl.default_rabin_automaton()
     aut_rabin.bdd = aut_streett.bdd

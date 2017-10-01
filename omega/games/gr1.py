@@ -297,7 +297,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     basin = aut.false
     for z, yi, xijr in zip(zk, yki, xkijr):
         cox_basin = fx.step(env_action, sys_action,
-                            basin, t)
+                            basin, aut)
         rim = z & ~ basin
         rim &= ~ cox_basin
         # rho_2: pick persistence set

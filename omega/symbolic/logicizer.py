@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 def graph_to_logic(
         g, nodevar, ignore_initial,
-        receptive=False, self_loops=False):
+        receptive=False, self_loops=False,
+        aut=None):
     """Flatten labeled graph to temporal logic formulas.
 
     @param g: `TransitionSystem`
@@ -35,6 +36,8 @@ def graph_to_logic(
     @param receptive: if `True`, then add assumptions to
         ensure receptiveness at each node.
     @param self_loops: if `True`, then add all self-loops
+    @param aut: define in this automaton.
+        If `None`, return fresh `temporal.Automaton`
 
     @return: temporal formulas representing `g`.
     @rtype: `temporal.Automaton`
@@ -45,7 +48,8 @@ def graph_to_logic(
         receptive=receptive, self_loops=self_loops)
     # package as automaton
     dom = _nodevar_dom(g)
-    aut = trl.Automaton()
+    if aut is None:
+        aut = trl.Automaton()
     aut.declare_variables(**g.vars, **{nodevar: dom})
     aut.varlist['env'] = list(g.env_vars)
     aut.varlist['sys'] = [k for k in g.vars if k not in g.env_vars]

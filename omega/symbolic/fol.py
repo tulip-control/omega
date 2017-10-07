@@ -290,6 +290,14 @@ class Context(object):
             self.op[name] = expr_ast.flatten()
             self.op_bdd[name] = sym_bdd.add_expr(s, self.bdd)
 
+    def to_bdd(self, expr):
+        """Return BDD for the formula `expr`."""
+        return self.add_expr(expr)
+
+    def bdds_from(self, *expressions):
+        """Return `list` of BDDs for the `expressions`."""
+        return [self.to_bdd(e) for e in expressions]
+
     def add_expr(self, e, with_ops=False):
         """Add first-order predicate.
 

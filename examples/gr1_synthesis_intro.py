@@ -10,7 +10,7 @@ import networkx as nx
 from omega.games import gr1
 from omega.games import enumeration as enum
 from omega.symbolic import enumeration as sym_enum
-from omega.symbolic import symbolic
+from omega.symbolic import temporal as trl
 
 
 log = logging.getLogger('omega.games.enumeration')
@@ -28,22 +28,20 @@ def solve_design_problem():
 
 def gr1_specification():
     """Return a temporal logic spec in the GR(1) fragment."""
-    aut = symbolic.Automaton()
-    aut.vars = dict(
-        x=dict(type='int', dom=(1, 3), owner='env'),
-        y=dict(type='int', dom=(-3, 3), owner='sys'))
-    aut.init['env'] = ['x = 1  /\  y = 2']
-    aut.init['sys'] = ['TRUE']
-    aut.action['env'] = ['''
-        1 <= x  /\  x <= 2
-        ''']
-    aut.action['sys'] = ['''
-        /\ -3 <= y
-        /\ y <= 3
+    aut = trl.Automaton()
+    aut.declare_variables(x=(1, 3), y=(-3, 3))
+    aut.varlist.update(env=['x'], sys=['y'])
+    aut.init['env'] = 'x = 1  /\  y = 2'
+    aut.init['sys'] = 'TRUE'
+    aut.action['env'] = '''
+        /\ x \in 1..2
+        '''
+    aut.action['sys'] = '''
+        /\ y \in -3..3
         /\ y' = x - 3
-        ''']
-    aut.win['<>[]'] = ['x = 2']
-    aut.win['[]<>'] = ['y != -1']
+        '''
+    aut.win['<>[]'] = aut.bdds_from('x = 2')
+    aut.win['[]<>'] = aut.bdds_from('y != -1')
     aut.qinit = '\A \A'  # should work from all states that
                          # satisfy `aut.init['env']`
     aut.moore = True
@@ -57,11 +55,12 @@ def synthesize_some_controller(aut):
     If no controller exists, then raise an `Exception`.
     The returned controller is represented as a `networkx` graph.
     """
-    qinit = aut.qinit
-    aut_compiled = aut.build()  # compile expression strings to BDDs
-    z, yij, xijk = gr1.solve_streett_game(aut_compiled)
-    t = gr1.make_streett_transducer(z, yij, xijk, aut_compiled)
-    g = enum.action_to_steps(t, qinit=qinit)
+    z, yij, xijk = gr1.solve_streett_game(aut)
+    gr1.make_streett_transducer(z, yij, xijk, aut)
+    aut.init['env'] = aut.init['impl_env']
+    aut.init['sys'] = aut.init['impl_sys']
+    aut.action['sys'] = aut.action['impl']
+    g = enum.action_to_steps(aut, qinit=aut.qinit)
     return g
 
 

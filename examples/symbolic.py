@@ -31,22 +31,22 @@ def semi_symbolic():
     g.add_edge(10, 10)
     g.add_edge(10, 0, formula="x")
     # symbolic
-    a = logicizer.graph_to_logic(
+    aut = logicizer.graph_to_logic(
         g, 'nd', ignore_initial=True, self_loops=False)
-    a.init['env'] = ['nd = 1']
-    a.win['<>[]'].append('~ x')
-    a.win['[]<>'].append('nd = 0')
-    print(a)
-    # compile to BDD
-    aut = a.build()
+    aut.init['env'] = 'nd = 1'
+    aut.win['<>[]'] = aut.bdds_from(' ~ x')
+    aut.win['[]<>'] = aut.bdds_from('nd = 0')
+    aut.qinit = '\A \A'
     aut.moore = True
     aut.plus_one = True
+    print(aut)
+    # compile to BDD
     z, yij, xijk = gr1.solve_streett_game(aut)
-    t = gr1.make_streett_transducer(z, yij, xijk, aut)
+    gr1.make_streett_transducer(z, yij, xijk, aut)
     # print t.bdd.to_expr(t.action['sys'][0])
-    r = t.action['sys'][0]
-    # t.bdd.dump('bdd.pdf', roots=[r])
-    g = enum.action_to_steps(t, qinit='\A \A')
+    r = aut.action['sys']
+    # aut.bdd.dump('bdd.pdf', roots=[r])
+    g = enumerate_controller(aut)
     h, _ = sym_enum._format_nx(g)
     pd = nx.drawing.nx_pydot.to_pydot(h)
     pd.write_pdf('game_states.pdf')
@@ -54,7 +54,15 @@ def semi_symbolic():
         n=len(g)))
     print(('Winning set:', aut.bdd.to_expr(z)))
     print('{n} BDD nodes in total'.format(
-        n=len(t.bdd)))
+        n=len(aut.bdd)))
+
+
+def enumerate_controller(aut):
+    aut.init['env'] = aut.init['impl_env']
+    aut.init['sys'] = aut.init['impl_sys']
+    aut.action['sys'] = aut.action['impl']
+    g = enum.action_to_steps(aut, qinit=aut.qinit)
+    return g
 
 
 if __name__ == '__main__':

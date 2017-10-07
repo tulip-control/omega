@@ -182,11 +182,10 @@ class Context(object):
             rename = stx.isinstance_str(vars_to_new[k])
             break
         if rename:
-            bit_rename = _refine_renaming(vars_to_new, self.vars)
-            return self.bdd.rename(u, bit_rename)
+            d = _refine_renaming(vars_to_new, self.vars)
         else:
-            bit_values = _refine_assignment(vars_to_new, self.vars)
-            return self.bdd.cofactor(u, bit_values)
+            d = _refine_assignment(vars_to_new, self.vars)
+        return self.bdd.let(d, u)
 
     def replace_with_bdd(self, u, var_subs):
         """Substitute Boolean-valued variables with BDD nodes."""

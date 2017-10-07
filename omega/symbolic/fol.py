@@ -63,8 +63,8 @@ class Context(object):
         """Instantiate first-order context."""
         self.vars = dict()
         self.bdd = _bdd.BDD()
-        self.op = dict()  # namespace of operators
-        self.op_bdd = dict()
+        self.op = dict()  # operator name -> `str`
+        self.op_bdd = dict()  # operator name -> bdd
 
     def __str__(self):
         return ((
@@ -121,6 +121,12 @@ class Context(object):
 
         - Priming is not reasoned about here.
           Priming is cared for by other modules.
+
+        The method `add_vars` adds to `vars[var]` the keys:
+
+          - `"bitnames"`: `list`
+          - `"signed"`: `True` if signed integer
+          - `"width"`: `len(bitnames)`
         """
         assert dvars, dvars
         self._avoid_redeclaration(dvars)

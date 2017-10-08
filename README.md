@@ -5,26 +5,80 @@
 About
 =====
 
-A package of symbolic algorithms for solving games of infinite duration.
-It can be used to generate software from [temporal logic specifications][specs].
+A package of symbolic algorithms using binary decision diagrams (BDDs)
+for synthesizing implementations from [temporal logic specifications][specs].
 This is useful for designing systems, especially vehicles that carry humans.
 
-It contains:
 
-- [Synthesis][synthesis] algorithms of [Moore][moore] or [Mealy][mealy] strategies for:
-  - [generalized Streett(1)][streett1] games (known as [GR(1)][gr1])
-  - generalized Rabin(1) games ([counter-strategies][rabin1] to GR(1))
-  - detection of trivial realizability in GR(1) games.
+Features
+========
+
+- [Synthesis][synthesis] algorithms for [Moore][moore] or [Mealy][mealy]
+  implementations of:
+
+  - [generalized Streett(1)][streett1] specifications (known as [GR(1)][gr1])
+  - generalized Rabin(1) specifications ([counter-strategies][rabin1] to GR(1))
+  - detection of trivial realizability in GR(1) specifications.
+
+  See `omega.games.gr1`.
+
+
+- Enumeration of state machines (as `networkx` graphs) from the synthesized
+  symbolic implementations. See `omega.games.enumeration`.
+
+
+- Facilities to simulate the resulting implementations with little and
+  readable user code. See `omega.steps`.
+
+
+- Code generation for the synthesized *symbolic* implementations.
+  This code is correct-by-construction.
+
+
 - [First-order][fol] [linear temporal logic][LTL] (LTL) with
   [rigid quantification][rigid quantification] and substitution.
+  See `omega.logic.lexyacc`, `omega.logic.ast`, and `omega.logic.syntax`.
+
+
 - [Bitblaster][bitblasting] of quantified integer arithmetic (integers -> bits).
-- Translation from [past][past LTL] to future LTL, using [temporal testers][temporal testers].
-- Symbolic automata that include:
-  - methods that compile first-order logic to, and maintain, the underlying [binary decision diagrams][bdd] (BDDs)
-  - functions for generatining primed variables, and BDD orderings.
-- [Semi-enumerated automata][tla-in-pictures] (and "transition systems").
-- Flattening of semi-enumerated transition systems to LTL.
-- Enumeration / plotting of BDDs representing sets and actions.
+  See `omega.logic.bitvector`.
+
+
+- Translation from [past][past LTL] to future LTL, using
+  [temporal testers][temporal testers]. See `omega.logic.past`.
+
+
+- Symbolic automata that manage first-order formulas by seamlessly using
+  [binary decision diagrams][bdd] (BDDs) underneath. You can:
+
+  - declare variables and constants
+  - translate:
+    1. formulas to BDDs and
+    2. BDDs to *minimal* formulas via minimal covering
+  - quantify
+  - substitute
+  - prime/unprime variables
+  - get the support of predicates
+  - pick satisfying assignments (or work with iterators)
+  - define operators
+
+  See `omega.symbolic.temporal` and `omega.symbolic.fol` for more details.
+
+
+- Facilities to write symbolic fixpoint algorithms.
+  See `omega.symbolic.fixpoint` and `omega.symbolic.prime`.
+
+
+- Conversion from graphs annotated with formulas to temporal logic formulas.
+  These graphs can help specify transition relations.
+  The translation is in the spirit of
+  [predicate-action diagrams][tla-in-pictures].
+
+  See `omega.symbolic.logicizer` and `omega.automata` for more details.
+
+
+- Enumeration and plotting of state predicates and actions represented as BDDs.
+  See `omega.symbolic.enumeration`.
 
 
 Documentation

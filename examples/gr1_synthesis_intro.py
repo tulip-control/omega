@@ -35,6 +35,7 @@ def gr1_specification():
     aut.init['sys'] = 'TRUE'
     aut.action['env'] = '''
         /\ x \in 1..2
+        /\ x' \in 1..2
         '''
     aut.action['sys'] = '''
         /\ y \in -3..3

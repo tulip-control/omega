@@ -3,6 +3,7 @@
 htmlcov/*
 omega/_version.py
 *parsetab.py
+tests/generated_foo.py
 build/*
 dist/*
 *.egg-info/*

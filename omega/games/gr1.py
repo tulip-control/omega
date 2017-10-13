@@ -528,13 +528,13 @@ def _make_init(internal_init, win, aut):
     env_init = aut.init['env']
     b = aut.init['sys']
     u = b & internal_init
-    sys_init = u & win
+    new_sys_init = u & win
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
-        new_env_init = env_init & sys_init
+        new_env_init = env_init & new_sys_init
     elif qinit == '\E \A':
         env_bound = aut.exist(aut.varlist['sys'], env_init)
-        u = env_init & sys_init
+        u = env_init & new_sys_init
         u |= ~ env_bound
         sys_bound = aut.forall(aut.varlist['env'], u)
         new_env_init = env_bound & sys_bound
@@ -543,9 +543,9 @@ def _make_init(internal_init, win, aut):
             'unknown `qinit` value "{qinit}"'.format(
                 qinit=qinit))
     assert new_env_init != aut.false
-    assert sys_init != aut.false
+    assert new_sys_init != aut.false
     aut.init['impl_env'] = new_env_init
-    aut.init['impl_sys'] = sys_init
+    aut.init['impl_sys'] = new_sys_init
 
 
 def _warn_moore_mealy(aut):

@@ -526,9 +526,7 @@ def _make_init(internal_init, win, aut):
     qinit = aut.qinit
     # impl qinit = '\A \A'  # we synthesize `env_init` below
     env_init = aut.init['env']
-    b = aut.init['sys']
-    u = b & internal_init
-    new_sys_init = u & win
+    new_sys_init = aut.init['sys'] & internal_init & win
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
         new_env_init = env_init & new_sys_init

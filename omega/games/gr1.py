@@ -531,20 +531,20 @@ def _make_init(internal_init, win, aut):
     sys_init = u & win
     # synthesize initial predicate
     if qinit in ('\A \A', '\A \E', '\E \E'):
-        env_init = a & sys_init
+        new_env_init = a & sys_init
     elif qinit == '\E \A':
         env_bound = aut.exist(aut.varlist['sys'], a)
         u = a & sys_init
         u |= ~ env_bound
         sys_bound = aut.forall(aut.varlist['env'], u)
-        env_init = env_bound & sys_bound
+        new_env_init = env_bound & sys_bound
     else:
         raise ValueError(
             'unknown `qinit` value "{qinit}"'.format(
                 qinit=qinit))
-    assert env_init != aut.false
+    assert new_env_init != aut.false
     assert sys_init != aut.false
-    aut.init['impl_env'] = env_init
+    aut.init['impl_env'] = new_env_init
     aut.init['impl_sys'] = sys_init
 
 

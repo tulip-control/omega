@@ -542,6 +542,8 @@ def _make_init(internal_init, win, aut):
                 qinit=qinit))
     assert new_env_init != aut.false
     assert new_sys_init != aut.false
+    assert sym_bdd.is_state_predicate(new_env_init)
+    assert sym_bdd.is_state_predicate(new_sys_init)
     aut.init['impl_env'] = new_env_init
     aut.init['impl_sys'] = new_sys_init
 

@@ -443,7 +443,7 @@ def is_realizable(z, aut):
         u = aut.exist(evars + uvars, u)
         r = (u == aut.true)
         msg = (
-            'no winning state satisfies:\n'
+            'no state satisfies:\n'
             '`EnvInit /\ SysInit /\ Win`')
     elif qinit == '\A \E':
         assert not aut.moore

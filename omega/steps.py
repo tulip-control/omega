@@ -113,13 +113,13 @@ class AutomatonStepper(object):
     def __init__(self, aut):
         self.vars = aut.vars
         self.aut = aut
-        self._init = aut.init['impl_sys']
+        self._init = aut.init['impl']
         self._action = aut.action['impl']
 
     def init(self):
         """Return initial values of variables for this component."""
         r = self.aut.pick(self._init)
-        return {k: v for k, v in r.items() if k in self.aut.varlist['sys']}
+        return {k: v for k, v in r.items() if k in self.aut.varlist['impl']}
 
     def step(self, state):
         """Return next values of variables or `None`.
@@ -138,7 +138,7 @@ class AutomatonStepper(object):
         action = self._action
         self._assert_support_assigned(action, state)
         u = self.aut.let(state, action)
-        vrs = self.aut.support(u).union(self.aut.varlist["sys'"])
+        vrs = self.aut.support(u).union(self.aut.varlist["impl'"])
         primed_state = self.aut.pick(u, vrs)
         self._assert_unblocked(primed_state)
         return _unprime_state(primed_state)
@@ -348,8 +348,7 @@ def _assert_disjoint(a, b):
 def enumerate_impl(spec):
     """Return enumerated controller."""
     # modifies env, sys (which serve as a reusable interface)
-    spec.init['env'] = spec.init['impl_env']
-    spec.init['sys'] = spec.init['impl_sys']
+    spec.init['sys'] = spec.init['impl']
     spec.action['sys'] = spec.action['impl']
     graph = enum.action_to_steps(spec, qinit=spec.qinit)
     graph.inputs = spec.varlist['env']

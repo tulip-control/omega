@@ -41,12 +41,18 @@ def action_to_steps(aut, env, sys, qinit='\A \A'):
 
     Enumeration is done based on `qinit`:
 
-    - `'\A \A'`: pick all states that satisfy `aut.init['env']`
-    - `'\E \E'`: pick one state that satisfies `aut.init['env']`
-    - `'\A \E'`: for all states that satisfy `aut.init['env']`,
-      pick a unique state for each env state `x`
-    - `'\E \A'`: pick a sys state `u` and enumerate all
-      states that satisfy `aut.init['env']` and `y = u`
+    - `'\A \A'`: pick all states that satisfy `aut.init[env] /\ aut.init[sys]`,
+      where the conjunct `aut.init[sys]` is included for the internal variables
+
+    - `'\E \E'`: pick one state that satisfies `aut.init[sys]`
+
+    - `'\A \E'`: for each environment state `x` that satisfies
+      `\E y:  aut.init[env]`,
+      pick a system state `y` that satisfies `aut.init[sys]`
+
+    - `'\E \A'`: pick a system state `y` that satisfies
+      `\A x:  aut.init[sys]`,
+      and enumerate all environment states `x` that satisfy `aut.init['env']`.
     """
     _aut = copy.copy(aut)
     _aut.moore = aut.moore
@@ -166,10 +172,12 @@ def _init_search(g, aut, umap, keys, qinit):
 def _forall_init(g, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
     env_init = aut.init['env']
+    sys_init = aut.init['sys']  # to constrain only the
+        # initial value of the internal memory variables
     assert env_init != aut.false
     care_vars = chain(aut.varlist['env'], aut.varlist['sys'])
     init_iter = aut.pick_iter(
-        env_init,
+        env_init & sys_init,
         care_vars=list(care_vars))
     visited = aut.false
     queue = list()
@@ -181,11 +189,11 @@ def _forall_init(g, aut, umap, keys):
 
 def _exist_init(g, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
-    env_init = aut.init['env']
-    assert env_init != aut.false
+    sys_init = aut.init['sys']
+    assert sys_init != aut.false
     care_vars = chain(aut.varlist['env'], aut.varlist['sys'])
     d = aut.pick(
-        env_init,
+        sys_init,
         care_vars=list(care_vars))
     visited = aut.false
     queue = list()
@@ -201,14 +209,17 @@ def _forall_exist_init(g, aut, umap, keys):
     initial states in ZF set theory.
     """
     env_init = aut.init['env']
+    sys_init = aut.init['sys']
     assert env_init != aut.false
+    assert sys_init != aut.false
+    # `env_init` should not depend on sys vars
     only_env_init = aut.exist(aut.varlist['sys'], env_init)
     env_iter = aut.pick_iter(
         only_env_init, care_vars=aut.varlist['env'])
     visited = aut.false
     queue = list()
     for env_0 in env_iter:
-        u = aut.let(env_0, env_init)
+        u = aut.let(env_0, sys_init)
         sys_0 = aut.pick(u, care_vars=aut.varlist['sys'])
         d = dict(env_0)
         d.update(sys_0)
@@ -226,18 +237,18 @@ def _exist_forall_init(g, aut, umap, keys):
     # by constraining initial sys assignments,
     # then enumerating the same way
     env_init = aut.init['env']
+    sys_init = aut.init['sys']
     assert env_init != aut.false
+    assert sys_init != aut.false
     # pick `sys_0` so that it work for all
     # env assignments alowed by `env_init`
-    only_env_init = aut.exist(aut.varlist['sys'], env_init)
-    u = ~ only_env_init | env_init
-    u = aut.forall(aut.varlist['env'], u)
+    u = aut.forall(aut.varlist['env'], sys_init)
     assert u != aut.false
     sys_0 = aut.pick(u, care_vars=aut.varlist['sys'])
     # iterate over env initial assignments
-    # independently of sys
+    # allow `EnvInit` that depends on sys vars (Mealy env)
     env_iter = aut.pick_iter(
-        only_env_init, care_vars=aut.varlist['env'])
+        env_init, care_vars=aut.varlist['env'])
     visited = aut.false
     queue = list()
     for env_0 in env_iter:

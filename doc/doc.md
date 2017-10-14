@@ -691,10 +691,11 @@ aut.prime_varlists()
 aut.moore = True
 # specification using stepwise implication
 aut.init['env'] = 'x = 1 /\ y = 2'
+aut.init['sys'] = aut.true
 aut.action['sys'] = " x < 5 /\ y' = IF x = 4 THEN 1 ELSE x "
 aut.action['env'] = " x \in 1..4 /\ x' \in 1..4 "
 # enumerate and plot
-g = action_to_steps(aut, qinit='\A \A')
+g = action_to_steps(aut, 'env', 'sys', qinit='\A \A')
 _dump_graph_as_figure(g, 'foo.pdf')
 ```
 
@@ -737,10 +738,7 @@ z, yij, xijk = gr1.solve_streett_game(aut)
 gr1.make_streett_transducer(z, yij, xijk, aut)
 #
 # enumerate
-aut.init['env'] = aut.init['impl_env']
-aut.init['sys'] = aut.init['impl_sys']
-aut.action['sys'] = aut.action['impl']
-g = enum.action_to_steps(aut, qinit=aut.qinit)
+g = enum.action_to_steps(aut, 'env', 'impl', qinit=aut.qinit)
 # plot
 _dump_graph_as_figure(g, 'foo.pdf')
 ```

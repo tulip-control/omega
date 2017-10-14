@@ -398,94 +398,67 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     return aut.action['impl']
 
 
-def is_realizable(z, aut):
+def is_realizable(win, aut):
     """Return `True` if, and only if, `aut` wins from `z`.
 
-    @param z: bdd node
-    @param type: compiled `temporal.Automaton`
+    @param win: bdd node
+    @param aut: `temporal.Automaton`
     """
-    env_init = aut.init['env']
     sys_init = aut.init['sys']
-    sys_action = aut.action['sys']
-    evars = aut.varlist['sys']
-    uvars = aut.varlist['env']
-    # common errors
-    assert env_init != aut.false, 'vacuous spec'
-    # realizable ?
+    env_init = aut.init['env']
+    sys_vars = aut.varlist['sys']
+    env_vars = aut.varlist['env']
+    # decouple stepwise form from sharing of state initially
+    if aut.plus_one:
+        init = sys_init & (win | ~ env_init)
+        form = 'SysInit /\ (EnvInit => Win)'
+    else:
+        init = (sys_init & win) | ~ env_init
+        form = 'EnvInit => (SysInit /\ Win)'
     qinit = aut.qinit
     if qinit == '\A \A':
-        w = ~ env_init | sys_init
-        if w != aut.true:
-            print(
-                'WARNING: `qinit = "\A \A"` but '
-                'not `EnvInit => SysInit`')
-        w = aut.exist(aut.varlist["sys'"], sys_action)
-        w |= ~ env_init
-        if w != aut.true:
-            print(
-                "WARNING: `qinit = '\A \A'` but "
-                "not `EnvInit => (\E y':  SysNext)`")
-        # \A env, sys:
-        #    env_init => /\ sys_init
-        #                /\ z
-        u = sys_init & z
-        u |= ~ env_init
+        assert sys_init == aut.true
+        u = win | ~ env_init
         r = (u == aut.true)
         msg = (
-            'some initial states are losing:\n'
-            '`\A x, y:  EnvInit => (SysInit /\ Win)`')
+            'The initial condition requirement:\n'
+            '\A x, y:  EnvInit => Win\n'
+            'does not hold, so some `EnvInit` states are losing.')
     elif qinit == '\E \E':
-        # \E env, sys:  /\ env_init
-        #               /\ sys_init
-        #               /\ z
-        u = sys_init & z
-        u &= env_init
-        u = aut.exist(evars + uvars, u)
+        assert env_init == aut.true
+        vrs = env_vars + sys_vars
+        u = aut.exist(vrs, win & sys_init)
         r = (u == aut.true)
         msg = (
-            'no state satisfies:\n'
-            '`EnvInit /\ SysInit /\ Win`')
+            'The initial condition requirement:\n'
+            '\E x, y:  SysInit /\ Win\n'
+            'does not hold, so no `SysInit` states are winning.')
     elif qinit == '\A \E':
-        assert not aut.moore
-        # \A env:  \E sys:
-        #    (\E sys:  env_init) => /\ env_init
-        #                           /\ sys_init
-        #                           /\ z
-        a = aut.exist(evars, env_init)
-        u = sys_init & z
-        u &= env_init
-        u |= ~ a
-        u = aut.exist(evars, u)
-        u = aut.forall(uvars, u)
+        u = aut.exist(sys_vars, init)
+        u = aut.forall(env_vars, u)
         r = (u == aut.true)
         msg = (
-            'cannot for each x pick a y:\n'
-            '`\A x:  \E y:\n'
-            '    (\E y:  EnvInit) => /\ EnvInit\n'
-            '                        /\ SysInit\n'
-            '                        /\ Win`')
+            'The initial condition requirement:\n'
+            '\A x:  \E y:  {form}\n'
+            'does not hold, so for some `EnvInit` states, '
+            'the component cannot pick an initial `SysInit` state \n'
+            'that is also winning.'
+            ).format(form=form)
     elif qinit == '\E \A':
-        # \E sys:  \A env:
-        #    (\E sys:  env_init) => /\ env_init
-        #                           /\ sys_init
-        #                           /\ z
-        a = aut.exist(evars, env_init)
-        u = sys_init & z
-        u &= env_init
-        u |= ~ a
-        u = aut.forall(uvars, u)
-        u = aut.exist(evars, u)
+        u = aut.forall(env_vars, init)
+        u = aut.exist(sys_vars, u)
         r = (u == aut.true)
         msg = (
-            'cannot pick y that works for all x:\n'
-            '`\E y:  \A x:\n'
-            '    (\E y:  EnvInit) => /\ EnvInit\n'
-            '                        /\ SysInit\n'
-            '                        /\ Win`')
+            'The initial condition requirement:\n'
+            '\E y:  \A x:  {form}\n'
+            'does not hold, so the component cannot pick '
+            'a single `SysInit` state such that for any \n'
+            '`EnvInit` state, the initial state be winning.'
+            ).format(form=form)
     else:
         raise ValueError(
-            'unknown `qinit` value "{qinit}"'.format(
-                qinit=qinit))
+            'unknown `qinit` value "{q}"'.format(
+                q=qinit))
     if not r:
         print(msg)
     return r
@@ -517,35 +490,79 @@ def _make_init(internal_init, win, aut):
     """Return initial conditions for implementation.
 
     Depending on `aut.qinit`,
-    synthesize the initial condition `aut.env_init`
+    synthesize the initial condition `aut.init['impl']`
     using the winning states `win`.
+
+    The cases are:
+
+    - `\A \A`:  `InternalInit`
+    - `\E \E`:  `InternalInit /\ Win /\ SysInit`
+    - `\A \E`:
+
+      - `plus_one is True`:
+        ```
+        /\ SysInit /\ (EnvInit => Win)
+        /\ InternalInit
+        ```
+
+      - `plus_one is False`:
+        ```
+        /\ EnvInit => (SysInit /\ Win)
+        /\ InternalInit
+        ```
+
+    - `\E \A`:
+
+      - `plus_one is True`:
+        ```
+        /\ \A EnvVars:  SysInit /\ (EnvInit => Win)
+        /\ InternalInit
+        ```
+
+      - `plus_one is False`:
+        ```
+        /\ \A EnvVars:  EnvInit => (SysInit /\ Win)
+        /\ InternalInit
+        ```
+
+    where `InternalInit` is the initial condition for internal variables.
 
     @param internal_init: initial condition for
         internal variables.
     """
-    qinit = aut.qinit
-    # impl qinit = '\A \A'  # we synthesize `env_init` below
+    sys_init = aut.init['sys']
     env_init = aut.init['env']
-    new_sys_init = aut.init['sys'] & internal_init & win
-    # synthesize initial predicate
-    if qinit in ('\A \A', '\A \E', '\E \E'):
-        new_env_init = env_init & new_sys_init
+    env_vars = aut.varlist['env']
+    qinit = aut.qinit
+    plus_one = aut.plus_one
+    # In `omega.games.enumeration` both of these reduce
+    # to `sys_init & win` over those states that are
+    # enumerated as initial, because only states that
+    # satisfy `env_init` are enumerated--assuming
+    # `env_init` is independent of sys vars.
+    if plus_one:
+        form = sys_init & (win | ~ env_init)
+    else:
+        form = (sys_init & win) | ~ env_init
+    assert is_state_predicate(form)
+    if qinit == '\A \A':
+        # shared-state, env picks initial state
+        init = aut.true
+    elif qinit == '\E \E':
+        # shared-state, sys picks initial state
+        init = win & sys_init
+    elif qinit == '\A \E':
+        # disjoint-state
+        init = form
     elif qinit == '\E \A':
-        env_bound = aut.exist(aut.varlist['sys'], env_init)
-        u = env_init & new_sys_init
-        u |= ~ env_bound
-        sys_bound = aut.forall(aut.varlist['env'], u)
-        new_env_init = env_bound & sys_bound
+        # disjoint-state
+        init = aut.forall(env_vars, form)
     else:
         raise ValueError(
-            'unknown `qinit` value "{qinit}"'.format(
-                qinit=qinit))
-    assert new_env_init != aut.false
-    assert new_sys_init != aut.false
-    assert is_state_predicate(new_env_init)
-    assert is_state_predicate(new_sys_init)
-    aut.init['impl_env'] = new_env_init
-    aut.init['impl_sys'] = new_sys_init
+            'unknown `qinit` value "{q}"'.format(q=qinit))
+    assert init != aut.false
+    assert is_state_predicate(init)
+    aut.init['impl'] = init & internal_init
 
 
 def _warn_moore_mealy(aut):

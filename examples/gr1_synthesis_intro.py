@@ -31,8 +31,8 @@ def gr1_specification():
     aut = trl.Automaton()
     aut.declare_variables(x=(1, 3), y=(-3, 3))
     aut.varlist.update(env=['x'], sys=['y'])
-    aut.init['env'] = 'x = 1  /\  y = 2'
-    aut.init['sys'] = 'TRUE'
+    aut.init['env'] = 'x = 1'
+    aut.init['sys'] = 'y = 2'
     aut.action['env'] = '''
         /\ x \in 1..2
         /\ x' \in 1..2
@@ -43,8 +43,7 @@ def gr1_specification():
         '''
     aut.win['<>[]'] = aut.bdds_from('x = 2')
     aut.win['[]<>'] = aut.bdds_from('y != -1')
-    aut.qinit = '\A \A'  # should work from all states that
-                         # satisfy `aut.init['env']`
+    aut.qinit = '\E \A'
     aut.moore = True
     aut.plus_one = True
     return aut

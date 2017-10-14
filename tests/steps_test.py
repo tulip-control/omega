@@ -7,9 +7,9 @@ from omega.symbolic import temporal as trl
 def test_step():
     aut = trl.Automaton()
     aut.declare_variables(x='bool', y=(1, 3))
-    aut.varlist = dict(env=['x'], sys=['y'])
+    aut.varlist = dict(env=['x'], sys=['y'], impl=[])
     aut.prime_varlists()
-    aut.init['impl_sys'] = 'True'
+    aut.init['impl'] = 'True'
     action = aut.add_expr("x /\ (~ x') /\ (y = 2) /\ (y' = 3)")
     aut.action['impl'] = action
     stepper = steps.AutomatonStepper(aut)

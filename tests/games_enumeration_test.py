@@ -53,6 +53,7 @@ def test_init_search():
     aut.declare_variables(x='bool')
     aut.varlist = dict(env=[], sys=['x'])
     aut.init['env'] = aut.true
+    aut.init['sys'] = 'x'
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -72,6 +73,7 @@ def test_forall_init():
     # single initial state
     s = '(x = 4) /\ ~ y /\ z'
     aut.init['env'] = aut.add_expr(s)
+    aut.init['sys'] = aut.true
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -111,8 +113,8 @@ def test_exist_init():
     aut.declare_variables(x=(0, 2), y='bool', z='bool')
     aut.varlist = dict(env={'x'}, sys={'y', 'z'})
     # single initial state
-    s = '(x = 1) /\ y /\ z'
-    aut.init['env'] = aut.add_expr(s)
+    aut.init['env'] = aut.true
+    aut.init['sys'] = '(x = 1) /\ y /\ z'
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -150,8 +152,8 @@ def test_forall_exist_init():
     aut.declare_variables(x='bool', y='bool')
     aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
-    s = 'x /\ y'
-    aut.init['env'] = aut.add_expr(s)
+    aut.init['env'] = 'x'
+    aut.init['sys'] = 'x /\ y'
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -166,8 +168,8 @@ def test_forall_exist_init():
     d_ = dict(x=True, y=True)
     assert d ==d_, (d, d_)
     # multiple initial states
-    s = 'x <=> y'
-    aut.init['env'] = aut.add_expr(s)
+    aut.init['env'] = 'TRUE'
+    aut.init['sys'] = 'x <=> y'
     aut.build()
     g = nx.DiGraph()
     umap = dict()
@@ -196,8 +198,8 @@ def test_exist_forall_init():
     aut.declare_variables(x='bool', y='bool')
     aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
-    s = 'x /\ ~ y'
-    aut.init['env'] = aut.add_expr(s)
+    aut.init['env'] = 'x'
+    aut.init['sys'] = ' ~ y'
     a = aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -212,8 +214,8 @@ def test_exist_forall_init():
     d_ = dict(x=True, y=False)
     assert d == d_, (d, d_)
     # multiple initial states
-    s = 'y'
-    aut.init['env'] = aut.add_expr(s)
+    aut.init['env'] = 'TRUE'
+    aut.init['sys'] = 'y'
     a = aut.build()
     g = nx.DiGraph()
     umap = dict()

@@ -42,12 +42,12 @@ class _SystemGraph(nx.MultiDiGraph):
         @param rankdir, prog: see `pydot.Dot.write`
         """
         name, ext = os.path.splitext(filename)
-        pd = self.to_pydot()
+        pd = self._to_pydot()
         pd.set_rankdir(rankdir)
         pd.set_splines('true')
         pd.write(filename, format=ext[1:], prog=prog)
 
-    def to_pydot(self):
+    def _to_pydot(self):
         return nx.drawing.nx_pydot.to_pydot(self)
 
 
@@ -200,7 +200,7 @@ class Automaton(_SystemGraph):
                 edges=f(self.edges(data=True)))
         return s
 
-    def to_pydot(self):
+    def _to_pydot(self):
         # TODO: initial nodes
         g = nx.MultiDiGraph()
         for u, d in self.nodes(data=True):
@@ -323,7 +323,7 @@ class TransitionSystem(_SystemGraph):
                 nodes=_dumps_nodes(self),
                 edges=pformat(self.edges(data=True), indent=3))
 
-    def to_pydot(self):
+    def _to_pydot(self):
         g = nx.MultiDiGraph()
         for u, d in self.nodes(data=True):
             label = ', '.join(

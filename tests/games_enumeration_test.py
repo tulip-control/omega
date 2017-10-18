@@ -12,16 +12,20 @@ from omega.symbolic import temporal as symbolic
 def test_action_to_steps():
     aut = symbolic.Automaton()
     aut.declare_variables(x='bool', y=(0, 17))
-    aut.varlist['env'] = ['x']
-    aut.varlist['sys'] = ['y']
+    env = 'env_foo'
+    sys = 'sys_bar'
+    aut.varlist[env] = ['x']
+    aut.varlist[sys] = ['y']
     keys = ('x', 'y')
-    aut.init['env'] = aut.add_expr('x /\ (y = 1)')
-    aut.action['sys'] = aut.add_expr("y' /= y")
-    aut.action['env'] = aut.true
+    aut.init[env] = aut.add_expr('x /\ (y = 1)')
+    aut.init[sys] = aut.true
+    aut.action[env] = aut.true
+    aut.action[sys] = aut.add_expr("y' /= y")
     aut.qinit = '\A \A'
     aut.moore = True
-    aut.build()
-    g = enum.action_to_steps(aut, qinit=aut.qinit)
+    aut.prime_varlists()
+    g = enum.action_to_steps(
+        aut, env=env, sys=sys, qinit=aut.qinit)
     # 36 states reachable, but should enumerate fewer
     assert len(g) == 4, g.nodes()
     # these are state projections (partial assignments)

@@ -16,6 +16,7 @@ try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
+import copy
 from itertools import chain
 import logging
 
@@ -28,7 +29,7 @@ from omega.symbolic import symbolic
 log = logging.getLogger(__name__)
 
 
-def action_to_steps(aut, qinit='\A \A'):
+def action_to_steps(aut, env, sys, qinit='\A \A'):
     r"""Return enumerated graph with steps as edges.
 
     Only `aut.init['env']` considered.
@@ -47,6 +48,22 @@ def action_to_steps(aut, qinit='\A \A'):
     - `'\E \A'`: pick a sys state `u` and enumerate all
       states that satisfy `aut.init['env']` and `y = u`
     """
+    _aut = copy.copy(aut)
+    _aut.moore = aut.moore
+    _aut.varlist.update(
+        env=aut.varlist[env],
+        sys=aut.varlist[sys])
+    _aut.init.update(
+        env=aut.init[env],
+        sys=aut.init[sys])
+    _aut.action.update(
+        env=aut.action[env],
+        sys=aut.action[sys])
+    _aut.prime_varlists()
+    return _action_to_steps(_aut, qinit)
+
+
+def _action_to_steps(aut, qinit):
     assert aut.action['sys'] != aut.false
     primed_vars = _primed_vars_per_quantifier(aut.varlist)
     unprime_vars = {stx.prime(var): var for var in aut.vars

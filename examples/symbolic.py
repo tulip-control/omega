@@ -58,10 +58,8 @@ def semi_symbolic():
 
 
 def enumerate_controller(aut):
-    aut.init['env'] = aut.init['impl_env']
-    aut.init['sys'] = aut.init['impl_sys']
-    aut.action['sys'] = aut.action['impl']
-    g = enum.action_to_steps(aut, qinit=aut.qinit)
+    g = enum.action_to_steps(
+        aut, env='env', sys='impl', qinit=aut.qinit)
     return g
 
 

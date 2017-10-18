@@ -150,9 +150,10 @@ def _forall_init(g, aut, umap, keys):
     r"""Enumerate initial states with \A \A vars."""
     env_init = aut.init['env']
     assert env_init != aut.false
+    care_vars = chain(aut.varlist['env'], aut.varlist['sys'])
     init_iter = aut.pick_iter(
         env_init,
-        care_vars=chain(aut.varlist['env'], aut.varlist['sys']))
+        care_vars=care_vars)
     visited = aut.false
     queue = list()
     for d in init_iter:
@@ -165,9 +166,10 @@ def _exist_init(g, aut, umap, keys):
     r"""Enumerate initial states with \E env, sys vars."""
     env_init = aut.init['env']
     assert env_init != aut.false
+    care_vars = chain(aut.varlist['env'], aut.varlist['sys'])
     d = aut.pick(
         env_init,
-        care_vars=chain(aut.varlist['env'], aut.varlist['sys']))
+        care_vars=care_vars)
     visited = aut.false
     queue = list()
     _add_new_node(d, g, queue, umap, keys)

@@ -11,8 +11,8 @@ def print_minimal_formula():
     c = _fol.Context()
     c.declare(x=(1, 5), y=(0, 14))
     s = '''
-        \/ (x = 2  /\  y <= 15)
-        \/ (0 <= x  /\ x <= 3  /\ y >= 5)
+        \/ (x = 2  /\  y <= 13)
+        \/ (1 <= x  /\ x <= 4  /\ y \in 5..10)
         '''
     u = c.add_expr(s)
     s = '''

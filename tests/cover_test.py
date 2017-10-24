@@ -1028,15 +1028,21 @@ def test_list_limits():
 
 
 def test_bitfield_limits():
-    hint = dict(width=1, signed=False)
+    # positive
+    hint = dict(width=1, signed=False, dom=(0, 0))
     r = cov._bitfield_limits(hint)
     assert r == (0, 1), r
-    hint = dict(width=2, signed=False)
+    hint = dict(width=2, signed=False, dom=(1, 2))
     r = cov._bitfield_limits(hint)
     assert r == (0, 3), r
-    hint = dict(width=10, signed=False)
+    hint = dict(width=10, signed=False, dom=(0, 12))
     r = cov._bitfield_limits(hint)
     assert r == (0, 1023), r
+    # negative
+    hint = dict(width=4, signed=False, dom=(-13, -2))
+    r = cov._bitfield_limits(hint)
+    assert r == (-16, -1), r
+    # signed
     hint = dict(width=1, signed=True)
     r = cov._bitfield_limits(hint)
     assert r == (-1, 0), r

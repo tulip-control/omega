@@ -1207,8 +1207,15 @@ def _bitfield_limits(hint):
     if hint['signed']:
         n = width - 1
         limits = (- 2**n, 2**n - 1)
-    else:
+        return limits
+    # unsigned: so variable ranges over values of same sign
+    min_, max_ = hint['dom']
+    # flip ?
+    if min_ >= 0:
         limits = (0, 2**width - 1)
+    else:
+        assert max_ < 0, max_
+        limits = (- 2**width, -1)
     return limits
 
 

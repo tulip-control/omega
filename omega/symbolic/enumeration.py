@@ -11,6 +11,7 @@ import math
 import natsort
 import networkx as nx
 
+from omega.logic import bitvector as bv
 from omega.symbolic import bdd as scope
 from omega.symbolic import symbolic
 
@@ -248,9 +249,7 @@ def _bitfields_to_int_iter(bits, t):
             continue
         # partial bitvector valuation
         bitvalues = list(map(bits.get, bitnames))
-        if not d['signed']:
-            # TODO: update this
-            bitvalues += ['0']
+        bv._append_sign_bit(bitvalues, flatname, d)
         values = _enumerate_int(bitvalues)
         sets[flatname] = list(values)
     return _take_product_iter(sets, model)

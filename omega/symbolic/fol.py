@@ -433,7 +433,6 @@ def _int_to_bit_assignment(var, value, table):
     p, q = bv.equalize_width(var_bits, int_bits)
     values = dict()
     for u, v in zip(p, q):
-        # primed ?
         if u.isdigit():
             assert u == v, (u, v)
         else:

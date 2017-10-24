@@ -160,7 +160,7 @@ def dom_to_width(dom):
     minval, maxval = dom
     logger.debug('int in ({m}, {M})'.format(
         m=minval, M=maxval))
-    signed = (minval < 0) and (maxval > 0)
+    signed = (minval < 0) and (maxval >= 0)
     absval = max(abs(minval), abs(maxval))
     width = absval.bit_length()
     if width == 0:
@@ -1105,6 +1105,7 @@ def _append_sign_bit(bits, var, d):
     if min_ >= 0:
         sign_bit = '0'
     else:
+        assert max_ < 0, max_  # only negative values
         sign_bit = '1'
     bits.append(sign_bit)
     assert len(bits) > 1, len(bits)

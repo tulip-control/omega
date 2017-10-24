@@ -399,8 +399,12 @@ def test_twos_complement_for_var():
                bitnames=['y0', 'y1']),
         z=dict(type='int', dom=(0, 1), signed=False,
                bitnames=['z0']),
-        w=dict(type='int', dom=(-1, 0), signed=False,
-               bitnames=['w0']))
+        w=dict(type='int', dom=(-1, 0), signed=True,
+               bitnames=['w0', 'w1']),
+        p=dict(type='int', dom=(-1, -1), signed=False,
+               bitnames=['p0']),
+        q=dict(type='int', dom=(-1, 0), signed=False,
+               bitnames=['q0']))
     with nt.assert_raises(Exception):
         bv.var_to_twos_complement('r', t)
     with nt.assert_raises(TypeError):
@@ -410,7 +414,11 @@ def test_twos_complement_for_var():
     z = bv.var_to_twos_complement('z', t)
     assert z == ['z0', '0'], z
     w = bv.var_to_twos_complement('w', t)
-    assert w == ['w0', '1'], w
+    assert w == ['w0', 'w1'], w
+    p = bv.var_to_twos_complement('p', t)
+    assert p == ['p0', '1'], p
+    with nt.assert_raises(AssertionError):
+        bv.var_to_twos_complement('q', t)
 
 
 def test_twos_complement_for_int():

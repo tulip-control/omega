@@ -54,8 +54,11 @@ WhilePlusHalf(A(_, _), G(_, _), x, y) ==
 temporal property P(x, y) describes.
 *)
 Unzip(P(_, _), x, y) ==
-    LET A(u, v) == WhilePlusHalf(P, P, v, u)  (* swap to y, x *)
-    IN WhilePlusHalf(A, P, x, y)
+    LET
+        Q(u, v) == P(v, u)  (* swap back to x, y *)
+        A(u, v) == WhilePlusHalf(Q, Q, v, u)  (* swap to y, x *)
+    IN
+        WhilePlusHalf(A, P, x, y)
 
 ================================================================================
 (* Copyright 2016-2017 by California Institute of Technology. *)

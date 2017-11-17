@@ -83,6 +83,18 @@ def primed_support(u, fol):
     return {k for k in fol.support(u) if stx.isprimed(k)}
 
 
+def prime(u, fol):
+    """Prime state predicate `u`."""
+    support = fol.support(u)
+    # all identifiers are unprimed ?
+    assert not any(stx.isprimed(name) for name in support), support
+    # avoid priming constants
+    # (no primed identifiers are declared for constants)
+    vrs = {name for name in support if is_variable(name, fol)}
+    let = {var: stx.prime(var) for var in vrs}
+    return fol.let(let, u)
+
+
 def is_constant(name, fol):
     """Return `True` if `name` is declared as constant."""
     return not is_variable(name, fol)

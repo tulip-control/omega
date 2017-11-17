@@ -11,6 +11,7 @@ import logging
 from dd import bdd as _bdd
 from omega.symbolic import bdd as sym_bdd
 from omega.symbolic.bdd import is_state_predicate
+from omega.symbolic import prime as prm
 
 
 SYS = 'sys'  # default player for existential image
@@ -85,7 +86,7 @@ def step(env_action, sys_action, target, aut):
     # TODO: use efficient substitution
     yp = aut.varlist["sys'"]
     xp = aut.varlist["env'"]
-    u = sym_bdd.prime(target, aut)
+    u = prm.prime(target, aut)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
         u |= ~ env_action

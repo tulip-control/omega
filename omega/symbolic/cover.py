@@ -408,6 +408,9 @@ def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     Require that `p_to_u` be given explicitly,
     to avoid errors if support is empty.
 
+    In the proof, this operator is equivalent to:
+        `IsAbove(p, ThoseUnder(u_is_signature, q, Leq))`
+
     @param signatures: function of `u`
     """
     log.info('---- contains covered ----')

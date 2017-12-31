@@ -1,5 +1,8 @@
 .coverage
 spec/*.tlaps
+__tlacache__
+states/
+headers/
 htmlcov/*
 .DS_Store
 ._.DS_Store

@@ -14,7 +14,15 @@ __pycache__
 __tlacache__/
 states/
 headers/
+workspace/
 *.tlaps
+*.toolbox
+*.states
+# tex
+*.tex
+*.log
+*.dvi
+*.aux
 # editing
 *.swp
 # OS

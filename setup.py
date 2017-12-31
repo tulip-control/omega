@@ -23,7 +23,7 @@ VERSION_TEXT = (
 install_requires = [
     'dd >= 0.5.2',
     'natsort >= 3.5.3',
-    'networkx >= 1.9.1',
+    'networkx >= 2.0',
     'ply >= 3.6',
     'pydot >= 1.2.2']
 tests_require = ['nose >= 1.3.4']

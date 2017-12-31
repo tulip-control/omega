@@ -22,7 +22,7 @@ script:
   - cd ..
   # install `dd.cudd`
   - pip uninstall --yes dd
-  - pip download --no-dependencies dd>=0.5.2
+  - pip download --no-dependencies dd>=0.5.2 --no-binary dd
   - tar xzf dd-*.tar.gz
   - cd dd-*/
   - python setup.py install --fetch --cudd

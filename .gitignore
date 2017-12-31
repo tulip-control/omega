@@ -1,12 +1,6 @@
+# python
 .coverage
-spec/*.tlaps
-__tlacache__
-states/
-headers/
 htmlcov/*
-.DS_Store
-._.DS_Store
-*.txt
 omega/_version.py
 *parsetab.py
 build/*
@@ -15,11 +9,22 @@ dist/*
 __pycache__
 *.pyc
 *.egg
+*.lprof
+# tla
+__tlacache__/
+states/
+headers/
+*.tlaps
+# editing
 *.swp
+# OS
+.DS_Store
+._.DS_Store
+# binaries or generated
+*.pdf
+*.tar
+*.gz
 *.svg
 *.html
 *.css
-*.pdf
-*.lprof
-*.tar
-*.gz
+*.txt

@@ -230,7 +230,9 @@ class Component(object):
             outputs = self.init()
         else:
             outputs = self.step()
-        self.state = dict(**inputs, **outputs)
+        state = dict(inputs)
+        state.update(outputs)
+        self.state = state
 
 
 class Scheduler(object):

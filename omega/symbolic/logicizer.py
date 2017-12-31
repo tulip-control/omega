@@ -50,7 +50,9 @@ def graph_to_logic(
     dom = _nodevar_dom(g)
     if aut is None:
         aut = trl.Automaton()
-    aut.declare_variables(**g.vars, **{nodevar: dom})
+    d = dict(g.vars)
+    d[nodevar] = dom
+    aut.declare_variables(**d)
     aut.varlist['env'] = list(g.env_vars)
     aut.varlist['sys'] = [k for k in g.vars if k not in g.env_vars]
     aut.varlist[g.owner].append(nodevar)

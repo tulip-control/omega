@@ -6,3 +6,5 @@ include doc/*.dot
 include tests/*_test.py
 include examples/*.py
 include spec/*.tla
+include spec/mincover/*.tla
+include spec/mincover/README

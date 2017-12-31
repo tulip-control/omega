@@ -330,6 +330,13 @@ def _find_or_add_model(model, umap, keys):
     return u
 
 
+def _dump_graph_as_figure(g, fname):
+    """Create a PDF file showing the graph `g`."""
+    h, _ = _format_nx(g)
+    pd = nx.drawing.nx_pydot.to_pydot(h)
+    pd.write_pdf(fname)
+
+
 def _format_nx(g, keys=None):
     """Return graph ready to be dumped.
 

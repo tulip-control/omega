@@ -17,6 +17,11 @@ can be found in the distribution of TLAPS v1.4.3:
 
 http://tla.msr-inria.inria.fr/tlaps/dist/current/tlaps-1.4.3.tar.gz
 
+The proofs have been checked with TLAPS v1.4.3, in the presence of:
+    - Zenon v0.7.2
+    - CVC3 v2.4.1
+    - Isabelle v2011-1
+    - LS4 (commit c5e907eb3be9d454b3365e747c05100bdffa939c)
 
 This document accompanies the dissertation available at:
 

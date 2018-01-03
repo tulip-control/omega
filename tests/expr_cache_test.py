@@ -1,5 +1,5 @@
+from omega.symbolic import fol
 from omega.symbolic import temporal
-# from dd import cudd
 
 
 aut = temporal.Automaton()
@@ -11,7 +11,7 @@ aut._fetch_expr(u)
 aut._fetch_expr(u)
 aut._add_expr('x')
 del u
-# cudd.reorder(aut.bdd)
+fol._bdd.reorder(aut.bdd)
 aut._add_expr('y')
 aut._add_expr('x \/ ~ y')
 print(aut._bdd_to_expr)

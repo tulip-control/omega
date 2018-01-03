@@ -10,9 +10,6 @@ for synthesizing implementations from [temporal logic specifications][specs].
 This is useful for designing systems, especially vehicles that carry humans.
 
 
-Features
-========
-
 - [Synthesis][synthesis] algorithms for [Moore][moore] or [Mealy][mealy]
   implementations of:
 

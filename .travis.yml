@@ -18,10 +18,19 @@ install:
 
 script:
   - cd tests/
+  #
+  # test as installed by `pip` (may be source or wheel)
+  - nosetests -e "cover*"
+  #
+  # test without `dd.cudd` (pure Python)
+  - pip uninstall --yes dd
+  - pip install dd>=0.5.2 --no-binary dd
   - nosetests -e "cover*"
   - cd ..
+  #
   # install `dd.cudd`
   - pip uninstall --yes dd
+  # obtain `dd` source, even if suitable wheel file available from PyPI
   - pip download --no-dependencies dd>=0.5.2 --no-binary dd
   - tar xzf dd-*.tar.gz
   - cd dd-*/

@@ -292,11 +292,6 @@ def is_state_predicate(u):
     return not any(stx.isprimed(var) for var in u.support)
 
 
-def is_primed_state_predicate(u):
-    """Return `True` if `u` depends only on primed values."""
-    return all(stx.isprimed(var) for var in u.support)
-
-
 def is_proper_action(u):
     """Return `True` if `u` depends on both primed and unprimed."""
     r = u.support

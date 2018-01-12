@@ -6,9 +6,17 @@ from omega.logic import syntax as stx
 from omega.symbolic import bdd as sym_bdd
 
 
-# functions in transition to here
-is_state_predicate = sym_bdd.is_state_predicate
-is_proper_action = sym_bdd.is_proper_action
+def is_state_predicate(u):
+    """Return `True` if `u` depends only on unprimed values."""
+    return not any(stx.isprimed(var) for var in u.support)
+
+
+def is_proper_action(u):
+    """Return `True` if `u` depends on both primed and unprimed."""
+    r = u.support
+    return (
+        any(stx.isprimed(var) for var in r) and
+        any(not stx.isprimed(var) for var in r))
 
 
 def is_primed_state_predicate(u, fol):

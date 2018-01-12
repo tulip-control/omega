@@ -287,19 +287,6 @@ def support_issubset(u, vrs, fol):
     return support.issubset(vrs)
 
 
-def is_state_predicate(u):
-    """Return `True` if `u` depends only on unprimed values."""
-    return not any(stx.isprimed(var) for var in u.support)
-
-
-def is_proper_action(u):
-    """Return `True` if `u` depends on both primed and unprimed."""
-    r = u.support
-    return (
-        any(stx.isprimed(var) for var in r) and
-        any(not stx.isprimed(var) for var in r))
-
-
 def print_support(u, fol):
     """Print separately unprimed and primed vars in support."""
     support = fol.support(u)

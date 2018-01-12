@@ -9,7 +9,6 @@ from omega.symbolic import bdd as sym_bdd
 # functions in transition to here
 is_state_predicate = sym_bdd.is_state_predicate
 is_proper_action = sym_bdd.is_proper_action
-prime = sym_bdd.prime
 unprime = sym_bdd.unprime
 
 

@@ -305,13 +305,6 @@ def is_proper_action(u):
         any(not stx.isprimed(var) for var in r))
 
 
-def prime(u, fol):
-    """Prime variables in support of state predicate `u`."""
-    r = fol.support(u)
-    d = {var: stx.prime(var) for var in r}
-    return fol.let(d, u)
-
-
 def unprime(u, fol):
     """Unprime variables in support of `u`.
 

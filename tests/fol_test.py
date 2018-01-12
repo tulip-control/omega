@@ -264,6 +264,17 @@ def test_define():
     assert u == u_, u
 
 
+def test_define_non_boolean_operator():
+    ctx = _fol.Context()
+    ctx.declare(x=(0, 15))
+    ctx.define('op == 1')
+    u = ctx.add_expr(
+        'x = op',
+        with_ops=True)
+    u_ = ctx.add_expr('x = 1')
+    assert u == u_, (u, u_)
+
+
 def test_add_expr():
     fol = _fol.Context()
     bdd = fol.bdd

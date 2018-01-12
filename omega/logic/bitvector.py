@@ -542,6 +542,9 @@ class Nodes(_Nodes):
                 # list at arithmetic level ?
                 if isinstance(u, list):
                     return u
+                # not ast ?
+                if not hasattr(u, 'flatten'):
+                    return u
                 # ast
                 return u.flatten(
                     prime=prime, mem=mem, t=t, defs=defs,

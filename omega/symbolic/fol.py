@@ -287,14 +287,21 @@ class Context(object):
                         name=name, old=self.op[name]))
             s = bv_ast.flatten(
                 t=self.vars, defs=self.op_bdd)
-            assert stx.isinstance_str(s), s
             # sensitive point:
-            #     operator expressions are stored before substitutions
-            #     operator BDDs are stored after operator substitutions
-            # operator definitions cannot change, so this should
+            #     operator expressions are stored
+            #         before substitutions
+            #     operator BDDs are stored after
+            #         operator substitutions
+            # operator definitions cannot change,
+            # so this should
             # not cause problems as currently arranged.
             self.op[name] = expr_ast.flatten()
-            self.op_bdd[name] = sym_bdd.add_expr(s, self.bdd)
+            if stx.isinstance_str(s):
+                self.op_bdd[name] = sym_bdd.add_expr(
+                    s, self.bdd)
+            else:
+                # operator with non-BDD value
+                self.op_bdd[name] = s
 
     def to_bdd(self, expr):
         """Return BDD for the formula `expr`."""

@@ -285,14 +285,3 @@ def support_issubset(u, vrs, fol):
     """
     support = fol.support(u)
     return support.issubset(vrs)
-
-
-def print_support(u, fol):
-    """Print separately unprimed and primed vars in support."""
-    support = fol.support(u)
-    primed_support = set(filter(stx.isprimed, support))
-    unprimed_support = support.difference(primed_support)
-    print('Unprimed variables in support:')
-    print(unprimed_support)
-    print('Primed variables in support:')
-    print(primed_support)

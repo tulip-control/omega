@@ -9,7 +9,6 @@ from omega.symbolic import bdd as sym_bdd
 # functions in transition to here
 is_state_predicate = sym_bdd.is_state_predicate
 is_proper_action = sym_bdd.is_proper_action
-unprime = sym_bdd.unprime
 
 
 def is_primed_state_predicate(u, fol):
@@ -91,6 +90,13 @@ def prime(u, fol):
     # (no primed identifiers are declared for constants)
     vrs = {name for name in support if is_variable(name, fol)}
     let = {var: stx.prime(var) for var in vrs}
+    return fol.let(let, u)
+
+
+def unprime(u, fol):
+    """Unprime primed variables in support of `u`."""
+    primed_vars = primed_support(u, fol)
+    let = {s: stx.unprime(s) for s in primed_vars}
     return fol.let(let, u)
 
 

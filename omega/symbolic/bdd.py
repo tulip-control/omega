@@ -305,16 +305,6 @@ def is_proper_action(u):
         any(not stx.isprimed(var) for var in r))
 
 
-def unprime(u, fol):
-    """Unprime variables in support of `u`.
-
-    Assume only primed variables in support of `u`.
-    """
-    r = fol.support(u)
-    d = {var: stx.unprime(var) for var in r}
-    return fol.let(d, u)
-
-
 def print_support(u, fol):
     """Print separately unprimed and primed vars in support."""
     support = fol.support(u)

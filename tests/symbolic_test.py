@@ -387,8 +387,6 @@ def test_prime_unprimed():
     assert r == r_, fol.bdd.to_expr(r)
     with nt.assert_raises(AssertionError):
         sym_bdd.prime(r, fol)
-    with nt.assert_raises(AssertionError):
-        sym_bdd.unprime(u, fol)
     s = "x' = -3  /\  ~ y'"
     u = fol.add_expr(s)
     r = sym_bdd.unprime(u, fol)

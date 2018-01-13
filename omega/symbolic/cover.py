@@ -93,6 +93,60 @@ def minimize(f, care, fol):
     return cover
 
 
+def _minimize_two_managers(f, care, fol):
+    """Optimized version of `minimize` for large problems."""
+    if not _care_implies_type_hints(f, care, fol):
+        log.warning('care set should imply type hints')
+    if not _f_implies_care(f, care, fol):
+        log.warning('f should imply care set')
+    if (f | ~ care) == fol.true:
+        log.warning('f covers care set, so trivial cover')
+    log.info('---- branching ----')
+    path_cost = 0.0
+    x_vars, px, qx, p_to_q = _setup_aux_vars(f, care, fol)
+    # manager where optimization happens
+    fol_2 = type(fol)()
+    fol_2.add_vars(fol.vars)
+    # x (to be covered)
+    log.info('embed implicants')
+    x = _embed_as_implicants(f, px, fol)
+    x = fol.copy(x, fol_2)
+    # covering problem
+    fcare = f | ~ care
+    # relations
+    log.info('partial order')
+    u_leq_p, p_leq_u = _partial_order(px, fol_2)
+    varmap = _parameter_varmap(px, qx)
+    log.info('subseteq relation')
+    p_leq_q = _orthotope_subseteq(varmap, fol_2)
+    log.info('equality relation')
+    p_eq_q = _orthotope_eq(varmap, fol_2)
+    # y (to use in cover)
+    log.info('primes')
+    fcare_2 = fol.copy(fcare, fol_2)
+    y = prime_orthotopes(
+        fcare_2, px, qx,
+        p_leq_q, p_eq_q,
+        fol_2, x_vars)
+    del fcare_2
+    bab = _BranchAndBound(
+        p_leq_q, p_leq_u, u_leq_p,
+        p_eq_q, p_to_q, px, qx, fol_2)
+    # initialize upper bound
+    bab.upper_bound = _upper_bound(
+        x, y, p_leq_q, p_to_q, fol_2)
+    # assert _covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol_2)
+    log.info('traverse')
+    cover, _ = _traverse(x, y, path_cost, bab, fol_2)
+    if cover is None:
+        cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol_2)
+    assert cover is not None
+    log.info('==== branching ==== ')
+    del p_eq_q, p_leq_q, u_leq_p, p_leq_u, fcare
+    cover = fol_2.copy(cover, fol)
+    return cover
+
+
 def _traverse(x, y, path_cost, bab, fol):
     """Compute cyclic core and terminate, prune, or recurse."""
     log.info('\n\n---- traverse ----')

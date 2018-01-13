@@ -263,25 +263,3 @@ def add_expr(e, bdd):
     tree = parser.parse(e)
     u = tree.flatten(bdd=bdd)
     return u
-
-
-def joint_support(nodes, fol):
-    """Return union of supports ."""
-    gen = (fol.support(u) for u in nodes)
-    return set().union(*gen)
-
-
-def support_issubset(u, vrs, fol):
-    """Return `support(u) <= vrs`.
-
-    Use this function to ensure that only the expected
-    variables occur in the expression that a BDD represents.
-    This check catches several errors early.
-
-    If `fol` is a `dd.cudd.BDD`, then variable names
-    will be bits instead of first-order.
-
-    @param vrs: `set` of variable names as `str`
-    """
-    support = fol.support(u)
-    return support.issubset(vrs)

@@ -18,7 +18,6 @@ from __future__ import absolute_import
 import logging
 import ply.lex
 from omega.logic.ast import Nodes as _Nodes
-from omega.logic import syntax as stx
 
 
 logger = logging.getLogger(__name__)

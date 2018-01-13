@@ -19,7 +19,6 @@ import logging
 import networkx as nx
 
 from omega.logic import syntax as stx
-from omega.symbolic import fol as _fol
 from omega.symbolic import symbolic
 
 

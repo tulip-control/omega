@@ -12,7 +12,7 @@ import natsort
 import networkx as nx
 
 from omega.logic import bitvector as bv
-from omega.symbolic import bdd as scope
+from omega.symbolic import prime as scope
 from omega.symbolic import symbolic
 
 

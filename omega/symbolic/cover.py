@@ -20,8 +20,8 @@ import time
 
 import natsort
 from omega.logic import syntax as stx
-from omega.symbolic.bdd import support_issubset
-from omega.symbolic.bdd import joint_support
+from omega.symbolic.prime import support_issubset
+from omega.symbolic.prime import joint_support
 # import polytope (inline)
 
 

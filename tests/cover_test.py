@@ -12,7 +12,7 @@ import time
 plt = None  # uncomment if you want to plot
 from nose.tools import assert_raises
 from omega.logic import syntax as stx
-from omega.symbolic.bdd import support_issubset
+from omega.symbolic.prime import support_issubset
 from omega.symbolic import fol as _fol
 
 from omega.symbolic import cover as cov

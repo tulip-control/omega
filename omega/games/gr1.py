@@ -23,10 +23,10 @@ Robert Konighofer
 import logging
 import copy
 
-from omega.symbolic import bdd as sym_bdd
-from omega.symbolic.bdd import is_state_predicate
+from omega.symbolic.prime import is_state_predicate
 from omega.symbolic import fixpoint as fx
 from omega.symbolic import fol as _fol
+from omega.symbolic import prime as prm
 from omega.symbolic import symbolic
 from omega.symbolic import temporal as trl
 
@@ -498,7 +498,7 @@ def _controllable_action(target, aut):
     """
     env_action = aut.action['env']
     sys_action = aut.action['sys']
-    u = sym_bdd.prime(target, aut)
+    u = prm.prime(target, aut)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
         u |= ~ env_action
@@ -542,8 +542,8 @@ def _make_init(internal_init, win, aut):
                 qinit=qinit))
     assert new_env_init != aut.false
     assert new_sys_init != aut.false
-    assert sym_bdd.is_state_predicate(new_env_init)
-    assert sym_bdd.is_state_predicate(new_sys_init)
+    assert is_state_predicate(new_env_init)
+    assert is_state_predicate(new_sys_init)
     aut.init['impl_env'] = new_env_init
     aut.init['impl_sys'] = new_sys_init
 

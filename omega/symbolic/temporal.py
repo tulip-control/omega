@@ -24,7 +24,6 @@ import weakref
 
 from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
-from omega.symbolic import bdd as sym_bdd
 from omega.symbolic import fol as _fol
 from omega.symbolic import prime as prm
 from omega.symbolic import symbolic as _sym
@@ -479,7 +478,7 @@ def _assert_invariant(components, aut, moore=True):
                if k in components}
     assert prm.pairwise_disjoint(varlists), varlists
     for u in aut.init.values():
-        assert sym_bdd.is_state_predicate(u)
+        assert prm.is_state_predicate(u)
     _assert_is_win(aut.win)
     if not moore:
         return
@@ -490,7 +489,7 @@ def _assert_invariant(components, aut, moore=True):
 def _assert_is_win(d):
     if isinstance(d, list):
         for u in d:
-            assert sym_bdd.is_state_predicate(u), u
+            assert prm.is_state_predicate(u), u
             return
     assert isinstance(d, dict), d
     for _, v in d.items():

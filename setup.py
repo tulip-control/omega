@@ -27,6 +27,7 @@ install_requires = [
     'networkx >= 2.0',
     'ply >= 3.6',
     'pydot >= 1.2.2']
+setup_requires=['setuptools >= 38.6.0'],
 tests_require = ['nose >= 1.3.4']
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',
@@ -109,6 +110,7 @@ def run_setup():
         author_email='jfilippidis@gmail.com',
         url=url,
         license='BSD',
+        setup_requires=setup_requires,
         install_requires=install_requires,
         tests_require=tests_require,
         packages=[name, 'omega.games',

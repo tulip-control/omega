@@ -84,7 +84,7 @@ def minimize(f, care, fol):
     # assert covers(bab.best_cover, f, p_leq_q, p_to_q, px, fol)
     cover, _ = _traverse(x, y, path_cost, bab, fol)
     if cover is None:
-        cover = _some_cover(x, y, p_leq_q, p_to_q, fol)
+        cover, _ = _some_cover(x, y, p_leq_q, p_to_q, fol)
     assert cover is not None
     assert _covers(cover, f, p_leq_q, p_to_q, px, fol)
     low = care & ~ f

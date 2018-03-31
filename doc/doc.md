@@ -1050,9 +1050,11 @@ the future fragment using [temporal testers](http://doi.org/10.1007/BFb0055036)
 
 If a formula is a conjunction of an initial predicate, safety formulas of
 the form `[](...)` and recurrence formulas `[]<>(...)`, then
-`gr1.ltl_to_automaton` can be used to split the temporal formula into
-an initial condition, an action, and a conjunction of recurrence formulas.
-These are stored in a `symbolic.Automaton`.
+`omega.gr1.split_gr1` can be used to split the temporal formula into
+an initial condition, an action, a conjunction of recurrence formulas, and
+a disjunction of persistence formulas.
+These are stored in an `omega.symbolic.temporal.Automaton` when calling the
+function `omega.gr1.closed_system_to_automaton`.
 
 The resulting automaton stores transition-level formulas (in TLA+ these are
 formulas that include primes (`'`)). These formulas can be bitblasted using

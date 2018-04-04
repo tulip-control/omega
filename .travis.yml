@@ -23,15 +23,17 @@ script:
   - nosetests -e "cover*"
   #
   # test without `dd.cudd` (pure Python)
+  - export DD_VERSION=$(pip show dd | head
+    | grep -m 1 -o -E '[0-9]+\.[0-9]+\.[0-9]+')
   - pip uninstall --yes dd
-  - pip install dd>=0.5.2 --no-binary dd
+  - pip install dd==${DD_VERSION} --no-binary dd
   - nosetests -e "cover*"
   - cd ..
   #
   # install `dd.cudd`
   - pip uninstall --yes dd
   # obtain `dd` source, even if suitable wheel file available from PyPI
-  - pip download --no-dependencies dd>=0.5.2 --no-binary dd
+  - pip download --no-dependencies dd==${DD_VERSION} --no-binary dd
   - tar xzf dd-*.tar.gz
   - cd dd-*/
   - python setup.py install --fetch --cudd

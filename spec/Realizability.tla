@@ -1,9 +1,6 @@
 ------------------------- MODULE Realizability -------------------------------
 (* A definition of what it means for a function to realize a property.
 
-A synthesizer first proves:
-  THEOREM Realizability!IsRealizable(Phi, e)
-
 
 References
 ==========

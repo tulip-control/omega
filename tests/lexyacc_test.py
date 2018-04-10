@@ -13,12 +13,14 @@ def test_quantifiers():
     assert t.operator == '\E', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
-    assert len(qvars) == 1, qvars
-    (x,) = qvars
+    assert hasattr(qvars, 'operator'), qvars
+    assert qvars.operator == 'params', qvars.operator
+    x, = qvars.operands
     _assert_is_var_node(x, 'x')
     assert hasattr(e, 'type'), e
     assert e.type == 'bool', e.type
     assert e.value == 'True', e.value
+    #
     s = '\E x, y:  False'
     t = parser.parse(s)
     assert hasattr(t, 'type'), t
@@ -26,22 +28,30 @@ def test_quantifiers():
     assert t.operator == '\E', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
-    assert len(qvars) == 2, qvars
-    x, y = qvars
+    assert hasattr(qvars, 'operator'), qvars
+    assert qvars.operator == 'params', qvars.operator
+    x, y = qvars.operands
     _assert_is_var_node(x, 'x')
     _assert_is_var_node(y, 'y')
     assert hasattr(e, 'type'), e
     assert e.type == 'bool', e.type
     assert e.value == 'False', e.value
+    #
     s = '\A y:  True'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
+    #
     s = '\A x, y, z:  (x \/ ~ y) /\ z'
     t = parser.parse(s)
     assert t.operator == '\A', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
-    assert len(qvars) == 3, qvars
+    assert hasattr(qvars, 'operator'), qvars
+    assert qvars.operator == 'params', qvars.operator
+    x, y, z = qvars.operands
+    _assert_is_var_node(x, 'x')
+    _assert_is_var_node(y, 'y')
+    _assert_is_var_node(z, 'z')
     r = e.flatten()
     r_ = '( ( x \/ ( ~ y ) ) /\ z )'
     assert r == r_, (r, r_)

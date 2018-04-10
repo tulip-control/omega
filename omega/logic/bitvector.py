@@ -391,20 +391,24 @@ class Nodes(_Nodes):
             if self.operator in ('\A', '\E'):
                 assert mem is None, mem
                 x, e = self.operands
-                assert isinstance(x, list), x
-                # list bits
-                # t = kw['t']
-                bits = list()
-                for v in x:
-                    flat = _flatten_var(v, mem=None, **kw)
-                    bits.extend(flat)
-                cube = (len(bits) - 1) * '& ' + ' '.join(bits)
+                cube = x.flatten(mem=None, *arg, **kw)
+                assert isinstance(cube, str), cube
                 u = e.flatten(mem=None, *arg, **kw)
                 r = ' {op} {cube} {u}'.format(
                     op=Nodes.opmap[self.operator],
                     cube=cube,
                     u=u)
                 return r
+            if self.operator == 'params':
+                assert mem == None, mem
+                # list bits
+                # t = kw['t']
+                bits = list()
+                for v in self.operands:
+                    flat = _flatten_var(v, mem=None, **kw)
+                    bits.extend(flat)
+                cube = (len(bits) - 1) * '& ' + ' '.join(bits)
+                return cube
             if self.operator == '\S':
                 x, e = self.operands
                 assert isinstance(x, list), x

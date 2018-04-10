@@ -324,7 +324,8 @@ class Parser(astutils.Parser):
         """expr : FORALL list COLON expr
                 | EXISTS list COLON expr
         """
-        p[0] = self.nodes.Operator(p[1], p[2], p[4])
+        params = self.nodes.Operator('params', *p[2])
+        p[0] = self.nodes.Operator(p[1], params, p[4])
 
     def p_substitute(self, p):
         """expr : RENAME pairs COLON expr"""

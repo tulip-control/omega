@@ -16,3 +16,6 @@ The examples are:
 
 - `symbolic.py`: specify using a graph data structure and create an
   implementation using GR(1) synthesis.
+
+- `choosing_type_hints.py`: The importance of picking sufficiently large
+  bitfields to represent each integer-valued variable.

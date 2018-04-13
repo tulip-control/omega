@@ -122,10 +122,15 @@ def _conjoin_type_hints(vrs, fol):
     r = list()
     for var in vrs:
         hints = fol.vars[var]
+        if hints['type'] == 'bool':
+            # The constraint `var \in BOOLEAN` will
+            # anyway dissapear at the BDD layer.
+            continue
+        assert hints['type'] == 'int', hints
         a, b = hints['dom']
-        s = '({a} <= {var}) /\ ({var} <= {b})'.format(
-            a=a, b=b, var=var)
-        r.append(s)
+        s = r'({a} <= {var}) /\ ({var} <= {b})'
+        type_hints = s.format(a=a, b=b, var=var)
+        r.append(type_hints)
     u = fol.add_expr(stx.conj(r))
     return u
 

@@ -27,6 +27,7 @@ from omega.logic import syntax as stx
 from omega.symbolic import fol as _fol
 from omega.symbolic import prime as prm
 from omega.symbolic import symbolic as _sym
+from omega.symbolic import _type_hints as tyh
 
 
 log = logging.getLogger(__name__)
@@ -279,7 +280,7 @@ class Automaton(_fol.Context):
         # so a static conclusion.
         vrs = {var for var in self.vars
                if not stx.isprimed(var)}
-        type_hints = _conjoin_type_hints(vrs, self)
+        type_hints = tyh._conjoin_type_hints(vrs, self)
         r = type_hints | ~ u
         return r == self.true
 
@@ -554,24 +555,6 @@ def conj_actions_of(players, aut):
     for p in players:
         action &= aut.action[p]
     return action
-
-
-def _conjoin_type_hints(vrs, fol):
-    """Return conjunction of type hints for `vrs` as BDD."""
-    r = list()
-    for var in vrs:
-        hints = fol.vars[var]
-        if hints['type'] == 'bool':
-            # The constraint `var \in BOOLEAN` will
-            # anyway dissapear at the BDD layer.
-            continue
-        assert hints['type'] == 'int', hints
-        a, b = hints['dom']
-        s = r'({a} <= {var}) /\ ({var} <= {b})'
-        type_hints = s.format(a=a, b=b, var=var)
-        r.append(type_hints)
-    u = fol.add_expr(stx.conj(r))
-    return u
 
 
 # serves the same purpose as `fill_blanks` in `symbolic`.

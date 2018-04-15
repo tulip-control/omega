@@ -134,6 +134,17 @@ def _minimize_two_managers(f, care, fol):
     return cover
 
 
+def _assert_correct_cover(cover, f, care, fol):
+    """Raise `AssertionError` if `cover` not of `f`."""
+    prm = lat.setup_aux_vars(f, care, fol)
+    # in implicant space
+    low = care & ~ f
+    assert _none_covered(cover, low, prm, fol)
+    # in concrete space
+    g = _concretize_implicants(cover, prm, fol)
+    assert (g & care) == (f & care)
+
+
 def unfloors(cover, y, fol, bab):
     """Return a minimal cover using elements from y.
 

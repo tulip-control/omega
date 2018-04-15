@@ -352,6 +352,10 @@ class Context(object):
         """Apply operator `op` on operands `u, v, w`."""
         return self.bdd.apply(op, u, v, w)
 
+    def copy(self, u, other):
+        """Copy BDD `u` from `self.bdd` to `other.bdd`."""
+        return self.bdd.copy(u, other.bdd)
+
     @property
     def false(self):
         """Return `self.bdd.false`."""

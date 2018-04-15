@@ -19,10 +19,13 @@ def _clip_subrange(ab, dom, x):
     """Return `ab` clipped to `dom`."""
     a, b = ab
     u, v = dom
+    assert a <= b, (a, b)
+    assert u <= v, (u, v)
     # assert not disjoint ranges
     assert a <= v and b >= u, (ab, dom, x)
     a = max(a, u)
     b = min(b, v)
+    assert a <= b, (a, b)
     if a == u and v == b:
         a, b = None, None
     return a, b

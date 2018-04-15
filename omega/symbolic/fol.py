@@ -329,15 +329,6 @@ class Context(object):
         cover = cov.minimize(u, care, self)
         s = cov.dumps_cover(
             cover, u, care, self, **kw)
-        # prepare to assert
-        prm = lat.setup_aux_vars(u, care, self)
-        r = lat.list_expr(
-            cover, prm, self, simple=True)
-        r = stx.disj(r)
-        u_ = self.add_expr(r)
-        # promise to match `u` only inside `care`
-        # forgive `|#  u => care`
-        assert u & care == u_ & care, s
         return s
 
     def assign_from(self, assignment):

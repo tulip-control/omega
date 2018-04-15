@@ -373,8 +373,6 @@ def cyclic_core(f, care, fol):
     _print_cyclic_core(
         x, y, xcore, ycore, essential,
         t0, bab.prm, fol)
-    s = dumps_cover(essential, f, care, fol)
-    log.info(s)
     return xcore, ycore, essential
 
 
@@ -922,6 +920,14 @@ def dumps_cover(
             care_vars=_comma_sorted(care_vars),
             s=s)
     # could add option to find minimal cover for care too
+    # postcondition
+    r = lat.list_expr(
+        cover, prm, fol, use_dom=show_dom)
+    r = stx.disj(r)
+    g = fol.add_expr(r)
+    # ensure that `g` equals `f` inside `care`
+    # `g` can be arbitrary outside of `care`
+    assert (g & care) == (f & care), r
     return s
 
 

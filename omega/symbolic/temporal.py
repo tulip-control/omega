@@ -38,6 +38,9 @@ class Automaton(_fol.Context):
 
     Both interleaving and noninterleaving style specifications
     can be written using this class.
+    This class can be used to represent temporal operators.
+    For example, a closed system, or an open system
+    described by stepwise implication.
 
 
     User-defined attributes

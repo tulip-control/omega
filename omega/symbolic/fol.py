@@ -317,8 +317,8 @@ class Context(object):
     def to_expr(self, u, care=None, **kw):
         """Return minimal DNF of integer inequalities.
 
-        For now, this method supports all variables in
-        `support(u)` being integers.
+        For now, this method requires that all variables in
+        `support(u)` be integers.
 
         @param care: BDD of care set
         @param kw: keyword args are passed to

@@ -26,7 +26,10 @@ Amir Pnueli, Yaniv Sa'ar
 # Copyright 2016-2017 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
-from dd import cudd as _bdd
+try:
+    from dd import cudd as _bdd
+except ImportError:
+    _bdd = None
 
 
 def make_functions(r, vrs, bdd):
@@ -85,8 +88,10 @@ def extract_function(f, yp, outputs, bdd):
             p, n = pz, nz
     # restrict
     care = (p & ~ n) | (n & ~ p)
-    g = _bdd.restrict(p, care)
-    # g = p
+    if _bdd is None:
+        g = p
+    else:
+        g = _bdd.restrict(p, care)
     return g, care
 
 

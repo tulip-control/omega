@@ -313,13 +313,23 @@ def list_expr(
             w.append(s)
         # conjoin as one triplet per line
         lines = w
-        n_tail = len(lines) % 3
-        tail = lines[-n_tail:]
-        lines = lines[:-n_tail]
+        width = 3
+        k = len(lines)
+        n_tail = k % width
+        up_to = k - n_tail
+        tail = lines[up_to: k]
+        lines = lines[: up_to]
+        n_tail = len(tail)
+        n_lines = len(lines)
+        assert n_tail < width, (tail, width)
+        assert n_lines % width == 0, (lines, width)
+        assert (n_lines + n_tail) == k, (lines, tail)
         i = iter(lines)
-        triplets = list(zip(i, i, i))
-        lines = [' /\ '.join(t) for t in triplets]
-        lines.append(' /\ '.join(tail))
+        pack = width * [i]
+        tuples = list(zip(*pack))
+        if tail:
+            tuples.append(tail)
+        lines = [' /\ '.join(t) for t in tuples]
         s = stx.vertical_op(lines, latex=latex, op='and')
         r.append(s)
     r = natsort.natsorted(r)  # reproducible vertical listing

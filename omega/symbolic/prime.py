@@ -59,6 +59,23 @@ def flexible_support(u, fol):
     return {k for k in unprimed if is_variable(k, fol)}
 
 
+def vars_in_support(u, fol):
+    """Return variables that `u` depends on.
+
+    Returns unprimed identifiers for all variables
+    that occur (primed or not) in the support of `u`.
+    """
+    vrs = set()
+    for k in fol.support(u):
+        if stx.isprimed(k):
+            vrs.add(stx.unprime(k))
+        elif is_variable(k, fol):
+            vrs.add(k)
+    assert vrs == (flexible_support(u, fol) |
+        {stx.unprime(s) for s in primed_support(u, fol)})
+    return vrs
+
+
 def print_support(u, fol):
     """Print separately unprimed and primed vars in support."""
     unprimed, primed = split_support(u, fol)

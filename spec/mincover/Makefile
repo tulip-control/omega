@@ -11,7 +11,7 @@ stx:
 	tla2sany CyclicCore.tla
 
 clean:
-	-rm -rf *.tlaps *.toolbox workspace .aux/*
+	-rm -rf *.tlaps *.toolbox workspace .aux/* __tlacache__
 
 print_theorems:
 	ag "AXIOM|ASSUMPTION|PROPOSITION|LEMMA|THEOREM|COROLLARY" \

@@ -370,7 +370,7 @@ def _prime_like(var):
     return '{var}_cp'.format(var=var)
 
 
-def vertical_op(c, latex=False, op='and'):
+def vertical_op(c, latex=False, op='and', spacing=1):
     """Return TLA conjunction with one conjunct per line."""
     assert op in {'and', 'or'}, op
     if not c:
@@ -384,7 +384,7 @@ def vertical_op(c, latex=False, op='and'):
         nl = r' \\' + '\n'
     else:
         pref = '/\\' if op == 'and' else '\/'
-        nl = '\n'
+        nl = '\n' * spacing
     r = list()
     for s in c:
         t = s.split('\n')

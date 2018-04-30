@@ -906,7 +906,6 @@ def dumps_cover(
         cover, prm, fol, use_dom=show_dom, latex=latex)
     s = stx.vertical_op(r, op='or', latex=latex, spacing=2)
     c.append(s)
-    n_expr = len(r)
     if care != fol.true:
         c.append('care expression')
     s = stx.vertical_op(c, op='and', latex=latex)

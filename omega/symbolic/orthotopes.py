@@ -114,7 +114,6 @@ def _implicant_orthotopes(f, prm, fol):
 def embed_as_implicants(f, prm, fol):
     px = prm._px
     ax = {x: d['a'] for x, d in px.items()}
-    bx = {x: d['b'] for x, d in px.items()}
     u = fol.let(ax, f)
     v = _orthotope_singleton(px, fol)
     return u & v

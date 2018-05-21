@@ -936,7 +936,7 @@ def _care_implies_type_hints(f, care, fol):
     type_hints = tyh._conjoin_type_hints(vrs, fol)
     r = type_hints | ~ care
     if r != fol.true:
-        vrs = fol.support(r)
+        vrs = _find_protruding_dimensions(care, type_hints, fol)
         s = ('`care => type_hints` fails '
              'for variables: {vrs}').format(
                 vrs=_comma_sorted(vrs))
@@ -948,12 +948,25 @@ def _f_implies_care(f, care, fol):
     """Return `True` if `|= f => care`."""
     r = care | ~ f
     if r != fol.true:
-        vrs = fol.support(r)
+        vrs = _find_protruding_dimensions(f, care, fol)
         s = ('`f => care` fails '
              'for variables: {vrs}').format(
                 vrs=_comma_sorted(vrs))
         log.warning(s)
     return r == fol.true
+
+
+def _find_protruding_dimensions(f, care, fol):
+    """Return variables along which `f` violates `care`."""
+    vrs = joint_support([f, care], fol)
+    dims = set()
+    for var in vrs:
+        other_vars = vrs - {var}
+        f_proj = fol.exist(other_vars, f)
+        care_proj = fol.exist(other_vars, care)
+        if (care_proj | ~ f_proj) != fol.true:
+            dims.add(var)
+    return dims
 
 
 def _comma_sorted(c):

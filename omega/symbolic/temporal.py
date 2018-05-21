@@ -272,17 +272,19 @@ class Automaton(_fol.Context):
         let = {stx.prime(k): k for k in vrs}
         return self.let(let, u)
 
-    def implies_type_hints(self, u, vrs):
-        """Return `True` if `u => TypeInv` for all vars.
+    def implies_type_hints(self, u, vrs=None):
+        """Return `True` if `u => TypeHints` for `vrs`.
 
-        All declared variables and constants are taken into
-        account.
+        If `vrs is None`, then all declared variables and constants
+        are taken into account.
         """
-        # not named `assert_type_invariant` because the
-        # assertion is about the state predicate `u`,
+        # This function is not named `assert_type_invariant`
+        # because the assertion is about the state predicate `u`,
         # so a static conclusion.
-        vrs = {var for var in self.vars
-               if not stx.isprimed(var)}
+        #
+        if vrs is None:
+            vrs = {var for var in self.vars
+                   if not stx.isprimed(var)}
         type_hints = tyh._conjoin_type_hints(vrs, self)
         r = type_hints | ~ u
         return r == self.true

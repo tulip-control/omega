@@ -608,8 +608,9 @@ PROOF
     BY <1>1, <1>2
 
 
-(* If a minimal cover C refines a minimal cover Cm,
+(* If a cover C refines a minimal cover Cm,
 then each ym \in Cm has some y \in C below it.
+In other words, Cm refines C with respect to Geq.
 *)
 THEOREM MinCoverRefinementHasBelow ==
     ASSUME

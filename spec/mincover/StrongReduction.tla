@@ -189,7 +189,7 @@ InvCompl(C) ==
 InvSound(C) == (C \in MinCoversBelow) => IsAMinCover(C, X, Y, Leq)
 
 --------------------------------------------------------------------------------
-(* Auxiliary theorems about minimal covers. *)
+(* Auxiliary theorems about expressions used to define the action `Next`. *)
 
 
 THEOREM SubsetYFinite ==
@@ -1805,8 +1805,8 @@ PROOF
     BY <1>4, <1>5 DEF g
 
 
-(* Type formula for the operator `more` that appears in the definition in
-the definition of the action `Expand`.
+(* Type formula for the operator `more` that appears in the definition
+of the action `Expand`.
 *)
 THEOREM MoreInSeqSubsetY ==
     ASSUME

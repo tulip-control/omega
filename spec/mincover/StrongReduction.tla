@@ -2087,6 +2087,8 @@ PROOF
             BY <2>2
         <3> QED  (* goal from <1>3 *)
             BY <3>1, <3>2
+
+    (* Expand the invariant. *)
     <2>3. \/ \E n \in DOMAIN stack:  IsPrefixCov(stack[n], g)
           \/ C \in MinCoversBelow
         <3>1. InvCompl(C)
@@ -2097,6 +2099,8 @@ PROOF
             BY <3>1 DEF InvCompl, g
         <3> QED
             BY <3>2, <2>2
+
+    (* Monotonicity of MinCoversBelow. *)
     <2>4. ASSUME C \in MinCoversBelow
           PROVE C \in MinCoversBelow'
         <3>1. /\ stack # << >>
@@ -2405,7 +2409,7 @@ PROOF
         <3> QED
             BY <3>2, <3>3
 
-    <2>22. SUFFICES
+    <2>22. SUFFICES  (* Case of action Expand. *)
             ASSUME i < N
             PROVE \E n \in DOMAIN stack':  IsPrefixCov(stack[n]', g)
 
@@ -3086,6 +3090,7 @@ PROOF
         <3> QED
             BY <3>1, <3>2
 
+    (* Expanding the invariant PartialCoversInStack. *)
     <2>12. /\ IsAMinCover(Q, X, Y, Leq)
            /\ Q \in SUBSET Y
            /\ IsACover(Q, X, Leq)

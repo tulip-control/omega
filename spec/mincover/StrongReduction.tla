@@ -2497,13 +2497,10 @@ PROOF
                 BY <4>1
             <4>2. ~ Leq[x, y]
                 BY <3>2
-            <4>3. Leq[x, y]
-                <5>1. Leq[x, yc]
-                    BY <3>3
-                <5> QED
-                    BY <5>1, <4>1
+            <4>3. ~ Leq[x, yc]
+                BY <4>1, <4>2
             <4> QED  (* goal from <4>1 *)
-                BY <4>2, <4>3
+                BY <3>3, <4>3
         <3>5. ASSUME yc \in PartialCover
               PROVE FALSE
             <4>1. yc \in Q \ {ymax}

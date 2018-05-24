@@ -2085,7 +2085,7 @@ PROOF
               \/ ~ IsAMinCover(C, X, Y, Leq)
               \/ C \in MinCoversBelow'
             BY <2>2
-        <3> QED
+        <3> QED  (* goal from <1>3 *)
             BY <3>1, <3>2
     <2>3. \/ \E n \in DOMAIN stack:  IsPrefixCov(stack[n], g)
           \/ C \in MinCoversBelow
@@ -2127,7 +2127,7 @@ PROOF
               PROVE \/ \E n \in DOMAIN stack':  IsPrefixCov(stack[n]', g)
                     \/ C \in MinCoversBelow'
             BY <2>4
-        <3> QED
+        <3> QED  (* goal from <2>2 *)
             BY <2>5, <3>1  (* which are exhaustive cases *)
 
     <2>6. /\ stack \in Seq(SUBSET Y)
@@ -3270,13 +3270,12 @@ PROOF
                    /\ IsACover(QNext, X, Leq)
                    /\ Cardinality(QNext) = N
                    /\ PartialNext \cap Patch(kNext) = {}
-            (* goal from <2>10 *)
         <3> HIDE DEF QNext
         <3>1. IsAMinCover(QNext, X, Y, Leq)
             BY <1>3, <1>4, <2>2,
                 MinCoverEquivCoverCard, XYAreFiniteSets,
                 ProblemInput, HaveCardAsCost DEF N
-        <3> QED
+        <3> QED  (* goal from <2>10 *)
             BY <2>2, <3>1
 
     <2>11. Expand

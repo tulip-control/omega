@@ -226,7 +226,7 @@ class Context(object):
         c = self.bdd.count(u, n)
         assert c == int(c), c
         assert c >= 0, c
-        return c
+        return int(c)
 
     def pick(self, u, care_vars=None):
         """Return a satisfying assignment, or `None`."""

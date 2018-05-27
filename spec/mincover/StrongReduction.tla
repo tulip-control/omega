@@ -3567,7 +3567,7 @@ PROOF
                     BY <5>1, <5>2
             <4>5. y \in Partial \cup Patch(kNext)
                 BY <4>3, <4>4
-            <4>6. (Partial\cup Patch(kNext)) \subseteq QNext
+            <4>6. (Partial \cup Patch(kNext)) \subseteq QNext
                 <5>1. PartialNext = Partial \cup {yk}
                     BY <2>22
                 <5>2. QNext = PartialNext \cup Patch(kNext)

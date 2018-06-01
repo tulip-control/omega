@@ -241,7 +241,7 @@ def _exist_forall_init(g, aut, umap, keys):
     assert env_init != aut.false
     assert sys_init != aut.false
     # pick `sys_0` so that it work for all
-    # env assignments alowed by `env_init`
+    # env assignments allowed by `env_init`
     u = aut.forall(aut.varlist['env'], sys_init)
     assert u != aut.false
     sys_0 = aut.pick(u, care_vars=aut.varlist['sys'])

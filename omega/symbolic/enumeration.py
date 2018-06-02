@@ -341,10 +341,13 @@ def _format_nx(g, keys=None):
     """Return graph ready to be dumped.
 
     Nodes with same label over `keys` are identified.
+    Edge attributes are copied.
 
     @type g: `networkx.DiGraph`
-    @param keys: `list` of keys in node `dict` to show,
-        in same order. By default all keys are shown.
+    @param keys: `list` of keys in node attributes `dict` to
+        show as label, in the given order.
+        Attributes outside `keys` remain attributes.
+        By default all keys are shown.
     @rtype: `pydot.Graph`
     """
     h = nx.DiGraph()
@@ -355,12 +358,13 @@ def _format_nx(g, keys=None):
         c = ['{var}={val}'.format(var=var, val=d[var])
              for var in keys if var in d]
         s = _square_conj(c)
-        h.add_node(s)
+        attr = {k: v for k, v in d.items() if k not in keys}
+        h.add_node(s, **attr)
         umap[u] = s
-    for u, v in g.edges():
+    for u, v, attr in g.edges(data=True):
         us = umap[u]
         vs = umap[v]
-        h.add_edge(us, vs)
+        h.add_edge(us, vs, **attr)
     assert len(g) >= len(h), (g.nodes, h.nodes)
     assert len(g) == len(umap), (g.nodes, umap)
     return h, umap

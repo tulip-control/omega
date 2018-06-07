@@ -72,10 +72,10 @@ def action_to_steps(aut, env, sys, qinit='\A \A'):
 def _action_to_steps(aut, qinit):
     assert aut.action['sys'] != aut.false
     primed_vars = _primed_vars_per_quantifier(aut.varlist)
-    unprime_vars = {stx.prime(var): var for var in aut.vars
-                    if not stx.isprimed(var)}
+    vrs = set(aut.varlist['env']).union(aut.varlist['sys'])
+    unprime_vars = {stx.prime(var): var for var in vrs}
     # fix an order for tupling
-    keys = list(k for k in aut.vars if not stx.isprimed(k))
+    keys = list(vrs)
     umap = dict()  # map assignments -> node numbers
     g = nx.DiGraph()
     queue, visited = _init_search(g, aut, umap, keys, qinit)

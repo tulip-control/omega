@@ -290,7 +290,9 @@ class Automaton(_fol.Context):
         return r == self.true
 
     def type_hint_for(self, vrs):
-        """Return initial predicate using type hints for `vrs`.
+        """Return conjunction of type hints for `vrs`.
+
+        `vrs` may contain primed or unprimed identifiers.
 
         See also `self.type_action_for`.
         """
@@ -331,7 +333,7 @@ class Automaton(_fol.Context):
     def _type_hints_to_formulas(self, vrs, action):
         r"""Return type constraint for `vrs` as `str`.
 
-        If `action is  True` then return type invariant `Inv`,
+        If `action is False` then return type invariant `Inv`,
         else the action `Inv /\ Inv'`.
         """
         r = list()

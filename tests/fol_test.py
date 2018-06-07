@@ -285,7 +285,8 @@ def test_to_expr():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
-        ' /\\ x \\in -128 .. 127\n /\\ (x \in 1 .. 3)')
+        '/\\ x \\in -128 .. 127\n'
+        '/\\ (x \in 1 .. 3)')
     assert s == s_, (s, s_)
     care = fol.add_expr('(-14 <= x)  /\  (x <= 100)')
     s = fol.to_expr(u, care=care, show_dom=True)
@@ -293,9 +294,9 @@ def test_to_expr():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:  x *)\n'
         '(* The minimal cover is: *)\n'
-        ' /\\ x \\in -14 .. 100\n'
-        ' /\\ (x \in 1 .. 3)\n'
-        ' /\\ care expression')
+        '/\\ x \\in -14 .. 100\n'
+        '/\\ (x \in 1 .. 3)\n'
+        '/\\ care expression')
     assert s == s_, (s, s_)
 
 

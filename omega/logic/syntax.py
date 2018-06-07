@@ -380,16 +380,17 @@ def vertical_op(c, latex=False, op='and', spacing=1):
     if len(c) == 1:
         return c[0]
     if latex:
-        pref = '  '
+        pref = 4 * ' '
         nl = r' \\' + '\n'
     else:
-        pref = '/\\' if op == 'and' else '\/'
+        pref = '/\\ ' if op == 'and' else '\/ '
         nl = '\n' * spacing
     r = list()
     for s in c:
         t = s.split('\n')
-        t[0] = ' {p} {first}'.format(p=pref, first=t[0])
-        e = '\n    '.join(t)
+        t[0] = '{p}{first}'.format(p=pref, first=t[0])
+        sep = '\n{indent}'.format(indent=len(pref) * ' ')
+        e = sep.join(t)
         r.append(e)
     r = nl.join(r)
     env = 'conj' if op == 'and' else 'disj'

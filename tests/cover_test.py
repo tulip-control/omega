@@ -79,9 +79,9 @@ def test_using_fol_context():
 (* `f` depends on:  x, y *)
 (* `care` depends on:   *)
 (* The minimal cover is: *)
- /\ x \in 0 .. 7
- /\ y \in -8 .. 7
- /\ (x \in 1 .. 3) /\ (y \in -2 .. 4)'''
+/\ x \in 0 .. 7
+/\ y \in -8 .. 7
+/\ (x \in 1 .. 3) /\ (y \in -2 .. 4)'''
     assert s == s_, (s, s_)
 
 
@@ -928,8 +928,8 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
-        ' /\ x \in 0 .. 7\n'
-        ' /\ (x \in 2 .. 4)')
+        '/\ x \in 0 .. 7\n'
+        '/\ (x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # care = type hints
     care = tyh._conjoin_type_hints(['x', 'y'], fol)
@@ -941,25 +941,29 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:  x, y *)\n'
         '(* The minimal cover is: *)\n'
-        ' /\ x \in 0 .. 4\n'
-        ' /\ y \in -5 .. 9\n'
-        ' /\ (x \in 2 .. 4)\n'
-        ' /\ care expression')
+        '/\ x \in 0 .. 4\n'
+        '/\ y \in -5 .. 9\n'
+        '/\ (x \in 2 .. 4)\n'
+        '/\ care expression')
     assert s == s_, (s, s_)
 
 
 def test_vertical_op():
     c = ['a', 'b', 'c']
     s = stx.vertical_op(c)
-    s_ = ' /\ a\n /\ b\n /\ c'
+    s_ = '/\ a\n/\ b\n/\ c'
     assert s == s_, (s, s_)
     c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
     s = stx.vertical_op(c)
-    s_ = ' /\ /\ a\n    /\ b\n    /\ c\n /\ d\n /\ e'
+    s_ = ('/\ /\ a\n'
+          '   /\ b\n'
+          '   /\ c\n'
+          '/\ d\n'
+          '/\ e')
     assert s == s_, (s, s_)
     c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
     s = stx.vertical_op(c, op='or')
-    s_ = ' \/ /\ a\n    /\ b\n    /\ c\n \/ d\n \/ e'
+    s_ = '\/ /\ a\n   /\ b\n   /\ c\n\/ d\n\/ e'
     assert s == s_, (s, s_)
     c = ['e']
     s = stx.vertical_op(c)

@@ -64,7 +64,7 @@ def action_to_steps(aut, qinit='\A \A'):
         node = queue.pop()
         values = g.nodes[node]
         log.debug('at node: {d}'.format(d=values))
-        assert set(values) == varnames, (values, aut.vars)
+        assert set(values) == varnames, (values, varnames)
         u = aut.action['env']
         u = aut.let(values, u)
         # apply Mealy controller function

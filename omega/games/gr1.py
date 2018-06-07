@@ -100,8 +100,9 @@ def _attractor_under_assumptions(goal, aut):
 def make_streett_transducer(z, yij, xijk, aut):
     """Return I/O `temporal.Automaton` implementing strategy.
 
-    An auxiliary variable `_goal` is added,
+    An auxiliary variable `_goal` is declared,
     to represent the counter of recurrence goals.
+    The variable `_goal` is appended to `varlist['impl']`.
     """
     winning = z
     assert is_realizable(winning, aut)
@@ -112,7 +113,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     c_max = n_goals - 1
     vrs = {c: (0, c_max)}
     aut.declare_variables(**vrs)
-    aut.varlist['sys'].append(c)
+    aut.varlist['sys']
     # compile transducer with refined shared BDD
     env_init = aut.init['env']
     sys_init = aut.init['sys']
@@ -181,6 +182,8 @@ def make_streett_transducer(z, yij, xijk, aut):
     assert u != aut.false
     symbolic._assert_support_moore(u, aut)
     aut.action['impl'] = u
+    aut.varlist['impl'] = list(aut.varlist['sys']) + [c]
+    aut.prime_varlists()
     # initial condition for counter
     # (no closure taken for counter)
     s = '{c} = 0'.format(c=c)
@@ -276,7 +279,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     n_c = n_goals - 1
     vrs = {w: (0, n_w), c: (0, n_c)}
     aut.declare_variables(**vrs)
-    aut.varlist['sys'].extend([w, c])
+    aut.varlist['sys']
     # compile
     env_init = aut.init['env']
     sys_init = aut.init['sys']
@@ -390,6 +393,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     assert u != aut.false
     symbolic._assert_support_moore(u, aut)
     aut.action['impl'] = u
+    aut.varlist['impl'] = list(aut.varlist['sys']) + [w, c]
+    aut.prime_varlists()
     # initial condition for counter
     s = '({c} = 0) /\ ({w} = {none})'.format(
         c=c, w=w, none=n_holds)

@@ -182,3 +182,16 @@ def pick(c):
     If `c` is empty, return `None`.
     """
     return next(iter(c), None)
+
+
+def rename_variables(let, u, aut):
+    """Rename primed and unprimed occurrences of variables.
+
+    @param let: `dict` that renames unprimed variable identifiers
+    """
+    let_primed = {stx.prime(k): stx.prime(v) for k, v in let.items()}
+    let.update(let_primed)
+    r = aut.let(let, u)
+    support = aut.support(r)
+    assert not support.intersection(let), support
+    return r

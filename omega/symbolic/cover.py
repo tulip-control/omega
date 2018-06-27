@@ -880,13 +880,15 @@ def dumps_cover(
         cover, f, care, fol,
         latex=False,
         show_dom=False,
-        show_limits=False):
+        show_limits=False,
+        comment=True):
     """Return disjunction of orthotopes in `cover`, one per line.
 
     @param latex: use `pf.sty` commands
     @param show_dom: if `care` implies type hints,
         then conjoin type hints (`fol.vars[var]['dom']`)
     @param show_limits: conjoin limits of  bitfield values
+    @param comment: if `True`, then list support of `f`, `cover`
 
     @rtype: `str`
     """
@@ -911,13 +913,14 @@ def dumps_cover(
     s = stx.vertical_op(c, op='and', latex=latex)
     f_vars = fol.support(f)
     care_vars = fol.support(care)
-    s = (
+    s_comment = (
         '(* `f` depends on:  {f_vars} *)\n'
         '(* `care` depends on:  {care_vars} *)\n'
-        '(* The minimal cover is: *)\n{s}').format(
+        '(* The minimal cover is: *)').format(
             f_vars=_comma_sorted(f_vars),
-            care_vars=_comma_sorted(care_vars),
-            s=s)
+            care_vars=_comma_sorted(care_vars))
+    if comment:
+        s = '{comment}\n{s}'.format(comment=s_comment, s=s)
     # could add option to find minimal cover for care too
     # postcondition
     r = lat.list_expr(

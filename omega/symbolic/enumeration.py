@@ -387,7 +387,7 @@ def _square_conj(p, n=None, op=r'&and;'):
     assert n > 0, n
     m = math.ceil(n**0.5)
     c = list()
-    for i, s in enumerate(p):
+    for i, s in enumerate(natsort.natsorted(p)):
         c.append(op)
         s = ' ({s}) '.format(s=s)
         c.append(s)

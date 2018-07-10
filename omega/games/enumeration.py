@@ -105,15 +105,8 @@ def _action_to_steps(aut, qinit):
             env_values = {unprime_vars[var]: value
                           for var, value in next_env.items()}
             v = aut.let(env_values, visited)
-            # prefer already visited nodes
-            v &= u
-            if v == aut.false:
-                log.info('cannot remain in visited nodes')
-                v = u
-                remain = False
-            else:
-                remain = True
-            assert v != aut.false
+            v, remain = _select_candidate_nodes(
+                u, v, aut, visited=True)
             sys_values = aut.pick(
                 v, care_vars=aut.varlist['sys'])
             d = dict(env_values)
@@ -135,6 +128,32 @@ def _action_to_steps(aut, qinit):
                     e=env_values,
                     s=sys_values))
     return g
+
+
+def _select_candidate_nodes(
+        next_nodes, visited_nodes, aut, visited=True):
+    """Return set of next nodes to choose from, as BDD."""
+    u = next_nodes
+    v = visited_nodes
+    # prefer already visited nodes ?
+    if visited:
+        v &= u
+        if v == aut.false:
+            log.info('cannot remain in visited nodes')
+            v = u
+            remain = False
+        else:
+            remain = True
+    else:
+        v = u & ~ v
+        if v == aut.false:
+            log.info('cannot visit new nodes')
+            v = u
+            remain = True
+        else:
+            remain = False
+    assert v != aut.false
+    return v, remain
 
 
 def _primed_vars_per_quantifier(varlist):

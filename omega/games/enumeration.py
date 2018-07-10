@@ -23,6 +23,7 @@ import logging
 import networkx as nx
 
 from omega.logic import syntax as stx
+from omega.symbolic import prime as prm
 from omega.symbolic import symbolic
 
 
@@ -67,6 +68,39 @@ def action_to_steps(aut, env, sys, qinit='\A \A'):
         sys=aut.action[sys])
     _aut.prime_varlists()
     return _action_to_steps(_aut, qinit)
+
+
+def enumerate_state_machine(init, action, aut):
+    """Return graph of `action` steps enumerated from `init`.
+
+    @rtype: `networkx.DiGraph`
+    """
+    assert init != aut.false
+    assert action != aut.false
+    vrs = (
+        prm.vars_in_support(init, aut) |
+        prm.vars_in_support(action, aut))
+    g = nx.DiGraph()
+    keys = list(vrs)
+    umap = dict()
+    init_iter = aut.pick_iter(init, vrs)
+    visited = aut.false
+    queue = list()
+    for d in init_iter:
+        _add_new_node(d, g, queue, umap, keys)
+        visited = _add_to_visited(d, visited, aut)
+    while queue:
+        node = queue.pop()
+        values = g.nodes[node]
+        u = aut.let(values, action)
+        u = prm.unprime(u, aut)
+        for d in aut.pick_iter(u, vrs):
+            if aut.let(d, visited) != aut.true:
+                next_node = _add_new_node(d, g, queue, umap, keys)
+                visited = _add_to_visited(d, visited, aut)
+            next_node = _find_node(d, umap, keys)
+            g.add_edge(node, next_node)
+    return g
 
 
 def _action_to_steps(aut, qinit):

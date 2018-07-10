@@ -41,6 +41,20 @@ def test_action_to_steps():
     assert len(r) == 2
 
 
+def test_enumerate_state_machine():
+    aut = symbolic.Automaton()
+    aut.declare_variables(x='bool', y=(0, 17))
+    init = aut.add_expr('x /\ (y = 1)')
+    action = aut.add_expr('''
+        /\ ( (x /\ (y = 1)) => (~ x' /\ (y' = 2)) )
+        /\ ( (~ x /\ (y = 2)) => (x' /\ (y' = 1)) )
+        ''')
+    g = enum.enumerate_state_machine(init, action, aut)
+    assert len(g) == 2, len(g)
+    e = list(g.edges())
+    assert len(e) == 2, len(e)
+
+
 def test__primed_vars_per_quantifier():
     varlist = dict(env=['x'], sys=['y', 'z'])
     primed_vars = enum._primed_vars_per_quantifier(varlist)

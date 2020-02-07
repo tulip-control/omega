@@ -1,6 +1,8 @@
 """Test `omega.symbolic.fixpoint`."""
 import logging
 
+import networkx as nx
+
 logging.getLogger('omega').setLevel(logging.WARNING)
 
 from omega.automata import TransitionSystem
@@ -14,7 +16,7 @@ def test_attractor():
     g = TransitionSystem()
     g.vars['x'] = 'bool'
     g.env_vars.add('x')
-    g.add_path([0, 1, 2, 3])
+    nx.add_path(g, [0, 1, 2, 3])
     g.add_edge(4, 1, formula='x')
     aut = logicizer.graph_to_logic(g, 'loc', True)
     aut.plus_one = True
@@ -40,7 +42,7 @@ def test_attractor():
 
 def test_descendants():
     g = TransitionSystem()
-    g.add_path([0, 1, 2])
+    nx.add_path(g, [0, 1, 2])
     aut = logicizer.graph_to_logic(g, 'pc', True)
     source = aut.add_expr('pc = 0')
     constrain = aut.true
@@ -50,7 +52,7 @@ def test_descendants():
 
 def test_ee_image_only_sys():
     g = TransitionSystem()
-    g.add_path([0, 1, 2])
+    nx.add_path(g, [0, 1, 2])
     aut = logicizer.graph_to_logic(g, 'pc', True)
     u = aut.add_expr('pc = 0')
     v = fx.ee_image(u, aut)

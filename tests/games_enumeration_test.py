@@ -78,7 +78,7 @@ def test_forall_init():
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
-    d = g.node[q]
+    d = g.nodes[q]
     d_ = dict(x=4, y=False, z=True)
     assert d == d_, d
     # multiple initial states: should pick all
@@ -95,7 +95,7 @@ def test_forall_init():
     varnames = {'x', 'y', 'z'}
     for q in queue:
         assert q in g, (q, g)
-        d = g.node[q]
+        d = g.nodes[q]
         assert set(d) == varnames, d
         assert d['x'] < 5, d
         assert isinstance(d['y'], bool), d
@@ -119,7 +119,7 @@ def test_exist_init():
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
-    d = g.node[q]
+    d = g.nodes[q]
     d_ = dict(x=1, y=True, z=True)
     assert d == d_, d
     # multiple initial states: should pick one
@@ -133,7 +133,7 @@ def test_exist_init():
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
-    d = g.node[q]
+    d = g.nodes[q]
     varnames = {'x', 'y', 'z'}
     assert set(d) == varnames, d
     assert d['x'] == 1, d
@@ -158,7 +158,7 @@ def test_forall_exist_init():
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
-    d = g.node[q]
+    d = g.nodes[q]
     d_ = dict(x=True, y=True)
     assert d ==d_, (d, d_)
     # multiple initial states
@@ -173,8 +173,8 @@ def test_forall_exist_init():
     q0, q1 = queue
     assert q0 in g, (q0, g)
     assert q1 in g, (q1, g)
-    d0 = g.node[q0]
-    d1 = g.node[q1]
+    d0 = g.nodes[q0]
+    d1 = g.nodes[q1]
     varnames = set(keys)
     assert set(d0) == varnames, (d0, varnames)
     assert set(d1) == varnames, (d1, varnames)
@@ -204,7 +204,7 @@ def test_exist_forall_init():
     assert len(queue) == 1, queue
     (q,) = queue
     assert q in g, (q, g)
-    d = g.node[q]
+    d = g.nodes[q]
     d_ = dict(x=True, y=False)
     assert d == d_, (d, d_)
     # multiple initial states
@@ -219,8 +219,8 @@ def test_exist_forall_init():
     q0, q1 = queue
     assert q0 in g, (q0, g)
     assert q1 in g, (q1, g)
-    d0 = g.node[q0]
-    d1 = g.node[q1]
+    d0 = g.nodes[q0]
+    d1 = g.nodes[q1]
     varnames = set(keys)
     assert set(d0) == varnames, (d0, varnames)
     assert set(d1) == varnames, (d1, varnames)
@@ -252,7 +252,7 @@ def test_add_new_node():
     assert u == 0, u
     assert len(g) == 1, g
     assert u in g, (u, g.nodes())
-    du = g.node[u]
+    du = g.nodes[u]
     assert du == d, du
     values = (False, 99)
     assert values in umap, (values, umap)

@@ -59,7 +59,7 @@ def action_to_steps(aut, qinit='\A \A'):
     # search
     while queue:
         node = queue.pop()
-        values = g.node[node]
+        values = g.nodes[node]
         log.debug('at node: {d}'.format(d=values))
         assert set(values) == varnames, (values, aut.vars)
         u = aut.action['env']

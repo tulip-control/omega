@@ -170,12 +170,12 @@ class EnumStrategyStepper(object):
 
     def step(self, state):
         """Return next values for variables this component controls."""
-        u = next(u for u in self.graph if self.graph.node[u] == state)
+        u = next(u for u in self.graph if self.graph.nodes[u] == state)
         return self._pick_sys(self.graph.successors(u))
 
     def _pick_sys(self, nodes):
         u = next(iter(nodes))
-        d = self.graph.node[u]
+        d = self.graph.nodes[u]
         # TODO: consider defining `varlist` instead of
         # `inputs` and `outputs`
         return slice_dict(d, self.graph.outputs)

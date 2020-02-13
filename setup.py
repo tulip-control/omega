@@ -10,7 +10,7 @@ name = 'omega'
 description = (
     'Symbolic algorithms for solving '
     'games of infinite duration.')
-url = 'https://github.com/johnyf/{name}'.format(name=name)
+url = 'https://github.com/tulip-control/{name}'.format(name=name)
 README = 'README.md'
 VERSION_FILE = '{name}/_version.py'.format(name=name)
 MAJOR = 0

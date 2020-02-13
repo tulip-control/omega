@@ -403,7 +403,7 @@ whereas the second call exhaustively enumerated only over the type hints
 of the variable `y`.
 
 Under the hood, the picking methods call [`BDD.pick_iter`](
-    https://github.com/johnyf/dd/blob/master/dd/_abc.py#L138),
+    https://github.com/tulip-control/dd/blob/master/dd/_abc.py#L138),
 and the function `omega.symbolic.enumeration._bitfields_to_int_iter`.
 
 
@@ -1212,7 +1212,7 @@ An assignment to variables is represented as a `dict`.
 
 At the interface with humans, a formula is represented as a string. Deeper,
 formulas are converted to [binary decision diagrams (BDDs)](
-    https://github.com/johnyf/dd)
+    https://github.com/tulip-control/dd)
 for certain operations.
 
 There are two approaches to ensuring a data structure is well-formed: during

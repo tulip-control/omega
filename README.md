@@ -124,13 +124,13 @@ License
 [bitblasting]: http://dx.doi.org/10.1007/978-3-540-74105-3
 [bdd]: http://dx.doi.org/10.1109/TC.1986.1676819
 [tla-in-pictures]: http://dx.doi.org/10.1109/32.464544
-[doc]: https://github.com/johnyf/omega/blob/master/doc/doc.md
+[doc]: https://github.com/tulip-control/omega/blob/master/doc/doc.md
 [cython]: https://en.wikipedia.org/wiki/Cython
 [cudd]: http://vlsi.colorado.edu/~fabio/CUDD
-[dd]: https://github.com/johnyf/dd#cython-bindings
+[dd]: https://github.com/tulip-control/dd#cython-bindings
 [bsd3]: http://opensource.org/licenses/BSD-3-Clause
 
-[build_img]: https://travis-ci.org/johnyf/omega.svg?branch=master
-[travis]: https://travis-ci.org/johnyf/omega
-[coverage]: https://coveralls.io/repos/johnyf/omega/badge.svg?branch=master
-[coveralls]: https://coveralls.io/r/johnyf/omega?branch=master
+[build_img]: https://travis-ci.org/tulip-control/omega.svg?branch=master
+[travis]: https://travis-ci.org/tulip-control/omega
+[coverage]: https://coveralls.io/repos/tulip-control/omega/badge.svg?branch=master
+[coveralls]: https://coveralls.io/r/tulip-control/omega?branch=master

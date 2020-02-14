@@ -403,7 +403,7 @@ whereas the second call exhaustively enumerated only over the type hints
 of the variable `y`.
 
 Under the hood, the picking methods call [`BDD.pick_iter`](
-    https://github.com/tulip-control/dd/blob/master/dd/_abc.py#L138),
+    https://github.com/tulip-control/dd/blob/954c7045ae4a62a50ebc2d5ee063e703cc5307a5/dd/_abc.py#L143),
 and the function `omega.symbolic.enumeration._bitfields_to_int_iter`.
 
 

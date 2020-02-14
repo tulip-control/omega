@@ -22,6 +22,7 @@ VERSION_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
 install_requires = [
+    'astutils >= 0.0.3',
     'dd >= 0.5.4',
     'humanize >= 0.5.1',
     'natsort >= 3.5.3',

@@ -81,11 +81,20 @@ Ceilings(S, Y, Leq) == { Ceil(x, Y, Leq):  x \in S }
 MaxFloors(S, X, Leq) == Maxima(Floors(S, X, Leq), Leq)
 MaxCeilings(S, Y, Leq) == Maxima(Ceilings(S, Y, Leq), Leq)
 
+(* A quasiorder is also known as a preorder. *)
 IsAQuasiOrder(R) == /\ IsReflexive(R) /\ IsTransitive(R)
                     /\ IsAFunction(R) /\ \E S:  S \X S = DOMAIN R
 
 IsAPartialOrder(R) ==
     /\ IsReflexive(R) /\ IsTransitive(R) /\ IsAntiSymmetric(R)
+    /\ IsAFunction(R) /\ \E S:  S \X S = DOMAIN R
+
+IsAStrictPartialOrder(R) ==
+    /\ IsIrreflexive(R) /\ IsTransitive(R) /\ IsAntiSymmetric(R)
+    /\ IsAFunction(R) /\ \E S:  S \X S = DOMAIN R
+
+IsAnEquivalenceRelation(R) ==
+    /\ IsReflexive(R) /\ IsTransitive(R) /\ IsSymmetric(R)
     /\ IsAFunction(R) /\ \E S:  S \X S = DOMAIN R
 
 IsALattice(R) ==

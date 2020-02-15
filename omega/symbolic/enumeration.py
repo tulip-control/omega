@@ -310,7 +310,7 @@ def _unprime_any_primed(model):
     """Trim any primed variables."""
     d = dict(model)
     suffix = "'"
-    for k in d:
+    for k in list(d.keys()):
         if k.endswith(suffix):
             s = k[:-1]
             d[s] = d.pop(k)

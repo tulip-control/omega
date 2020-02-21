@@ -562,7 +562,7 @@ aut.win['<>[]'] = aut.bdds_from(' ~ (foo = 3) ')
 aut.win['[]<>'] = aut.bdds_from(' bar = - 3 ')
 
 aut.plus_one = True  # strictly causal stepwise implication
-aut.moore = True  # implementation reads current state; not x'
+aut.moore = True  # implementation reads current state; not foo'
 aut.qinit = '\E \A'  # disjoint-state throughout
 
 fixpoint_iterates = gr1.solve_streett_game(aut)

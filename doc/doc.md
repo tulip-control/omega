@@ -32,7 +32,7 @@
 - [The deprecated class `omega.symbolic.symbolic.Automaton`](
       #the-deprecated-class-omegasymbolicsymbolicautomaton)
 - [Some design notes](#some-design-notes)
-- [Footnotes](#footnotes)
+- [Copying](#copying)
 
 
 ## Overview
@@ -1239,7 +1239,7 @@ The classes `omega.symbolic.temporal.Automaton` and
   https://github.com/tulip-control/tulip-control/blob/1c1ef990cfb042ec4984c9048dcd5c3644d70949/tulip/spec/form.py#L260).
 
 
-## Footnotes
+## Copying
 
 
 This document is copyright 2015-2020 by California Institute of Technology.

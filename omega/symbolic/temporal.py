@@ -585,8 +585,8 @@ def _default_safety_automaton():
     """Return a populated `Automaton`, except for liveness."""
     aut = Automaton()
     aut.varlist = dict(env=list(), sys=list())
-    aut.init = dict(env=aut.true, sys=aut.true)
-    aut.action = dict(env=aut.true, sys=aut.true)
+    aut.init.update(env=aut.true, sys=aut.true)
+    aut.action.update(env=aut.true, sys=aut.true)
     aut.qinit = r'\E \A'
     aut.moore = True
     aut.plus_one = True

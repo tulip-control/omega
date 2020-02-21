@@ -202,7 +202,7 @@ The method `prime_varlists` adds to `varlist` lists of primed variables,
 which are useful during fixpoint computations.
 
 Assigning a formula as value of `aut.init['env']` stores a BDD, and
-similarly for the other atributes (except for `aut.wini`, where we need
+similarly for the other atributes (except for `aut.win`, where we need
 to do the conversion in user code). The formulas are memoized, together
 with the resulting BDDs, and this relation is used to pretty print the
 result, as follows:

@@ -24,8 +24,8 @@ def test_counterexample_to_strong_reduction():
     q_vars = dict(q=(0, 8))
     u_vars = dict(p_cp=(0, 8))
     fol.declare(**x_vars, **p_vars, **q_vars, **u_vars)
-    p_eq_q = fol.to_bdd('p \in 0..8  /\  q \in 0..8  /\ p = q')
-    leq = '''
+    p_eq_q = fol.to_bdd(r'p \in 0..8  /\  q \in 0..8  /\ p = q')
+    leq = r'''
     # (* layer 1 *)
     \/ (p = 0  /\  q = 6)
     \/ (p = 0  /\  q = 7)
@@ -63,8 +63,8 @@ def test_counterexample_to_strong_reduction():
     prm.p_leq_q = p_leq_q
     prm.p_eq_q = p_eq_q
     #
-    x = fol.add_expr('p \in 6..8')
-    y = fol.add_expr('p \in 2..5')
+    x = fol.add_expr(r'p \in 6..8')
+    y = fol.add_expr(r'p \in 2..5')
     #
     path_cost = 0.0
     bab = cov._BranchAndBound(prm, fol)

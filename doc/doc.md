@@ -980,8 +980,8 @@ so actions are handled as first-order expressions with primed identifiers
 (of flexible variables) becoming rigid variables. In other words, each
 flexible variable gives rise to two rigid variables:
 
-1. one for the primed value (for example `x`), and
-2. another for the unprimed value (for example `x'`).
+1. one for the unprimed value (for example `x`), and
+2. another for the primed value (for example `x'`).
 
 Besides integer and Boolean variables defined in the bitblasted symbol table,
 the `bitvector.bitblast` recognizes also bits of bitfields associated with

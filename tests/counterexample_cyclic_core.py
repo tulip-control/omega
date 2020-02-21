@@ -42,6 +42,17 @@ def test_counterexample_to_strong_reduction():
     \/ (p = 3  /\  q = 1)
     \/ (p = 4  /\  q = 1)
     \/ (p = 5  /\  q = 1)
+    # transitivity
+    \/ (p = 0 /\ q = 2)
+    \/ (p = 0 /\ q = 3)
+    \/ (p = 0 /\ q = 4)
+    \/ (p = 0 /\ q = 5)
+    \/ (p = 0 /\ q = 1)
+
+    \/ (p = 6 /\ q = 1)
+    \/ (p = 7 /\ q = 1)
+    \/ (p = 8 /\ q = 1)
+    # equality
     \/ (p = q /\ p \in 0..8 /\ q \in 0..8)
     '''
     p_leq_q = fol.to_bdd(leq)

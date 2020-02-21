@@ -934,7 +934,8 @@ A comparison of detailed and bitblasted tables:
 The function `logic.bitvector.bitblast` translates first-order
 logic formulas to propositional logic. The table of variables is refined
 from detailed to bitblasted by `logic.bitvector.bitblast_table`.
-The bitblaster returns also some safety constraints:
+The bitblaster can also compute safety constraints, using the function
+`omega.logic.bitvector.type_invariants`:
 
 - formulas that constrain integers
   (derived from `'type'` and `'dom'`)

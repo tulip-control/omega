@@ -1223,10 +1223,9 @@ formulas are converted to [binary decision diagrams (BDDs)](
 for certain operations.
 
 There are two approaches to ensuring a data structure is well-formed: during
-creation, and at check points. The former leads to complex, nested, ugly, and
-fragile code. The latter is simple, flat, and easy to maintain. Most classes
-have a method `assert_consistent` that performs these checks. This collects
-all checks at one place, to override and modify when subclassing.
+creation, and at check points. The latter is simple, flat, and easy to maintain.
+Most classes have a method `assert_consistent` that performs these checks.
+This collects all checks at one place, to override and modify when subclassing.
 
 Synthesis specifications include assumptions about the world outside
 the component, called "environment". The strings `"env"` and `"sys"` are

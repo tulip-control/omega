@@ -14,6 +14,6 @@ del u
 fol._bdd.reorder(aut.bdd)
 aut._add_expr('y')
 aut._add_expr('x \/ ~ y')
-print(aut._bdd_to_expr)
+assert len(aut._bdd_to_expr) == 1, aut._bdd_to_expr
 aut._clear_invalid_cache()
-print(aut._bdd_to_expr)
+assert not aut._bdd_to_expr

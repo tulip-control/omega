@@ -958,16 +958,20 @@ s = bv.bitblast(f, bt)
 gives:
 
 ```python
->>> print(bt)
+>>> import pprint
+>>> pprint.pprint(bt)
 {'x': {'type': 'bool'},
  'y': {'bitnames': ['y_0', 'y_1', 'y_2'],
-  'dom': (0, 4),
-  'signed': False,
-  'type': 'int',
-  'width': 3}}
+       'dom': (0, 4),
+       'signed': False,
+       'type': 'int',
+       'width': 3}}
 
->>> print(s)
-& x' $ 11 ^ ^ 1 ! y_0 1 | & 1 ! y_0 & ^ 1 ! y_0 1 ^ ^ 0 ! y_1 ? 1 | & 0 ! y_1 & ^ 0 ! y_1 ? 1 ^ ^ 1 ! y_2 ? 3 | & 1 ! y_2 & ^ 1 ! y_2 ? 3 ^ ^ 0 ! 0 ? 5 | & 0 ! 0 & ^ 0 ! 0 ? 5 ^ ^ 0 ! 0 ? 7 | & 0 ! 0 & ^ 0 ! 0 ? 7 ! ^ ! ^ 0 0 ? 9
+>>> pprint.pprint(s)
+(" & x' $ 11 ^ ^ 1 ! y_0 1 | & 1 ! y_0 & ^ 1 ! y_0 1 ^ ^ 0 ! y_1 ? 1 | & 0 ! "
+ 'y_1 & ^ 0 ! y_1 ? 1 ^ ^ 1 ! y_2 ? 3 | & 1 ! y_2 & ^ 1 ! y_2 ? 3 ^ ^ 0 ! 0 ? '
+ '5 | & 0 ! 0 & ^ 0 ! 0 ? 5 ^ ^ 0 ! 0 ? 7 | & 0 ! 0 & ^ 0 ! 0 ? 7 ! ^ ! ^ 0 0 '
+ '? 9 ')
 ```
 
 The bitblaster recognizes the action operator `'` (prime symbol),

@@ -233,6 +233,7 @@ action[sys] =
     /\ (y' > 0)
     /\ (x' => (y = y - 1))
 
+win =
 {'sys': [Function (DdNode) with var index: 1, ref count: 1, int repr: 44909187]}
 ```
 

@@ -180,6 +180,7 @@ class Automaton(_fol.Context):
                 e = v
             s = 'action[{k}] = {e}'.format(k=k, e=e)
             c.append(s)
+        c.append('win =')
         c.append(str(self.win))
         return 'Automaton:\n' + '\n'.join(c)
 

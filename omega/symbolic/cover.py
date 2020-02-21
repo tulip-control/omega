@@ -684,7 +684,7 @@ def _independent_set(
     assert support_issubset(x, p, fol), (fol.support(x), p)
     assert support_issubset(y, p, fol), (fol.support(y), p)
     yq = fol.let(p_to_q, y)
-    assert _cover_refines(x, yq, p_leq_q, p, q, fol), r
+    assert _cover_refines(x, yq, p_leq_q, p, q, fol)
     rem = x
     z = fol.false
     k = 0

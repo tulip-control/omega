@@ -87,7 +87,7 @@ def test_forall_init():
         '/\ ~ z /\ (z <=> TRUE \/ z <=> FALSE)')
     aut.init['env'] = aut.add_expr(s)
     aut.build()
-    g= nx.DiGraph()
+    g = nx.DiGraph()
     umap = dict()
     queue, visited = enum._forall_init(
         g, aut, umap, keys)

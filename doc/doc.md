@@ -267,7 +267,7 @@ methods are useful:
 - `count` for finding how many assignments (relevant states) satisfy a BDD
 - `pick` and `pick_iter` for enumerating satisfying assignments
 - `define` for defining operators (currently nullary operators)
-- `assign_from` is the first-order analog of "cube" in BDD packages.
+- `assign_from` is the integer analog of "cube" in BDD packages.
 
 One of the most useful methods is `to_bdd`. It takes a first-order formula
 and returns a BDD node:

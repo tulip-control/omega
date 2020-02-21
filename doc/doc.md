@@ -273,7 +273,7 @@ One of the most useful methods is `to_bdd`. It takes a first-order formula
 and returns a BDD node:
 
 ```python
->>> u = aut.add_expr("x' /\ (y = 5)")
+>>> u = aut.to_bdd("x' /\ (y = 5)")
 Function (DdNode) with var index: 1, ref count: 1, int repr: 44909347
 ```
 

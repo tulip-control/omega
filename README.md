@@ -17,7 +17,7 @@ This is useful for designing systems, especially vehicles that carry humans.
   - generalized Rabin(1) specifications ([counter-strategies][rabin1] to GR(1))
   - detection of trivial realizability in GR(1) specifications.
 
-  See `omega.games.gr1`.
+  See `omega.games.gr1` and the example `gr1_synthesis_intro`.
 
 
 - Enumeration of state machines (as `networkx` graphs) from the synthesized
@@ -25,11 +25,17 @@ This is useful for designing systems, especially vehicles that carry humans.
 
 
 - Facilities to simulate the resulting implementations with little and
-  readable user code. See `omega.steps`.
+  readable user code. See `omega.steps` and the example `moore_moore`.
 
 
 - Code generation for the synthesized *symbolic* implementations.
-  This code is correct-by-construction.
+  This code is correct-by-construction. See `omega.symbolic.codegen`.
+
+
+- *Minimal covering* with a symbolic algorithm to find a minimal cover, and to
+  enumerate all minimal covers. Used to convert BDDs to *minimal* formulas.
+  See `omega.symbolic.cover` and `omega.symbolic.cover_enum`, and the
+  example `minimal_formula_from_bdd`.
 
 
 - [First-order][fol] [linear temporal logic][LTL] (LTL) with
@@ -63,7 +69,8 @@ This is useful for designing systems, especially vehicles that carry humans.
 
 
 - Facilities to write symbolic fixpoint algorithms.
-  See `omega.symbolic.fixpoint` and `omega.symbolic.prime`.
+  See `omega.symbolic.fixpoint` and `omega.symbolic.prime`, and the example
+  `reachability_solver`.
 
 
 - Conversion from graphs annotated with formulas to temporal logic formulas.
@@ -71,7 +78,8 @@ This is useful for designing systems, especially vehicles that carry humans.
   The translation is in the spirit of
   [predicate-action diagrams][tla-in-pictures].
 
-  See `omega.symbolic.logicizer` and `omega.automata` for more details.
+  See `omega.symbolic.logicizer` and `omega.automata` for more details, and
+  the example `symbolic`.
 
 
 - Enumeration and plotting of state predicates and actions represented as BDDs.

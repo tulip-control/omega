@@ -888,7 +888,8 @@ There are three flavors of tables, at different levels of abstraction:
 
 The simple format is used in the attributes
 `omega.automata.Automaton.vars` and `omega.automata.TransitionSystem.vars`.
-The detailed format is used in `temporal.Automaton.vars`.
+The detailed format is used in the attribute
+`omega.symbolic.temporal.Automaton.vars`.
 
 
 #### Simple format

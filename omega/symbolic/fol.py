@@ -240,10 +240,15 @@ class Context(object):
             care_bits = bv.bit_table(care_vars, self.vars)
         else:
             care_bits = set()
+        vrs = self.support(u)
+        if care_vars:
+            vrs.update(care_vars)
         for bit_assignment in self.bdd.pick_iter(
                 u, care_vars=care_bits):
             for d in enum._bitfields_to_int_iter(
                     bit_assignment, self.vars):
+                assert set(d).issubset(vrs), (
+                    d, vrs, bit_assignment)
                 yield d
 
     def define(self, e):

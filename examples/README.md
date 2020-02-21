@@ -19,3 +19,11 @@ The examples are:
 
 - `choosing_type_hints.py`: The importance of picking sufficiently large
   bitfields to represent each integer-valued variable.
+
+- `inverter`: synthesis of an inverter from a GR(1) specification
+
+- `moore_moore`: synthesis of two Moore implementations, and simulation of
+  their assembly.
+
+- `while_plus_half`: realizability of properties expressed with the operator
+  `WhilePlusHalf`.

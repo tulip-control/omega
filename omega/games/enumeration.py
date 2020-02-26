@@ -33,13 +33,6 @@ log = logging.getLogger(__name__)
 def action_to_steps(aut, env, sys, qinit='\A \A'):
     r"""Return enumerated graph with steps as edges.
 
-    Only `aut.init['env']` considered.
-    The predicate `aut.init['sys']` is ignored.
-
-    `qinit` has different meaning that in `omega.games.gr1`.
-    Nonetheless, for synthesized `aut.init['env']`,
-    the meaning of `qinit` here yields the expected result.
-
     Enumeration is done based on `qinit`:
 
     - `'\A \A'`: pick all states that satisfy `aut.init[env] /\ aut.init[sys]`,

@@ -597,7 +597,7 @@ def _default_safety_automaton():
 def _copier(d):
     """Recursively copy `d`, used for `self.win`."""
     if isinstance(d, list):
-        return d.copy()
+        return list(d)
     assert isinstance(d, dict), d
     r = dict()
     for k, v in d.items():

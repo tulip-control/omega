@@ -551,8 +551,15 @@ class Nodes(_Nodes):
                     *arg, **kw)
             if _is_bool_var(name, t):
                 # Boolean scope ?
-                if name in t:
-                    assert mem is None, mem
+                # This check was relevant when
+                # Boolean-valued variables could
+                # appear only in Boolean scope.
+                #
+                # Boolean-valued variables can
+                # appear in arithmetic scope
+                # under the equality operator `=`.
+                # if name in t:
+                #     assert mem is None, mem
                 return '{v}{prime}'.format(
                     v=name, prime=stx.PRIME if prime else '')
             assert name in t, (
@@ -586,7 +593,17 @@ class Nodes(_Nodes):
             mem = list()
             p = self.operands[0].flatten(mem=mem, *arg, **kw)
             q = self.operands[1].flatten(mem=mem, *arg, **kw)
-            return flatten_comparator(self.operator, p, q, mem)
+            # arithmetic or Boolean operands ?
+            if isinstance(p, list) and isinstance(q, list):
+                return flatten_comparator(self.operator, p, q, mem)
+            else:
+                op = self.operator
+                assert op in ('=', '!=', '/='), op
+                if op == '=':
+                    pref = '! ^'
+                else:
+                    pref = '^'
+                return f'{pref} {p} {q}'
 
     class Arithmetic(_Nodes.Arithmetic):
         def flatten(self, mem=None, *arg, **kw):

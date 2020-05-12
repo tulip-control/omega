@@ -323,6 +323,25 @@ def test_apply():
     assert w == bdd.true
 
 
+def test_boolean_eq():
+    ctx = _fol.Context()
+    ctx.declare(x='bool')
+    # identifiers
+    u = ctx.add_expr('x = TRUE')
+    u_ = ctx.add_expr('x')
+    assert u == u_, (u, u_)
+    u = ctx.add_expr('x = FALSE')
+    u_ = ctx.add_expr('~ x')
+    assert u == u_, (u, u_)
+    # values
+    u = ctx.add_expr('TRUE = TRUE')
+    u_ = ctx.true
+    assert u == u_, (u, u_)
+    u = ctx.add_expr('TRUE = FALSE')
+    u_ = ctx.false
+    assert u == u_, (u, u_)
+
+
 def test_reorder():
     fol = _fol.Context()
     bdd = fol.bdd

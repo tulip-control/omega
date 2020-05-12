@@ -487,7 +487,7 @@ class Nodes(_Nodes):
     class Unary(_Nodes.Unary):
         def flatten(self, *arg, **kw):
             logger.info('flatten "{s}"'.format(s=repr(self)))
-            if self.operator == 'X':
+            if self.operator == 'X' or self.operator == "'":
                 kw.update(prime=True)
                 # avoid making it a string
                 # (because in arithmetic context it is a list)

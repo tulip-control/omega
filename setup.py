@@ -14,8 +14,8 @@ url = 'https://github.com/tulip-control/{name}'.format(name=name)
 README = 'README.md'
 VERSION_FILE = '{name}/_version.py'.format(name=name)
 MAJOR = 0
-MINOR = 3
-MICRO = 2
+MINOR = 4
+MICRO = 0
 VERSION = '{major}.{minor}.{micro}'.format(
     major=MAJOR, minor=MINOR, micro=MICRO)
 VERSION_TEXT = (

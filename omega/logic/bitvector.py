@@ -383,7 +383,7 @@ class Nodes(_Nodes):
         'X': '',
         # 'G': '[]', 'F': '<>',
         '<': '<', '<=': '<=', '=': '=',
-        '>=': '>=', '>': '>', '!=': '!=', '/=': '!=',
+        '>=': '>=', '>': '>', '#': '!=', '/=': '!=', '!=': '!=',
         '+': '+', '-': '-'}
 
     class Operator(_Nodes.Operator):
@@ -598,7 +598,7 @@ class Nodes(_Nodes):
                 return flatten_comparator(self.operator, p, q, mem)
             else:
                 op = self.operator
-                assert op in ('=', '!=', '/='), op
+                assert op in ('=', '#', '/=', '!='), op
                 if op == '=':
                     pref = '! ^'
                 else:
@@ -651,12 +651,14 @@ def flatten_comparator(operator, x, y, mem):
     assert len(p) == len(q), (p, q)
     logger.debug('p = {p}\nq = {q}'.format(p=p, q=q))
     negate = False
-    if operator in {'=', '!=', '/='}:
+    if operator in {'=', '#', '/=', '!='}:
         r = inequality(p, q, mem)
         if operator == '=':
             negate = True
         else:
-            assert operator == '!=' or operator == '/=', operator
+            assert (operator == '#'
+                or operator == '/='
+                or operator == '!='), operator
     elif operator in {'<', '<=', '>=', '>'}:
         swap = False
         if operator == '<=':

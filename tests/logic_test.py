@@ -25,7 +25,7 @@ def test_flatten_previous_var():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X x_prev1) <=> x)'
+    b = "((x_prev1') <=> x)"
     assert a == b, a
 
 
@@ -50,7 +50,7 @@ def test_flatten_previous_boolean():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X x_prev1) <=> x)'
+    b = "((x_prev1') <=> x)"
     assert a == b, a
 
 
@@ -76,7 +76,7 @@ def test_flatten_previous_boolean_expr():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux0) <=> ( x /\ y ))'
+    b = "((_aux0') <=> ( x /\ y ))"
     assert a == b, a
 
 
@@ -108,7 +108,7 @@ def test_flatten_nested_previous():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux1) <=> ( q /\ _aux0 ))'
+    b = "((_aux1') <=> ( q /\ _aux0 ))"
     assert a == b, a
     #
     # tester for whole formula (_aux1)
@@ -122,7 +122,7 @@ def test_flatten_nested_previous():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux1) <=> ( q /\ _aux0 ))'
+    b = "((_aux1') <=> ( q /\ _aux0 ))"
     assert a == b, a
 
 
@@ -146,7 +146,12 @@ def test_flatten_since():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '((X _aux0) <=> (    (X q) \/ ((X p) /\ _aux0)))'
+    b = '''
+        (
+        (_aux0') <=> (
+            (q') \/ ((p') /\ _aux0)
+        ))
+        '''
     assert a == b, a
 
 
@@ -157,7 +162,7 @@ def test_past_parser_boolean():
     assert init == init_, init
     r_ = '( a_prev1 /\ b )'
     assert r == r_, r
-    trans_ = '((X a_prev1) <=> a)'
+    trans_ = "((a_prev1') <=> a)"
     assert trans == trans_, trans
 
 

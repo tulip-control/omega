@@ -192,7 +192,7 @@ def _make_tester_for_previous(var, expr, context, strong):
         raise Exception(
             'unknown context: "{c}"'.format(c=context))
     # translate "previous" in future LTL
-    trans = '((X {var}) {op} {expr})'.format(
+    trans = "(({var}') {op} {expr})".format(
         var=var, op=op, expr=expr)
     return init, trans
 
@@ -206,11 +206,12 @@ def _flatten_since(operands, testers, context, *arg, **kw):
     i = len(testers)
     var = '_aux{i}'.format(i=i)
     init = '({var} <=> {q})'.format(var=var, q=q)
-    trans = (
-        '('
-        '(X {var}) <=> ('
-        '    (X {q}) \/ ((X {p}) /\ {var})'
-        '))').format(
+    trans = '''
+        (
+        ({var}') <=> (
+            ({q}') \/ (({p}') /\ {var})
+        ))
+        '''.format(
             var=var, p=p, q=q)
     testers[var] = dict(
         type='bool',
@@ -225,11 +226,12 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     q = y.flatten(testers=testers, context=context, *arg, **kw)
     i = len(testers)
     var = '_aux{i}'.format(i=i)
-    trans = (
-        '('
-        '{var} <=> ('
-        '    ({q}) \/ (({p}) /\ (X {var}))'
-        '))').format(
+    trans = '''
+        (
+        {var} <=> (
+            ({q}) \/ (({p}) /\ ({var}'))
+        ))
+        '''.format(
             var=var, p=p, q=q)
     win = '(({q}) \/ ~ {var})'.format(var=var, q=q)
     testers[var] = dict(

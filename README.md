@@ -138,7 +138,7 @@ License
 [dd]: https://github.com/tulip-control/dd#cython-bindings
 [bsd3]: http://opensource.org/licenses/BSD-3-Clause
 
-[build_img]: https://travis-ci.org/tulip-control/omega.svg?branch=master
-[travis]: https://travis-ci.org/tulip-control/omega
+[build_img]: https://travis-ci.com/tulip-control/omega.svg?branch=master
+[travis]: https://travis-ci.com/tulip-control/omega
 [coverage]: https://coveralls.io/repos/tulip-control/omega/badge.svg?branch=master
 [coveralls]: https://coveralls.io/r/tulip-control/omega?branch=master

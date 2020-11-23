@@ -113,7 +113,11 @@ def preimage(trans, target, qvars, automaton, forall):
 
 
 def descendants(source, constrain, aut, future=True):
-    """Existential descendants of `source` in `constrain`."""
+    """Existential descendants of `source` in `constrain`.
+
+    @param future: if `True`, then apply an image operation
+        before starting the least fixpoint computation
+    """
     if future:
         q = ee_image(source, aut)
     else:

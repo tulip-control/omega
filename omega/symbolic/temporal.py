@@ -110,10 +110,10 @@ class Automaton(_fol.Context):
     # Relation to `omega.symbolic.symbolic.Automaton`
     # ===============================================
     #
-    # - uvars = varlists["env"]
-    # - upvars = varlists["env'"]
-    # - evars = varlists["sys"]
-    # - epvars = varlists["sys'"]
+    # - uvars = varlist["env"] as bits
+    # - upvars = varlist["env'"] as bits
+    # - evars = varlist["sys"] as bits
+    # - epvars = varlist["sys'"] as bits
     #
     # Memoizing the following is unnecessary:
     #

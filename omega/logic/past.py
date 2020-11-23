@@ -54,6 +54,9 @@ class Nodes(_Nodes):
                     '(',
                     ', '.join((a, b, c)),
                     ')'])
+            if self.operator == '@':
+                x, = self.operands
+                return '@' + x.flatten(context=context, *arg, **kw)
             return super(Nodes.Operator, self).flatten(
                 context=context, *arg, **kw)
 

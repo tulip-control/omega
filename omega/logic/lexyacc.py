@@ -55,7 +55,7 @@ class Lexer(astutils.Lexer):
     misc = ['NAME', 'NUMBER']
 
     def t_NAME(self, t):
-        r'[A-Za-z_][A-za-z0-9_]*'
+        r'[A-Za-z_][A-Za-z0-9_]*'
         t.value = self.values.get(t.value, t.value)
         t.type = self.reserved.get(t.value, 'NAME')
         return t

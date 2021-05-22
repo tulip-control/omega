@@ -106,11 +106,13 @@ def run_setup():
     except ImportError:
         print('WARNING: `omega` could not cache parser tables '
               '(ignore this if running only for "egg_info").')
+    with open(README) as fd:
+        long_description = fd.read()
     setup(
         name=name,
         version=version,
         description=description,
-        long_description=open(README).read(),
+        long_description=long_description,
         long_description_content_type='text/markdown',
         author='Caltech Control and Dynamical Systems',
         author_email='tulip@tulip-control.org',

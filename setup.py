@@ -29,7 +29,7 @@ install_requires = [
     'networkx >= 2.0',
     'ply >= 3.6, <= 3.10',
     'pydot >= 1.2.2']
-setup_requires=['setuptools >= 38.6.0'],
+setup_requires = ['setuptools >= 38.6.0'],
 tests_require = ['nose >= 1.3.4']
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',

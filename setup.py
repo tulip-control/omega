@@ -6,19 +6,19 @@ from pkg_resources import parse_version
 # import git
 
 
-NAME = 'omega'
+PACKAGE_NAME = 'omega'
 DESCRIPTION = (
     'Symbolic algorithms for solving '
     'games of infinite duration.')
-URL = 'https://github.com/tulip-control/{name}'.format(name=NAME)
+PACKAGE_URL = 'https://github.com/tulip-control/{name}'.format(name=PACKAGE_NAME)
 README = 'README.md'
-VERSION_FILE = '{name}/_version.py'.format(name=NAME)
+VERSION_FILE = '{name}/_version.py'.format(name=PACKAGE_NAME)
 MAJOR = 0
 MINOR = 4
 MICRO = 0
 VERSION = '{major}.{minor}.{micro}'.format(
     major=MAJOR, minor=MINOR, micro=MICRO)
-VERSION_TEXT = (
+VERSION_FILE_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
 INSTALL_REQUIRES = [
@@ -96,7 +96,7 @@ def run_setup():
     except:
         print('No git info: Assume release.')
         version = VERSION
-    s = VERSION_TEXT.format(version=version)
+    s = VERSION_FILE_TEXT.format(version=version)
     with open(VERSION_FILE, 'w') as f:
         f.write(s)
     # build parser
@@ -109,21 +109,21 @@ def run_setup():
     with open(README) as fd:
         long_description = fd.read()
     setup(
-        name=NAME,
+        name=PACKAGE_NAME,
         version=version,
         description=DESCRIPTION,
         long_description=long_description,
         long_description_content_type='text/markdown',
         author='Caltech Control and Dynamical Systems',
         author_email='tulip@tulip-control.org',
-        url=URL,
+        url=PACKAGE_URL,
         license='BSD',
         setup_requires=SETUP_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
-        packages=[NAME, 'omega.games',
+        packages=[PACKAGE_NAME, 'omega.games',
                   'omega.logic', 'omega.symbolic'],
-        package_dir={NAME: NAME},
+        package_dir={PACKAGE_NAME: PACKAGE_NAME},
         classifiers=CLASSIFIERS,
         keywords=KEYWORDS)
 

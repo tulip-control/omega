@@ -1,7 +1,7 @@
 """Test the module `omega.steps`."""
-from nose import tools as nt
 from omega import steps
 from omega.symbolic import temporal as trl
+import pytest
 
 
 def test_step():
@@ -20,7 +20,7 @@ def test_step():
     assert next_values == d, (next_values, d)
     # `action` not enabled at `state`
     state = dict(x=True, y=1)
-    with nt.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         stepper.step(state)
 
 
@@ -32,7 +32,7 @@ def test_omit_prefix():
     assert r == r_, (r, r_)
     # name conflict
     d = {'a': 1, '_mem': 2, 'foo_mem': 3}
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         steps.omit_prefix(d, prefix)
 
 

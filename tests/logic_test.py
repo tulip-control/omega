@@ -1,8 +1,7 @@
 """Tests for `omega.logic`."""
-from nose.tools import assert_raises
-
 from omega.logic import past
 from omega.logic import syntax as stx
+import pytest
 
 
 parser = past.parser
@@ -220,7 +219,7 @@ def test_context_checks():
     tree = parser.parse(s)
     tree.flatten(testers=dict,
                  context='arithmetic')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tree.flatten(testers=dict,
                      context='bool')
     # arithmetic
@@ -228,13 +227,13 @@ def test_context_checks():
     tree = parser.parse(s)
     tree.flatten(testers=dict,
                  context='bool')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tree.flatten(testers=dict,
                      context='arithmetic')
     # nested
     s = r'y /\ (y + 3)'
     tree = parser.parse(s)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tree.flatten(testers=dict,
                      context='bool')
 

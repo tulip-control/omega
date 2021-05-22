@@ -10,7 +10,6 @@ import time
 # mpl.use('Agg')
 # from matplotlib import pyplot as plt
 plt = None  # uncomment if you want to plot
-from nose.tools import assert_raises
 from omega.logic import syntax as stx
 from omega.symbolic.prime import support_issubset
 from omega.symbolic import fol as _fol
@@ -18,6 +17,7 @@ from omega.symbolic import fol as _fol
 from omega.symbolic import cover as cov
 from omega.symbolic import orthotopes as lat
 from omega.symbolic import _type_hints as tyh
+import pytest
 
 
 log = logging.getLogger(__name__)
@@ -1035,9 +1035,9 @@ def test_list_orthotope_expr():
         r'(a_x = -4) /\ (5 <= b_x)'
         r'/\ (a_y = 3 ) /\ (b_y = 1)')
     cover = fol.add_expr(s)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         lat.list_expr(cover, prm, fol, use_dom=True)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         lat.list_expr(cover, prm, fol)
 
 
@@ -1060,7 +1060,7 @@ def test_clip_subrange():
 
 def test_check_type_hint():
     hint = dict(dom=(0, 50), width=6, signed=True)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tyh._check_type_hint(10, 0, hint, 'x')
     tyh._check_type_hint(2, 5, hint, 'y')
 
@@ -1097,7 +1097,7 @@ def test_f_implies_care():
 
 
 def test_list_type_hints():
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tyh._list_type_hints(list(), 'whatever')
     table = dict(
         x=dict(type='int', dom=(-4, 5)),
@@ -1272,9 +1272,9 @@ def test_replace_prime():
     pvar = "x'"
     r = stx._replace_prime(pvar)
     assert r == "x_p", r
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
          stx._replace_prime("a'bc")
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
          stx._replace_prime("a'bc'")
     # identity
     var = "x"
@@ -1297,7 +1297,7 @@ def test_add_prime_like_too():
     assert t['y'] == table['y'], t
     assert t[xp] == t['x'], t
     assert t[yp] == t['y'], t
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         table["x'"] = tuple(table['x'])
         stx._add_prime_like_too(table)
 
@@ -1314,13 +1314,13 @@ def test_branch_and_bound_class():
     prm = lat.Parameters()
     bab = cov._BranchAndBound(prm, fol)
     bab.lower_bound = 15
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bab.upper_bound = 10
     bab.upper_bound = 20
     # only init for lower bound
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bab.lower_bound = 17
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bab.upper_bound = 10
     bab.upper_bound = 18
 

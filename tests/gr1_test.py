@@ -1,6 +1,6 @@
 """Tests for gr1 fragment utilities."""
-from nose.tools import assert_raises
 from omega import gr1
+import pytest
 
 
 def test_split_gr1():
@@ -63,13 +63,13 @@ def test_split_gr1():
     assert s == '( p => q )', s
     assert d['persistence'] == list(), d
     # not in fragment
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.split_gr1('[]( [] p )')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.split_gr1('[] <>( [] p )')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.split_gr1(r'(X p ) /\ ( [] p )')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.split_gr1(r'[]<> ( x /\ (X y) )')
 
 

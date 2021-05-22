@@ -3,12 +3,11 @@ import logging
 import pprint
 
 from dd import mdd
-from nose.tools import assert_raises
-
 from omega.symbolic import enumeration
 from omega.symbolic import symbolic
 from omega.symbolic import temporal as trl
 from omega.games import gr1
+import pytest
 
 
 log = logging.getLogger('astutils')
@@ -339,7 +338,7 @@ def test_streett_with_safety_assumption():
     z, yij, xijk = gr1.solve_streett_game(aut)
     assert z == aut.add_expr(' ~ x'), aut.bdd.to_expr(z)
     # transducer
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.make_streett_transducer(z, yij, xijk, aut)
     # Moore case
     aut.moore = True
@@ -383,7 +382,7 @@ def test_rabin_with_safety_assumption():
     zk, yki, xkijr = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
     assert win_set == aut.false, aut.bdd.to_expr(win_set)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.make_rabin_transducer(zk, yki, xkijr, aut)
 
 
@@ -440,7 +439,7 @@ def test_streett_with_liveness_assumption():
     bdd = b.bdd
     streett_win_set = gr1._copy_bdd(z, aut.bdd, bdd)
     assert rabin_win_set == bdd.apply('not', streett_win_set)
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         gr1.make_rabin_transducer(zk, yki, xkijr, b)
 
 
@@ -577,7 +576,7 @@ def test_make_init():
     internal_init = aut.true
     win = aut.true
     aut.qinit = '???'
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         gr1._make_init(internal_init, win, aut)
 
 

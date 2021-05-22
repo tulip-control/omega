@@ -1,4 +1,5 @@
 # python
+.pytest_cache/
 .coverage
 htmlcov/*
 omega/_version.py

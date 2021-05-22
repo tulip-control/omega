@@ -31,7 +31,7 @@ INSTALL_REQUIRES = [
     'ply >= 3.6, <= 3.10',
     'pydot >= 1.2.2']
 SETUP_REQUIRES = ['setuptools >= 38.6.0']
-TESTS_REQUIRE = ['nose >= 1.3.4']
+TESTS_REQUIRE = ['pytest >= 4.6.11']
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Science/Research',

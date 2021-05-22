@@ -2,11 +2,11 @@
 import itertools
 import pprint
 
-from nose.tools import assert_raises
 from omega.symbolic import cover as cov
 from omega.symbolic import cover_enum as cov_enum
 from omega.symbolic import fol as _fol
 from omega.symbolic import orthotopes as lat
+import pytest
 
 
 def test_cyclic_core_with_care_set():
@@ -404,7 +404,7 @@ def test_assert_are_covers():
     cov_enum._assert_are_covers(x, covers, prm, fol)
     # not covers
     x = fol.add_expr('p = 2')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         cov_enum._assert_are_covers(x, covers, prm, fol)
 
 
@@ -419,7 +419,7 @@ def test_assert_covers_from():
     cov_enum._assert_covers_from(covers, y, fol)
     # not covers from `y`
     y = fol.add_expr('p = 4')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         cov_enum._assert_covers_from(covers, y, fol)
 
 
@@ -435,7 +435,7 @@ def test_assert_uniform_cardinality():
     bdds = {
         fol.add_expr('p = 0'),
         fol.add_expr(r'p \in 2..3')}
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         cov_enum._assert_uniform_cardinality(bdds, fol)
 
 
@@ -472,7 +472,7 @@ def test_enumerate_mincovers_unfloor():
         ''')
     y = fol.add_expr(r'p \in 2..3')
     cover_from_floors = fol.add_expr(r'p \in 0..1')
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         # The assertion error is raised because the cover's cardinality
         # is reduced by the mapping, so the cardinality of the
         # partial cover is smaller than expected (`assert k == k_` within
@@ -606,7 +606,7 @@ def test_lm_tail():
           fol.add_expr('x = 1'),  # index 2
           fol.add_expr('x = 2')]  # index 3
     k = 0
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         cov_enum._lm_tail(k, lm)
     k = 1
     r = cov_enum._lm_tail(k, lm)
@@ -621,7 +621,7 @@ def test_lm_tail():
     r_ = fol.add_expr('x = 2')
     assert r == r_, list(fol.pick_iter(r))
     k = 4
-    with assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         cov_enum._lm_tail(k, lm)
 
 

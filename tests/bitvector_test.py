@@ -4,7 +4,7 @@ from dd import bdd as _bdd
 import networkx as nx
 from omega.logic import bitvector as bv
 from omega.symbolic import bdd as bddizer
-from nose import tools as nt
+import pytest
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ def test_bitvector_name_conflicts():
     assert t['x']['bitnames'] == ['x_0'], t
     # integer `x` mapped to `x_0`, conflict with Boolean `x_0`
     t['x_0'] = t.pop('x_1')
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bv._add_bitnames(t)
 
 
@@ -177,7 +177,7 @@ def test_flatten_substitution():
         r'\S a / y: True']
     for s in c:
         print(s)
-        with nt.assert_raises(AssertionError):
+        with pytest.raises(AssertionError):
             u = parser.parse(s)
             u.flatten(t=t)
 
@@ -405,9 +405,9 @@ def test_twos_complement_for_var():
                bitnames=['p0']),
         q=dict(type='int', dom=(-1, 0), signed=False,
                bitnames=['q0']))
-    with nt.assert_raises(Exception):
+    with pytest.raises(Exception):
         bv.var_to_twos_complement('r', t)
-    with nt.assert_raises(TypeError):
+    with pytest.raises(TypeError):
         bv.var_to_twos_complement('x', t)
     y = bv.var_to_twos_complement('y', t)
     assert y == ['y0', 'y1'], y
@@ -417,7 +417,7 @@ def test_twos_complement_for_var():
     assert w == ['w0', 'w1'], w
     p = bv.var_to_twos_complement('p', t)
     assert p == ['p0', '1'], p
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bv.var_to_twos_complement('q', t)
 
 
@@ -474,16 +474,16 @@ def test_sign_extension():
          'b': {'type': 'int',
                'signed': True,
                'bitnames': ['b0', 'b1']}}
-    with nt.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         bv.sign_extension(['1'], 2)
-    with nt.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         bv.sign_extension(['1', '1'], 0)
     assert bv.sign_extension(['1', '1'], 3) == ['1', '1', '1']
     assert bv.sign_extension(['1', '0'], 3) == ['1', '0', '0']
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         mem = list()
         parser.parse('a + 1').flatten(t=t)
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         parser.parse('b < -1').flatten(t=t, mem=mem)
 
 
@@ -502,7 +502,7 @@ def test_ite():
     p = parser.parse('ite( x, y, z)')
     s = p.flatten(t=t)
     assert s == r, s
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bv.ite_connective('a', ['b', 'c'], 'd')
     # ite function
     x = 'x'
@@ -540,7 +540,7 @@ def test_ite():
         '| & a1 ? 0 & b1 ! ? 0']
     assert r == ['? 1', '? 2']
     # b, c of different length
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         bv.ite_function('x', ['y0'], ['z0', 'z1', 'z2'], start=0)
 
 
@@ -565,7 +565,7 @@ def test_bool_eq_number():
     # wrong
     s = 'x <=> 0'
     tree = parser.parse(s)
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         tree.flatten(t=t)
     # correct
     s = 'x <=> false'

@@ -1,7 +1,6 @@
 import logging
 
 import dd.bdd
-from nose import tools as nt
 from omega.automata import TransitionSystem
 from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
@@ -11,6 +10,7 @@ from omega.symbolic import fol as _fol
 from omega.symbolic import logicizer
 from omega.symbolic import prime as prm
 from omega.symbolic import symbolic
+import pytest
 
 
 log = logging.getLogger('astutils')
@@ -386,7 +386,7 @@ def test_prime_unprimed():
     s = r"x' = -3  /\  ~ y'"
     r_ = fol.add_expr(s)
     assert r == r_, fol.bdd.to_expr(r)
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         prm.prime(r, fol)
     s = r"x' = -3  /\  ~ y'"
     u = fol.add_expr(s)

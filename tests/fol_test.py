@@ -3,8 +3,8 @@
 import logging
 import pprint
 
-from nose import tools as nt
 from omega.symbolic import fol as _fol
+import pytest
 
 
 log = logging.getLogger('dd')
@@ -52,11 +52,11 @@ def test_declare():
     fol.declare(x='bool')
     fol.declare(x='bool')
     # mismatch with existing var
-    with nt.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         fol.declare(x=(1, 5))
     # mixed new and existing
     fol.declare(x='bool', y=(0, 5))
-    with nt.assert_raises(ValueError):
+    with pytest.raises(ValueError):
         fol.declare(x='bool', y=(3, 15))
 
 
@@ -69,9 +69,9 @@ def test_support():
     assert r == set(), r
     # single variable
     fol.declare(x=(0, 10), y='bool')
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         u = fol.add_expr('x')
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         u = fol.add_expr(5)
     s = 'x = 1'
     u = fol.add_expr(s)
@@ -97,10 +97,10 @@ def test_replace():
     u = fol.add_expr('x = 1')
     # with mismatched substitutions
     subs = {'x': 'z'}
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         fol.let(subs, u)
     subs = {'x': 'w'}
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         fol.let(subs, u)
     # with constants
     # Boolean
@@ -124,7 +124,7 @@ def test_replace():
     # outside coarse type bound
     u = fol.add_expr('z = 2')
     subs = {'z': 4}
-    with nt.assert_raises(AssertionError):
+    with pytest.raises(AssertionError):
         fol.let(subs, u)
     # no effect
     u = fol.add_expr('w')

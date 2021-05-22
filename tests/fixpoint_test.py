@@ -71,13 +71,13 @@ def test_ue_image_no_constrain():
     g.add_edge(0, 2, formula=' ~ x')
     aut = logicizer.graph_to_logic(g, 'pc', True)
     # source constrained to x
-    source = aut.add_expr('x /\ (pc = 0)')
+    source = aut.add_expr(r'x /\ (pc = 0)')
     u = fx.ee_image(source, aut)
     assert u == aut.add_expr('pc = 1')
     # source contains both x and ~ x
     source = aut.add_expr('pc = 0')
     u = fx.ee_image(source, aut)
-    assert u == aut.add_expr('(pc = 1) \/ (pc = 2)')
+    assert u == aut.add_expr(r'(pc = 1) \/ (pc = 2)')
 
 
 def test_ee_image():
@@ -90,7 +90,7 @@ def test_ee_image():
     aut = logicizer.graph_to_logic(g, 'pc', True)
     source = aut.add_expr('pc = 0')
     u = fx.ee_image(source, aut)
-    u_ = aut.add_expr('(pc = 1) \/ (pc = 2)')
+    u_ = aut.add_expr(r'(pc = 1) \/ (pc = 2)')
     assert u == u_, _to_expr(u, aut)
 
 
@@ -186,10 +186,10 @@ def test_cpre_moore_plus_one():
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
-    target = aut.add_expr('x /\ ~ y')
+    target = aut.add_expr(r'x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    target = aut.add_expr(' ~ x /\ ~ y')
+    target = aut.add_expr(r' ~ x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
 
@@ -286,10 +286,10 @@ def test_cpre_moore_circular():
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
-    target = aut.add_expr('x /\ ~ y')
+    target = aut.add_expr(r'x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    target = aut.add_expr(' ~ x /\ ~ y')
+    target = aut.add_expr(r' ~ x /\ ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.add_expr(' ~ x'), _to_expr(u, aut)
 
@@ -369,7 +369,7 @@ def test_cpre_mealy_plus_one():
     target = aut.add_expr(' ~ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.false, _to_expr(u, aut)
-    target = aut.add_expr(' ~ x \/ y')
+    target = aut.add_expr(r' ~ x \/ y')
     u = cpre(env_action, sys_action, target, aut)
     assert u == aut.true, _to_expr(u, aut)
     # x' => y' with assumption
@@ -407,12 +407,12 @@ def test_cpre_mealy_plus_one():
     assert u == aut.true, _to_expr(u, aut)
     #
     aut.action['env'] = aut.add_expr("x' ")
-    aut.action['sys'] = aut.add_expr("x /\ y")
+    aut.action['sys'] = aut.add_expr(r"x /\ y")
     env_action = aut.action['env']
     sys_action = aut.action['sys']
     target = aut.true
     u = cpre(env_action, sys_action, target, aut)
-    assert u == aut.add_expr('x /\ y'), _to_expr(u, aut)
+    assert u == aut.add_expr(r'x /\ y'), _to_expr(u, aut)
 
 
 def test_cpre_mealy_circular():

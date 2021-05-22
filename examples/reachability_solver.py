@@ -41,8 +41,8 @@ def spec():
     aut = trl.Automaton()
     aut.declare_variables(x=(1, 3), y=(0, 5), z='bool')
     aut.varlist['sys'] = ['x', 'y', 'z']
-    goal = aut.to_bdd('(x = 2) /\ (y = 1) /\ z')
-    action = aut.to_bdd('''
+    goal = aut.to_bdd(r'(x = 2) /\ (y = 1) /\ z')
+    action = aut.to_bdd(r'''
         (* type invariant *)
         /\ x \in 1..3
         /\ y \in 0..5
@@ -66,7 +66,7 @@ def print_expr(u, aut):
     # currently, `to_expr` works with only
     # integer-valued variables
     aut.declare_constants(tmp=(0, 1))
-    s = '\E z:  ({u} /\ (z <=> (tmp = 1)) )'.format(u=u)
+    s = r'\E z:  ({u} /\ (z <=> (tmp = 1)) )'.format(u=u)
     v = aut.to_bdd(s)
     s = aut.type_hint_for(['x', 'y', 'tmp'])
     care = aut.to_bdd(s)

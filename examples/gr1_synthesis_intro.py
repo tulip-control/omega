@@ -33,17 +33,17 @@ def gr1_specification():
     aut.varlist.update(env=['x'], sys=['y'])
     aut.init['env'] = 'x = 1'
     aut.init['sys'] = 'y = 2'
-    aut.action['env'] = '''
+    aut.action['env'] = r'''
         /\ x \in 1..2
         /\ x' \in 1..2
         '''
-    aut.action['sys'] = '''
+    aut.action['sys'] = r'''
         /\ y \in -3..3
         /\ y' = x - 3
         '''
     aut.win['<>[]'] = aut.bdds_from('x = 2')
     aut.win['[]<>'] = aut.bdds_from('y != -1')
-    aut.qinit = '\E \A'
+    aut.qinit = r'\E \A'
     aut.moore = True
     aut.plus_one = True
     return aut

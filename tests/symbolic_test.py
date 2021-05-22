@@ -35,7 +35,7 @@ def test_symbolic_automaton():
     # strategy definition
     assert aut.moore is True, aut.moore
     assert aut.plus_one is True, aut.plus_one
-    assert aut.qinit == '\A \A', aut.qinit
+    assert aut.qinit == r'\A \A', aut.qinit
     # str
     s = str(aut)
     assert s.startswith('Symbolic automaton:'), s[:10]
@@ -114,18 +114,18 @@ def test_slugsin_parser():
     a, b = a.memory
     assert_is_number(a, 1)
     assert_is_register(b, 0)
-    s = '\E x & x y'
+    s = r'\E x & x y'
     u = parser.parse(s)
-    assert_is_operator(u, '\E')
+    assert_is_operator(u, r'\E')
     qvars, e = u.operands
     assert_is_var(qvars, 'x')
     assert_is_operator(e, '&')
     x, y = e.operands
     assert_is_var(x, 'x')
     assert_is_var(y, 'y')
-    s = '\A y | y ! x4'
+    s = r'\A y | y ! x4'
     u = parser.parse(s)
-    assert_is_operator(u, '\A')
+    assert_is_operator(u, r'\A')
     qvars, e = u.operands
     assert_is_var(qvars, 'y')
     assert_is_operator(e, '|')
@@ -134,21 +134,21 @@ def test_slugsin_parser():
     assert_is_operator(not_x4, '!')
     (x4,) = not_x4.operands
     assert_is_var(x4, 'x4')
-    s = '\E x \A y | x y'
+    s = r'\E x \A y | x y'
     u = parser.parse(s)
-    assert_is_operator(u, '\E')
+    assert_is_operator(u, r'\E')
     qvars, e = u.operands
     assert_is_var(qvars, 'x')
-    assert_is_operator(e, '\A')
+    assert_is_operator(e, r'\A')
     qvars, e = e.operands
     assert_is_var(qvars, 'y')
     assert_is_operator(e, '|')
     x, y = e.operands
     assert_is_var(x, 'x')
     assert_is_var(y, 'y')
-    s = '\S $4 x y  z w  & y w'
+    s = r'\S $4 x y  z w  & y w'
     u = parser.parse(s)
-    assert_is_operator(u, '\S')
+    assert_is_operator(u, r'\S')
     subs, e = u.operands
     assert_is_buffer(subs, 4)
     x, y, z, w = subs.memory
@@ -207,7 +207,7 @@ def test_iterative_bddizer():
     bdd = dd.bdd.BDD(order)
     e = '$ 3   & x y   ! z  | ? 0 ? 1'
     u = add(e, bdd)
-    v = bdd.add_expr('(x /\ y) \/ ~ z')
+    v = bdd.add_expr(r'(x /\ y) \/ ~ z')
     assert u == v, (u, v)
 
 
@@ -218,7 +218,7 @@ def test_bddizer_propositional():
     bdd = dd.bdd.BDD(order)
     e = '& x y'
     u = add(e, bdd)
-    v = bdd.add_expr('x /\ y')
+    v = bdd.add_expr(r'x /\ y')
     assert u == v, (u, v)
     # buffers
     # (x & y) | ! z
@@ -229,7 +229,7 @@ def test_bddizer_propositional():
     assert u == v, (u, v)
     #
     e = '& $2 & 1 x ?0 $3 | !x y z & ?1 z'
-    s = 'x /\ z'
+    s = r'x /\ z'
     u = add(e, bdd)
     v = bdd.add_expr(s)
     assert u == v, (u, v)
@@ -239,32 +239,32 @@ def test_bddizer_quantifiers():
     add = sym_bdd.add_expr
     order = {'x': 0, 'y': 1, 'z': 2}
     bdd = dd.bdd.BDD(order)
-    e = '\E x 1'
+    e = r'\E x 1'
     u = add(e, bdd)
     assert u == bdd.true, u
-    e = '\E x 0'
+    e = r'\E x 0'
     u = add(e, bdd)
     assert u == bdd.false, u
-    e = '\A x 1'
+    e = r'\A x 1'
     u = add(e, bdd)
     assert u == bdd.true, u
-    e = '\A x 0'
+    e = r'\A x 0'
     u = add(e, bdd)
     assert u == bdd.false, u
-    e = '\A x x'
+    e = r'\A x x'
     u = add(e, bdd)
     assert u == bdd.false, u
-    e = '\E x x'
+    e = r'\E x x'
     u = add(e, bdd)
     assert u == bdd.true, u
-    e = '\A & x y y'
+    e = r'\A & x y y'
     u = add(e, bdd)
     assert u == bdd.false, u
-    e = '\A x y'
+    e = r'\A x y'
     u = add(e, bdd)
     u_ = bdd.var('y')
     assert u == u_, (u, u_)
-    e = '\E & x y & y x'
+    e = r'\E & x y & y x'
     u = add(e, bdd)
     assert u == bdd.true, u
 
@@ -273,15 +273,15 @@ def test_bddizer_substitution():
     add = sym_bdd.add_expr
     order = {'x': 0, 'y': 1, 'z': 2, 'w': 3}
     bdd = dd.bdd.BDD(order)
-    e = '\S $2 x y y'
+    e = r'\S $2 x y y'
     u = add(e, bdd)
     u_ = bdd.var('x')
     assert u == u_, (u, u_)
-    e = '\S $4 x y  z w  | y ! w'
+    e = r'\S $4 x y  z w  | y ! w'
     u = add(e, bdd)
     u_ = bdd.add_expr('x | ! z')
     assert u == u_, (u, u_)
-    e = '$2 0 \S $2 x y y'
+    e = r'$2 0 \S $2 x y y'
     u = add(e, bdd)
     u_ = bdd.var('x')
     assert u == u_, (u, u_)
@@ -312,12 +312,12 @@ def test_logicizer_env():
         ignore_initial=True,
         self_loops=True)
     s = stx.conj(env_act)
-    e1 = "(((((k = 0)) => (((x <=> True)) /\ ((k' = 1)))) \n"
-    e2 = "(((((k = 0)) => (((k' = 1)) /\ ((x <=> True)))) \n"
+    e1 = "(((((k = 0)) => (((x <=> True)) /\\ ((k' = 1)))) \n"
+    e2 = "(((((k = 0)) => (((k' = 1)) /\\ ((x <=> True)))) \n"
     assert s.startswith(e1) or s.startswith(e2), s
     e3 = (
-        "/\ (((k = 1)) => ((x') /\ ((k' = 2))))) \n"
-        "/\ (((k = 2)) => ((k' = 1)))) \/ (k' = k)")
+        "/\\ (((k = 1)) => ((x') /\\ ((k' = 2))))) \n"
+        "/\\ (((k = 2)) => ((k' = 1)))) \\/ (k' = k)")
     assert s.endswith(e3), s
     # test automaton
     aut = logicizer.graph_to_logic(
@@ -354,24 +354,24 @@ def test_joint_support():
 
 def test_assert_support():
     fol = setup()
-    u = fol.add_expr('x = -3 /\ ~ y')
+    u = fol.add_expr(r'x = -3 /\ ~ y')
     assert prm.support_issubset(u, ['x', 'y'], fol)
     assert not prm.support_issubset(u, ['x'], fol)
 
 
 def test_is_state_predicate():
     fol = setup()
-    s = "x = -3  /\  ~ y"
+    s = r"x = -3  /\  ~ y"
     u = fol.add_expr(s)
     assert prm.is_state_predicate(u)
     assert not prm.is_primed_state_predicate(u, fol)
     assert not prm.is_proper_action(u)
-    s = "x' = -3  /\  ~ y'"
+    s = r"x' = -3  /\  ~ y'"
     u = fol.add_expr(s)
     assert not prm.is_state_predicate(u)
     assert prm.is_primed_state_predicate(u, fol)
     assert not prm.is_proper_action(u)
-    s = "x = -3  /\  ~ y'"
+    s = r"x = -3  /\  ~ y'"
     u = fol.add_expr(s)
     assert not prm.is_state_predicate(u)
     assert not prm.is_primed_state_predicate(u, fol)
@@ -380,18 +380,18 @@ def test_is_state_predicate():
 
 def test_prime_unprimed():
     fol = setup()
-    s = "x = -3  /\  ~ y"
+    s = r"x = -3  /\  ~ y"
     u = fol.add_expr(s)
     r = prm.prime(u, fol)
-    s = "x' = -3  /\  ~ y'"
+    s = r"x' = -3  /\  ~ y'"
     r_ = fol.add_expr(s)
     assert r == r_, fol.bdd.to_expr(r)
     with nt.assert_raises(AssertionError):
         prm.prime(r, fol)
-    s = "x' = -3  /\  ~ y'"
+    s = r"x' = -3  /\  ~ y'"
     u = fol.add_expr(s)
     r = prm.unprime(u, fol)
-    s = "x = -3  /\  ~ y"
+    s = r"x = -3  /\  ~ y"
     r_ = fol.add_expr(s)
     assert r == r_, fol.bdd.to_expr(r)
 

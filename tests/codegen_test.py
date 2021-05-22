@@ -50,7 +50,7 @@ def test_code_generation():
 def test_dump_bdd_as_code():
     bdd = _fol._bdd.BDD()
     bdd.declare('x', 'y')
-    u = bdd.add_expr('x /\ ~ y')
+    u = bdd.add_expr(r'x /\ ~ y')
     roots = dict(output=u)
     code = dump.dumps_bdd_as_code(roots, bdd)
     boolean = [False, True]
@@ -62,7 +62,7 @@ def test_dump_bdd_as_code():
             assert out == (x and not y), out
     # a longer formula
     bdd.declare('x', 'y', 'z', 'w')
-    u = bdd.add_expr('(x /\ y) \/ (~ z) \/ (w /\ (x \/ y))')
+    u = bdd.add_expr(r'(x /\ y) \/ (~ z) \/ (w /\ (x \/ y))')
     roots = dict(output=u)
     code = dump.dumps_bdd_as_code(roots, bdd)
     state = dict(x=True, y=False, z=True, w=True,

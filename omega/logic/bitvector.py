@@ -127,15 +127,15 @@ def type_invariants(table):
         # still included, for use with counters
         # during transducer construction,
         # because closure not taken for the counters
-        s = '({min} <= {x})  /\  ({x} <= {max})'.format(
+        s = r'({min} <= {x})  /\  ({x} <= {max})'.format(
             min=dmin, max=dmax, x=var)
         init[var].append(s)
         # prime needed to enforce limits now, not one step later,
         # otherwise env can violate limits, if that will force
         # sys to lose in the next time step.
         s = (
-            "    ({min} <= {x})  /\  ({x} <= {max}) "
-            " /\ ({min} <= {x}') /\  ({x}' <= {max})").format(
+            r"    ({min} <= {x})  /\  ({x} <= {max}) "
+            r" /\ ({min} <= {x}') /\  ({x}' <= {max})").format(
                 min=dmin, max=dmax, x=var)
         safety[var].append(s)
     return init, safety
@@ -379,7 +379,7 @@ class Nodes(_Nodes):
         '=>': '| !',
         '<=>': '! ^',
         'ite': 'ite', '@': '',
-        '\A': '\A', '\E': '\E', '\S': '\S',
+        r'\A': r'\A', r'\E': r'\E', r'\S': r'\S',
         'X': '',
         # 'G': '[]', 'F': '<>',
         '<': '<', '<=': '<=', '=': '=',
@@ -388,7 +388,7 @@ class Nodes(_Nodes):
 
     class Operator(_Nodes.Operator):
         def flatten(self, mem=None, *arg, **kw):
-            if self.operator in ('\A', '\E'):
+            if self.operator in (r'\A', r'\E'):
                 assert mem is None, mem
                 x, e = self.operands
                 cube = x.flatten(mem=None, *arg, **kw)
@@ -409,7 +409,7 @@ class Nodes(_Nodes):
                     bits.extend(flat)
                 cube = (len(bits) - 1) * '& ' + ' '.join(bits)
                 return cube
-            if self.operator == '\S':
+            if self.operator == r'\S':
                 x, e = self.operands
                 assert isinstance(x, list), x
                 unique = set(new.value for new, old in x)

@@ -39,7 +39,7 @@ def test_flatten_previous_boolean():
     s = e.flatten(
         testers,
         context=context)
-    assert s == '( x_prev1 /\ y )', s
+    assert s == r'( x_prev1 /\ y )', s
     # tester
     assert 'x_prev1' in testers, testers
     d = testers['x_prev1']
@@ -76,7 +76,7 @@ def test_flatten_previous_boolean_expr():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = "((_aux0') <=> ( x /\ y ))"
+    b = r"((_aux0') <=> ( x /\ y ))"
     assert a == b, a
 
 
@@ -108,7 +108,7 @@ def test_flatten_nested_previous():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = "((_aux1') <=> ( q /\ _aux0 ))"
+    b = r"((_aux1') <=> ( q /\ _aux0 ))"
     assert a == b, a
     #
     # tester for whole formula (_aux1)
@@ -122,7 +122,7 @@ def test_flatten_nested_previous():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = "((_aux1') <=> ( q /\ _aux0 ))"
+    b = r"((_aux1') <=> ( q /\ _aux0 ))"
     assert a == b, a
 
 
@@ -146,7 +146,7 @@ def test_flatten_since():
     assert a == b, a
     # trans
     a = d.get('trans')
-    b = '''
+    b = r'''
         (
         (_aux0') <=> (
             (q') \/ ((p') /\ _aux0)
@@ -156,11 +156,11 @@ def test_flatten_since():
 
 
 def test_past_parser_boolean():
-    s = '-X a /\ b'
+    s = r'-X a /\ b'
     dvars, r, init, trans, win = past.translate(s)
     init_ = 'a_prev1'
     assert init == init_, init
-    r_ = '( a_prev1 /\ b )'
+    r_ = r'( a_prev1 /\ b )'
     assert r == r_, r
     trans_ = "((a_prev1') <=> a)"
     assert trans == trans_, trans
@@ -196,11 +196,11 @@ def test_parser_strong_weak_previous():
 
 
 def test_parser_mixed():
-    s = '(--X a /\ ((p + q) = 5))'
+    s = r'(--X a /\ ((p + q) = 5))'
     dvars, r, init, trans, win = past.translate(
         s, debug=True)
     assert init == '(~ a_prev1)', init
-    r_ = '( a_prev1 /\ ( ( p + q ) = 5 ) )'
+    r_ = r'( a_prev1 /\ ( ( p + q ) = 5 ) )'
     assert r == r_, r
 
 
@@ -224,7 +224,7 @@ def test_context_checks():
         tree.flatten(testers=dict,
                      context='bool')
     # arithmetic
-    s = 'x /\ y'
+    s = r'x /\ y'
     tree = parser.parse(s)
     tree.flatten(testers=dict,
                  context='bool')
@@ -232,7 +232,7 @@ def test_context_checks():
         tree.flatten(testers=dict,
                      context='arithmetic')
     # nested
-    s = 'y /\ (y + 3)'
+    s = r'y /\ (y + 3)'
     tree = parser.parse(s)
     with assert_raises(AssertionError):
         tree.flatten(testers=dict,

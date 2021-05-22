@@ -176,7 +176,7 @@ aut.prime_varlists()
 aut.init['env'] = ' ~ x'
 aut.init['sys'] = 'y >= 2'
 aut.action['env'] = " IF x THEN ~ x' ELSE x' "
-aut.action['sys'] = '''
+aut.action['sys'] = r'''
     /\ (y < 5)
     /\ (y' > 0)
     /\ (x' => (y = y - 1))
@@ -273,7 +273,7 @@ One of the most useful methods is `to_bdd`. It takes a first-order formula
 and returns a BDD node:
 
 ```python
->>> u = aut.to_bdd("x' /\ (y = 5)")
+>>> u = aut.to_bdd(r"x' /\ (y = 5)")
 Function (DdNode) with var index: 1, ref count: 1, int repr: 44909347
 ```
 
@@ -315,8 +315,8 @@ from omega.symbolic import fol
 
 ctx = fol.Context()
 ctx.declare(x=(0, 3), y=(0, 7))
-u = ctx.to_bdd('x \in 1..3  /\  y \in 4..6')
-v = ctx.to_bdd('x \in 2..3 /\ y \in 2..5')
+u = ctx.to_bdd(r'x \in 1..3  /\  y \in 4..6')
+v = ctx.to_bdd(r'x \in 2..3 /\ y \in 2..5')
 w = u | v
 expr = ctx.to_expr(w)
 print(expr)
@@ -353,7 +353,7 @@ from omega.symbolic import fol
 
 ctx = fol.Context()
 ctx.declare(x=(1, 5), y='bool')
-u = ctx.to_bdd('x = 2  /\  ~ y')
+u = ctx.to_bdd(r'x = 2  /\  ~ y')
 # select a single satisfying assignment, if any
 values = ctx.pick(u)
 >>> values
@@ -365,7 +365,7 @@ To enumerate all satisfying assignments from those assignments allowed by the
 type hints, use the method `pick_iter`:
 
 ```python
-u = ctx.to_bdd('x < 2  /\  ~ y')
+u = ctx.to_bdd(r'x < 2  /\  ~ y')
 assignments = list(ctx.pick_iter(u))
 >>> assignments
 [{'x': 0, 'y': False}, {'x': 1, 'y': False}]
@@ -378,7 +378,7 @@ of variables that occur in all assignments, via the argument `care_vars`.
 For example:
 
 ```python
-u = ctx.to_bdd('x < 2  \/  ~ y')
+u = ctx.to_bdd(r'x < 2  \/  ~ y')
 assignments = list(ctx.pick_iter(u))
 >>> assignments
 [{'x': 0, 'y': False},
@@ -452,7 +452,7 @@ g.vars = dict(x='bool', y=(0, 5))
 g.env_vars.add('x')
 
 g.add_nodes_from(range(5))
-g.add_edge(0, 1, formula="x /\ (y' = 4)")
+g.add_edge(0, 1, formula=r"x /\ (y' = 4)")
 g.add_edge(0, 0, formula=" ~ x")
 g.add_edge(1, 2, formula="(y' = 3)")
 g.add_edge(2, 3, formula="(y' = y - 1)")
@@ -542,14 +542,14 @@ aut.varlist.update(env=['foo'], sys=['bar'])
 aut.prime_varlists()
 
 # specify an inverter
-aut.init['env'] = ' foo \in 1..15 '
-aut.init['sys'] = ' bar \in -15..-1 '
-aut.action['env'] = '''
+aut.init['env'] = r' foo \in 1..15 '
+aut.init['sys'] = r' bar \in -15..-1 '
+aut.action['env'] = r'''
     (* type invariant *)
     /\ foo \in 1..15
     /\ foo' \in 1..15
     '''
-aut.action['sys'] = '''
+aut.action['sys'] = r'''
     (* type invariant *)
     /\ (bar \in -15..-1)
     /\ (bar' \in -15..-1)
@@ -563,7 +563,7 @@ aut.win['[]<>'] = aut.bdds_from(' bar = - 3 ')
 
 aut.plus_one = True  # strictly causal stepwise implication
 aut.moore = True  # implementation reads current state; not foo'
-aut.qinit = '\E \A'  # disjoint-state throughout
+aut.qinit = r'\E \A'  # disjoint-state throughout
 
 fixpoint_iterates = gr1.solve_streett_game(aut)
 gr1.make_streett_transducer(*fixpoint_iterates, aut)
@@ -690,12 +690,12 @@ aut.varlist['sys'] = ['y']
 aut.prime_varlists()
 aut.moore = True
 # specification using stepwise implication
-aut.init['env'] = 'x = 1 /\ y = 2'
+aut.init['env'] = r'x = 1 /\ y = 2'
 aut.init['sys'] = aut.true
-aut.action['sys'] = " x < 5 /\ y' = IF x = 4 THEN 1 ELSE x "
-aut.action['env'] = " x \in 1..4 /\ x' \in 1..4 "
+aut.action['sys'] = r" x < 5 /\ y' = IF x = 4 THEN 1 ELSE x "
+aut.action['env'] = r" x \in 1..4 /\ x' \in 1..4 "
 # enumerate and plot
-g = action_to_steps(aut, 'env', 'sys', qinit='\A \A')
+g = action_to_steps(aut, 'env', 'sys', qinit=r'\A \A')
 _dump_graph_as_figure(g, 'foo.pdf')
 ```
 
@@ -716,19 +716,19 @@ from omega.symbolic.enumeration import _dump_graph_as_figure
 aut = trl.Automaton()
 aut.declare_variables(x=(1, 3), y=(-3, 3))
 aut.varlist.update(env=['x'], sys=['y'])
-aut.init['env'] = 'x = 1  /\  y = 2'
+aut.init['env'] = r'x = 1  /\  y = 2'
 aut.init['sys'] = 'TRUE'
-aut.action['env'] = '''
+aut.action['env'] = r'''
     /\ x \in 1..2
     /\ x' \in 1..2
     '''
-aut.action['sys'] = '''
+aut.action['sys'] = r'''
     /\ y \in -3..3
     /\ y' = x - 3
     '''
 aut.win['<>[]'] = aut.bdds_from('x = 2')
 aut.win['[]<>'] = aut.bdds_from('y != -1')
-aut.qinit = '\A \A'  # should work from all states that
+aut.qinit = r'\A \A'  # should work from all states that
                      # satisfy `aut.init['env']`
 aut.moore = True
 aut.plus_one = True
@@ -849,10 +849,10 @@ from omega.symbolic import temporal as trl
 aut = trl.Automaton()
 aut.declare_variables(x=(1, 5), y=(-2, 17))
 # a state predicate depends only on unprimed identifiers
-u = aut.to_bdd('x \in 1..3  /\  y = -2')
+u = aut.to_bdd(r'x \in 1..3  /\  y = -2')
 assert prm.is_state_predicate(u), aut.support(u)
 # an action may depend on primed identifiers
-u = aut.to_bdd("x' \in 2..4")
+u = aut.to_bdd(r"x' \in 2..4")
 assert not prm.is_state_predicate(u)
 ```
 
@@ -861,7 +861,7 @@ Another example is inspecting the support of a predicate:
 
 ```python
 aut.declare_constants(c=(1, 5))
-u = aut.to_bdd("c = 3 /\ x \in 1..3 /\ x' \in 2..4 /\ y = 0")
+u = aut.to_bdd(r"c = 3 /\ x \in 1..3 /\ x' \in 2..4 /\ y = 0")
 print(u.support)  # bits
 print(aut.support(u))  # integer-valued variables
 print(prm.rigid_support(u, aut))  # identifiers of constants
@@ -950,7 +950,7 @@ t = dict(
     x=dict(type='bool'),
     y=dict(type='int', dom=(0, 4)))
 bt = bv.bitblast_table(t)
-f = "x' /\ (y <= 5)"
+f = r"x' /\ (y <= 5)"
 s = bv.bitblast(f, bt)
 ```
 

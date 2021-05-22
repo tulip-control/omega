@@ -252,12 +252,12 @@ class Context(object):
                 yield d
 
     def define(self, e):
-        """Register operator definitions.
+        r"""Register operator definitions.
 
         The string `e` must contain definitions. Example:
 
         ```python
-        e = '''
+        e = r'''
             a == x + y > 3
             b == z - x <= 0
             c == a /\ b

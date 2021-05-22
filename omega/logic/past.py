@@ -209,7 +209,7 @@ def _flatten_since(operands, testers, context, *arg, **kw):
     i = len(testers)
     var = '_aux{i}'.format(i=i)
     init = '({var} <=> {q})'.format(var=var, q=q)
-    trans = '''
+    trans = r'''
         (
         ({var}') <=> (
             ({q}') \/ (({p}') /\ {var})
@@ -229,14 +229,14 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     q = y.flatten(testers=testers, context=context, *arg, **kw)
     i = len(testers)
     var = '_aux{i}'.format(i=i)
-    trans = '''
+    trans = r'''
         (
         {var} <=> (
             ({q}) \/ (({p}) /\ ({var}'))
         ))
         '''.format(
             var=var, p=p, q=q)
-    win = '(({q}) \/ ~ {var})'.format(var=var, q=q)
+    win = r'(({q}) \/ ~ {var})'.format(var=var, q=q)
     testers[var] = dict(
         type='bool',
         init='True', trans=trans, win=win)

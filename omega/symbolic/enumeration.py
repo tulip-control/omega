@@ -132,7 +132,7 @@ def _print_enumeration(
             i = product[x]
             s = '({x} = {i})'.format(x=x, i=i)
             w.append(s)
-        s = ' /\ '.join(w)
+        s = r' /\ '.join(w)
         r.append(s)
     e = '\n'.join(r)
     logger.debug((
@@ -392,7 +392,7 @@ def _square_conj(p, n=None, op=r'&and;'):
         s = ' ({s}) '.format(s=s)
         c.append(s)
         if (i + 1) % m == 0:
-            c.append('\l')
+            c.append(r'\l')
     # single line ?
     if n <= 2:
         c.pop(0)

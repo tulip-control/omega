@@ -206,7 +206,7 @@ class BDDNodes(Nodes):
     class Operator(Nodes.Operator):
         def flatten(self, bdd, mem=None, *arg, **kw):
             # op with variable number of args ?
-            if self.operator == '\S':
+            if self.operator == r'\S':
                 pairs, x = self.operands
                 operand = x.flatten(bdd=bdd, mem=mem, *arg, **kw)
                 mem = list()

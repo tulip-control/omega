@@ -10,7 +10,7 @@ def test_step():
     aut.varlist = dict(env=['x'], sys=['y'], impl=[])
     aut.prime_varlists()
     aut.init['impl'] = 'True'
-    action = aut.add_expr("x /\ (~ x') /\ (y = 2) /\ (y' = 3)")
+    action = aut.add_expr(r"x /\ (~ x') /\ (y = 2) /\ (y' = 3)")
     aut.action['impl'] = action
     stepper = steps.AutomatonStepper(aut)
     # `action` enabled at `state`

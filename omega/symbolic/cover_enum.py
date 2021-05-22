@@ -434,7 +434,7 @@ def _pick_iter_as_bdd(u, fol):
 
 
 def _below_and_suff(ymax, cover, x, y, prm, fol):
-    """Return subset of `y` that is below `ymax` and suffices.
+    r"""Return subset of `y` that is below `ymax` and suffices.
 
     A `yk \in y` suffices if it covers all elements in `x`
     that are covered by `ymax` but not by any element of `y`

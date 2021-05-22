@@ -16,7 +16,7 @@ def test_cyclic_core_with_care_set():
     f = fol.add_expr(s)
     care_set = fol.true
     mincovers = cov_enum.minimize(f, care_set, fol)
-    mincovers_ = {fol.add_expr('a_x = 0 /\ b_x = 14')}
+    mincovers_ = {fol.add_expr(r'a_x = 0 /\ b_x = 14')}
     assert mincovers == mincovers_, list(
         fol.pick_iter(mincovers))
 

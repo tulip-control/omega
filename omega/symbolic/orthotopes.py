@@ -41,12 +41,12 @@ def essential_orthotopes(f, prm, fol):
     x = ', '.join(prm._px)
     q = ', '.join(prm.q_vars)
     s = (
-        '{p_is_prime} /\ '
+        r'{p_is_prime} /\ '
         r'\E {x}:  ( '
-        '    {f} /\ '
+        r'    {f} /\ '
         r'    \A {q}:  ( '
         '        ( '
-        '            {q_is_prime} /\ '
+        r'            {q_is_prime} /\ '
         '            ~ {p_eq_q} '
         '        ) '
         '        => ~ {x_in_q}'
@@ -72,12 +72,12 @@ def prime_implicants(f, prm, fol):
     r = prm.p_eq_q | ~ r
     r = fol.forall(prm.q_vars, r)
     r &= p_is_implicant
-    '''
+    r'''
     q = ', '.join(prm.q_vars)
     s = (
-        '{p_is_implicant} /\ '
+        r'{p_is_implicant} /\ '
         r'\A {q}:  ( '
-        '     ({q_is_implicant} /\ {p_leq_q})'
+        r'     ({q_is_implicant} /\ {p_leq_q})'
         '     => {p_eq_q}'
         ')').format(
             p_is_implicant=p_is_implicant,
@@ -103,8 +103,8 @@ def _implicant_orthotopes(f, prm, fol):
     h = x_in_implicant(prm, fol)
     nonempty = _orthotope_nonempty(prm._px, fol)
     s = (
-        '{nonempty} /\ '
-        '\A {x}:  {h} => {f} ').format(
+        r'{nonempty} /\ '
+        r'\A {x}:  {h} => {f} ').format(
             x=x, h=h, f=f, nonempty=nonempty)
     r = fol.add_expr(s)
     log.info('==== implicant orthotopes ====')
@@ -168,7 +168,7 @@ def _orthotope_nonempty(abx, fol):
 def x_in_implicant(prm, fol):
     r"""Return `x \in concretization(prm)`."""
     px = prm._px
-    s = stx.conj('''
+    s = stx.conj(r'''
            ({a} <= {x})
         /\ ({x} <= {b})
         '''.format(
@@ -184,7 +184,7 @@ def subseteq(varmap, fol):
     This is the partial order defined by the subset relation.
     In the general formulation `\sqsubseteq`.
     """
-    s = stx.conj('''
+    s = stx.conj(r'''
            ({u} <= {a})
         /\ ({b} <= {v})
         '''.format(a=a, b=b, u=u, v=v)
@@ -200,7 +200,7 @@ def eq(varmap, fol):
     parameter assignments to orthotopes. This is why equality
     of orthotopes is equivalent to equality of parameter values.
     """
-    s = stx.conj('''
+    s = stx.conj(r'''
            ({a} = {u})
         /\ ({b} = {v})
         '''.format(a=a, b=b, u=u, v=v)
@@ -210,7 +210,7 @@ def eq(varmap, fol):
 
 
 def implicants_intersect(prm, fol):
-    """Return `ab \cap uv # \emptyset`.
+    r"""Return `ab \cap uv # \emptyset`.
 
     Equivalent to
 
@@ -222,7 +222,7 @@ def implicants_intersect(prm, fol):
     avoids quantification over `x`.
     """
     # disjoint intervals in at least one dimension
-    s = stx.disj('''
+    s = stx.disj(r'''
            ({b} < {u})
         \/ ({v} < {a})
         '''.format(a=a, b=b, u=u, v=v)
@@ -304,10 +304,10 @@ def list_expr(
             if a == b:
                 s = '({x} = {a})'
             elif simple:
-                s = '({a} <= {x}) /\ ({x} <= {b})'
+                s = r'({a} <= {x}) /\ ({x} <= {b})'
             else:
                 # precise even in absence of limits/dom
-                s = '({x} \in {a} .. {b})'
+                s = r'({x} \in {a} .. {b})'
             s = s.format(x=x, a=a, b=b)
             w.append(s)
         # conjoin as one triplet per line
@@ -328,7 +328,7 @@ def list_expr(
         tuples = list(zip(*pack))
         if tail:
             tuples.append(tail)
-        lines = [' /\ '.join(t) for t in tuples]
+        lines = [r' /\ '.join(t) for t in tuples]
         s = stx.vertical_op(lines, latex=latex, op='and')
         r.append(s)
     r = natsort.natsorted(r)  # reproducible vertical listing
@@ -344,7 +344,7 @@ def _orthotopes_iter(u, fol):
 
 
 def setup_aux_vars(f, care, fol):
-    """Add and return auxiliary variables.
+    r"""Add and return auxiliary variables.
 
     No BDD operations other than `support` are invoked.
 

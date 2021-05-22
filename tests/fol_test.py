@@ -77,7 +77,7 @@ def test_support():
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == {'x'}, r
-    s = '(x < 2) \/ ~ y'
+    s = r'(x < 2) \/ ~ y'
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == {'x', 'y'}, r
@@ -160,7 +160,7 @@ def test_quantifiers():
     r = fol.exist(set(), u)
     assert r == u, (r, u)
     # TYPENESS !!!
-    s = '\E x: (x = 7)'
+    s = r'\E x: (x = 7)'
     u = fol.add_expr(s)
     assert u == bdd.true
     u = fol.add_expr('x = 3')
@@ -184,7 +184,7 @@ def test_quantifiers():
     u = fol.add_expr('x > 5')
     u = fol.exist(['x'], u)
     assert u == bdd.true
-    u = fol.add_expr('(6 <= x) /\ (x < 8)')
+    u = fol.add_expr(r'(6 <= x) /\ (x < 8)')
     u = fol.exist(['x'], u)
     assert u == bdd.true
     u = fol.add_expr('x > 7')
@@ -231,7 +231,7 @@ def test_define():
     c.declare(x=(9, 35))
     c.declare(y=(1, 5))
     c.declare(z=(-3, 10))
-    e = '''
+    e = r'''
         a == x + y > 3
         b == z - x <= 0
         c == a /\ b
@@ -254,12 +254,12 @@ def test_define():
     assert u == u_, u
     # c
     s = c.op['c']
-    s_ = '( a /\ b )'
+    s_ = r'( a /\ b )'
     assert s == s_, s
     u = c.op_bdd['c']
     # caution:  operator names *have* been substituted in
     # the BDD, unlike the expression in `c.op['c']` above.
-    s_ = '( ( ( x + y ) > 3 )  /\  ( ( z - x ) <= 0 ) )'
+    s_ = r'( ( ( x + y ) > 3 )  /\  ( ( z - x ) <= 0 ) )'
     u_ = c.add_expr(s_)
     assert u == u_, u
 
@@ -290,23 +290,23 @@ def test_to_expr():
     fol = _fol.Context()
     fol.bdd.configure(reordering=True)
     fol.declare(x=(-14, 100), y=(5, 23))
-    u = fol.add_expr('(1 <= x) /\ (x <= 3)')
+    u = fol.add_expr(r'(1 <= x) /\ (x <= 3)')
     s = fol.to_expr(u, show_limits=True)
     s_ = (
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
         '/\\ x \\in -128 .. 127\n'
-        '/\\ (x \in 1 .. 3)')
+        '/\\ (x \\in 1 .. 3)')
     assert s == s_, (s, s_)
-    care = fol.add_expr('(-14 <= x)  /\  (x <= 100)')
+    care = fol.add_expr(r'(-14 <= x)  /\  (x <= 100)')
     s = fol.to_expr(u, care=care, show_dom=True)
     s_ = (
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:  x *)\n'
         '(* The minimal cover is: *)\n'
         '/\\ x \\in -14 .. 100\n'
-        '/\\ (x \in 1 .. 3)\n'
+        '/\\ (x \\in 1 .. 3)\n'
         '/\\ care expression')
     assert s == s_, (s, s_)
 

@@ -36,7 +36,7 @@ def semi_symbolic():
     aut.init['env'] = 'nd = 1'
     aut.win['<>[]'] = aut.bdds_from(' ~ x')
     aut.win['[]<>'] = aut.bdds_from('nd = 0')
-    aut.qinit = '\A \A'
+    aut.qinit = r'\A \A'
     aut.moore = True
     aut.plus_one = True
     print(aut)

@@ -30,7 +30,7 @@ from omega.symbolic import symbolic
 log = logging.getLogger(__name__)
 
 
-def action_to_steps(aut, env, sys, qinit='\A \A'):
+def action_to_steps(aut, env, sys, qinit=r'\A \A'):
     r"""Return enumerated graph with steps as edges.
 
     Enumeration is done based on `qinit`:
@@ -201,13 +201,13 @@ def _init_search(g, aut, umap, keys, qinit):
     """Enumerate initial states according to `qinit`."""
     # danger of blowup due to sparsity
     # implement enumerated equivalent to compare
-    if qinit == '\A \E':
+    if qinit == r'\A \E':
         queue, visited = _forall_exist_init(g, aut, umap, keys)
-    elif qinit == '\A \A':
+    elif qinit == r'\A \A':
         queue, visited = _forall_init(g, aut, umap, keys)
-    elif qinit == '\E \E':
+    elif qinit == r'\E \E':
         queue, visited = _exist_init(g, aut, umap, keys)
-    elif qinit == '\E \A':
+    elif qinit == r'\E \A':
         queue, visited = _exist_forall_init(g, aut, umap, keys)
     else:
         raise Exception('unknown qinit "{q}"'.format(q=qinit))

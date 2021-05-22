@@ -8,7 +8,7 @@ import math
 
 logger = logging.getLogger(__name__)
 PRIME = "'"
-SUPPORTED_OPERATORS = {'&', '|', '/\\', '\/'}
+SUPPORTED_OPERATORS = {'&', '|', '/\\', r'\/'}
 
 
 def conj(iterable, sep='', op='/\\'):
@@ -383,7 +383,7 @@ def vertical_op(c, latex=False, op='and', spacing=1):
         pref = 4 * ' '
         nl = r' \\' + '\n'
     else:
-        pref = '/\\ ' if op == 'and' else '\/ '
+        pref = '/\\ ' if op == 'and' else r'\/ '
         nl = '\n' * spacing
     r = list()
     for s in c:

@@ -6,11 +6,11 @@ parser = lexyacc.Parser()
 
 
 def test_quantifiers():
-    s = '\E x:  True'
+    s = r'\E x:  True'
     t = parser.parse(s)
     assert hasattr(t, 'operator'), t
     assert t.type == 'operator', t
-    assert t.operator == '\E', t.operator
+    assert t.operator == r'\E', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
     assert hasattr(qvars, 'operator'), qvars
@@ -21,11 +21,11 @@ def test_quantifiers():
     assert e.type == 'bool', e.type
     assert e.value == 'True', e.value
     #
-    s = '\E x, y:  False'
+    s = r'\E x, y:  False'
     t = parser.parse(s)
     assert hasattr(t, 'type'), t
     assert t.type == 'operator', t.type
-    assert t.operator == '\E', t.operator
+    assert t.operator == r'\E', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
     assert hasattr(qvars, 'operator'), qvars
@@ -37,13 +37,13 @@ def test_quantifiers():
     assert e.type == 'bool', e.type
     assert e.value == 'False', e.value
     #
-    s = '\A y:  True'
+    s = r'\A y:  True'
     t = parser.parse(s)
-    assert t.operator == '\A', t.operator
+    assert t.operator == r'\A', t.operator
     #
-    s = '\A x, y, z:  (x \/ ~ y) /\ z'
+    s = r'\A x, y, z:  (x \/ ~ y) /\ z'
     t = parser.parse(s)
-    assert t.operator == '\A', t.operator
+    assert t.operator == r'\A', t.operator
     assert len(t.operands) == 2, t.operands
     qvars, e = t.operands
     assert hasattr(qvars, 'operator'), qvars
@@ -53,16 +53,16 @@ def test_quantifiers():
     _assert_is_var_node(y, 'y')
     _assert_is_var_node(z, 'z')
     r = e.flatten()
-    r_ = '( ( x \/ ( ~ y ) ) /\ z )'
+    r_ = r'( ( x \/ ( ~ y ) ) /\ z )'
     assert r == r_, (r, r_)
 
 
 def test_substitution():
-    s = '\S a / b: True'
+    s = r'\S a / b: True'
     t = parser.parse(s)
     assert hasattr(t, 'type'), t
     assert t.type == 'operator', t.type
-    assert t.operator == '\S', t.operator
+    assert t.operator == r'\S', t.operator
     assert len(t.operands) == 2, t.operands
     pairs, e = t.operands
     assert len(pairs) == 1, pairs
@@ -73,11 +73,11 @@ def test_substitution():
     assert hasattr(e, 'type'), e
     assert e.type == 'bool', e.type
     assert e.value == 'True', e.value
-    s = '\S a / b,  c / d: False'
+    s = r'\S a / b,  c / d: False'
     t = parser.parse(s)
     assert hasattr(t, 'type'), t
     assert t.type == 'operator', t
-    assert t.operator == '\S', t.operator
+    assert t.operator == r'\S', t.operator
     assert len(t.operands) == 2, t.operands
     pairs, e = t.operands
     assert len(pairs) == 2, pairs
@@ -105,8 +105,8 @@ def test_range():
         '''
     r = parser.parse(s).flatten()
     r_ = (
-        '( ( z \in ( 0 .. 2 ) )'
-        ' /\ ( y \in ( -45 .. 1 ) ) )')
+        r'( ( z \in ( 0 .. 2 ) )'
+        r' /\ ( y \in ( -45 .. 1 ) ) )')
     assert r == r_, r
 
 

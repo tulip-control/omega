@@ -41,7 +41,7 @@ def test_streett_trivial_loop():
     assert init == init_, a.bdd.to_expr(init)
     # action
     action = a.action['impl']
-    s = "(_goal = 0) /\ (_goal' = 0)"
+    s = r"(_goal = 0) /\ (_goal' = 0)"
     action_ = a.add_expr(s)
     assert action == action_, a.bdd.to_expr(action)
 
@@ -72,12 +72,12 @@ def test_rabin_trivial_loop():
     assert 'x' in a.vars, a.vars
     # init
     init = a.init['impl']
-    init_ = a.add_expr('(_goal = 0) /\ (_hold = 1)')
+    init_ = a.add_expr(r'(_goal = 0) /\ (_hold = 1)')
     assert init == init_, a.bdd.to_expr(init)
     # action
     action = a.action['impl']
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
         "(_hold' = 0)")
     action_ = a.add_expr(s)
     assert action == action_, a.bdd.to_expr(action)
@@ -87,7 +87,7 @@ def test_streett_deadend():
     aut = trl.default_streett_automaton()
     aut.declare_variables(x=(0, 10))
     aut.varlist['sys'] = ['x']
-    aut.action['sys'] = aut.add_expr("(x = 0) /\ (x' = 5)")
+    aut.action['sys'] = aut.add_expr(r"(x = 0) /\ (x' = 5)")
     z, _, _ = gr1.solve_streett_game(aut)
     win_set = z
     assert win_set == aut.bdd.false, win_set
@@ -98,7 +98,7 @@ def test_rabin_deadend():
     aut.acceptance = 'Rabin(1)'
     aut.declare_variables(x=(0, 101))
     aut.varlist['sys'] = ['x']
-    aut.action['sys'] = aut.add_expr("(x = 1) /\ (x' = 96 - x)")
+    aut.action['sys'] = aut.add_expr(r"(x = 1) /\ (x' = 96 - x)")
     zk, _, _ = gr1.solve_rabin_game(aut)
     win_set = zk[-1]
     assert win_set == aut.bdd.false, win_set
@@ -123,7 +123,7 @@ def test_streett_always_x():
     # action
     action = aut.action['impl']
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
         "x' ")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
@@ -141,7 +141,7 @@ def test_streett_always_x():
     init_ = aut.add_expr('(_goal = 0)')
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
-    s = "(_goal = 0) /\ (_goal' = 0) /\ ~ x /\ ~ x'"
+    s = r"(_goal = 0) /\ (_goal' = 0) /\ ~ x /\ ~ x'"
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
 
@@ -161,14 +161,14 @@ def test_rabin_always_x():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     # init
     init = aut.init['impl']
-    s = '(_goal = 0) /\ (_hold = 1)'
+    s = r'(_goal = 0) /\ (_hold = 1)'
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     # action
     action = aut.action['impl']
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
-        "(_hold' = 0) /\ "
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_hold' = 0) /\ "
         "x' ")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
@@ -185,14 +185,14 @@ def test_rabin_always_x():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    s = ' (_goal = 0) /\ (_hold = 1) '
+    s = r' (_goal = 0) /\ (_hold = 1) '
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
-        "(_hold' = 0) /\ "
-        " ~ x /\ ~ x'")
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_hold' = 0) /\ "
+        r" ~ x /\ ~ x'")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
 
@@ -215,8 +215,8 @@ def test_streett_counter():
     assert action_refined(aut)
     # regression
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
-        "(x <=> ~ x')")
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(x <=> ~ x')")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
 
@@ -226,7 +226,7 @@ def test_rabin_counter():
     aut.declare_variables(x='bool')
     aut.varlist['sys'] = ['x']
     aut.plus_one = False
-    aut.qinit = '\A \A'
+    aut.qinit = r'\A \A'
     aut.action['sys'] = aut.add_expr("x => ~ x' ")
     aut.win['[]<>'] = [aut.add_expr('x')]
     # solve
@@ -237,14 +237,14 @@ def test_rabin_counter():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    s = '(_goal = 0) /\ (_hold = 1)'
+    s = r'(_goal = 0) /\ (_hold = 1)'
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
     # regression
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
-        "(_hold' = 0) /\ "
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_hold' = 0) /\ "
         "ite(_hold = 0, x <=> ~ x', x => ~ x')")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
@@ -264,13 +264,13 @@ def test_rabin_persistence():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    s = '(_goal = 0) /\ (_hold = 1) /\ ~ x'
+    s = r'(_goal = 0) /\ (_hold = 1) /\ ~ x'
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
-        "ite(_hold' = 1, ~ x /\ x', x /\ x')")
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
+        r"ite(_hold' = 1, ~ x /\ x', x /\ x')")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
     #
@@ -295,20 +295,20 @@ def test_rabin_persistence_2():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    s = '(_goal = 0) /\ (_hold = 2)'
+    s = r'(_goal = 0) /\ (_hold = 2)'
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
     # enumeration.dump_relation(action, aut)
     s = (
-        "(_goal = 0) /\ (_goal' = 0) /\ "
+        r"(_goal = 0) /\ (_goal' = 0) /\ "
         "ite(_hold = 1,"
-        "(_hold' = 1) /\ ~ x',"
+        r"(_hold' = 1) /\ ~ x',"
         "ite(_hold = 0,"
-        "(_hold' = 0) /\ x',"
-        "(_hold = 2) /\ ("
-        "( (_hold' = 0) /\ x' ) \/ "
-        "( (_hold' = 1) /\ ~ x' )"
+        r"(_hold' = 0) /\ x',"
+        r"(_hold = 2) /\ ("
+        r"( (_hold' = 0) /\ x' ) \/ "
+        r"( (_hold' = 1) /\ ~ x' )"
         ") ) )")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
@@ -330,7 +330,7 @@ def test_streett_with_safety_assumption():
     init = aut.init['impl']
     assert init == aut.add_expr('_goal = 0'), aut.bdd.to_expr(init)
     action = aut.action['impl']
-    action_ = aut.add_expr("x => ((_goal = 0) /\ (_goal' = 0))")
+    action_ = aut.add_expr(r"x => ((_goal = 0) /\ (_goal' = 0))")
     assert action == action_, aut.bdd.to_expr(action)
     #
     # negate action to make unrealizable
@@ -369,11 +369,11 @@ def test_rabin_with_safety_assumption():
     gr1.make_rabin_transducer(zk, yki, xkijr, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    s = '(_goal = 0) /\ (_hold = 1)'
+    s = r'(_goal = 0) /\ (_hold = 1)'
     init_ = aut.add_expr(s)
     assert init == init_, aut.bdd.to_expr(init)
     action = aut.action['impl']
-    s = "((_goal = 0) /\ (_goal' = 0) /\ (_hold' = 0) /\ x)"
+    s = r"((_goal = 0) /\ (_goal' = 0) /\ (_hold' = 0) /\ x)"
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
     #
@@ -391,9 +391,9 @@ def test_streett_with_liveness_assumption():
     aut = trl.default_streett_automaton()
     aut.declare_variables(x='bool', y=(0, 2))
     aut.varlist = dict(env=['x'], sys=['y'])
-    aut.init['sys'] = aut.add_expr(' y \in 0..2 ')
+    aut.init['sys'] = aut.add_expr(r' y \in 0..2 ')
     aut.action['sys'] = aut.add_expr(
-        """
+        r"""
         /\ ( ((y = 0) /\ ~ x) => (y' = 0) )
         /\ ((y = 0) => (y' < 2))
         /\ ((y = 1) => (y' = 0))
@@ -412,13 +412,13 @@ def test_streett_with_liveness_assumption():
     gr1.make_streett_transducer(z, yij, xijk, aut)
     assert action_refined(aut)
     init = aut.init['impl']
-    assert init == aut.add_expr('(y < 2) /\ (_goal = 0)'), aut.bdd.to_expr(init)
+    assert init == aut.add_expr(r'(y < 2) /\ (_goal = 0)'), aut.bdd.to_expr(init)
     action = aut.action['impl']
     s = (
-        "( (y = 0) => ite(x, (y' = 1), (y' = 0)) ) /\ "
-        "( (y = 1) => (y' = 0) ) /\ "
-        "( (_goal = 0) /\ (_goal' = 0) ) /\ "
-        "( (y /= 2) /\ (y /= 3) )")
+        r"( (y = 0) => ite(x, (y' = 1), (y' = 0)) ) /\ "
+        r"( (y = 1) => (y' = 0) ) /\ "
+        r"( (_goal = 0) /\ (_goal' = 0) ) /\ "
+        r"( (y /= 2) /\ (y /= 3) )")
     action_ = aut.add_expr(s)
     sat = list(aut.bdd.pick_iter(action))
     sys_action = aut.action['sys']
@@ -459,10 +459,10 @@ def test_streett_2_goals():
     # print_fol_bdd(action, aut.bdd, aut.vars)
     # enumeration.dump_relation(action, aut)
     s = (
-        "((x /\ (_goal = 0)) => (_goal' = 1)) /\ "
-        "(( ~ x /\ (_goal = 1)) => (_goal' = 0)) /\ "
-        "(( ~ x /\ (_goal = 0)) => (x' /\ (_goal' = 0))) /\ "
-        "((x /\ (_goal = 1)) => ( ~ x' /\ (_goal' = 1)))")
+        r"((x /\ (_goal = 0)) => (_goal' = 1)) /\ "
+        r"(( ~ x /\ (_goal = 1)) => (_goal' = 0)) /\ "
+        r"(( ~ x /\ (_goal = 0)) => (x' /\ (_goal' = 0))) /\ "
+        r"((x /\ (_goal = 1)) => ( ~ x' /\ (_goal' = 1)))")
     action_ = aut.add_expr(s)
     assert action == action_, aut.bdd.to_expr(action)
 
@@ -513,49 +513,49 @@ def test_is_realizable():
     aut.varlist = dict(env=['x'], sys=['y'])
     aut.prime_varlists()
     # \A \A realizable
-    aut.init['env'] = aut.add_expr('x /\ (y = 1)')
+    aut.init['env'] = aut.add_expr(r'x /\ (y = 1)')
     aut.init['sys'] = aut.true
-    aut.qinit = '\A \A'
-    z = aut.add_expr('x /\ (y < 2)')
+    aut.qinit = r'\A \A'
+    z = aut.add_expr(r'x /\ (y < 2)')
     assert gr1.is_realizable(z, aut)
     # \A \A unrealizable
     aut.init['env'] = aut.add_expr('(y < 1)')
     assert not gr1.is_realizable(z, aut)
     # \E \E realizable
     aut.init['env'] = aut.true
-    aut.init['sys'] = aut.add_expr('x /\ (y < 3)')
-    aut.qinit = '\E \E'
-    z = aut.add_expr('x /\ (y < 2)')
+    aut.init['sys'] = aut.add_expr(r'x /\ (y < 3)')
+    aut.qinit = r'\E \E'
+    z = aut.add_expr(r'x /\ (y < 2)')
     assert gr1.is_realizable(z, aut)
     # \E \E unrealizable
     aut.init['env'] = aut.true
     aut.init['sys'] = aut.add_expr('(y > 10)')
-    aut.qinit = '\E \E'
+    aut.qinit = r'\E \E'
     z = aut.true
     assert not gr1.is_realizable(z, aut)
     # \A \E realizable
     aut.moore = False
     aut.init['env'] = aut.true
     s = (
-        '(x => (y = 1)) /\ '
+        r'(x => (y = 1)) /\ '
         '((~ x) => (y = 4))')
     aut.init['sys'] = aut.add_expr(s)
-    aut.qinit = '\A \E'
+    aut.qinit = r'\A \E'
     z = aut.add_expr('y > 0')
     assert gr1.is_realizable(z, aut)
     # \A \E unrealizable
     s = (
-        '(x => (y = 1)) /\ '
+        r'(x => (y = 1)) /\ '
         '((~ x) => (y = 10))')
     aut.init['sys'] = aut.add_expr(s)
-    aut.qinit = '\A \E'
+    aut.qinit = r'\A \E'
     z = aut.true
     assert not gr1.is_realizable(z, aut)
     # \E \A realizable
     aut.moore = True
     s = 'x => (y = 1)'
     aut.init['sys'] = aut.add_expr(s)
-    aut.qinit = '\E \A'
+    aut.qinit = r'\E \A'
     z = aut.add_expr('y <= 2')
     assert gr1.is_realizable(z, aut)
     # \E \A unrealizable
@@ -565,8 +565,8 @@ def test_is_realizable():
         /\ ((~ x) => (y = 3))
         ''')
     aut.moore = True
-    aut.qinit = '\E \A'
-    z = aut.add_expr('y = 1 \/ y = 2')
+    aut.qinit = r'\E \A'
+    z = aut.add_expr(r'y = 1 \/ y = 2')
     assert not gr1.is_realizable(z, aut)
 
 
@@ -586,17 +586,17 @@ def test_streett_qinit_exist_forall():
     aut.declare_variables(x='bool', y=(0, 5))
     aut.varlist = dict(env=['x'], sys=['y'])
     aut.moore = True
-    aut.qinit = '\E \A'
+    aut.qinit = r'\E \A'
     aut.init['env'] = aut.add_expr('x')
-    aut.init['sys'] = aut.add_expr('(x => (y = 4)) /\ y \in 0..5')
-    aut.action['sys'] = aut.add_expr('y \in 0..5')
+    aut.init['sys'] = aut.add_expr(r'(x => (y = 4)) /\ y \in 0..5')
+    aut.action['sys'] = aut.add_expr(r'y \in 0..5')
     # solve
     z, yij, xijk = gr1.solve_streett_game(aut)
-    assert z == aut.add_expr('y \in 0..5'), aut.bdd.to_expr(z)
+    assert z == aut.add_expr(r'y \in 0..5'), aut.bdd.to_expr(z)
     # transducer
     gr1.make_streett_transducer(z, yij, xijk, aut)
     u = aut.init['impl']
-    u_ = aut.add_expr('(y = 4) /\ (_goal = 0)')
+    u_ = aut.add_expr(r'(y = 4) /\ (_goal = 0)')
     assert u == u_, aut.bdd.to_expr(u)
 
 
@@ -615,14 +615,14 @@ def test_warn_moore_mealy():
     aut.varlist = dict(env=['x'], sys=['y'])
     # Moore OK
     aut.moore = True
-    aut.action['env'] = aut.add_expr("x /\ x' ")
-    aut.action['sys'] = aut.add_expr("(y > 4) /\ (y' = 5)")
+    aut.action['env'] = aut.add_expr(r"x /\ x' ")
+    aut.action['sys'] = aut.add_expr(r"(y > 4) /\ (y' = 5)")
     aut.build()
     r = gr1._warn_moore_mealy(aut)
     assert r is True, r
     # Moore with env' in sys action
-    aut.action['env'] = aut.add_expr("x /\ x' ")
-    aut.action['sys'] = aut.add_expr("x' /\ (y > 4) /\ (y' = 5)")
+    aut.action['env'] = aut.add_expr(r"x /\ x' ")
+    aut.action['sys'] = aut.add_expr(r"x' /\ (y > 4) /\ (y' = 5)")
     r = gr1._warn_moore_mealy(aut)
     assert r is False, r
     # Mealy with env' in sys action
@@ -630,12 +630,12 @@ def test_warn_moore_mealy():
     r = gr1._warn_moore_mealy(aut)
     assert r is True, r
     # Mealy with sys' in env action
-    aut.action['env'] = aut.add_expr("x /\ x' /\ (y' > 4)")
+    aut.action['env'] = aut.add_expr(r"x /\ x' /\ (y' > 4)")
     aut.moore = False
     r = gr1._warn_moore_mealy(aut)
     assert r is False, r
     # Moore with sys' in env action
-    aut.action['sys'] = aut.add_expr("(y > 4) /\ (y' = 5)")
+    aut.action['sys'] = aut.add_expr(r"(y > 4) /\ (y' = 5)")
     aut.moore = True
     r = gr1._warn_moore_mealy(aut)
     assert r is False, r

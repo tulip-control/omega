@@ -114,67 +114,67 @@ def test_flatten_arithmetic():
 
 def test_flatten_quantifiers():
     # single qvar
-    s = '\A a: True'
+    s = r'\A a: True'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \A & a0 a1 1', r
-    s = '\E y: False'
+    assert r == r' \A & a0 a1 1', r
+    s = r'\E y: False'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \E & & y0 y1 y2 0', r
-    s = '\E y: x = y'
+    assert r == r' \E & & y0 y1 y2 0', r
+    s = r'\E y: x = y'
     r = parser.parse(s).flatten(t=t)
     eq = parser.parse('x = y').flatten(t=t)
-    r_ = ' \E & & y0 y1 y2 {eq}'.format(eq=eq)
+    r_ = r' \E & & y0 y1 y2 {eq}'.format(eq=eq)
     assert r == r_, (r, r_)
     # multiple qvars
-    s = '\E a, b: True'
+    s = r'\E a, b: True'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \E & & & a0 a1 b0 b1 1', r
-    s = '\E a, x: x - a > 0'
+    assert r == r' \E & & & a0 a1 b0 b1 1', r
+    s = r'\E a, x: x - a > 0'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('x - a > 0').flatten(t=t)
-    r_ = ' \E & & & a0 a1 x@0.0.3 x@1 {h}'.format(h=h)
+    r_ = r' \E & & & a0 a1 x@0.0.3 x@1 {h}'.format(h=h)
     assert r == r_, (r, r_)
-    s = '\A r: r | ! q'
+    s = r'\A r: r | ! q'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('r | ! q').flatten(t=t)
-    r_ = ' \A r {h}'.format(h=h)
+    r_ = r' \A r {h}'.format(h=h)
     assert r == r_, (r, r_)
 
 
 def test_flatten_substitution():
     # single pair
-    s = '\S a / b: True'
+    s = r'\S a / b: True'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \S $4 a0 b0 a1 b1 1', r
-    s = '\S q / r: False'
+    assert r == r' \S $4 a0 b0 a1 b1 1', r
+    s = r'\S q / r: False'
     r = parser.parse(s).flatten(t=t)
-    assert r == ' \S $2 q r 0', r
-    s = '\S b / x: x - y <= 0'
+    assert r == r' \S $2 q r 0', r
+    s = r'\S b / x: x - y <= 0'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('x - y <= 0').flatten(t=t)
-    r_ = ' \S $4 b0 x@0.0.3 b1 x@1 {h}'.format(h=h)
+    r_ = r' \S $4 b0 x@0.0.3 b1 x@1 {h}'.format(h=h)
     assert r == r_, r
     # multiple pairs
-    s = '\S a / b,  q / r:  False'
+    s = r'\S a / b,  q / r:  False'
     r = parser.parse(s).flatten(t=t)
-    r_ = ' \S $6 a0 b0 a1 b1 q r 0'
+    r_ = r' \S $6 a0 b0 a1 b1 q r 0'
     assert r == r_, r
     # swap: order of substitutions should be preserved
-    s = '\S q / r, a / b:  False'
+    s = r'\S q / r, a / b:  False'
     r = parser.parse(s).flatten(t=t)
-    r_ = ' \S $6 q r a0 b0 a1 b1 0'
+    r_ = r' \S $6 q r a0 b0 a1 b1 0'
     assert r == r_, r
     # more complex expr
-    s = '\S a / b, q / r:  r | ! (a != b)'
+    s = r'\S a / b, q / r:  r | ! (a != b)'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('r | ! (a != b)').flatten(t=t)
-    r_ = ' \S $6 a0 b0 a1 b1 q r {h}'.format(h=h)
+    r_ = r' \S $6 a0 b0 a1 b1 q r {h}'.format(h=h)
     assert r == r_, r
     # invalid input
     c = [
-        '\S a / q: True',
-        '\S q / a: True',
-        '\S a / y: True']
+        r'\S a / q: True',
+        r'\S q / a: True',
+        r'\S a / y: True']
     for s in c:
         print(s)
         with nt.assert_raises(AssertionError):
@@ -578,7 +578,7 @@ def test_mixed_fol_bitblasted():
     t = dict(x=dict(type='bool', owner='sys'),
              y=dict(type='int', dom=(0, 3), owner='sys'))
     t = bv.bitblast_table(t)
-    s = '(x /\ y_0) \/ (y < 0)'
+    s = r'(x /\ y_0) \/ (y < 0)'
     tree_0 = parser.parse(s)
     q = 'y < 0'
     tree_1 = parser.parse(q)
@@ -591,11 +591,11 @@ def test_type_invariants():
     t = dict(x=dict(type='int', dom=(0, 3), init=2))
     t = bv.bitblast_table(t)
     init, action = bv.type_invariants(t)
-    init_ = dict(x=['x = 2', '(0 <= x)  /\  (x <= 3)'])
+    init_ = dict(x=['x = 2', r'(0 <= x)  /\  (x <= 3)'])
     assert init == init_, init
     s = (
-         "    (0 <= x)  /\  (x <= 3)"
-         "  /\ (0 <= x') /\  (x' <= 3)")
+        r"    (0 <= x)  /\  (x <= 3)"
+        r"  /\ (0 <= x') /\  (x' <= 3)")
     action_ = dict(x=[s])
     assert action == action_, action
 

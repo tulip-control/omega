@@ -5,7 +5,7 @@ from omega import gr1
 
 def test_split_gr1():
     # init
-    f = '(x > 0) /\ (y + 1 < 2)'
+    f = r'(x > 0) /\ (y + 1 < 2)'
     d = gr1.split_gr1(f)
     t = d['init']
     assert len(t) == 2, t
@@ -18,13 +18,13 @@ def test_split_gr1():
     assert d['recurrence'] == list(), d
     assert d['persistence'] == list(), d
     # safety
-    f = '[]((x > 0) /\ (z = 3 + y))'
+    f = r'[]((x > 0) /\ (z = 3 + y))'
     d = gr1.split_gr1(f)
     assert d['init'] == list(), d
     t = d['action']
     assert len(t) == 1, t
     s = t[0].flatten()
-    assert s == '( ( x > 0 ) /\ ( z = ( 3 + y ) ) )', s
+    assert s == r'( ( x > 0 ) /\ ( z = ( 3 + y ) ) )', s
     assert d['recurrence'] == list(), d
     assert d['persistence'] == list(), d
     # recurrence
@@ -68,9 +68,9 @@ def test_split_gr1():
     with assert_raises(AssertionError):
         gr1.split_gr1('[] <>( [] p )')
     with assert_raises(AssertionError):
-        gr1.split_gr1('(X p ) /\ ( [] p )')
+        gr1.split_gr1(r'(X p ) /\ ( [] p )')
     with assert_raises(AssertionError):
-        gr1.split_gr1('[]<> ( x /\ (X y) )')
+        gr1.split_gr1(r'[]<> ( x /\ (X y) )')
 
 
 if __name__ == '__main__':

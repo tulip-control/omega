@@ -126,7 +126,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     rho_1 = aut.false
     for i, goal in enumerate(goals):
         ip = (i + 1) % len(goals)
-        s = "({c} = {i}) /\ ({c}' = {ip})".format(c=c, i=i, ip=ip)
+        s = r"({c} = {i}) /\ ({c}' = {ip})".format(c=c, i=i, ip=ip)
         u = aut.add_expr(s)
         u &= goal
         rho_1 |= u
@@ -135,7 +135,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_2: descent in basin
     rho_2 = aut.false
     for i, yj in enumerate(yij):
-        s = "({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
+        s = r"({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
         count = aut.add_expr(s)
         rho_2j = aut.false
         basin = yj[0]
@@ -151,7 +151,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_3: persistence holds
     rho_3 = aut.false
     for i, xjk in enumerate(xijk):
-        s = "({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
+        s = r"({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
         count = aut.add_expr(s)
         rho_3j = aut.false
         used = aut.false
@@ -171,7 +171,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     u = rho_1 | rho_2
     u |= rho_3
     # counter `c` limits
-    s = '{c} \in 0..{n}'.format(c=c, n=c_max)
+    s = r'{c} \in 0..{n}'.format(c=c, n=c_max)
     u &= aut.add_expr(s)
     # `sys_action` is already in the `\rho`
     # next is "useful" only if `env_action` depends on `y'`
@@ -288,7 +288,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     goals = aut.win['[]<>']
     # compute strategy from iterates
     # \rho_1: descent in persistence basin
-    s = "({c}' = {c}) /\ ({w}' = {none})".format(
+    s = r"({c}' = {c}) /\ ({w}' = {none})".format(
         c=c, w=w, none=n_holds)
     count = aut.add_expr(s)
     rho_1 = aut.false
@@ -310,7 +310,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rim = z & ~ basin
         rim &= ~ cox_basin
         # rho_2: pick persistence set
-        s = "({c}' = {c}) /\ ({w} = {none})".format(
+        s = r"({c}' = {c}) /\ ({w} = {none})".format(
             c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
         u = rim & count
@@ -325,8 +325,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rho_2 |= u
         # rho_3: descent in recurrence basin
         s = (
-            "({c}' = {c}) /\ "
-            "({w} /= {none}) /\ "
+            r"({c}' = {c}) /\ "
+            r"({w} /= {none}) /\ "
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
@@ -335,7 +335,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         for i, xjr in enumerate(xijr):
             for j, (xr, goal) in enumerate(zip(xjr, goals)):
                 s = (
-                    "({c} = {j}) /\ "
+                    r"({c} = {j}) /\ "
                     " ({w} = {i})").format(c=c, w=w, i=i, j=j)
                 count = aut.add_expr(s)
                 x_basin = xr[0]
@@ -355,13 +355,13 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         u = aut.false
         for j, goal in enumerate(goals):
             jp = (j + 1) % len(goals)
-            s = "({c} = {j}) /\ ({c}' = {jp})".format(
+            s = r"({c} = {j}) /\ ({c}' = {jp})".format(
                 c=c, j=j, jp=jp)
             count = aut.add_expr(s)
             p = count & goal
             u |= p
         s = (
-            "({w} /= {none}) /\ "
+            r"({w} /= {none}) /\ "
             "({w}' = {w})").format(
                 c=c, w=w, none=n_holds)
         count = aut.add_expr(s)
@@ -383,7 +383,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u |= rho_3
     u |= rho_4
     # counter limits
-    s = '({w} \in 0..{n_w}) /\ ({c} \in 0..{n_c})'.format(
+    s = r'({w} \in 0..{n_w}) /\ ({c} \in 0..{n_c})'.format(
         w=w, n_w=n_w, c=c, n_c=n_c)
     u &= aut.add_expr(s)
     if not aut.plus_one:
@@ -396,7 +396,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     aut.varlist['impl'] = list(aut.varlist['sys']) + [w, c]
     aut.prime_varlists()
     # initial condition for counter
-    s = '({c} = 0) /\ ({w} = {none})'.format(
+    s = r'({c} = 0) /\ ({w} = {none})'.format(
         c=c, w=w, none=n_holds)
     count = aut.add_expr(s)
     _make_init(count, winning, aut)
@@ -416,46 +416,46 @@ def is_realizable(win, aut):
     # decouple stepwise form from sharing of state initially
     if aut.plus_one:
         init = sys_init & (win | ~ env_init)
-        form = 'SysInit /\ (EnvInit => Win)'
+        form = r'SysInit /\ (EnvInit => Win)'
     else:
         init = (sys_init & win) | ~ env_init
-        form = 'EnvInit => (SysInit /\ Win)'
+        form = r'EnvInit => (SysInit /\ Win)'
     qinit = aut.qinit
-    if qinit == '\A \A':
+    if qinit == r'\A \A':
         assert sys_init == aut.true
         u = win | ~ env_init
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\A x, y:  EnvInit => Win\n'
+            '\\A x, y:  EnvInit => Win\n'
             'does not hold, so some `EnvInit` states are losing.')
-    elif qinit == '\E \E':
+    elif qinit == r'\E \E':
         assert env_init == aut.true
         vrs = env_vars + sys_vars
         u = aut.exist(vrs, win & sys_init)
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\E x, y:  SysInit /\ Win\n'
+            '\\E x, y:  SysInit /\\ Win\n'
             'does not hold, so no `SysInit` states are winning.')
-    elif qinit == '\A \E':
+    elif qinit == r'\A \E':
         u = aut.exist(sys_vars, init)
         u = aut.forall(env_vars, u)
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\A x:  \E y:  {form}\n'
+            '\\A x:  \\E y:  {form}\n'
             'does not hold, so for some `EnvInit` states, '
             'the component cannot pick an initial `SysInit` state \n'
             'that is also winning.'
             ).format(form=form)
-    elif qinit == '\E \A':
+    elif qinit == r'\E \A':
         u = aut.forall(env_vars, init)
         u = aut.exist(sys_vars, u)
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\E y:  \A x:  {form}\n'
+            '\\E y:  \\A x:  {form}\n'
             'does not hold, so the component cannot pick '
             'a single `SysInit` state such that for any \n'
             '`EnvInit` state, the initial state be winning.'
@@ -492,7 +492,7 @@ def _controllable_action(target, aut):
 
 
 def _make_init(internal_init, win, aut):
-    """Return initial conditions for implementation.
+    r"""Return initial conditions for implementation.
 
     Depending on `aut.qinit`,
     synthesize the initial condition `aut.init['impl']`
@@ -550,16 +550,16 @@ def _make_init(internal_init, win, aut):
     else:
         form = (sys_init & win) | ~ env_init
     assert is_state_predicate(form)
-    if qinit == '\A \A':
+    if qinit == r'\A \A':
         # shared-state, env picks initial state
         init = aut.true
-    elif qinit == '\E \E':
+    elif qinit == r'\E \E':
         # shared-state, sys picks initial state
         init = win & sys_init
-    elif qinit == '\A \E':
+    elif qinit == r'\A \E':
         # disjoint-state
         init = form
-    elif qinit == '\E \A':
+    elif qinit == r'\E \A':
         # disjoint-state
         init = aut.forall(env_vars, form)
     else:

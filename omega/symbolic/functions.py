@@ -1,4 +1,4 @@
-"""Functional synthesis.
+r"""Functional synthesis.
 
 Convert a predicate over input and output variables to multiple predicates
 that depend only on input variables, one predicate for each output variable.

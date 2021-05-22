@@ -95,7 +95,7 @@ def _split_always(u, action):
 def _split_liveness(u, recurrence, persistence):
     """Collect one generalized Streett pair."""
     assert not persistence  # GR(1), not GR(k)
-    flat_disj = flatten_op(u, '\/')
+    flat_disj = flatten_op(u, r'\/')
     for v in flat_disj.operands:
         op = v.operator
         if op == '<>':

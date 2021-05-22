@@ -1,4 +1,4 @@
-"""Realizability of properties expressed with the operator `WhilePlusHalf`.
+r"""Realizability of properties expressed with the operator `WhilePlusHalf`.
 
 The operator `WhilePlusHalf` implies the stepwise form:
 
@@ -35,14 +35,14 @@ aut.varlist['sys'] = ['y']
 aut.prime_varlists()
 # environment formulas
 env_init = aut.to_bdd('x = 1')
-env_next = aut.to_bdd('''
+env_next = aut.to_bdd(r'''
     \/ (x' \in 1..5)
     \/ (x' = x)
     ''')
 env_live = aut.to_bdd(' x = 2 ')
 # component formulas
-sys_init = aut.to_bdd('y \in 1..5  /\  (y = x)')
-sys_next = aut.to_bdd('''
+sys_init = aut.to_bdd(r'y \in 1..5  /\  (y = x)')
+sys_next = aut.to_bdd(r'''
     \/ (y' = x)
     \/ (x' = x  /\  y' = y)
     ''')
@@ -69,7 +69,7 @@ aut.moore = True  # a synthesis option that describes the implementation
 aut.plus_one = True  # a specification formula option, affects
     # init form and
     # the steady state (win set via the controllable step operator)
-aut.qinit = '\E \A'  # whether state is disjoint or initially shared:
+aut.qinit = r'\E \A'  # whether state is disjoint or initially shared:
     # a synthesis option that describes the kind of implementation
 
 # initial conditions

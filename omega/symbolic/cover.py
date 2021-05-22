@@ -523,12 +523,12 @@ def _floor(p_is_signature, p_is_prime,
     r &= p_like_q
     r &= q_is_prime
     r = fol.exist(bab.q_vars, r)
-    '''
+    r'''
     q = ', '.join(iter(p_to_q.values()))
     u = ', '.join(iter(p_to_u.values()))
     s = (
-        '\E {q}:  {q_is_prime} /\ {p_like_q} /\ '
-        '    \A {u}:  {u_like_q} => {p_leq_u}').format(
+        r'\E {q}:  {q_is_prime} /\ {p_like_q} /\ '
+        r'    \A {u}:  {u_like_q} => {p_leq_u}').format(
             q=q,
             u=u,
             q_is_prime=q_is_prime,
@@ -565,11 +565,11 @@ def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     r = u_is_signature & u_leq_q
     r = ~ r | u_leq_p
     r = fol.forall(bab.u_vars, r)
-    '''
+    r'''
     uvars = ', '.join(bab.u_vars)
     s = (
-        '\A {uvars}:  '
-        '    ({sig_u} /\ {u_leq_q}) '
+        r'\A {uvars}:  '
+        r'    ({sig_u} /\ {u_leq_q}) '
         '        => {u_leq_p}').format(
         uvars=uvars,
         sig_u=u_is_signature,
@@ -594,11 +594,11 @@ def _maxima(u, bab, fol):
     r = ~ r | bab.p_eq_q
     r = fol.forall(bab.q_vars, r)
     r &= u
-    '''
+    r'''
     q = ', '.join(bab.q_vars)
     s = (
-        '{u} /\ '
-        '\A {q}:  ({v} /\ {p_leq_q}) => ({p_eq_q})').format(
+        r'{u} /\ '
+        r'\A {q}:  ({v} /\ {p_leq_q}) => ({p_eq_q})').format(
             u=u,
             v=v,
             p_leq_q=bab.p_leq_q,

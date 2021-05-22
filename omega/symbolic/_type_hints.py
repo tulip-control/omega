@@ -86,7 +86,7 @@ def _list_type_hints(variables, table):
 
 
 def _list_limits(vrs, table):
-    """Return `list` of bitfield limits.
+    r"""Return `list` of bitfield limits.
 
     Each limit has the form `x \in a .. b`
 
@@ -139,6 +139,6 @@ def _conjoin_type_hints(vrs, fol):
 
 
 def _format_range(var, a, b):
-    """Return string for set containment `var \in a .. b`."""
+    r"""Return string for set containment `var \in a .. b`."""
     return r'{var} \in {a} .. {b}'.format(
         var=var, a=a, b=b)

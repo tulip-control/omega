@@ -64,10 +64,10 @@ def test_replace_with_primed():
     aut = trl.Automaton()
     aut.declare_variables(x=(0, 10), y=(0, 10))
     aut.declare_constants(z='bool')
-    u = aut.add_expr("(x = 1 /\ y = 2) \/ ~ z")
+    u = aut.add_expr(r"(x = 1 /\ y = 2) \/ ~ z")
     vrs = ['x', 'y']
     v = aut.replace_with_primed(vrs, u)
-    v_ = aut.add_expr("(x' = 1 /\ y' = 2) \/ ~ z")
+    v_ = aut.add_expr(r"(x' = 1 /\ y' = 2) \/ ~ z")
     assert v == v_, list(aut.pick_iter(v))
 
 
@@ -75,10 +75,10 @@ def test_replace_with_unprimed():
     aut = trl.Automaton()
     aut.declare_variables(x=(0, 10), y=(0, 10))
     aut.declare_constants(z='bool')
-    u = aut.add_expr("(x' = 1 /\ y' = 2) \/ ~ z")
+    u = aut.add_expr(r"(x' = 1 /\ y' = 2) \/ ~ z")
     vrs = ['x', 'y']
     v = aut.replace_with_unprimed(vrs, u)
-    v_ = aut.add_expr("(x = 1 /\ y = 2) \/ ~ z")
+    v_ = aut.add_expr(r"(x = 1 /\ y = 2) \/ ~ z")
     assert v == v_, list(aut.pick_iter(v))
 
 
@@ -86,12 +86,12 @@ def test_implies_type_hints():
     aut = trl.Automaton()
     aut.declare_variables(
         x=(0, 10), y=(0, 10), z='bool')
-    u = aut.add_expr('x \in 0..10 /\ y \in 0..10')
+    u = aut.add_expr(r'x \in 0..10 /\ y \in 0..10')
     assert aut.implies_type_hints(u)
     assert aut.implies_type_hints(u, vrs=['x', 'y'])
-    u = aut.add_expr('x \in 0..12 /\ y \in 0..10')
+    u = aut.add_expr(r'x \in 0..12 /\ y \in 0..10')
     assert not aut.implies_type_hints(u)
-    u = aut.add_expr('y \in 0..10')
+    u = aut.add_expr(r'y \in 0..10')
     assert not aut.implies_type_hints(u)
     assert aut.implies_type_hints(u, vrs=['y'])
 
@@ -102,8 +102,8 @@ def test_type_hint_for():
         x=(0, 10), y=(0, 10), z='bool')
     t = aut.type_hint_for(['x', 'y'])
     t_ = (
-        '((0 <= x) /\ (x  <= 10)) '
-        '/\ ((0 <= y) /\ (y  <= 10))')
+        r'((0 <= x) /\ (x  <= 10)) '
+        r'/\ ((0 <= y) /\ (y  <= 10))')
     assert t == t_, t
 
 
@@ -113,10 +113,10 @@ def test_type_action_for():
         x=(0, 10), y=(0, 10), z='bool')
     t = aut.type_action_for(['x', 'y'])
     t_ = (
-        "(((0 <= x) /\ (x  <= 10)) "
-        "/\ ((0 <= x') /\ (x'  <= 10))) "
-        "/\ (((0 <= y) /\ (y  <= 10)) "
-        "/\ ((0 <= y') /\ (y'  <= 10)))")
+        r"(((0 <= x) /\ (x  <= 10)) "
+        r"/\ ((0 <= x') /\ (x'  <= 10))) "
+        r"/\ (((0 <= y) /\ (y  <= 10)) "
+        r"/\ ((0 <= y') /\ (y'  <= 10)))")
     assert t == t_, t
 
 

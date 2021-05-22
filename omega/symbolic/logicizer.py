@@ -84,7 +84,7 @@ def _graph_to_formulas(
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
         if self_loops:
-            r = "({r}) \/ ({var}' = {var})".format(
+            r = r"({r}) \/ ({var}' = {var})".format(
                 r=r, var=nodevar)
         sys_tran.append(r)
         sys_tran.extend(nodepred)
@@ -97,7 +97,7 @@ def _graph_to_formulas(
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
-            r = "({r}) \/ ({var}' = {var})".format(
+            r = r"({r}) \/ ({var}' = {var})".format(
                 r=r, var=nodevar)
         env_tran.append(r)
         env_tran.extend(nodepred)
@@ -130,7 +130,7 @@ def _node_var_trans(g, nodevar, dvars):
         if r == 'True':
             continue
         # initial node vars
-        init.append('~ ({pre}) \/ ({r})'.format(pre=pre, r=r))
+        init.append(r'~ ({pre}) \/ ({r})'.format(pre=pre, r=r))
         # transitions of node vars
         trans.append("((({pre}) => ({r}))')".format(pre=pre, r=r))
     return (init, trans)

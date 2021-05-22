@@ -17,8 +17,8 @@ Slugsin syntax:
 from omega.symbolic.bdd import Lexer
 
 
-OPERATORS = {'!', '&', '|', '^', '\A', '\E', '\S'}
-BINARY_OPERATORS = {'&', '|', '^', '\A', '\E', '\S'}
+OPERATORS = {'!', '&', '|', '^', r'\A', r'\E', r'\S'}
+BINARY_OPERATORS = {'&', '|', '^', r'\A', r'\E', r'\S'}
 BINARY = {'AND', 'OR', 'XOR', 'FORALL', 'EXISTS', 'RENAME'}
 
 

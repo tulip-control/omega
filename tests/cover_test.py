@@ -51,14 +51,14 @@ def test_scaling_equality():
     u = lat.subseteq(varmap, aut)
     #
     s = (
-        '( '
-        '(z = 1  /\  y <= 0)  \/ '
-        '(x = 0  /\  z = 1)  \/ '
-        '(y >= 1  /\  x <= 0)  \/ '
-        '(y >= 1  /\  z <= 0)  \/ '
-        '(x >= 1  /\  z <= 0)  \/ '
-        '(x >= 1  /\  y <= 0) '
-        ') ')
+        r'( '
+        r'(z = 1  /\  y <= 0)  \/ '
+        r'(x = 0  /\  z = 1)  \/ '
+        r'(y >= 1  /\  x <= 0)  \/ '
+        r'(y >= 1  /\  z <= 0)  \/ '
+        r'(x >= 1  /\  z <= 0)  \/ '
+        r'(x >= 1  /\  y <= 0) '
+        r') ')
     f = aut.add_expr(s)
     prm = lat.Parameters()
     prm._px = px
@@ -68,20 +68,20 @@ def test_scaling_equality():
 def test_using_fol_context():
     c = _fol.Context()
     c.declare(x=(0, 5), y=(-4, 6))
-    s = ('1 <= x /\ x <= 3 /\ -2 <= y /\ y <= 4')
+    s = (r'1 <= x /\ x <= 3 /\ -2 <= y /\ y <= 4')
     u = c.add_expr(s)
     care = c.true
     r = cov.minimize(u, care, c)
     s = cov.dumps_cover(r, u, care, c, show_limits=True)
-    assert 'x \in 1 .. 3' in s, s
-    assert 'y \in -2 .. 4' in s, s
+    assert r'x \in 1 .. 3' in s, s
+    assert r'y \in -2 .. 4' in s, s
     s_ = '''\
 (* `f` depends on:  x, y *)
 (* `care` depends on:   *)
 (* The minimal cover is: *)
-/\ x \in 0 .. 7
-/\ y \in -8 .. 7
-/\ (x \in 1 .. 3) /\ (y \in -2 .. 4)'''
+/\\ x \\in 0 .. 7
+/\\ y \\in -8 .. 7
+/\\ (x \\in 1 .. 3) /\\ (y \\in -2 .. 4)'''
     assert s == s_, (s, s_)
 
 
@@ -95,19 +95,19 @@ def test_branching():
     #     max_cache_hard=2**25)
     aut.declare(x=(0, 10), y=(0, 25), z=(0, 25))
     s = (
-        '( '
-        '(z = 1  /\  y <= 0)  \/ '
-        '(x = 0  /\  z = 1)  \/ '
-        '(y >= 1  /\  x <= 0)  \/ '
-        '(y >= 1  /\  z <= 0)  \/ '
-        '(x >= 1  /\  z <= 0)  \/ '
-        '(x >= 1  /\  y <= 0) '
-        ') ')
+        r'( '
+        r'(z = 1  /\  y <= 0)  \/ '
+        r'(x = 0  /\  z = 1)  \/ '
+        r'(y >= 1  /\  x <= 0)  \/ '
+        r'(y >= 1  /\  z <= 0)  \/ '
+        r'(x >= 1  /\  z <= 0)  \/ '
+        r'(x >= 1  /\  y <= 0) '
+        r') ')
     f = aut.add_expr(s)
     s = (
-        '0 <= x  /\  x <= 2  /\ '
-        '0 <= y  /\  y <= 1  /\ '
-        '0 <= z  /\  z <= 1 '
+        r'0 <= x  /\  x <= 2  /\ '
+        r'0 <= y  /\  y <= 1  /\ '
+        r'0 <= z  /\  z <= 1 '
         )
     care_set = aut.add_expr(s)
     # care_set = aut.true
@@ -124,9 +124,9 @@ def test_cost():
     # to ensure unit testing
     prm.p_eq_q = lat.eq(prm._varmap, fol)
     s = (
-        '1 <= a_x /\ a_x <= 3 /\ b_x = 6 /\ '
-        '2 <= a_y /\ a_y <= 5 /\ '
-        '0 <= b_y /\ b_y <= 7')
+        r'1 <= a_x /\ a_x <= 3 /\ b_x = 6 /\ '
+        r'2 <= a_y /\ a_y <= 5 /\ '
+        r'0 <= b_y /\ b_y <= 7')
     u = fol.add_expr(s)
     r = cov._cost(u, prm, fol)
     assert r == 96, r
@@ -215,44 +215,44 @@ def test_cyclic_core():
     aut = _fol.Context()
     aut.declare(x=(0, 4), y=(0, 4), z=(0, 4))
     # cover = single prime
-    s = '(x < 3) /\ (y = 2)'
+    s = r'(x < 3) /\ (y = 2)'
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
     # cover = 2 primes
-    s = '(x <= 2) \/ (y <= 2)'
+    s = r'(x <= 2) \/ (y <= 2)'
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
     # no cyclic core
     s = (
-        '('
-        '(0 <= x  /\  x <= 1) \/ '
-        '(0 <= x  /\  x <= 1  /\  1 <= y  /\  y <= 3) \/ '
-        '(3 <= x  /\  x <= 4) \/ '
-        '(3 <= x  /\  x <= 4  /\  1 <= y  /\  y <= 3) \/ '
-        '(0 <= y  /\  y <= 1) \/ '
-        '(0 <= y  /\  y <= 1  /\  1 <= x  /\  x <= 3) \/ '
-        '(3 <= y  /\  y <= 4) \/ '
-        '(3 <= y  /\  y <= 4  /\  1 <= x  /\  x <= 3) '
-        ') /\ (0 <= x) /\ (x <= 4) /\ '
-        '(0 <= y) /\ (y <= 4) ')
+        r'('
+        r'(0 <= x  /\  x <= 1) \/ '
+        r'(0 <= x  /\  x <= 1  /\  1 <= y  /\  y <= 3) \/ '
+        r'(3 <= x  /\  x <= 4) \/ '
+        r'(3 <= x  /\  x <= 4  /\  1 <= y  /\  y <= 3) \/ '
+        r'(0 <= y  /\  y <= 1) \/ '
+        r'(0 <= y  /\  y <= 1  /\  1 <= x  /\  x <= 3) \/ '
+        r'(3 <= y  /\  y <= 4) \/ '
+        r'(3 <= y  /\  y <= 4  /\  1 <= x  /\  x <= 3) '
+        r') /\ (0 <= x) /\ (x <= 4) /\ '
+        r'(0 <= y) /\ (y <= 4) ')
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
     # no cyclic core
     s = (
-        '('
-        '(0 <= x  /\  x <= 3  /\  0 <= y  /\  y <= 1) \/ '
-        '(1 <= x  /\  x <= 4  /\  0 <= y  /\  y <= 1) \/ '
-        '(0 <= x  /\  x <= 3  /\  3 <= y  /\  y <= 4) \/ '
-        '(1 <= x  /\  x <= 4  /\  3 <= y  /\  y <= 4) \/ '
-        '(0 <= x  /\  x <= 1  /\  0 <= y  /\  y <= 3) \/ '
-        '(0 <= x  /\  x <= 1  /\  1 <= y  /\  y <= 4) \/ '
-        '(3 <= x  /\  x <= 4  /\  0 <= y  /\  y <= 3) \/ '
-        '(3 <= x  /\  x <= 4  /\  1 <= y  /\  y <= 4) '
-        ') /\ (0 <= x) /\ (x <= 4) /\ '
-        '(0 <= y) /\ (y <= 4) ')
+        r'('
+        r'(0 <= x  /\  x <= 3  /\  0 <= y  /\  y <= 1) \/ '
+        r'(1 <= x  /\  x <= 4  /\  0 <= y  /\  y <= 1) \/ '
+        r'(0 <= x  /\  x <= 3  /\  3 <= y  /\  y <= 4) \/ '
+        r'(1 <= x  /\  x <= 4  /\  3 <= y  /\  y <= 4) \/ '
+        r'(0 <= x  /\  x <= 1  /\  0 <= y  /\  y <= 3) \/ '
+        r'(0 <= x  /\  x <= 1  /\  1 <= y  /\  y <= 4) \/ '
+        r'(3 <= x  /\  x <= 4  /\  0 <= y  /\  y <= 3) \/ '
+        r'(3 <= x  /\  x <= 4  /\  1 <= y  /\  y <= 4) '
+        r') /\ (0 <= x) /\ (x <= 4) /\ '
+        r'(0 <= y) /\ (y <= 4) ')
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
@@ -262,16 +262,16 @@ def test_cyclic_core():
     # in order to test `_print_cyclic_core`
     logger.setLevel(logging.INFO)
     s = (
-        '('
-        '(z = 1  /\  y = 0)  \/ '
-        '(x = 0  /\  z = 1)  \/ '
-        '(y = 1  /\  x = 0)  \/ '
-        '(y = 1  /\  z = 0)  \/ '
-        '(x = 1  /\  z = 0)  \/ '
-        '(x = 1  /\  y = 0) '
-        ') /\ (0 <= x  /\  x <= 1  /\ '
-        '0 <= y  /\  y <= 1  /\ '
-        '0 <= z  /\  z <= 1) ')
+        r'('
+        r'(z = 1  /\  y = 0)  \/ '
+        r'(x = 0  /\  z = 1)  \/ '
+        r'(y = 1  /\  x = 0)  \/ '
+        r'(y = 1  /\  z = 0)  \/ '
+        r'(x = 1  /\  z = 0)  \/ '
+        r'(x = 1  /\  y = 0) '
+        r') /\ (0 <= x  /\  x <= 1  /\ '
+        r'0 <= y  /\  y <= 1  /\ '
+        r'0 <= z  /\  z <= 1) ')
     f = aut.add_expr(s)
     care_set = aut.true
     cov.cyclic_core(f, care_set, aut)
@@ -324,8 +324,8 @@ def test_needs_unfloors():
     """
     fol = _fol.Context()
     fol.declare(x=(0, 1), y=(0, 1))
-    f = fol.add_expr('x = 0 /\ y = 0')
-    care = fol.add_expr('''
+    f = fol.add_expr(r'x = 0 /\ y = 0')
+    care = fol.add_expr(r'''
         \/ (x = 0 /\ y = 0)
         \/ (x = 1 /\ y = 1)
         ''')
@@ -345,9 +345,9 @@ def test_max_transpose():
     # `p'` serves as `u`
     dvars = {'p': (0, 4), 'q': (0, 4), "p_cp": (0, 4)}
     fol.declare(**dvars)
-    s = '(p = 2) \/ (p = 4)'
+    s = r'(p = 2) \/ (p = 4)'
     p_is_prime = fol.add_expr(s)
-    s = '(p = 1) \/ (p = 3)'
+    s = r'(p = 1) \/ (p = 3)'
     p_is_signature = fol.add_expr(s)
     p_to_q = {'p': 'q'}
     # we use intervals `0..p` as literals
@@ -381,9 +381,9 @@ def test_transpose():
     fol = _fol.Context()
     dvars = {'p': (0, 4), 'q': (0, 4), "p_cp": (0, 4)}
     fol.declare(**dvars)
-    s = '(p = 1) \/ (p = 2) \/ (p = 4)'
+    s = r'(p = 1) \/ (p = 2) \/ (p = 4)'
     p_is_prime = fol.add_expr(s)
-    s = '(p = 1) \/ (p = 3)'
+    s = r'(p = 1) \/ (p = 3)'
     p_is_signature = fol.add_expr(s)
     p_to_q = {'p': 'q'}
     p_leq_q = fol.add_expr("p <= q")
@@ -401,7 +401,7 @@ def test_transpose():
     bab = cov._BranchAndBound(prm, fol)
     tau = cov._floor(
         p_is_signature, p_is_prime, bab, fol)
-    s = 'p = 1 \/ p = 3'
+    s = r'p = 1 \/ p = 3'
     tau_ = fol.add_expr(s)
     assert tau == tau_
 
@@ -409,7 +409,7 @@ def test_transpose():
 def test_contains_covered():
     fol = _fol.Context()
     fol.declare(p_cp=(0, 4), p=(0, 4), q=(0, 4))
-    s = 'p_cp = 1 \/ p_cp = 2 \/ p_cp = 5'
+    s = r'p_cp = 1 \/ p_cp = 2 \/ p_cp = 5'
     u_is_signature = fol.add_expr(s)
     prm = lat.Parameters()
     prm.p_vars = {'p'}
@@ -424,8 +424,8 @@ def test_contains_covered():
     supp = fol.support(p_like_q)
     # pprint.pprint(list(fol.pick_iter(p_like_q, care_vars=supp)))
     s = (
-        '((q >= 1) => (p >= 1)) /\ '
-        '((q >= 2) => (p >= 2)) /\ '
+        r'((q >= 1) => (p >= 1)) /\ '
+        r'((q >= 2) => (p >= 2)) /\ '
         '((q >= 5) => (p >= 5))')
     p_like_q_ = fol.add_expr(s)
     assert p_like_q == p_like_q_
@@ -434,10 +434,10 @@ def test_contains_covered():
 def test_maxima():
     prm = lat.Parameters()
     fol, _ = setup_aut(5, 5)
-    s = 'x = 1 \/ x = 3 \/ x = 4'
+    s = r'x = 1 \/ x = 3 \/ x = 4'
     u = fol.add_expr(s)
     # x <= y
-    s = '(x = 1 /\ y = 1) \/ (x = 1 /\ y = 3)'
+    s = r'(x = 1 /\ y = 1) \/ (x = 1 /\ y = 3)'
     prm.p_leq_q = fol.add_expr(s)
     prm.p_vars = {'x'}
     prm.q_vars = {'y'}
@@ -503,15 +503,15 @@ def simple_covering_problem():
     vrs = {'p': (0, 4), 'q': (0, 4), "p'": (0, 4)}
     # signatures
     fol.declare(**vrs)
-    s = '(p = 1) \/ (p = 2) \/ (p = 4)'
+    s = r'(p = 1) \/ (p = 2) \/ (p = 4)'
     x = fol.add_expr(s)
     # primes
-    s = '(p = 2) \/ (p = 3) \/ (p = 4) \/ (p = 5)'
+    s = r'(p = 2) \/ (p = 3) \/ (p = 4) \/ (p = 5)'
     y = fol.add_expr(s)
     p_to_q = dict(p='q')
     s = '''\
-           ((p < 4) /\ (q < 4) /\ (p <= q))
-        \/ ((p >= 4) /\ (q >= 4) /\ (p <= q))
+           ((p < 4) /\\ (q < 4) /\\ (p <= q))
+        \\/ ((p >= 4) /\\ (q >= 4) /\\ (p <= q))
     '''
     p_leq_q = fol.add_expr(s)
     return x, y, p_leq_q, p_to_q, fol
@@ -524,10 +524,10 @@ def test_partial_order():
         t=(0, 4), t_cp=(0, 4))
     px = dict(x=dict(a='w', b='t'))
     u_leq_p, p_leq_u = lat.partial_order(px, fol)
-    s = '(w <= w_cp) /\ (t_cp <= t)'
+    s = r'(w <= w_cp) /\ (t_cp <= t)'
     u_leq_p_ = fol.add_expr(s)
     assert u_leq_p == u_leq_p_
-    s = '(w_cp <= w) /\ (t <= t_cp)'
+    s = r'(w_cp <= w) /\ (t <= t_cp)'
     p_leq_u_ = fol.add_expr(s)
     assert p_leq_u == p_leq_u_
 
@@ -535,22 +535,22 @@ def test_partial_order():
 def test_essential_orthotopes():
     fol, prm = setup_orthotope_vars()
     # x in support(f)
-    f = fol.add_expr('1 < x  /\  x < 3')
+    f = fol.add_expr(r'1 < x  /\  x < 3')
     r = lat.essential_orthotopes(f, prm, fol)
-    s = '''
+    s = r'''
         /\ px = 2  /\  qx = 2
         /\ py = 0  /\  qy = 15
         '''
     r_ = fol.add_expr(s)
     assert r == r_, pprint.pformat(list(fol.pick_iter(r)))
     # x, y in support(f)
-    s = '''
+    s = r'''
         /\ -1 <= x  /\  x < 3
         /\ 4 < y  /\  y <= 17
         '''
     f = fol.add_expr(s)
     r = lat.essential_orthotopes(f, prm, fol)
-    s = '''
+    s = r'''
         /\ px = 0  /\  qx = 2
         /\ py = 5  /\  qy = 15
         '''
@@ -560,29 +560,29 @@ def test_essential_orthotopes():
 
 def test_prime_orthotopes():
     fol, prm = setup_orthotope_vars()
-    s = '''
+    s = r'''
         /\ ax <= px  /\  qx <= bx
         /\ ay <= py  /\  qy <= by
         '''
     p_leq_q = fol.add_expr(s)
-    s = '''
+    s = r'''
         /\ ax = px  /\  qx = bx
         /\ ay = py  /\  qy = by
         '''
     p_eq_q = fol.add_expr(s)
     # x in support(f)
-    f = fol.add_expr('2 <= x  /\  x <= 4')
+    f = fol.add_expr(r'2 <= x  /\  x <= 4')
     r = lat.prime_implicants(f, prm, fol)
-    s = '''
+    s = r'''
         /\ 2 = px  /\  qx = 4
         /\ 0 = py  /\  qy = 15
         '''
     r_ = fol.add_expr(s)
     assert r == r_, fol.count(r)  # pprint.pformat(list(fol.pick_iter(r)))
     # x, y in support(f)
-    f = fol.add_expr('1 <= x  /\  x <= 3  /\  y <= 3')
+    f = fol.add_expr(r'1 <= x  /\  x <= 3  /\  y <= 3')
     r = lat.prime_implicants(f, prm, fol)
-    s = '''
+    s = r'''
         /\ 1 = px  /\  qx = 3
         /\ 0 = py  /\  qy = 3
         '''
@@ -595,28 +595,28 @@ def test_implicant_orthotopes():
     # x in support(f)
     f = fol.add_expr('x < 2')
     r = lat._implicant_orthotopes(f, prm, fol)
-    s = '''
+    s = r'''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy <= 15
         '''
     r_ = fol.add_expr(s)
     assert r == r_, fol.support(r)
-    s = '''
+    s = r'''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy <= 14
         '''
     r_ = fol.add_expr(s)
     assert r != r_, fol.support(r)
     # x, y in support(f)
-    f = fol.add_expr('x < 2  /\  y < 3')
+    f = fol.add_expr(r'x < 2  /\  y < 3')
     r = lat._implicant_orthotopes(f, prm, fol)
-    s = '''
+    s = r'''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy < 3
         '''
     r_ = fol.add_expr(s)
     assert r == r_, fol.support(r)
-    s = '''
+    s = r'''
         /\ 0 <= px  /\  px <= qx  /\  qx < 2
         /\ 0 <= py  /\  py <= qy  /\  qy < 2
         '''
@@ -652,14 +652,14 @@ def setup_orthotope_vars():
 
 def test_none_covered():
     fol, prm = setup_aut()
-    cover = fol.add_expr('a_x = 0  /\  b_x = 5')
+    cover = fol.add_expr(r'a_x = 0  /\  b_x = 5')
     # some x are covered
-    f = fol.add_expr('5 <= x /\ x <= 10')
+    f = fol.add_expr(r'5 <= x /\ x <= 10')
     r = cov._none_covered(
         cover, f, prm, fol)
     assert r is False, r
     # no x is covered
-    f = fol.add_expr('6 <= x /\ x <= 10')
+    f = fol.add_expr(r'6 <= x /\ x <= 10')
     r = cov._none_covered(
         cover, f, prm, fol)
     assert r is True, r
@@ -671,15 +671,15 @@ def test_covers():
     # `setup_aut` because it will violate unit testing
     p_leq_q = lat.subseteq(prm._varmap, fol)
     prm.p_leq_q = p_leq_q
-    cover = fol.add_expr('a_x = 0  /\  b_x = 5')
+    cover = fol.add_expr(r'a_x = 0  /\  b_x = 5')
     # not covered
-    f = fol.add_expr('1 <= x  /\  x <= 6')
+    f = fol.add_expr(r'1 <= x  /\  x <= 6')
     r = cov._covers(cover, f, prm, fol)
     assert r is False, r
     r_ = cov._covers_naive(cover, f, prm, fol)
     assert r == r_, (r, r_)
     # covered
-    f = fol.add_expr('0 <= x  /\  x <= 4')
+    f = fol.add_expr(r'0 <= x  /\  x <= 4')
     r = cov._covers(cover, f, prm, fol)
     assert r is True, r
     r_ = cov._covers_naive(cover, f, prm, fol)
@@ -689,29 +689,29 @@ def test_covers():
 def test_concretize_implicants():
     fol, prm = setup_aut()
     impl = fol.add_expr(
-        '0 <= a_x  /\  a_x <= 3  /\ '
-        '1 <= b_x  /\  b_x <= 6 ')
+        r'0 <= a_x  /\  a_x <= 3  /\ '
+        r'1 <= b_x  /\  b_x <= 6 ')
     r = cov._concretize_implicants(impl, prm, fol)
-    r_ = fol.add_expr('0 <= x  /\  x <= 6')
+    r_ = fol.add_expr(r'0 <= x  /\  x <= 6')
     assert r == r_, (r, r_)
 
 
 def test_embed_as_implicants():
     fol, prm = setup_aut()
     prm._px = dict(x=prm._px['x'])  # restrict keys
-    u = fol.add_expr('2 <= x  /\  x <= 9')
+    u = fol.add_expr(r'2 <= x  /\  x <= 9')
     r = lat.embed_as_implicants(u, prm, fol)
     r_ = lat._embed_as_implicants_naive(u, prm._px, fol)
     assert r == r_, (r, r_)
     v = fol.add_expr(
-        '(a_x = 2  /\  b_x = 2) \/'
-        '(a_x = 3  /\  b_x = 3) \/'
-        '(a_x = 4  /\  b_x = 4) \/'
-        '(a_x = 5  /\  b_x = 5) \/'
-        '(a_x = 6  /\  b_x = 6) \/'
-        '(a_x = 7  /\  b_x = 7) \/'
-        '(a_x = 8  /\  b_x = 8) \/'
-        '(a_x = 9  /\  b_x = 9)')
+        r'(a_x = 2  /\  b_x = 2) \/'
+        r'(a_x = 3  /\  b_x = 3) \/'
+        r'(a_x = 4  /\  b_x = 4) \/'
+        r'(a_x = 5  /\  b_x = 5) \/'
+        r'(a_x = 6  /\  b_x = 6) \/'
+        r'(a_x = 7  /\  b_x = 7) \/'
+        r'(a_x = 8  /\  b_x = 8) \/'
+        r'(a_x = 9  /\  b_x = 9)')
     assert r == v
 
 
@@ -783,8 +783,8 @@ def test_orthotope_eq():
     varmap = prm._varmap
     r = lat.eq(varmap, fol)
     r_ = fol.add_expr(
-        'a_x = u_x /\ b_x = v_x /\ '
-        'a_y = u_y /\ b_y = v_y')
+        r'a_x = u_x /\ b_x = v_x /\ '
+        r'a_y = u_y /\ b_y = v_y')
     assert r == r_, (r, r_)
     d = dict(a_x=1, b_x=2, a_y=0, b_y=3)
     r = fol.let(d, r)
@@ -854,41 +854,41 @@ def setup_aut(xmax=15, ymax=15):
 def robots_example(fol):
     """Return cooperative winning set from ACC'16 example."""
     c = [
-        '(x = 0) /\ (y = 4)',
-        '(x = 0) /\ (y = 5)',
-        '(x = 0) /\ (y = 2)',
-        '(x = 0) /\ (y = 3)',
-        '(x = 0) /\ (y = 6)',
-        '(x = 0) /\ (y = 7)',
-        '(x = 1) /\ (y = 0)',
-        '(x = 1) /\ (y = 2)',
-        '(x = 1) /\ (y = 4)',
-        '(x = 1) /\ (y = 6)',
-        '(x = 1) /\ (y = 5)',
-        '(x = 1) /\ (y = 3)',
-        '(x = 1) /\ (y = 7)',
-        '(x = 2) /\ (y = 0)',
-        '(x = 2) /\ (y = 1)',
-        '(x = 2) /\ (y = 6)',
-        '(x = 2) /\ (y = 7)',
-        '(x = 3) /\ (y = 0)',
-        '(x = 3) /\ (y = 2)',
-        '(x = 3) /\ (y = 6)',
-        '(x = 3) /\ (y = 1)',
-        '(x = 3) /\ (y = 7)',
-        '(x = 4) /\ (y = 0)',
-        '(x = 4) /\ (y = 1)',
-        '(x = 4) /\ (y = 2)',
-        '(x = 4) /\ (y = 3)',
-        '(x = 4) /\ (y = 6)',
-        '(x = 4) /\ (y = 7)',
-        '(x = 5) /\ (y = 0)',
-        '(x = 5) /\ (y = 2)',
-        '(x = 5) /\ (y = 4)',
-        '(x = 5) /\ (y = 6)',
-        '(x = 5) /\ (y = 1)',
-        '(x = 5) /\ (y = 3)',
-        '(x = 5) /\ (y = 7)']
+        r'(x = 0) /\ (y = 4)',
+        r'(x = 0) /\ (y = 5)',
+        r'(x = 0) /\ (y = 2)',
+        r'(x = 0) /\ (y = 3)',
+        r'(x = 0) /\ (y = 6)',
+        r'(x = 0) /\ (y = 7)',
+        r'(x = 1) /\ (y = 0)',
+        r'(x = 1) /\ (y = 2)',
+        r'(x = 1) /\ (y = 4)',
+        r'(x = 1) /\ (y = 6)',
+        r'(x = 1) /\ (y = 5)',
+        r'(x = 1) /\ (y = 3)',
+        r'(x = 1) /\ (y = 7)',
+        r'(x = 2) /\ (y = 0)',
+        r'(x = 2) /\ (y = 1)',
+        r'(x = 2) /\ (y = 6)',
+        r'(x = 2) /\ (y = 7)',
+        r'(x = 3) /\ (y = 0)',
+        r'(x = 3) /\ (y = 2)',
+        r'(x = 3) /\ (y = 6)',
+        r'(x = 3) /\ (y = 1)',
+        r'(x = 3) /\ (y = 7)',
+        r'(x = 4) /\ (y = 0)',
+        r'(x = 4) /\ (y = 1)',
+        r'(x = 4) /\ (y = 2)',
+        r'(x = 4) /\ (y = 3)',
+        r'(x = 4) /\ (y = 6)',
+        r'(x = 4) /\ (y = 7)',
+        r'(x = 5) /\ (y = 0)',
+        r'(x = 5) /\ (y = 2)',
+        r'(x = 5) /\ (y = 4)',
+        r'(x = 5) /\ (y = 6)',
+        r'(x = 5) /\ (y = 1)',
+        r'(x = 5) /\ (y = 3)',
+        r'(x = 5) /\ (y = 7)']
     s = stx.disj(c)
     u = fol.add_expr(s)
     return u
@@ -898,7 +898,7 @@ def test_dumps_cover():
     fol = _fol.Context()
     fol.declare(x=(0, 4), y=(-5, 9))
     # care = TRUE
-    s = '2 <= x  /\  x <= 4'
+    s = r'2 <= x  /\  x <= 4'
     u = fol.add_expr(s)
     care = fol.true
     cover = cov.minimize(u, care, fol)
@@ -907,7 +907,7 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
-        '(x \in 2 .. 4)')
+        r'(x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # care doesn't imply type hints
     s = cov.dumps_cover(
@@ -917,7 +917,7 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
-        '(x \in 2 .. 4)')
+        r'(x \in 2 .. 4)')
     assert s == s_, (s, s_)
     # with limits
     s = cov.dumps_cover(
@@ -928,8 +928,8 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:   *)\n'
         '(* The minimal cover is: *)\n'
-        '/\ x \in 0 .. 7\n'
-        '/\ (x \in 2 .. 4)')
+        '/\\ x \\in 0 .. 7\n'
+        '/\\ (x \\in 2 .. 4)')
     assert s == s_, (s, s_)
     # care = type hints
     care = tyh._conjoin_type_hints(['x', 'y'], fol)
@@ -941,35 +941,35 @@ def test_dumps_cover():
         '(* `f` depends on:  x *)\n'
         '(* `care` depends on:  x, y *)\n'
         '(* The minimal cover is: *)\n'
-        '/\ x \in 0 .. 4\n'
-        '/\ y \in -5 .. 9\n'
-        '/\ (x \in 2 .. 4)\n'
-        '/\ care expression')
+        '/\\ x \\in 0 .. 4\n'
+        '/\\ y \\in -5 .. 9\n'
+        '/\\ (x \\in 2 .. 4)\n'
+        '/\\ care expression')
     assert s == s_, (s, s_)
 
 
 def test_vertical_op():
     c = ['a', 'b', 'c']
     s = stx.vertical_op(c)
-    s_ = '/\ a\n/\ b\n/\ c'
+    s_ = '/\\ a\n/\\ b\n/\\ c'
     assert s == s_, (s, s_)
-    c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
+    c = ['/\\ a\n/\\ b\n/\\ c', 'd', 'e']
     s = stx.vertical_op(c)
-    s_ = ('/\ /\ a\n'
-          '   /\ b\n'
-          '   /\ c\n'
-          '/\ d\n'
-          '/\ e')
+    s_ = ('/\\ /\\ a\n'
+          '   /\\ b\n'
+          '   /\\ c\n'
+          '/\\ d\n'
+          '/\\ e')
     assert s == s_, (s, s_)
-    c = ['/\ a\n/\ b\n/\ c', 'd', 'e']
+    c = ['/\\ a\n/\\ b\n/\\ c', 'd', 'e']
     s = stx.vertical_op(c, op='or')
-    s_ = '\/ /\ a\n   /\ b\n   /\ c\n\/ d\n\/ e'
+    s_ = '\\/ /\\ a\n   /\\ b\n   /\\ c\n\\/ d\n\\/ e'
     assert s == s_, (s, s_)
     c = ['e']
     s = stx.vertical_op(c)
     s_ = c[0]
     assert s == s_, (s, s_)
-    c = ['/\ a\n/\ b\n/\ c']
+    c = ['/\\ a\n/\\ b\n/\\ c']
     s = stx.vertical_op(c)
     s_ = c[0]
     assert s == s_, (s, s_)
@@ -1000,40 +1000,40 @@ def test_list_orthotope_expr():
     f = fol.add_expr('x = 1')
     care = fol.true
     s = (
-        '(a_x = 2) /\ (2 <= b_x) /\ (b_x <= 3) '
-        '/\ (a_y = 1 ) /\ (b_y = 5)')
+        r'(a_x = 2) /\ (2 <= b_x) /\ (b_x <= 3) '
+        r'/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
     r = lat.list_expr(cover, prm, fol)
     r = set(r)
-    r_ = {'(x = 2) /\ (y \in 1 .. 5)',
-          '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
+    r_ = {r'(x = 2) /\ (y \in 1 .. 5)',
+          r'(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
     assert r == r_, (r, r_)
     # simple syntax, for parsing back
     # (needed until able to parse `x \in a .. b` expressions)
     r = lat.list_expr(cover, prm, fol, simple=True)
     r = set(r)
-    r_ = {'(x = 2) /\ (1 <= y) /\ (y <= 5)',
-          '(2 <= x) /\ (x <= 3) /\ (1 <= y) /\ (y <= 5)'}
+    r_ = {r'(x = 2) /\ (1 <= y) /\ (y <= 5)',
+          r'(2 <= x) /\ (x <= 3) /\ (1 <= y) /\ (y <= 5)'}
     assert r == r_, (r, r_)
     # clipping on, but nothing to clip
     r = lat.list_expr(cover, prm, fol, use_dom=True)
     r = set(r)
-    r_ = {'(x = 2) /\ (y \in 1 .. 5)',
-          '(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
+    r_ = {r'(x = 2) /\ (y \in 1 .. 5)',
+          r'(x \in 2 .. 3) /\ (y \in 1 .. 5)'}
     assert r == r_, (r, r_)
     # clip using type hints
     s = (
-        '(a_x = -4) /\ (5 <= b_x)'
-        '/\ (a_y = 1 ) /\ (b_y = 5)')
+        r'(a_x = -4) /\ (5 <= b_x)'
+        r'/\ (a_y = 1 ) /\ (b_y = 5)')
     cover = fol.add_expr(s)
     r = lat.list_expr(cover, prm, fol, use_dom=True)
     r = set(r)
-    r_ = {'(y \in 1 .. 5)'}
+    r_ = {r'(y \in 1 .. 5)'}
     assert r == r_, (r, r_)
     # empty orthotopes
     s = (
-        '(a_x = -4) /\ (5 <= b_x)'
-        '/\ (a_y = 3 ) /\ (b_y = 1)')
+        r'(a_x = -4) /\ (5 <= b_x)'
+        r'/\ (a_y = 3 ) /\ (b_y = 1)')
     cover = fol.add_expr(s)
     with assert_raises(AssertionError):
         lat.list_expr(cover, prm, fol, use_dom=True)
@@ -1068,18 +1068,18 @@ def test_check_type_hint():
 def test_care_implies_type_hints():
     fol = _fol.Context()
     fol.declare(x=(-4, 5), y=(-7, 15))
-    f = fol.add_expr('0 < x  /\  x < 4')
-    care = fol.add_expr('-2 <= y  /\  y <= 4')
+    f = fol.add_expr(r'0 < x  /\  x < 4')
+    care = fol.add_expr(r'-2 <= y  /\  y <= 4')
     r = cov._care_implies_type_hints(f, care, fol)
     assert r is False, r
     care = fol.add_expr(
-        '1 <= x  /\  x <= 6  /\ '
-        '-2 <= y  /\  y <= 4')
+        r'1 <= x  /\  x <= 6  /\ '
+        r'-2 <= y  /\  y <= 4')
     r = cov._care_implies_type_hints(f, care, fol)
     assert r is False, r
     care = fol.add_expr(
-        '1 <= x  /\  x <= 5  /\ '
-        '-2 <= y  /\  y <= 4')
+        r'1 <= x  /\  x <= 5  /\ '
+        r'-2 <= y  /\  y <= 4')
     r = cov._care_implies_type_hints(f, care, fol)
     assert r is True, r
 
@@ -1087,11 +1087,11 @@ def test_care_implies_type_hints():
 def test_f_implies_care():
     fol = _fol.Context()
     fol.declare(x=(-4, 5))
-    f = fol.add_expr('0 < x  /\  x < 4')
-    care = fol.add_expr('-2 <= x  /\  x <= 4')
+    f = fol.add_expr(r'0 < x  /\  x < 4')
+    care = fol.add_expr(r'-2 <= x  /\  x <= 4')
     r = cov._f_implies_care(f, care, fol)
     assert r is True, r
-    care = fol.add_expr('-2 <= x  /\  x <= 2')
+    care = fol.add_expr(r'-2 <= x  /\  x <= 2')
     r = cov._f_implies_care(f, care, fol)
     assert r is False, r
 
@@ -1114,10 +1114,10 @@ def test_list_limits():
         x=dict(type='int', dom=(-4, 5), width=4, signed=True),
         y=dict(type='int', dom=(-7, 15), width=5, signed=True))
     r = tyh._list_limits(['x'], table)
-    r_ = ['x \in -8 .. 7']
+    r_ = [r'x \in -8 .. 7']
     assert r == r_, (r, r_)
     r = tyh._list_limits(['x', 'y'], table)
-    r_ = ['x \in -8 .. 7', 'y \in -16 .. 15']
+    r_ = [r'x \in -8 .. 7', r'y \in -16 .. 15']
     assert r == r_, (r, r_)
 
 
@@ -1153,23 +1153,23 @@ def test_conjoin_type_hints():
     fol.declare(x=(-4, 5), y=(-7, 15))
     vrs = ['x']
     u = tyh._conjoin_type_hints(vrs, fol)
-    u_ = fol.add_expr('-4 <= x  /\  x <= 5')
+    u_ = fol.add_expr(r'-4 <= x  /\  x <= 5')
     assert u == u_, (u, u_)
     vrs = ['y']
     u = tyh._conjoin_type_hints(vrs, fol)
-    u_ = fol.add_expr('-7 <= y  /\  y <= 15')
+    u_ = fol.add_expr(r'-7 <= y  /\  y <= 15')
     assert u == u_, (u, u_)
     vrs = ['x', 'y']
     u = tyh._conjoin_type_hints(vrs, fol)
     u_ = fol.add_expr(
-        '-4 <= x  /\  x <= 5 /\ '
-        '-7 <= y  /\  y <= 15')
+        r'-4 <= x  /\  x <= 5 /\ '
+        r'-7 <= y  /\  y <= 15')
     assert u == u_, (u, u_)
 
 
 def test_format_range():
     r = tyh._format_range('wqd', 'g', 'k')
-    r_ = 'wqd \in g .. k'
+    r_ = r'wqd \in g .. k'
     assert r == r_, (r, r_)
 
 
@@ -1177,7 +1177,7 @@ def test_orthotopes_iter():
     fol = _fol.Context()
     fol.declare(p=(2, 9))
     # careful with the type hint
-    u = fol.add_expr('(0 <= p) /\ (p <= 10)')
+    u = fol.add_expr(r'(0 <= p) /\ (p <= 10)')
     c = list(lat._orthotopes_iter(u, fol))
     assert len(c) == 11, c
 

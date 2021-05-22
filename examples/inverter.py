@@ -10,14 +10,14 @@ aut.varlist.update(env=['foo'], sys=['bar'])
 aut.prime_varlists()
 
 # specify an inverter
-aut.init['env'] = ' foo \in 1..15 '
-aut.init['sys'] = ' bar \in -15..-1 '
-aut.action['env'] = '''
+aut.init['env'] = r' foo \in 1..15 '
+aut.init['sys'] = r' bar \in -15..-1 '
+aut.action['env'] = r'''
     (* type invariant *)
     /\ foo \in 1..15
     /\ foo' \in 1..15
     '''
-aut.action['sys'] = '''
+aut.action['sys'] = r'''
     (* type invariant *)
     /\ (bar \in -15..-1)
     /\ (bar' \in -15..-1)
@@ -31,7 +31,7 @@ aut.win['[]<>'] = aut.bdds_from(' bar = - 3 ')
 
 aut.plus_one = True  # strictly causal stepwise implication
 aut.moore = True  # implementation reads current state; not x'
-aut.qinit = '\E \A'  # disjoint-state throughout
+aut.qinit = r'\E \A'  # disjoint-state throughout
 
 fixpoint_iterates = gr1.solve_streett_game(aut)
 gr1.make_streett_transducer(*fixpoint_iterates, aut)

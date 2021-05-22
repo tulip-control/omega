@@ -17,13 +17,13 @@ def test_action_to_steps():
     aut.varlist[env] = ['x']
     aut.varlist[sys] = ['y']
     keys = ('x', 'y')
-    aut.init[env] = aut.add_expr('x /\ (y = 1)')
+    aut.init[env] = aut.add_expr(r'x /\ (y = 1)')
     aut.init[sys] = aut.true
     aut.action[env] = aut.true
     aut.action[sys] = aut.add_expr("y' /= y")
     aut.win['<>[]'] = aut.bdds_from('x')
     aut.win['[]<>'] = aut.bdds_from('y != 1')
-    aut.qinit = '\A \A'
+    aut.qinit = r'\A \A'
     aut.moore = True
     aut.prime_varlists()
     g = enum.action_to_steps(
@@ -46,8 +46,8 @@ def test_action_to_steps():
 def test_enumerate_state_machine():
     aut = symbolic.Automaton()
     aut.declare_variables(x='bool', y=(0, 17))
-    init = aut.add_expr('x /\ (y = 1)')
-    action = aut.add_expr('''
+    init = aut.add_expr(r'x /\ (y = 1)')
+    action = aut.add_expr(r'''
         /\ ( (x /\ (y = 1)) => (~ x' /\ (y' = 2)) )
         /\ ( (~ x /\ (y = 2)) => (x' /\ (y' = 1)) )
         ''')
@@ -75,7 +75,7 @@ def test_init_search():
     fol = _init_context(aut)
     umap = dict()
     keys = ['x']
-    qinit = '\A \E'
+    qinit = r'\A \E'
     queue, visited = enum._init_search(
         g, aut, umap, keys, qinit)
     assert len(queue) == 1, queue
@@ -87,7 +87,7 @@ def test_forall_init():
         x=(3, 5), y='bool', z='bool')
     aut.varlist = dict(env=['x'], sys=['y', 'z'])
     # single initial state
-    s = '(x = 4) /\ ~ y /\ z'
+    s = r'(x = 4) /\ ~ y /\ z'
     aut.init['env'] = aut.add_expr(s)
     aut.init['sys'] = aut.true
     aut.build()
@@ -105,8 +105,8 @@ def test_forall_init():
     assert d == d_, d
     # multiple initial states: should pick all
     s = (
-        '(x \in 3..5) /\ (x < 5) '
-        '/\ ~ z /\ (z <=> TRUE \/ z <=> FALSE)')
+        r'(x \in 3..5) /\ (x < 5) '
+        r'/\ ~ z /\ (z <=> TRUE \/ z <=> FALSE)')
     aut.init['env'] = aut.add_expr(s)
     aut.build()
     g = nx.DiGraph()
@@ -130,7 +130,7 @@ def test_exist_init():
     aut.varlist = dict(env={'x'}, sys={'y', 'z'})
     # single initial state
     aut.init['env'] = aut.true
-    aut.init['sys'] = '(x = 1) /\ y /\ z'
+    aut.init['sys'] = r'(x = 1) /\ y /\ z'
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -145,7 +145,7 @@ def test_exist_init():
     d_ = dict(x=1, y=True, z=True)
     assert d == d_, d
     # multiple initial states: should pick one
-    s = '(x = 1) /\ y'
+    s = r'(x = 1) /\ y'
     aut.init['env'] = aut.add_expr(s)
     a = aut.build()
     g = nx.DiGraph()
@@ -169,7 +169,7 @@ def test_forall_exist_init():
     aut.varlist = dict(env={'x'}, sys={'y'})
     # single initial state
     aut.init['env'] = 'x'
-    aut.init['sys'] = 'x /\ y'
+    aut.init['sys'] = r'x /\ y'
     aut.build()
     g = nx.DiGraph()
     fol = _init_context(aut)
@@ -289,7 +289,7 @@ def test_add_to_visited():
     values = dict(x=True, y=5)
     visited = bdd.false
     new_visited = enum._add_to_visited(values, visited, c)
-    s = 'x /\ (y = 5)'
+    s = r'x /\ (y = 5)'
     u = c.add_expr(s)
     assert new_visited == u
 

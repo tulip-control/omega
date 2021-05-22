@@ -135,7 +135,7 @@ class Automaton(object):
         self.vars = dict()
         self.moore = True
         self.plus_one = True
-        self.qinit = '\A \A'
+        self.qinit = r'\A \A'
         # formulas
         self.init = dict(env=list(), sys=list())
         self.action = dict(env=list(), sys=list())

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+
 from dd import bdd as _bdd
 import networkx as nx
 from omega.logic import bitvector as bv

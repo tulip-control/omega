@@ -6,13 +6,13 @@ from pkg_resources import parse_version
 # import git
 
 
-name = 'omega'
-description = (
+NAME = 'omega'
+DESCRIPTION = (
     'Symbolic algorithms for solving '
     'games of infinite duration.')
-url = 'https://github.com/tulip-control/{name}'.format(name=name)
+URL = 'https://github.com/tulip-control/{name}'.format(name=NAME)
 README = 'README.md'
-VERSION_FILE = '{name}/_version.py'.format(name=name)
+VERSION_FILE = '{name}/_version.py'.format(name=NAME)
 MAJOR = 0
 MINOR = 4
 MICRO = 0
@@ -21,7 +21,7 @@ VERSION = '{major}.{minor}.{micro}'.format(
 VERSION_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
-install_requires = [
+INSTALL_REQUIRES = [
     'astutils >= 0.0.3',
     'dd >= 0.5.5',
     'humanize >= 0.5.1',
@@ -29,9 +29,9 @@ install_requires = [
     'networkx >= 2.0',
     'ply >= 3.6, <= 3.10',
     'pydot >= 1.2.2']
-setup_requires = ['setuptools >= 38.6.0']
-tests_require = ['nose >= 1.3.4']
-classifiers = [
+SETUP_REQUIRES = ['setuptools >= 38.6.0']
+TESTS_REQUIRE = ['nose >= 1.3.4']
+CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Science/Research',
     'License :: OSI Approved :: BSD License',
@@ -46,7 +46,7 @@ classifiers = [
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Topic :: Scientific/Engineering']
-keywords = [
+KEYWORDS = [
     'first-order', 'propositional', 'logic',
     'quantifier', 'forall', 'exists',
     'fixpoint', 'mu-calculus', 'formula', 'flatten',
@@ -109,23 +109,23 @@ def run_setup():
     with open(README) as fd:
         long_description = fd.read()
     setup(
-        name=name,
+        name=NAME,
         version=version,
-        description=description,
+        description=DESCRIPTION,
         long_description=long_description,
         long_description_content_type='text/markdown',
         author='Caltech Control and Dynamical Systems',
         author_email='tulip@tulip-control.org',
-        url=url,
+        url=URL,
         license='BSD',
-        setup_requires=setup_requires,
-        install_requires=install_requires,
-        tests_require=tests_require,
-        packages=[name, 'omega.games',
+        setup_requires=SETUP_REQUIRES,
+        install_requires=INSTALL_REQUIRES,
+        tests_require=TESTS_REQUIRE,
+        packages=[NAME, 'omega.games',
                   'omega.logic', 'omega.symbolic'],
-        package_dir={name: name},
-        classifiers=classifiers,
-        keywords=keywords)
+        package_dir={NAME: NAME},
+        classifiers=CLASSIFIERS,
+        keywords=KEYWORDS)
 
 
 if __name__ == '__main__':

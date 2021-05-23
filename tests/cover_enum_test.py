@@ -39,23 +39,23 @@ def test_example_of_strong_reduction():
     fol.declare(**u_vars)
     p_eq_q = fol.to_bdd(r'p \in 0..8  /\  q \in 0..8  /\ p = q')
     leq = r'''
-    # (* layer 1 *)
+    (* layer 1 *)
     \/ (p = 0  /\  q = 6)
     \/ (p = 0  /\  q = 7)
     \/ (p = 0  /\  q = 8)
-    # (* layer 2 *)
+    (* layer 2 *)
     \/ (p = 6  /\  q = 2)
     \/ (p = 6  /\  q = 3)
     \/ (p = 7  /\  q = 3)
     \/ (p = 7  /\  q = 4)
     \/ (p = 8  /\  q = 4)
     \/ (p = 8  /\  q = 5)
-    # (* layer 3 *)
+    (* layer 3 *)
     \/ (p = 2  /\  q = 1)
     \/ (p = 3  /\  q = 1)
     \/ (p = 4  /\  q = 1)
     \/ (p = 5  /\  q = 1)
-    # transitivity
+    (* transitivity *)
     \/ (p = 0 /\ q = 2)
     \/ (p = 0 /\ q = 3)
     \/ (p = 0 /\ q = 4)
@@ -65,7 +65,7 @@ def test_example_of_strong_reduction():
     \/ (p = 6 /\ q = 1)
     \/ (p = 7 /\ q = 1)
     \/ (p = 8 /\ q = 1)
-    # equality
+    (* equality *)
     \/ (p = q /\ p \in 0..8 /\ q \in 0..8)
     '''
     p_leq_q = fol.to_bdd(leq)
@@ -341,15 +341,15 @@ def test_cyclic_core_fixpoint_recursive():
     # | |
     # 0
     leq = r'''
-    # (* layer 1 *)
+    (* layer 1 *)
     \/ (p = 0  /\  q = 1)
     \/ (p = 0  /\  q = 2)
-    # (* layer 2 *)
+    (* layer 2 *)
     \/ (p = 1  /\  q = 3)
     \/ (p = 2  /\  q = 3)
-    # transitivity
+    (* transitivity *)
     \/ (p = 0 /\ q = 3)
-    # equality
+    (* equality *)
     \/ (p = q /\ p \in 0..3)
     '''
     p_leq_q = fol.to_bdd(leq)

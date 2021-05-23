@@ -1105,8 +1105,9 @@ expr ::= expr '*' expr
        | expr '-' expr
 
        | expr '=' expr
-       | expr '!=' expr
-       | expr '/=' expr
+       | expr '#' expr  # not equal
+       | expr '!=' expr  # not equal
+       | expr '/=' expr  # not equal
        | expr '<=' expr
        | expr '>=' expr
 
@@ -1189,7 +1190,7 @@ The token precedence (lowest to highest) and associativity
 - `/\`, `&` (l)
 - `[]`, `<>`, `-[]`, `-<>` (l)
 - `U`, `W`, `R`, `S`, `T` (l)
-- `=`, `!=` (l)
+- `=`, `#`, `/=`, `!=` (l)
 - `<=`, `>=`, `>` (l)
 - `+`, `-` (l)
 - `*`, `/`, `%` (l)
@@ -1198,6 +1199,7 @@ The token precedence (lowest to highest) and associativity
 - `'`, `.` (l)
 
 Comments start at `(*` and close at `*)`, which can appear on different lines.
+One-line comments start at `\*` and extend to the end of the line.
 
 
 ## The deprecated class `omega.symbolic.symbolic.Automaton`

@@ -71,8 +71,7 @@ class Lexer(astutils.Lexer):
         return t
 
     def t_NEQUALS(self, t):
-        r'\!\=|/\='
-        # symbol `#` already marks comments
+        r'\!\=|/\=|\#'
         return t
 
     def t_NOT(self, t):
@@ -134,7 +133,7 @@ class Lexer(astutils.Lexer):
     t_ignore = " \t"
 
     def t_comment(self, t):
-        r'\#.*'
+        r' \\ \* [^\n]* \n '
         return
 
     def t_multiline_comment(self, t):

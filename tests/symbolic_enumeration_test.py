@@ -4,7 +4,7 @@ import logging
 import networkx as nx
 
 from omega.symbolic import enumeration as enum
-from omega.symbolic import symbolic
+from omega.symbolic import temporal as trl
 
 
 logging.getLogger('astutils').setLevel('ERROR')
@@ -12,12 +12,10 @@ logging.getLogger('omega').setLevel('ERROR')
 
 
 def test_relation_to_graph():
-    a = symbolic.Automaton()
-    a.vars['x'] = dict(type='int', dom=(0, 5), owner='sys')
-    a.vars['y'] = dict(type='bool', owner='sys')
-    aut = a.build()
+    aut = trl.Automaton()
+    aut.declare_variables(x=(0, 5), y='bool')
     u = aut.add_expr("(x = 4) & y & (x' = 0)")
-    care_bits = aut.bdd.vars
+    care_bits = set(aut.bdd.vars)
     g = enum.relation_to_graph(
         u, aut, care_bits=care_bits)
     assert len(g) == 3, g.nodes()

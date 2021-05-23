@@ -5,6 +5,7 @@ Integers are decoded from binary to decimal.
 # Copyright 2015 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
+import copy
 import logging
 import math
 
@@ -12,6 +13,7 @@ import natsort
 import networkx as nx
 
 from omega.logic import bitvector as bv
+from omega.logic import syntax as stx
 from omega.symbolic import prime as scope
 from omega.symbolic import symbolic
 
@@ -53,7 +55,7 @@ def relation_to_graph(
     # to nx graph
     g = nx.DiGraph()
     # fix an order of keys for lookup
-    keys = list(aut.vars)
+    keys = [k for k in aut.vars if not stx.isprimed(k)]
     umap = dict()
     for model in c:
         # model = model of relation = edge
@@ -61,10 +63,10 @@ def relation_to_graph(
         source = dict()
         target = dict()
         for var, value in model.items():
-            if var in aut.vars:
-                source[var] = value
-            else:
+            if stx.isprimed(var):
                 target[var] = value
+            else:
+                source[var] = value
         # map valuation to g node
         target = _unprime_any_primed(target)
         u = _find_or_add_model(source, umap, keys)
@@ -156,16 +158,15 @@ def _make_table(
     The variables in `a.vars` should be unprimed.
     """
     bdd = aut.bdd
-    care_relation = _care_relation(care_source, care_target,
-                                   aut.prime, bdd)
-    t = symbolic._prime_and_order_table(aut.vars)
+    care_relation = _care_relation(care_source, care_target, bdd)
+    t = copy.deepcopy(aut.vars)
     if care_bits is not None:
         assert scope.support_issubset(u, care_bits, bdd), (
             support, care_bits)
     return t, care_relation
 
 
-def _care_relation(source, target, prime, bdd):
+def _care_relation(source, target, bdd):
     """Return product `source` with primed `target`.
 
     @param source: care set for source nodes
@@ -176,9 +177,27 @@ def _care_relation(source, target, prime, bdd):
     if source is None or target is None:
         care_relation = None
         return care_relation
-    primed_target = bdd.rename(target, prime)
+    primed_target = _prime_bits(target)
     care_relation = source & primed_target
     return care_relation
+
+
+def _prime_bits(u):
+    """Prime the bits in `u.support` that are not constants.
+
+    This function is similar to the function
+    `omega.symbolic.prime.prime`, with the difference that
+    the latter works with variables of
+    `omega.symbolic.fol.Context.vars`.
+
+    @param u: `dd.autoref.Function` or `dd.cudd.Function`
+    """
+    support = u.support  # bits
+    assert not any(stx.isprimed(name) for name in support), support
+    # omit constants
+    var_bits = {bit for bit in support if stx.prime(bit) in u.bdd.vars}
+    let = {bit: stx.prime(bit) for bit in var_bits}
+    return u.let(**let)
 
 
 def _enumerate_bdd(

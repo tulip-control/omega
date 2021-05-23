@@ -20,7 +20,8 @@ log.setLevel('ERROR')
 
 
 def test_symbolic_automaton():
-    aut = symbolic.Automaton()
+    with pytest.warns(PendingDeprecationWarning):
+        aut = symbolic.Automaton()
     aut.vars['x'] = dict(
         type='bool',
         owner='env')

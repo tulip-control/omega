@@ -11,6 +11,13 @@ DESCRIPTION = (
     'Symbolic algorithms for solving '
     'games of infinite duration.')
 PACKAGE_URL = 'https://github.com/tulip-control/{name}'.format(name=PACKAGE_NAME)
+PROJECT_URLS = {
+    'Bug Tracker':
+        'https://github.com/tulip-control/omega/issues',
+    'Documentation':
+        'https://github.com/tulip-control/omega/blob/main/doc/doc.md',
+    'Source Code':
+        'https://github.com/tulip-control/omega'}
 README = 'README.md'
 VERSION_FILE = '{name}/_version.py'.format(name=PACKAGE_NAME)
 MAJOR = 0
@@ -118,6 +125,7 @@ def run_setup():
         author='Caltech Control and Dynamical Systems',
         author_email='tulip@tulip-control.org',
         url=PACKAGE_URL,
+        project_urls=PROJECT_URLS,
         license='BSD',
         python_requires=PYTHON_REQUIRES,
         setup_requires=SETUP_REQUIRES,

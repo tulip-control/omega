@@ -77,7 +77,7 @@ which states can be initial, and how the state can change.
 The computational cost of synthesis depends mainly on the liveness part of
 the specification. Synthesis of implementations from specifications with
 one generalized Streett pair as liveness formula has [reasonable complexity](
-    http://dx.doi.org/10.1007/11609773_24). This kind of liveness properties
+    https://doi.org/10.1007/11609773_24). This kind of liveness properties
 is also known as GR(1). A Streett pair has the form:
 
 ```tla
@@ -161,7 +161,7 @@ A symbolic automaton provides a “context” for symbolic computation, in the
 sense of a [symbol table](https://en.wikipedia.org/wiki/Symbol_table),
 together with a translator from first-order formulas to BDDs.
 This notion of context aligns with TLA+ contexts (see Sec. 17.3 on page 324
-of the [TLA+ manual](http://lamport.azurewebsites.net/tla/book-02-08-08.pdf)).
+of the [TLA+ manual](https://lamport.azurewebsites.net/tla/book-02-08-08.pdf)).
 
 
 ```python
@@ -399,7 +399,7 @@ assignments = list(ctx.pick_iter(u, care_vars=['y']))
 
 The first call to `pick_iter` did a full enumeration of satisfying assignments
 over the records `[x: 0..7, y: BOOLEAN]` ([TLA+ records](
-    http://lamport.azurewebsites.net/tla/summary.pdf))
+    https://lamport.azurewebsites.net/tla/summary.pdf))
 whereas the second call exhaustively enumerated only over the type hints
 of the variable `y`.
 
@@ -422,7 +422,8 @@ representation is called “semi-symbolic”.
 For convenience, there are two flavors:
 
 - `automata.Automaton`: describes a language of (in)finite trees (sequences).
-  This represents an [alternating automaton](http://doi.org/10.1007/3-540-60915-6_6)
+  This represents an [alternating automaton](
+    https://doi.org/10.1007/3-540-60915-6_6)
   with the desired acceptance condition (Buchi, Rabin, Streett, Muller, parity,
   etc.), variables as alphabet, and formulas as guards labeling edges.
   A set of `universal_nodes` marks those nodes where path quantification is
@@ -430,7 +431,8 @@ For convenience, there are two flavors:
 
 - `automata.TransitionSystem`: describes a transition relation of a discrete
   system. Nodes can be labeled with state predicates (formulas over unprimed
-  variables), and edges with [actions](http://dx.doi.org/10.1145/177492.177726)
+  variables), and edges with [actions](
+    https://doi.org/10.1145/177492.177726)
   (formulas over primed variables). Some variables can be universally
   quantified (inputs), the rest existentially (outputs). A transition system
   can be viewed as an automaton with trivial acceptance condition
@@ -439,7 +441,7 @@ For convenience, there are two flavors:
     https://en.wikipedia.org/wiki/Kripke_structure_%28model_checking%29),
   or -when an environment is present- as a [contracted](
     https://en.wikipedia.org/wiki/Edge_contraction) description of a bipartite
-  [game graph](http://dx.doi.org/10.1016/0168-0072(93)90036-D).
+  [game graph](https://doi.org/10.1016/0168-0072(93)90036-D).
 
 Let's create a small transition system:
 
@@ -526,7 +528,7 @@ THEOREM Component => Spec
 
 As noted above, the complexity of synthesis depends on what kind of liveness
 formulas are in `EnvLive` and `SysLive`. [GR(1) synthesis](
-    http://dx.doi.org/10.1016/j.jcss.2011.08.007)
+    https://doi.org/10.1016/j.jcss.2011.08.007)
 handles conjunctions of recurrence formulas in these operators.
 As an example:
 
@@ -990,7 +992,7 @@ infix syntax.
 The workflow for compiling a symbol table is shown below.
 
 ![bitblasting workflow](
-  https://rawgithub.com/johnyf/binaries/master/omega/bitblasting.svg)
+  https://rawgithub.com/johnyf/binaries/main/omega/bitblasting.svg)
 
 The functions that prime and order variables are described in the
 [BDD section](#bddizing).
@@ -1041,11 +1043,13 @@ package. An effort has been made to reuse the same parsers as much as
 possible, and change only the backend. The main mechanism for matching one
 frontend with multiple backends is by replacing the AST nodes used.
 By subclassing a prototype AST, and overriding the flattening methods, any
-desired backend can be created for each parser. This is further supported by [`astutils`](https://pypi.org/project/astutils/).
+desired backend can be created for each parser. This is further supported by
+[`astutils`](https://pypi.org/project/astutils/).
 
 Linear temporal logic (LTL) and a fragment of the raw temporal logic of
 actions (TLA+) are supported. The past fragment of LTL is translated to
-the future fragment using [temporal testers](http://doi.org/10.1007/BFb0055036)
+the future fragment using [temporal testers](
+    https://doi.org/10.1007/BFb0055036)
 (see `omega.logic.past.translate`).
 
 If a formula is a conjunction of an initial predicate, safety formulas of
@@ -1067,9 +1071,11 @@ can be:
 	- pretty-printed in infix syntax for debugging purposes,
 - fed to a synthesizer that admits input in this syntax.
 
-![LTL -> BDD](https://rawgithub.com/johnyf/binaries/master/omega/ltl_to_bdd.svg)
+![LTL -> BDD](
+    https://rawgithub.com/johnyf/binaries/main/omega/ltl_to_bdd.svg)
 
-![details of parsing during bitblasting](https://rawgithub.com/johnyf/binaries/master/omega/fol_to_bdd_details.svg)
+![details of parsing during bitblasting](
+    https://rawgithub.com/johnyf/binaries/main/omega/fol_to_bdd_details.svg)
 
 
 
@@ -1238,7 +1244,7 @@ of those components are used instead of `"env"` and `"sys"`.
 The classes `omega.symbolic.temporal.Automaton` and
 `omega.symbolic.symbolic.Automaton` are inspired by the design of the class
 [`tulip.spec.form.GRSpec`](
-  https://github.com/tulip-control/tulip-control/blob/1c1ef990cfb042ec4984c9048dcd5c3644d70949/tulip/spec/form.py#L260).
+    https://github.com/tulip-control/tulip-control/blob/1c1ef990cfb042ec4984c9048dcd5c3644d70949/tulip/spec/form.py#L260).
 
 
 ## Copying

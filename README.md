@@ -117,28 +117,28 @@ License
 [BSD-3][bsd3], see `LICENSE` file.
 
 
-[specs]: http://research.microsoft.com/en-us/um/people/lamport/tla/book-02-08-08.pdf
-[synthesis]: http://dx.doi.org/10.1007/BFb0035748
+[specs]: https://lamport.azurewebsites.net/tla/book-02-08-08.pdf
+[synthesis]: https://doi.org/10.1007/BFb0035748
 [moore]: https://web.archive.org/web/20120216141113/http://people.mokk.bme.hu/~kornai/termeszetes/moore_1956.pdf
-[mealy]: http://dx.doi.org/10.1002/j.1538-7305.1955.tb03788.x
-[streett1]: http://dx.doi.org/10.1016/j.ic.2005.01.006
-[gr1]: http://dx.doi.org/10.1007/11609773_24
+[mealy]: https://doi.org/10.1002/j.1538-7305.1955.tb03788.x
+[streett1]: https://doi.org/10.1016/j.ic.2005.01.006
+[gr1]: https://doi.org/10.1007/11609773_24
 [rabin1]: https://online.tugraz.at/tug_online/voe_main2.getvolltext?pCurrPk=47554
 [fol]: https://en.wikipedia.org/wiki/First-order_logic
-[past LTL]: http://dx.doi.org/10.1007/3-540-15648-8_16
-[LTL]: http://dx.doi.org/10.1109/SFCS.1977.32
-[temporal testers]: http://doi.org/10.1007/978-3-540-69850-0_11
-[rigid quantification]: http://dx.doi.org/10.1007/978-1-4612-4222-2
-[bitblasting]: http://dx.doi.org/10.1007/978-3-540-74105-3
-[bdd]: http://dx.doi.org/10.1109/TC.1986.1676819
-[tla-in-pictures]: http://dx.doi.org/10.1109/32.464544
-[doc]: https://github.com/tulip-control/omega/blob/master/doc/doc.md
+[past LTL]: https://doi.org/10.1007/3-540-15648-8_16
+[LTL]: https://doi.org/10.1109/SFCS.1977.32
+[temporal testers]: https://doi.org/10.1007/978-3-540-69850-0_11
+[rigid quantification]: https://doi.org/10.1007/978-1-4612-4222-2
+[bitblasting]: https://doi.org/10.1007/978-3-540-74105-3
+[bdd]: https://doi.org/10.1109/TC.1986.1676819
+[tla-in-pictures]: https://doi.org/10.1109/32.464544
+[doc]: https://github.com/tulip-control/omega/blob/main/doc/doc.md
 [cython]: https://en.wikipedia.org/wiki/Cython
 [cudd]: http://vlsi.colorado.edu/~fabio/CUDD
 [dd]: https://github.com/tulip-control/dd#cython-bindings
-[bsd3]: http://opensource.org/licenses/BSD-3-Clause
+[bsd3]: https://opensource.org/licenses/BSD-3-Clause
 
 [build_img]: https://travis-ci.com/tulip-control/omega.svg?branch=master
-[travis]: https://travis-ci.com/tulip-control/omega
+[travis]: https://travis-ci.com/github/tulip-control/omega
 [coverage]: https://coveralls.io/repos/tulip-control/omega/badge.svg?branch=master
 [coveralls]: https://coveralls.io/r/tulip-control/omega?branch=master

@@ -8,12 +8,12 @@ References
 Ioannis Filippidis, Richard M. Murray
     "Formalizing synthesis in TLA+"
     Technical Report, California Institute of Technology, 2016
-    http://resolver.caltech.edu/CaltechCDSTR:2016.004
+    https://resolver.caltech.edu/CaltechCDSTR:2016.004
 
 Leslie Lamport
     "Miscellany"
     21 April 1991, note sent to TLA mailing list
-    http://lamport.org/tla/notes/91-04-21.txt
+    https://lamport.azurewebsites.net/tla/notes/91-04-21.txt
 *)
 EXTENDS FiniteSets
 

@@ -144,8 +144,8 @@ class Automaton(_SystemGraph):
     - Orna Kupferman and Moshe Vardi,
       "Safraless decision procedures", FOCS'05, pp.531--542
     - Def. 10.53, p.801, U{[BK08]
-      <http://tulip-control.sourceforge.net/doc/bibliography.html#bk08>}
-    - U{ltl2dstar<http://ltl2dstar.de/>} documentation
+      <https://tulip-control.sourceforge.io/doc/bibliography.html#bk08>}
+    - U{ltl2dstar<https://www.ltl2dstar.de>} documentation
 
 
     See also

@@ -7,7 +7,7 @@ Olivier Coudert
     "Two-level logic minimization: An overview"
     Integration, the VLSI Journal
     Vol.17, No.2, Oct 1994, pp.97--140
-    http://dx.doi.org/10.1016/0167-9260(94)00007-7
+    https://doi.org/10.1016/0167-9260(94)00007-7
 """
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.

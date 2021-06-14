@@ -12,12 +12,28 @@ SUPPORTED_OPERATORS = {'&', '|', '/\\', r'\/'}
 
 
 def conj(iterable, sep='', op='/\\'):
-    """Return binary conjunction in infix syntax."""
+    """Conjoin by applying infix conjunction operator.
+
+    @param iterable: container of formulas to conjoin
+    @type iterable: `list` of `str`
+    @param sep: separator
+    @type sep: `str`
+    @param op: infix operator to apply
+    @type op: `str`
+    """
     return _associative_op(iterable, op, sep)
 
 
 def disj(iterable, sep='', op=r'\/'):
-    """Return binary disjunction in prefix syntax."""
+    """Disjoin by applying infix disjunction operator.
+
+    @param iterable: container of formulas to disjoin
+    @type iterable: `list` of `str`
+    @param sep: separator
+    @type sep: `str`
+    @param op: infix operator to apply
+    @type op: `str`
+    """
     return _associative_op(iterable, op, sep)
 
 

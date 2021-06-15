@@ -29,8 +29,8 @@ def _associative_op(iterable, op, sep):
     if op not in SUPPORTED_OPERATORS:
         raise Exception(
             'operator "{op}" not supported.'.format(op=op))
-    true = 'True'
-    false = 'False'
+    true = 'TRUE'
+    false = 'FALSE'
     if op in ('&', '/\\'):
         true, false = false, true
     glue = (') ' + sep + op + ' (')
@@ -47,7 +47,7 @@ def _recurse_op(a, b, h, true, false, glue):
     @param b: end of sublist
     @type b: int in [0, len(h)]
     @param h: `list`
-    @param true, false: permutation of 'True', 'False'
+    @param true, false: permutation of 'TRUE', 'FALSE'
     @param glue: used to concatenate a, b
     """
     n = b - a

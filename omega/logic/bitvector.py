@@ -1145,11 +1145,12 @@ def _is_bool_var(name, t):
     else:
         # bit in a bitvector ?
         int_var = name.rsplit('_', 1)[0]
+        if int_var in t and 'bitnames' not in t[int_var]:
+            raise ValueError(int_var, t)
         is_bit = (
             int_var in t and
             name in t[int_var]['bitnames'])
-        if is_bit:
-            return True
+        return is_bit
 
 
 def _assert_var_in_table(name, t):

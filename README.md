@@ -1,5 +1,4 @@
-[![Build Status][build_img]][travis]
-[![Coverage Status][coverage]][coveralls]
+[![Build Status][build_img]][ci]
 
 
 About
@@ -138,7 +137,5 @@ License
 [dd]: https://github.com/tulip-control/dd#cython-bindings
 [bsd3]: https://opensource.org/licenses/BSD-3-Clause
 
-[build_img]: https://travis-ci.com/tulip-control/omega.svg?branch=master
-[travis]: https://travis-ci.com/github/tulip-control/omega
-[coverage]: https://coveralls.io/repos/tulip-control/omega/badge.svg?branch=master
-[coveralls]: https://coveralls.io/r/tulip-control/omega?branch=master
+[build_img]: https://github.com/tulip-control/omega/actions/workflows/main.yml/badge.svg?branch=main
+[ci]: https://github.com/tulip-control/omega/actions

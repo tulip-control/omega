@@ -1,0 +1,85 @@
+---
+# configuration for GitHub Actions
+name: omega tests
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: '43 5 5 * *'
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-20.04
+        strategy:
+            matrix:
+                python-version: [
+                    '2.7',
+                    '3.4',
+                    '3.5',
+                    '3.6',
+                    '3.7',
+                    '3.8',
+                    '3.9',
+                    ]
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Update Python environment
+              run: |
+                pip install --upgrade pip setuptools
+            - name: Install `omega`
+              run: |
+                set -o posix
+                echo "Exported environment variables:"
+                export -p
+                python setup.py sdist
+                pip install dist/omega-*.tar.gz
+            - name: Install test dependencies
+              run: |
+                pip install pytest
+            - name: Run `omega` tests, with packages as installed by `pip`
+              run: |
+                set -o posix
+                echo "Exported environment variables:"
+                export -p
+                # run tests
+                cd tests/
+                # test as installed by `pip` (may be source or wheel)
+                pytest -v --continue-on-collection-errors \
+                    --ignore-glob="cover*" .
+            - name: Test without `dd.cudd` (pure Python)
+              run: |
+                export DD_VERSION=$(pip show dd | head \
+                    | grep -m 1 -o -E '[0-9]+\.[0-9]+\.[0-9]+')
+                echo "DD_VERSION=$DD_VERSION" >> $GITHUB_ENV
+                pip uninstall --yes dd
+                pip install dd==${DD_VERSION} --no-binary dd
+                cd tests/
+                pytest -v --continue-on-collection-errors \
+                    --ignore-glob="cover*" .
+            - name: Install `dd.cudd`
+              run: |
+                pip uninstall --yes dd
+                # obtain `dd` source, even if a suitable
+                # wheel file is available from PyPI
+                pip download --no-dependencies \
+                    dd==${DD_VERSION} --no-binary dd
+                tar xzf dd-*.tar.gz
+                cd dd-*/
+                python setup.py install --fetch --cudd
+                # ensure that `dd.cudd` is importable,
+                # so that `omega` tests below that
+                # require `dd.cudd` will work
+                cd tests/
+                python -c "import dd.cudd"
+            - name: Run `dd` tests with `dd.cudd` installed
+              run: |
+                set -o posix
+                echo "Exported environment variables:"
+                export -p
+                # run tests
+                cd tests/
+                pytest -v --continue-on-collection-errors .

@@ -262,7 +262,7 @@ def _linear_operator_simple(f, x):
 
 
 def test_binary_operators():
-    for n in range(1, 1500):
+    for n in range(1, 1_500):
         a = range(n)
         f = _plus
         x0 = _compute_as_binary_tree(f, list(a))

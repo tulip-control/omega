@@ -1130,7 +1130,7 @@ def test_bitfield_limits():
     assert r == (0, 3), r
     hint = dict(width=10, signed=False, dom=(0, 12))
     r = tyh._bitfield_limits(hint)
-    assert r == (0, 1023), r
+    assert r == (0, 1_023), r
     # negative
     hint = dict(width=4, signed=False, dom=(-13, -2))
     r = tyh._bitfield_limits(hint)

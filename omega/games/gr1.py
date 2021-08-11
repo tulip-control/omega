@@ -123,15 +123,15 @@ def make_streett_transducer(z, yij, xijk, aut):
     goals = aut.win['[]<>']
     # compute strategy from iterates
     # \rho_1: switch goals
-    rho_1 = aut.false
+    to_next_goal = aut.false
     for i, goal in enumerate(goals):
         ip = (i + 1) % len(goals)
         s = r"({c} = {i}) /\ ({c}' = {ip})".format(c=c, i=i, ip=ip)
         u = aut.add_expr(s)
         u &= goal
-        rho_1 |= u
-    zstar = _controllable_action(z, aut)
-    rho_1 &= zstar
+        to_next_goal |= u
+    rho_1 = _controllable_action(
+        z, aut, extra_action=to_next_goal)
     # \rho_2: descent in basin
     rho_2 = aut.false
     for i, yj in enumerate(yij):
@@ -367,6 +367,8 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         count = aut.add_expr(s)
         u &= count
         u &= rim
+        u = _controllable_action(
+            aut.true, aut, extra_action=u)
         v = aut.false
         for i, y in enumerate(yi):
             s = "{w} = {i}".format(w=w, i=i)
@@ -469,7 +471,7 @@ def is_realizable(win, aut):
     return r
 
 
-def _controllable_action(target, aut):
+def _controllable_action(target, aut, extra_action=None):
     """Return controllable transitions for progress.
 
     Compared to CPre, this has "half" the quantification.
@@ -477,6 +479,8 @@ def _controllable_action(target, aut):
     env_action = aut.action['env']
     sys_action = aut.action['sys']
     u = prm.prime(target, aut)
+    if extra_action is not None:
+        u &= extra_action
     if aut.plus_one:
         # sys_action /\ (env_action => target')
         u |= ~ env_action

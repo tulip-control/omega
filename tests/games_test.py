@@ -103,6 +103,71 @@ def test_rabin_deadend():
     assert win_set == aut.bdd.false, win_set
 
 
+def test_moore_streett_constant_trivial():
+    aut = trl.default_streett_automaton()
+    aut.action['env'] = aut.false
+    aut.win['[]<>'] = [aut.false]
+    win_predicate, yij, xijk = gr1.solve_streett_game(aut)
+    assert win_predicate == aut.true, (
+        aut.bdd.to_expr(win_predicate))
+    gr1.make_streett_transducer(
+        win_predicate, yij, xijk, aut)
+    action = aut.action['impl']
+    values = dict(_goal=0)
+    u = aut.let(values, action)
+    assert u == aut.true, aut.bdd.to_expr(u)
+
+
+def test_moore_streett_trivial_env():
+    aut = trl.default_streett_automaton()
+    aut.declare_variables(x=(0, 1))
+    aut.varlist['sys'] = ['x']
+    aut.init['sys'] = aut.add_expr('x = 0')
+    aut.action['env'] = aut.false
+    aut.win['[]<>'] = [aut.add_expr('x = 1')]
+    win_predicate, yij, xijk = gr1.solve_streett_game(aut)
+    assert win_predicate == aut.true, (
+        aut.bdd.to_expr(win_predicate))
+    gr1.make_streett_transducer(
+        win_predicate, yij, xijk, aut)
+    action = aut.action['impl']
+    values = dict(x=0, _goal=0)
+    u = aut.let(values, action)
+    assert u == aut.true, aut.bdd.to_expr(u)
+
+
+def test_mealy_rabin_recurrence_constant_trivial_env():
+    aut = trl.default_rabin_automaton()
+    aut.action['env'] = aut.false
+    aut.win['[]<>'] = [aut.false]
+    zk, yki, xkijr = gr1.solve_rabin_game(aut)
+    win_predicate = zk[-1]
+    assert win_predicate == aut.true, (
+        aut.bdd.to_expr(win_predicate))
+    gr1.make_rabin_transducer(
+        zk, yki, xkijr, aut)
+    action = aut.action['impl']
+    values = dict(_hold=0, _goal=0)
+    u = aut.let(values, action)
+    assert u == aut.true, aut.bdd.to_expr(u)
+
+
+def test_mealy_rabin_persistence_constant_trivial_env():
+    aut = trl.default_rabin_automaton()
+    aut.action['env'] = aut.false
+    aut.win['<>[]'] = [aut.false]
+    zk, yki, xkijr = gr1.solve_rabin_game(aut)
+    win_predicate = zk[-1]
+    assert win_predicate == aut.true, (
+        aut.bdd.to_expr(win_predicate))
+    gr1.make_rabin_transducer(
+        zk, yki, xkijr, aut)
+    action = aut.action['impl']
+    values = dict(_hold=0, _goal=0)
+    u = aut.let(values, action)
+    assert u == aut.true, aut.bdd.to_expr(u)
+
+
 def test_streett_always_x():
     # always x
     aut = trl.default_streett_automaton()

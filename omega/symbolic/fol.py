@@ -191,7 +191,7 @@ class Context(object):
     def replace_with_bdd(self, u, var_subs):
         """Substitute Boolean-valued variables with BDD nodes."""
         # distinct from `replace` due to restriction to Boolean
-        return self.bdd.compose(u, var_subs)
+        return self.bdd.let(var_subs, u)
 
     def forall(self, qvars, u):
         """Universally quantify `qvars` in `u`."""

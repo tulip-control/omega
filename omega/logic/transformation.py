@@ -52,7 +52,7 @@ class Tree(nx.MultiDiGraph):
                 self.add_edge(u, v, key=i)
                 self._recurse(v)
         else:
-            raise Exception('unknown node type: {u}'.format(u=u))
+            raise Exception(f'unknown node type: {u}')
         return u
 
     def to_recursive_ast(self, u=None):
@@ -112,8 +112,8 @@ def ast_to_labeled_graph(tree, detailed):
         else:
             raise TypeError(
                 'AST node must be an operator or terminal, '
-                'got instead: {u}'.format(u=u) +
-                ', of type: {t}'.format(t=type(u)))
+                f'got instead: {u}' +
+                f', of type: {type(u)}')
         # show both repr and AST node class in each vertex
         if detailed:
             label += '\n' + str(type(u).__name__)

@@ -194,7 +194,7 @@ def _assert_uniform_cardinality(bdds, fol):
 def _traverse_exhaustive(xcore, ycore, path_cost, bab, fol):
     """Compute cyclic core and terminate, prune, or recurse."""
     log.info('\n\n---- traverse ----')
-    log.info('path cost: {p}'.format(p=path_cost))
+    log.info(f'path cost: {path_cost}')
     # PathLowerBound =
     #     + PathCost
     #     + Cardinality(essential)
@@ -207,7 +207,7 @@ def _traverse_exhaustive(xcore, ycore, path_cost, bab, fol):
     # lower bounds are local, not global
     if bab.lower_bound is None:
         log.info(
-            'global lower bound: {lb}'.format(lb=branch_lb))
+            f'global lower bound: {branch_lb}')
         bab.lower_bound = branch_lb
     if xcore == fol.false:
         assert ycore == fol.false
@@ -239,7 +239,7 @@ def _branch_exhaustive(x, y, path_cost, bab, fol):
     assert set(d) == bab.p_vars, (d, bab.p_vars, fol.support(y))
         # must be specific implicant
         # This condition follows because Y is an antichain when we pick.
-    log.info('picked branching y: {d}'.format(d=d))
+    log.info(f'picked branching y: {d}')
     y_branch = fol.assign_from(d)
     ynew = y & ~ y_branch
     assert ynew != y

@@ -10,7 +10,7 @@ PACKAGE_NAME = 'omega'
 DESCRIPTION = (
     'Symbolic algorithms for solving '
     'games of infinite duration.')
-PACKAGE_URL = 'https://github.com/tulip-control/{name}'.format(name=PACKAGE_NAME)
+PACKAGE_URL = f'https://github.com/tulip-control/{PACKAGE_NAME}'
 PROJECT_URLS = {
     'Bug Tracker':
         'https://github.com/tulip-control/omega/issues',
@@ -19,12 +19,11 @@ PROJECT_URLS = {
     'Source Code':
         'https://github.com/tulip-control/omega'}
 README = 'README.md'
-VERSION_FILE = '{name}/_version.py'.format(name=PACKAGE_NAME)
+VERSION_FILE = f'{PACKAGE_NAME}/_version.py'
 MAJOR = 0
 MINOR = 4
 MICRO = 0
-VERSION = '{major}.{minor}.{micro}'.format(
-    major=MAJOR, minor=MINOR, micro=MICRO)
+VERSION = f'{MAJOR}.{MINOR}.{MICRO}'
 VERSION_FILE_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
@@ -78,8 +77,7 @@ def git_version(version):
         latest_tag, version)
     sha = repo.head.commit.hexsha
     if repo.is_dirty():
-        return '{v}.dev0+{sha}.dirty'.format(
-            v=version, sha=sha)
+        return f'{version}.dev0+{sha}.dirty'
     # commit is clean
     # is it release of `version` ?
     try:
@@ -87,8 +85,7 @@ def git_version(version):
             match='v[0-9]*', exact_match=True,
             tags=True, dirty=True)
     except git.GitCommandError:
-        return '{v}.dev0+{sha}'.format(
-            v=version, sha=sha)
+        return f'{version}.dev0+{sha}'
     assert tag == 'v' + version, (tag, version)
     return version
 

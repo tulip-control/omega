@@ -66,7 +66,7 @@ def print_expr(u, aut):
     # currently, `to_expr` works with only
     # integer-valued variables
     aut.declare_constants(tmp=(0, 1))
-    s = r'\E z:  ({u} /\ (z <=> (tmp = 1)) )'.format(u=u)
+    s = rf'\E z:  ({u} /\ (z <=> (tmp = 1)) )'
     v = aut.to_bdd(s)
     s = aut.type_hint_for(['x', 'y', 'tmp'])
     care = aut.to_bdd(s)

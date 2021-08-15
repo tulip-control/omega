@@ -132,20 +132,15 @@ def _print_enumeration(
             if x not in product:
                 continue
             i = product[x]
-            s = '({x} = {i})'.format(x=x, i=i)
+            s = f'({x} = {i})'
             w.append(s)
         s = r' /\ '.join(w)
         r.append(s)
     e = '\n'.join(r)
-    logger.debug((
+    logger.debug(
         'enumeration of BDD node '
-        '{u} with care set {c}\n').format(
-            u=u, c=care_set))
-    s = (
-        'contains {n} expressions:\n\n{e}\n').format(
-            e=e,
-            n=len(c))
-    print(s)
+        f'{u} with care set {care_set}\n')
+    print(f'contains {len(c)} expressions:\n\n{e}\n')
 
 
 def _make_table(
@@ -213,10 +208,9 @@ def _enumerate_bdd(
         return
     if care_set is not None:
         u &= care_set
-        logging.debug((
-            'enumerating BDD node {u}, '
-            'with care set = {c}').format(
-                u=u, c=care_set))
+        logging.debug(
+            f'enumerating BDD node {u}, '
+            f'with care set = {care_set}')
     c = list()
     for dbit in bdd.pick_iter(u, care_bits):
         dint = _bitfields_to_int_iter(dbit, t)
@@ -242,12 +236,11 @@ def _bitfields_to_int_iter(bits, t):
             t_bits.update(d['bitnames'])
         else:
             raise Exception(
-                'unknown type "{dt}"'.format(dt=dt))
+                f'unknown type "{dt}"')
     missing = set(bits).difference(t_bits)
     assert not missing, (
-        'WARNING: missing bits:\n {b}\n'
-        'from concrete table:\n {t}').format(
-            b=missing, t=t)
+        f'WARNING: missing bits:\n {missing}\n'
+        f'from concrete table:\n {t}')
     # init
     bits = dict(bits)
     model = dict()
@@ -374,7 +367,7 @@ def _format_nx(g, keys=None):
     for u, d in g.nodes(data=True):
         if keys is None:
             keys = sorted(d)
-        c = ['{var}={val}'.format(var=var, val=d[var])
+        c = [f'{var}={d[var]}'
              for var in keys if var in d]
         s = _square_conj(c)
         attr = {k: v for k, v in d.items() if k not in keys}
@@ -408,7 +401,7 @@ def _square_conj(p, n=None, op=r'&and;'):
     c = list()
     for i, s in enumerate(natsort.natsorted(p)):
         c.append(op)
-        s = ' ({s}) '.format(s=s)
+        s = f' ({s}) '
         c.append(s)
         if (i + 1) % m == 0:
             c.append(r'\l')

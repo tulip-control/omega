@@ -77,7 +77,7 @@ class Nodes(_Nodes):
                 y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_since(a, *arg, **kw)
-                return '(~ {r})'.format(r=r)
+                return f'(~ {r})'
             elif op == '-<>':
                 a = (Nodes.Bool('TRUE'), self.operands[0])
                 return _flatten_since(a, *arg, **kw)
@@ -86,7 +86,7 @@ class Nodes(_Nodes):
                 y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_until(a, *arg, **kw)
-                return '(~ {r})'.format(r=r)
+                return f'(~ {r})'
             elif op == '<>' and until:
                 a = (Nodes.Bool('TRUE'), self.operands[0])
                 return _flatten_until(a, *arg, **kw)
@@ -139,8 +139,7 @@ class Nodes(_Nodes):
             assert testers is not None
             assert context == 'bool', (context, self.value)
             previous + 1  # isinstance(previous, int)  ?
-            var_prev = '{name}_prev{i}'.format(
-                name=var, i=previous)
+            var_prev = f'{var}_prev{previous}'
             # add tester
             init, trans = _make_tester_for_previous(
                 var_prev, var, context, strong)
@@ -171,7 +170,7 @@ def _flatten_previous(op, x, testers, context,
     # `len` *must* be called after `flatten`
     # note that each `x_prev` occupies an "aux" index
     i = len(testers)
-    var_prev = '_aux{i}'.format(i=i)
+    var_prev = f'_aux{i}'
     # create tester
     init, trans = _make_tester_for_previous(
         var_prev, expr, context, strong)
@@ -188,15 +187,14 @@ def _make_tester_for_previous(var, expr, context, strong):
         op = '<=>'
         # strong "previous" operator "--X" ?
         if strong:
-            init = '(~ {var})'.format(var=var)
+            init = f'(~ {var})'
         else:
             init = var
     else:
         raise Exception(
-            'unknown context: "{c}"'.format(c=context))
+            f'unknown context: "{context}"')
     # translate "previous" in future LTL
-    trans = "(({var}') {op} {expr})".format(
-        var=var, op=op, expr=expr)
+    trans = f"(({var}') {op} {expr})"
     return init, trans
 
 
@@ -207,15 +205,14 @@ def _flatten_since(operands, testers, context, *arg, **kw):
     p = x.flatten(testers=testers, context=context, *arg, **kw)
     q = y.flatten(testers=testers, context=context, *arg, **kw)
     i = len(testers)
-    var = '_aux{i}'.format(i=i)
-    init = '({var} <=> {q})'.format(var=var, q=q)
-    trans = r'''
+    var = f'_aux{i}'
+    init = f'({var} <=> {q})'
+    trans = rf'''
         (
         ({var}') <=> (
             ({q}') \/ (({p}') /\ {var})
         ))
-        '''.format(
-            var=var, p=p, q=q)
+        '''
     testers[var] = dict(
         type='bool',
         init=init, trans=trans, win=None)
@@ -228,15 +225,14 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     p = x.flatten(testers=testers, context=context, *arg, **kw)
     q = y.flatten(testers=testers, context=context, *arg, **kw)
     i = len(testers)
-    var = '_aux{i}'.format(i=i)
-    trans = r'''
+    var = f'_aux{i}'
+    trans = rf'''
         (
         {var} <=> (
             ({q}) \/ (({p}) /\ ({var}'))
         ))
-        '''.format(
-            var=var, p=p, q=q)
-    win = r'(({q}) \/ ~ {var})'.format(var=var, q=q)
+        '''
+    win = rf'(({q}) \/ ~ {var})'
     testers[var] = dict(
         type='bool',
         init='TRUE', trans=trans, win=win)

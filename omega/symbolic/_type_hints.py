@@ -34,39 +34,35 @@ def _clip_subrange(ab, dom, x):
 def _check_type_hint(a, b, hint, var):
     """Raise `AssertionError` and log warnings."""
     if a > b:
-        raise AssertionError((
-            'Empty orthotope interval `{a} .. {b}` for '
-            'variable "{var}".').format(
-                a=a, b=b, var=var))
+        raise AssertionError(
+            f'Empty orthotope interval `{a} .. {b}` for '
+            f'variable "{var}".')
     dom = hint['dom']
     limits = _bitfield_limits(hint)
     if a > dom[1] or b < dom[0]:
-        log.warning((
-            'Interval `a .. b = {a} .. {b}` is disjoint from '
-            'type hint `dom = {dom[0]} .. {dom[1]}` for '
-            'variable "{var}".\n'
-            'Use type hint `dom` as care set.\n').format(
-                a=a, b=b, dom=dom, var=var))
+        log.warning(
+            f'Interval `a .. b = {a} .. {b}` is disjoint from '
+            f'type hint `dom = {dom[0]} .. {dom[1]}` for '
+            f'variable "{var}".\n'
+            'Use type hint `dom` as care set.\n')
     # `a <= dom[0]` should imply `a = limits[0]`,
     # because otherwise only possible if some point
     # outside type hint matters, preventing prime to
     # extend to the limits of the bitfield
     if a <= dom[0] and a > limits[0]:
-        log.warning((
-            'a = {a} not in interior of type hint '
-            '`dom = {dom[0]} .. {dom[1]}` but unequal to '
-            'low of `limits = {limits[0]} .. {limits[1]}` '
-            'for variable "{var}".\n'
-            'Use type hint as care set.\n').format(
-                a=a, dom=dom, limits=limits, var=var))
+        log.warning(
+            f'a = {a} not in interior of type hint '
+            f'`dom = {dom[0]} .. {dom[1]}` but unequal to '
+            f'low of `limits = {limits[0]} .. {limits[1]}` '
+            f'for variable "{var}".\n'
+            'Use type hint as care set.\n')
     if b >= dom[1] and b < limits[1]:
-        log.warning((
-            'b = {b} not in interior of type hint '
-            '`dom = {dom[0]} .. {dom[1]}` but unequal to '
-            'high of `limits = {limits[0]} .. {limits[1]}` '
-            'for variable "{var}".\n'
-            'Use type hint as care set.\n').format(
-                b=b, dom=dom, limits=limits, var=var))
+        log.warning(
+            f'b = {b} not in interior of type hint '
+            f'`dom = {dom[0]} .. {dom[1]}` but unequal to '
+            f'high of `limits = {limits[0]} .. {limits[1]}` '
+            f'for variable "{var}".\n'
+            'Use type hint as care set.\n')
 
 
 def _list_type_hints(variables, table):
@@ -131,8 +127,7 @@ def _conjoin_type_hints(vrs, fol):
             continue
         assert hints['type'] == 'int', hints
         a, b = hints['dom']
-        s = r'({a} <= {var}) /\ ({var} <= {b})'
-        type_hints = s.format(a=a, b=b, var=var)
+        type_hints = rf'({a} <= {var}) /\ ({var} <= {b})'
         r.append(type_hints)
     u = fol.add_expr(stx.conj(r))
     return u
@@ -140,5 +135,4 @@ def _conjoin_type_hints(vrs, fol):
 
 def _format_range(var, a, b):
     r"""Return string for set containment `var \in a .. b`."""
-    return r'{var} \in {a} .. {b}'.format(
-        var=var, a=a, b=b)
+    return rf'{var} \in {a} .. {b}'

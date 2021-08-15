@@ -291,7 +291,7 @@ class Automaton:
             r['<>[]'].extend(d['<>[]'])
             r['[]<>'].extend(d['[]<>'])
         else:
-            raise Exception('unknown attr "{a}"'.format(a=attr))
+            raise Exception(f'unknown attr "{attr}"')
 
     def conjoin(self, as_what):
         """Conjoin attributes.
@@ -398,7 +398,7 @@ def _conj_owner(aut, owner, as_what):
         action = stx.recurse_binary(f, action)
     else:
         raise Exception(
-            'unknown as_what="{s}"'.format(s=as_what))
+            f'unknown as_what="{as_what}"')
     # set
     aut.init[owner] = [init]
     aut.action[owner] = [action]
@@ -634,10 +634,10 @@ def assert_primed_adjacent(prime, bdd):
         i = bdd.level_of_var(x)
         j = bdd.level_of_var(y)
         assert abs(i - j) == 1, (
-            'Variables "{x}" (level {i}) and '
-            '"{y}" (level {j}) are not adjacent.\n'
+            f'Variables "{x}" (level {i}) and '
+            f'"{y}" (level {j}) are not adjacent.\n'
             'Primed and unprimed vars must be adjacent in '
-            'the given BDD.').format(x=x, y=y, i=i, j=j)
+            'the given BDD.')
 
 
 def _assert_support_moore(u, aut):

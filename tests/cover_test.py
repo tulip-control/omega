@@ -46,7 +46,7 @@ def test_scaling_equality():
     p_to_q = lat._renaming_between_parameters(px, qx)
     x_as_x = {xj: dict(a=xj, b=xj) for xj in px}
     varmap = lat.parameter_varmap(px, x_as_x)
-    log.info('Number of variables: {n}'.format(n=len(varmap)))
+    log.info(f'Number of variables: {len(varmap)}')
     u = lat.subseteq(varmap, aut)
     #
     s = (
@@ -157,21 +157,21 @@ def test_orthotopes_using_robots_example():
     n_primes = aut.count(u)
     k = aut.count(u)
     assert n_primes == k, (n_primes, k)
-    log.info('{n} prime implicants'.format(n=n_primes))
+    log.info(f'{n_primes} prime implicants')
     u = lat.essential_orthotopes(f, prm, aut)
     support = aut.support(u)
     assert support == set(p_vars), (support, p_vars)
     n_essential = aut.count(u)
     k = aut.count(u)
     assert n_essential == k, (n_essential, k)
-    log.info('{n} essential prime implicants'.format(n=n_essential))
+    log.info(f'{n_essential} essential prime implicants')
     assert n_essential == 7, n_essential
     # result: all primes are essential in this example
     #
     care = aut.true
     s = cov.dumps_cover(u, f, care, aut)
     log.info(s)
-    log.info('BDD has {n} nodes'.format(n=len(aut.bdd)))
+    log.info(f'BDD has {len(aut.bdd)} nodes')
     # confirm that essential orthotopes cover exactly `f`
     c = lat.list_expr(u, prm, aut, simple=True)
     s = stx.disj(c)
@@ -184,7 +184,7 @@ def test_orthotopes_using_robots_example():
         _plot_orthotopes_for_robots_example(u, f, prm._px, xvars, aut)
     # pprint.pprint(aut.bdd.statistics())
     # pprint.pprint(aut.bdd.vars)
-    log.info('{n} nodes in manager'.format(n=len(aut.bdd)))
+    log.info(f'{len(aut.bdd)} nodes in manager')
 
 
 def _plot_orthotopes_for_robots_example(u, f, abx, xvars, aut):
@@ -441,14 +441,14 @@ def test_maxima():
     prm.p_vars = {'x'}
     prm.q_vars = {'y'}
     prm.p_to_q = {'x': 'y'}
-    r = stx.conj('{pj} = {qj}'.format(pj=pj, qj=qj)
+    r = stx.conj(f'{pj} = {qj}'
                       for pj, qj in prm.p_to_q.items())
     prm.p_eq_q = fol.add_expr(r)
     t0 = time.time()
     m = cov._maxima(u, prm, fol)
     t1 = time.time()
     dt = t1 - t0
-    log.info('`maxima` time (sec): {dt:1.2f}'.format(dt=dt))
+    log.info(f'`maxima` time (sec): {dt:1.2f}')
     # print result
     gen = fol.pick_iter(m, care_vars=['x'])
     c = list(gen)
@@ -1349,7 +1349,7 @@ def profile_functions_above():
             print(v)
             n += 1
             v()
-    print('{n} test functions'.format(n=n))
+    print(f'{n} test functions')
     pr.disable()
     ps = pstats.Stats(pr)
     ps = ps.strip_dirs()

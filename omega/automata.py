@@ -215,7 +215,7 @@ class Automaton(_SystemGraph):
             g.add_node(u, shape=shape, peripheries=peripheries)
         for u, v, d in self.edges(data=True):
             label = ', '.join(
-                '{k} = {v}'.format(k=k, v=v)
+                f'{k} = {v}'
                 for k, v in d.items()
                 if k in self.directions or k in self.alphabet)
             g.add_edge(u, v, label=label)
@@ -230,7 +230,7 @@ class Automaton(_SystemGraph):
         elif acceptance == 'parity':
             a = (None, None)
         else:
-            raise ValueError('unknown acceptance: {s}'.format(s=acceptance))
+            raise ValueError(f'unknown acceptance: {acceptance}')
         return a
 
     def assert_consistent(self):
@@ -254,7 +254,7 @@ class Automaton(_SystemGraph):
         elif a == 'parity':
             assert len(s) == 2
         else:
-            raise Exception('Unknown acceptance: {a}'.format(a=a))
+            raise Exception(f'Unknown acceptance: {a}')
         for u, v, d in self.edges(data=True):
             t = self.alphabet
             r = self.directions
@@ -327,17 +327,17 @@ class TransitionSystem(_SystemGraph):
         g = nx.MultiDiGraph()
         for u, d in self.nodes(data=True):
             label = ', '.join(
-                '{k} = {v}'.format(k=k, v=v)
+                f'{k} = {v}'
                 for k, v in d.items()
                 if k in self.vars)
-            label = '"{u}\n{label}"'.format(u=u, label=label)
+            label = f'"{u}\n{label}"'
             g.add_node(u, label=label, shape='box', **d)
         for u, v, d in self.edges(data=True):
             f = d.get('formula')
             if f is None:
                 label = '""'
             else:
-                label = '"{f}"'.format(f=f)
+                label = f'"{f}"'
             g.add_edge(u, v, label=label, **d)
         return nx.drawing.nx_pydot.to_pydot(g)
 
@@ -367,11 +367,10 @@ def _dumps_nodes(g):
     """Return string of graph `g` nodes."""
     r = list()
     for u, d in g.nodes(data=True):
-        s = '\t Node: {u}, {values}\n'.format(
-            u=u,
-            values=', '.join(
-                '{k} = {v}'.format(k=k, v=v)
-                for k, v in d.items()))
+        values = ', '.join(
+            f'{k} = {v}'
+            for k, v in d.items())
+        s = f'\t Node: {u}, {values}\n'
         r.append(s)
     return ''.join(r)
 
@@ -383,4 +382,4 @@ def _check_value(v, dom):
     elif isinstance(dom, tuple):
         assert dom[0] <= v <= dom[1]
     else:
-        raise TypeError('unknown domain "{dom}"'.format(dom=dom))
+        raise TypeError(f'unknown domain "{dom}"')

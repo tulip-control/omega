@@ -113,7 +113,7 @@ def _action_to_steps(aut, qinit):
     while queue:
         node = queue.pop()
         values = g.nodes[node]
-        log.debug('at node: {d}'.format(d=values))
+        log.debug(f'at node: {values}')
         assert set(values) == varnames, (values, varnames)
         u = aut.action['env']
         u = aut.let(values, u)
@@ -125,7 +125,7 @@ def _action_to_steps(aut, qinit):
         sys = aut.let(values, u)
         assert sys != aut.false
         for next_env in env_iter:
-            log.debug('next_env: {r}'.format(r=next_env))
+            log.debug(f'next_env: {next_env}')
             # no effect if `aut.moore`
             u = aut.let(next_env, sys)
             u = aut.let(unprime_vars, u)
@@ -149,11 +149,9 @@ def _action_to_steps(aut, qinit):
                 next_node = _add_new_node(d, g, queue, umap, keys)
                 visited = _add_to_visited(d, visited, aut)
             g.add_edge(node, next_node)
-            log.debug((
-                'next env: {e}\n'
-                'next sys: {s}\n').format(
-                    e=env_values,
-                    s=sys_values))
+            log.debug(
+                f'next env: {env_values}\n'
+                f'next sys: {sys_values}\n')
     return g
 
 
@@ -210,8 +208,8 @@ def _init_search(g, aut, umap, keys, qinit):
     elif qinit == r'\E \A':
         queue, visited = _exist_forall_init(g, aut, umap, keys)
     else:
-        raise Exception('unknown qinit "{q}"'.format(q=qinit))
-    log.info('{n} initial nodes'.format(n=len(queue)))
+        raise Exception(f'unknown qinit "{qinit}"')
+    log.info(f'{len(queue)} initial nodes')
     return queue, visited
 
 
@@ -345,7 +343,7 @@ def _add_to_visited(values, visited, aut):
             continue
         # integer
         assert t in ('int', 'saturating', 'modwrap'), t
-        s = '{var} = {value}'.format(var=var, value=value)
+        s = f'{var} = {value}'
         c.append(s)
     s = stx.conj(c)
     u = aut.add_expr(s)

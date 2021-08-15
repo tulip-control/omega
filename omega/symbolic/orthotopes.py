@@ -41,22 +41,17 @@ def essential_orthotopes(f, prm, fol):
     x = ', '.join(prm._px)
     q = ', '.join(prm.q_vars)
     s = (
-        r'{p_is_prime} /\ '
-        r'\E {x}:  ( '
-        r'    {f} /\ '
-        r'    \A {q}:  ( '
+        rf'{p_is_prime} /\ '
+        rf'\E {x}:  ( '
+        rf'    {f} /\ '
+        rf'    \A {q}:  ( '
         '        ( '
-        r'            {q_is_prime} /\ '
-        '            ~ {p_eq_q} '
+        rf'            {q_is_prime} /\ '
+        f'            ~ {prm.p_eq_q} '
         '        ) '
-        '        => ~ {x_in_q}'
+        f'        => ~ {x_in_q}'
         '    )'
-        ')').format(
-            p_is_prime=p_is_prime,
-            q_is_prime=q_is_prime,
-            p_eq_q=prm.p_eq_q,
-            x_in_q=x_in_q,
-            f=f, x=x, q=q)
+        ')')
     r = fol.add_expr(s)
     log.info('==== essential orthotopes ====')
     return r
@@ -75,16 +70,11 @@ def prime_implicants(f, prm, fol):
     r'''
     q = ', '.join(prm.q_vars)
     s = (
-        r'{p_is_implicant} /\ '
-        r'\A {q}:  ( '
-        r'     ({q_is_implicant} /\ {p_leq_q})'
-        '     => {p_eq_q}'
-        ')').format(
-            p_is_implicant=p_is_implicant,
-            q_is_implicant=q_is_implicant,
-            p_leq_q=prm.p_leq_q,
-            p_eq_q=prm.p_eq_q,
-            q=prm.q_vars)
+        rf'{p_is_implicant} /\ '
+        rf'\A {prm.q_vars}:  ( '
+        rf'     ({q_is_implicant} /\ {prm.p_leq_q})'
+        f'     => {prm.p_eq_q}'
+        ')')
     r = fol.add_expr(s)
     '''
     log.info('==== prime orthotopes ====')
@@ -103,9 +93,8 @@ def _implicant_orthotopes(f, prm, fol):
     h = x_in_implicant(prm, fol)
     nonempty = _orthotope_nonempty(prm._px, fol)
     s = (
-        r'{nonempty} /\ '
-        r'\A {x}:  {h} => {f} ').format(
-            x=x, h=h, f=f, nonempty=nonempty)
+        rf'{nonempty} /\ '
+        rf'\A {x}:  {h} => {f} ')
     r = fol.add_expr(s)
     log.info('==== implicant orthotopes ====')
     return r
@@ -184,10 +173,10 @@ def subseteq(varmap, fol):
     This is the partial order defined by the subset relation.
     In the general formulation `\sqsubseteq`.
     """
-    s = stx.conj(r'''
+    s = stx.conj(rf'''
            ({u} <= {a})
         /\ ({b} <= {v})
-        '''.format(a=a, b=b, u=u, v=v)
+        '''
             for (a, b), (u, v) in varmap.items())
     r = fol.add_expr(s)
     return r
@@ -200,10 +189,10 @@ def eq(varmap, fol):
     parameter assignments to orthotopes. This is why equality
     of orthotopes is equivalent to equality of parameter values.
     """
-    s = stx.conj(r'''
+    s = stx.conj(rf'''
            ({a} = {u})
         /\ ({b} = {v})
-        '''.format(a=a, b=b, u=u, v=v)
+        '''
         for (a, b), (u, v) in varmap.items())
     r = fol.add_expr(s)
     return r
@@ -222,10 +211,10 @@ def implicants_intersect(prm, fol):
     avoids quantification over `x`.
     """
     # disjoint intervals in at least one dimension
-    s = stx.disj(r'''
+    s = stx.disj(rf'''
            ({b} < {u})
         \/ ({v} < {a})
-        '''.format(a=a, b=b, u=u, v=v)
+        '''
             for (a, b), (u, v) in prm._varmap.items())
     r = fol.add_expr(s)
     return ~ r
@@ -406,7 +395,7 @@ def setup_aux_vars(f, care, fol):
     p_vars = set(p_to_q)
     q_vars = set(p_to_q.values())
     u_vars = set(p_to_u.values())
-    log.debug('x vars: {x_vars}'.format(x_vars=x_vars))
+    log.debug(f'x vars: {x_vars}')
     assert not (p_vars & q_vars), (p_vars, q_vars)
     assert not (p_vars & u_vars), (p_vars, u_vars)
     assert not (u_vars & q_vars), (u_vars, q_vars)
@@ -455,8 +444,8 @@ def _parameter_table(x, table, a_name, b_name):
         assert dtype in ('int', 'saturating'), dtype
         dom = table[xj]['dom']
         name = stx._replace_prime(xj)
-        aj = '{a}_{v}'.format(a=a_name, v=name)
-        bj = '{b}_{v}'.format(b=b_name, v=name)
+        aj = f'{a_name}_{name}'
+        bj = f'{b_name}_{name}'
         d[aj] = tuple(dom)
         d[bj] = tuple(dom)
         assert "'" not in aj, aj
@@ -470,8 +459,8 @@ def _map_vars_to_parameters(x_vars, a_name, b_name):
     d = dict()
     for x in x_vars:
         name = stx._replace_prime(x)
-        a_x = '{a}_{v}'.format(a=a_name, v=name)
-        b_x = '{b}_{v}'.format(b=b_name, v=name)
+        a_x = f'{a_name}_{name}'
+        b_x = f'{b_name}_{name}'
         d[x] = dict(a=a_x, b=b_x)
     return d
 

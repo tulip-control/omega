@@ -92,11 +92,10 @@ class Context:
 
     def __str__(self):
         """Return `str` description of `self`."""
-        return ((
+        return (
             'Refinement of variables by '
             'Boolean-valued variables:\n\n'
-            '{vars}').format(
-                vars=pprint.pformat(self.vars)))
+            f'{pprint.pformat(self.vars)}')
 
     def declare(self, **vrs):
         r"""Declare variable identifiers.
@@ -204,10 +203,10 @@ class Context:
             for k, v in dvars[var].items():
                 if k in old and v == old[k]:
                     continue
-                raise ValueError((
-                    'attempted to redeclare "{var}" '
-                    'where old: {old} and new: {new}').format(
-                        var=var, old=old, new=dvars[var]))
+                raise ValueError(
+                    f'attempted to redeclare "{var}" '
+                    f'where old: {old} and '
+                    f'new: {dvars[var]}')
 
     def support(self, u):
         r"""Return FOL variables that `u` depends on.
@@ -783,16 +782,18 @@ class Context:
             _, bv_ast = bv_opdef.operands
             name = name_ast.value
             if name in self.vars:
-                raise ValueError((
-                    'Attempted to define operator "{name}", '
-                    'but "{name}" already declared as variable: '
-                    '{old}').format(
-                        name=name, old=self.vars[name]))
+                raise ValueError(
+                    'Attempted to define '
+                    f'operator "{name}", '
+                    f'but "{name}" already '
+                    'declared as variable: '
+                    f'{self.vars[name]}')
             if name in self.op:
-                raise ValueError((
-                    'Attempted to redefine operator "{name}". '
-                    'Previous definition as: "{old}"').format(
-                        name=name, old=self.op[name]))
+                raise ValueError(
+                    'Attempted to redefine the '
+                    f'operator "{name}". '
+                    f'Previous definition '
+                    f'as: "{self.op[name]}"')
             s = bv_ast.flatten(
                 t=self.vars, defs=self.op_bdd)
             # sensitive point:
@@ -1116,10 +1117,8 @@ def reorder(dvars, fol):
         else:
             assert var_type in TYPE_HINTS, var_type
             bitnames = dv['bitnames']
-        # print('Shifting bits {bitnames} to '
-        #       'level {level}'.format(
-        #         level=level,
-        #         bitnames=bitnames))
+        # print(f'Shifting bits {bitnames} to '
+        #       f'level {level}')
         # assert each bit goes up in level
         for bit in bitnames:
             old_level = bdd.level_of_var(bit)
@@ -1190,7 +1189,7 @@ def _assignment_to_bdd(dvars, fol):
     raise DeprecationWarning(
         'use `_refine_assignment` instead')
     conj = stx.conj(
-        '{var} = {value}'.format(var=var, value=value)
+        f'{var} = {value}'
         for var, value in dvars.items())
     u = fol.add_expr(conj)
     return u
@@ -1261,16 +1260,15 @@ def _prime_bits_of_integers(ints, t):
 def closed_interval(var, a, b):
     """Return string `a <= var <= b`."""
     return (
-        '({a} <= {var}) & '
-        '({var} <= {b})').format(
-            var=var, a=a, b=b)
+        f'({a} <= {var}) & '
+        f'({var} <= {b})')
 
 
 def add_one_hot(var, a, b):
     """Return symbol table for one-hot encoding."""
     t = dict()
     for i in range(a, b):
-        var = '{var}{i}'.format(var=var, i=i)
+        var = f'{var}{i}'
         d = dict(type='bool', owner='parameters', level=0)
         t[var] = d
     return t
@@ -1290,7 +1288,7 @@ def array_to_logic(a, counter, aut):
     bdd = aut.bdd
     r = a[-1]
     for i, x in enumerate(a[:-1]):
-        s = '{counter} = {i}'.format(counter=counter, i=i)
+        s = f'{counter} = {i}'
         u = aut.add_expr(s)
         r = bdd.ite(u, x, r)
     return r

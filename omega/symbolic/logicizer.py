@@ -84,8 +84,7 @@ def _graph_to_formulas(
         sys_init = init + tmp_init
         r = _sys_trans(g, nodevar, dvars)
         if self_loops:
-            r = r"({r}) \/ ({var}' = {var})".format(
-                r=r, var=nodevar)
+            r = rf"({r}) \/ ({nodevar}' = {nodevar})"
         sys_tran.append(r)
         sys_tran.extend(nodepred)
         env_init = list()
@@ -97,8 +96,7 @@ def _graph_to_formulas(
         env_init = init + tmp_init
         r = _env_trans(g, nodevar, dvars, self_loops)
         if self_loops:
-            r = r"({r}) \/ ({var}' = {var})".format(
-                r=r, var=nodevar)
+            r = rf"({r}) \/ ({nodevar}' = {nodevar})"
         env_tran.append(r)
         env_tran.extend(nodepred)
     else:
@@ -130,9 +128,9 @@ def _node_var_trans(g, nodevar, dvars):
         if r == 'TRUE':
             continue
         # initial node vars
-        init.append(r'~ ({pre}) \/ ({r})'.format(pre=pre, r=r))
+        init.append(rf'~ ({pre}) \/ ({r})')
         # transitions of node vars
-        trans.append("((({pre}) => ({r}))')".format(pre=pre, r=r))
+        trans.append(f"((({pre}) => ({r}))')")
     return (init, trans)
 
 
@@ -155,8 +153,8 @@ def _sys_trans(g, nodevar, dvars):
         pre = _assign(nodevar, u, dvars)
         # no successors ?
         if not g.succ.get(u):
-            logger.debug('node: {u} is deadend !'.format(u=u))
-            sys_trans.append('({pre}) => False'.format(pre=pre))
+            logger.debug(f'node: {u} is deadend !')
+            sys_trans.append(f'({pre}) => False')
             continue
         post = list()
         for u, v, d in g.edges(u, data=True):
@@ -164,7 +162,7 @@ def _sys_trans(g, nodevar, dvars):
             t[stx.prime(nodevar)] = v
             r = _to_action(t, dvars)
             post.append(r)
-        c = '({pre}) => ({post})'.format(pre=pre, post=stx.disj(post))
+        c = f'({pre}) => ({stx.disj(post)})'
         sys_trans.append(c)
     s = stx.conj(sys_trans, sep='\n')
     return s
@@ -190,8 +188,7 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
             continue
         post = stx.disj(c)
         pre = _assign(nodevar, u, dvars)
-        env_trans.append('(({pre}) => ({post}))'.format(
-            pre=pre, post=post))
+        env_trans.append(f'(({pre}) => ({post}))')
     s = stx.conj(env_trans, sep='\n')
     return s
 
@@ -209,7 +206,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
         pre = _assign(nodevar, u, dvars)
         # no successors ?
         if not g.succ.get(u):
-            env_trans.append('{pre} => False'.format(pre=pre))
+            env_trans.append(f'{pre} => False')
             if not self_loops:
                 warnings.warn(
                     'Environment dead-end found.\n'
@@ -232,8 +229,7 @@ def _env_trans(g, nodevar, dvars, self_loops):
             sys.append(r)
         # avoid sys winning env by blocking all edges
         # post.append(stx.conj_neg(sys))
-        env_trans.append('({pre}) => ({post})'.format(
-            pre=pre, post=stx.disj(post)))
+        env_trans.append(f'({pre}) => ({stx.disj(post)})')
     s = stx.conj(env_trans, sep='\n')
     return s
 
@@ -269,14 +265,13 @@ def _assign(k, v, dvars):
         value = str(v).upper()
         if value != 'FALSE' and value != 'TRUE':
             raise ValueError(v)
-        s = '{k} <=> {v}'.format(k=k, v=value)
+        s = f'{k} <=> {value}'
     elif isinstance(typ, tuple) and len(typ) == 2:  # integer
-        s = '{k} = {v}'.format(k=k, v=v)
+        s = f'{k} = {v}'
     elif isinstance(typ, list):  # string enumeration
-        s = '{k} = "{v}"'.format(k=k, v=v)
+        s = f'{k} = "{v}"'
     else:
-        raise Exception('variable type hint is: {dtype}'.format(
-            dtype=dtype))
+        raise Exception(f'variable type hint is: {dtype}')
     return _pstr(s)
 
 
@@ -288,4 +283,4 @@ def _prime_dict(d):
 
 
 def _pstr(x):
-    return '({x})'.format(x=x)
+    return f'({x})'

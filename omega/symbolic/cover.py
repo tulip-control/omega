@@ -212,7 +212,7 @@ def _traverse(x, y, path_cost, bab, fol):
     # lower bounds are local, not global
     if bab.lower_bound is None:
         log.info(
-            'global lower bound: {lb}'.format(lb=branch_lb))
+            f'global lower bound: {branch_lb}')
         bab.lower_bound = branch_lb
     # prune
     # C_left.path + C_left.lower >= global_upper_bound ?
@@ -240,7 +240,7 @@ def _branch(x, y, path_cost, bab, fol):
     d = fol.pick(y)
     assert set(d) == bab.p_vars, d  # must be specific implicant
         # This condition follows because Y is an antichain when we pick.
-    log.info('picked branching y: {d}'.format(d=d))
+    log.info(f'picked branching y: {d}')
     y_branch = fol.assign_from(d)
     ynew = y & ~ y_branch
     assert ynew != y
@@ -294,7 +294,7 @@ def _cost_enumerative(u, prm, fol):
             continue
         cover.append(p)
     n = len(cover)
-    print('enumerative cost: {n}'.format(n=n))
+    print(f'enumerative cost: {n}')
     count = fol.count(u)
     assert n <= count, (n, count)
     if n < count:
@@ -338,7 +338,7 @@ def _equality_of_pairs(pairs, fol):
     @param pairs: iterable of 2-tuples of identifiers
     """
     s = stx.conj(
-        '({a} = {b})'.format(a=a, b=b)
+        f'({a} = {b})'
         for a, b in pairs)
     r = fol.add_expr(s)
     return r
@@ -428,7 +428,7 @@ def _cyclic_core_fixpoint(x, y, bab, fol):
     xold, yold = None, None
     i = 0
     while x != xold or y != yold:
-        log.debug('starting iteration {i}'.format(i=i))
+        log.debug(f'starting iteration {i}')
         t0 = time.time()
         xold, yold = x, y
         x = _max_transpose(x, y, bab, fol, signatures=True)
@@ -439,8 +439,7 @@ def _cyclic_core_fixpoint(x, y, bab, fol):
         y = _max_transpose(x, y, bab, fol)
         t1 = time.time()
         dt = t1 - t0
-        log.debug('iteration {i} took {dt:1.2f} sec'.format(
-            i=i, dt=dt))
+        log.debug(f'iteration {i} took {dt:1.2f} sec')
         i += 1
     _assert_fixpoint(
         x, y, xold, yold, essential, bab.p_vars, fol)
@@ -616,7 +615,7 @@ def _lower_bound(x, y, p_leq_q, p_to_q, fol):
     _, n = _independent_set(
         x, y, p_leq_q, p_to_q, fol, only_size=True)
     _assert_possible_cover_size(n, x, fol)
-    log.info('lower bound = {n}'.format(n=n))
+    log.info(f'lower bound = {n}')
     log.debug('==== lower bound ====')
     return n
 
@@ -627,7 +626,7 @@ def _upper_bound(x, y, p_leq_q, p_to_q, fol):
     _, n = _some_cover(
         x, y, p_leq_q, p_to_q, fol, only_size=True)
     _assert_possible_cover_size(n, x, fol)
-    log.info('upper bound = {n}'.format(n=n))
+    log.info(f'upper bound = {n}')
     log.debug('==== upper bound ====')
     return n
 
@@ -642,7 +641,7 @@ def _lower_bound_naive(x, y, p_leq_q, p_to_q, fol):
     z, n = _independent_set(x, y, p_leq_q, p_to_q, fol)
     assert support_issubset(z, p_to_q, fol)
     _assert_possible_cover_size(n, x, fol)
-    log.info('lower bound = {n}'.format(n=n))
+    log.info(f'lower bound = {n}')
     log.debug('==== naive lower bound ====')
     return n
 
@@ -657,7 +656,7 @@ def _upper_bound_naive(x, y, p_leq_q, p_to_q, fol):
     cover, n = _some_cover(x, y, p_leq_q, p_to_q, fol)
     assert support_issubset(cover, p_to_q, fol)
     _assert_possible_cover_size(n, x, fol)
-    log.info('upper bound = {n}'.format(n=n))
+    log.info(f'upper bound = {n}')
     log.debug('==== naive upper bound ====')
     return n
 
@@ -920,7 +919,7 @@ def dumps_cover(
             f_vars=_comma_sorted(f_vars),
             care_vars=_comma_sorted(care_vars))
     if comment:
-        s = '{comment}\n{s}'.format(comment=s_comment, s=s)
+        s = f'{s_comment}\n{s}'
     # could add option to find minimal cover for care too
     # postcondition
     r = lat.list_expr(
@@ -941,8 +940,7 @@ def _care_implies_type_hints(f, care, fol):
     if r != fol.true:
         vrs = _find_protruding_dimensions(care, type_hints, fol)
         s = ('`care => type_hints` fails '
-             'for variables: {vrs}').format(
-                vrs=_comma_sorted(vrs))
+             f'for variables: {_comma_sorted(vrs)}')
         log.warning(s)
     return r == fol.true
 
@@ -953,8 +951,7 @@ def _f_implies_care(f, care, fol):
     if r != fol.true:
         vrs = _find_protruding_dimensions(f, care, fol)
         s = ('`f => care` fails '
-             'for variables: {vrs}').format(
-                vrs=_comma_sorted(vrs))
+             f'for variables: {_comma_sorted(vrs)}')
         log.warning(s)
     return r == fol.true
 
@@ -1045,8 +1042,7 @@ class _BranchAndBound:
         self._assert_invariant(upper=c)
         if self._upper_bound is None:
             log.info(
-                'initialized upper bound to {c}'.format(
-                    c=c))
+                f'initialized upper bound to {c}')
         elif c < self._upper_bound:
             log.info((
                 'improved upper bound from '

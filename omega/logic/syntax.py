@@ -28,7 +28,7 @@ def _associative_op(iterable, op, sep):
     """
     if op not in SUPPORTED_OPERATORS:
         raise Exception(
-            'operator "{op}" not supported.'.format(op=op))
+            f'operator "{op}" not supported.')
     true = 'TRUE'
     false = 'FALSE'
     if op in ('&', '/\\'):
@@ -81,14 +81,14 @@ def paren(iterable):
 
 def linear_disj(s, op='||'):
     """Return linear disjunction in prefix syntax."""
-    b = ' {op} '.format(op=op)
-    return b.join('({x})'.format(x=x) for x in s if x != '')
+    b = f' {op} '
+    return b.join(f'({x})' for x in s if x != '')
 
 
 def linear_conj(s, op='&&'):
     """Return linear conjunction in prefix syntax."""
-    b = ' {op} '.format(op=op)
-    return b.join('({x})'.format(x=x) for x in s if x != '')
+    b = f' {op} '
+    return b.join(f'({x})' for x in s if x != '')
 
 
 def disj_prefix(iterable, op='|', false='0', true='1'):
@@ -127,17 +127,17 @@ def _prefix_linear(s, op, false, true):
 def conj_intersection(s, r, paren=True):
     if paren:
         return conj(
-            '({x})'.format(x=x) for x in s if x in r)
+            f'({x})' for x in s if x in r)
     else:
         return conj(
-            '{x}'.format(x=x) for x in s if x in r)
+            f'{x}' for x in s if x in r)
 
 
 def conj_neg(s, paren=True):
     if paren:
-        return conj('!({x})'.format(x=x) for x in s)
+        return conj(f'!({x})' for x in s)
     else:
-        return conj('!{x}'.format(x=x) for x in s)
+        return conj(f'!{x}' for x in s)
 
 
 def recurse_binary_log_space(f, x, n):
@@ -152,7 +152,7 @@ def recurse_binary_log_space(f, x, n):
     assert c < n <= 2 * c, (n, c)
     a = recurse_binary_log_space(f, x, c)
     b = recurse_binary_log_space(f, x, n - c)
-    logger.info('-- done binary {n} items'.format(n=n))
+    logger.info(f'-- done binary {n} items')
     return f(a, b)
 
 
@@ -160,7 +160,7 @@ def recurse_binary(f, x, bdd=None):
     """Recursively traverse binary tree of computation."""
     logger.info('++ recurse binary')
     n = len(x)
-    logger.debug('{n} items left to recurse'.format(n=n))
+    logger.debug(f'{n} items left to recurse')
     assert n > 0, n
     if n == 1:
         assert len(x) == 1, x
@@ -176,7 +176,7 @@ def recurse_binary(f, x, bdd=None):
     a = recurse_binary(f, left, bdd)
     b = recurse_binary(f, right, bdd)
     logger.info(bdd)
-    logger.info('-- done recurse binary ({n} items)'.format(n=n))
+    logger.info(f'-- done recurse binary ({n} items)')
     return f(a, b)
 
 
@@ -190,7 +190,7 @@ def _compute_as_binary_tree(f, x):
     assert len(x) > 0
     while len(x) > 1:
         n = len(x)
-        logger.debug('Binary at: {n}'.format(n=n))
+        logger.debug(f'Binary at: {n}')
         k = int(math.floor(0.5 * n))
         # consume the power of 2
         for i in range(k):
@@ -339,7 +339,7 @@ def _replace_prime(var):
     unprimed = unprime(var)
     # `'` even in the middle would split it when parsing
     assert "'" not in unprimed, unprimed
-    var_p = '{unprimed}_p'.format(unprimed=unprimed)
+    var_p = f'{unprimed}_p'
     assert "'" not in var_p, var_p
     return var_p
 
@@ -367,7 +367,7 @@ def _add_prime_like_too(table):
 
 
 def _prime_like(var):
-    return '{var}_cp'.format(var=var)
+    return f'{var}_cp'
 
 
 def vertical_op(c, latex=False, op='and', spacing=1):
@@ -385,11 +385,12 @@ def vertical_op(c, latex=False, op='and', spacing=1):
     else:
         pref = '/\\ ' if op == 'and' else r'\/ '
         nl = '\n' * spacing
+    indent = len(pref) * ' '
+    sep = f'\n{indent}'
     r = list()
     for s in c:
         t = s.split('\n')
-        t[0] = '{p}{first}'.format(p=pref, first=t[0])
-        sep = '\n{indent}'.format(indent=len(pref) * ' ')
+        t[0] = f'{pref}{t[0]}'
         e = sep.join(t)
         r.append(e)
     r = nl.join(r)

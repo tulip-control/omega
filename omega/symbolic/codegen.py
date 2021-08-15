@@ -123,7 +123,7 @@ def map_bits_to_bitvectors(vrs):
         assert typ == 'int', typ
         bitnames = attr['bitnames']
         d = {
-            name: 'bitvectors["{var}"][{i}]'.format(var=var, i=i)
+            name: f'bitvectors["{var}"][{i}]'
             for i, name in enumerate(bitnames)}
         renaming.update(d)
     return renaming
@@ -223,17 +223,15 @@ def _collect_layers(roots, syntax, bdd):
         _register_nodes(u, layers, bdd)
         # assign to `name` the latch value
         latch = _latch_ref(u, syntax)
-        line = 'out_bits["{name}"] = {latch}'.format(
-            name=name, latch=latch)
+        line = f'out_bits["{name}"] = {latch}'
         lines.append(line)
     return layers, lines
 
 
 def _comment_level(level, lines, syntax):
     """Comment indicating the level that follows."""
-    line = '{C} level: {level}'.format(
-        C=syntax['COMMENT'],
-        level=level)
+    comment = syntax['COMMENT']
+    line = f'{comment} level: {level}'
     lines.append(line)
 
 
@@ -250,7 +248,7 @@ def _append_sep(line, syntax):
         raise ValueError(line)
     # line contains only code
     sep = syntax['SEP']
-    return '{line}{SEP}'.format(line=line, SEP=sep)
+    return f'{line}{sep}'
 
 
 def _dumps_layer(
@@ -276,18 +274,13 @@ def _dumps_node(
     high_latch = _latch_ref(node.high, syntax)
     # ternary conditional for Boolean-valued variables
     bit = renaming.get(node.var, node.var)
+    and_ = syntax['AND']
+    or_ = syntax['OR']
+    not_ = syntax['NOT']
     line = (
-        '{latch} = (\n'
-        '    ({bit} {AND} {high_latch}) {OR} \n'
-        '    (({NOT} {bit}) {AND} {low_latch}))'
-        ).format(
-            latch=latch,
-            bit=bit,
-            low_latch=low_latch,
-            high_latch=high_latch,
-            AND=syntax['AND'],
-            OR=syntax['OR'],
-            NOT=syntax['NOT'])
+        f'{latch} = (\n'
+        f'    ({bit} {and_} {high_latch}) {or_} \n'
+        f'    (({not_} {bit}) {and_} {low_latch}))')
     lines.append(line)
 
 
@@ -299,8 +292,8 @@ def _latch_ref(node, syntax):
     """
     ref = _latch_name(node, syntax)
     if node.negated:
-        ref = '({NOT} {ref})'.format(
-            NOT=syntax['NOT'], ref=ref)
+        not_ = syntax['NOT']
+        ref = f'({not_} {ref})'
     return ref
 
 
@@ -312,7 +305,7 @@ def _latch_name(node, syntax):
     else:
         # avoid identifiers containing `-`
         node_id = str(int(node)).replace('-', 'n')
-        latch = 'latch_{i}'.format(i=node_id)
+        latch = f'latch_{node_id}'
     return latch
 
 

@@ -50,8 +50,7 @@ class Parser:
                 break
             s += tok.value
         raise Exception(
-            'syntax error: remaining characters: {s}'.format(
-                s=s))
+            f'syntax error: remaining characters: {s}')
 
     def _increase(self, mem, bdd):
         stack = list()
@@ -99,7 +98,7 @@ class Parser:
             need -= 1
         else:
             raise Exception(
-                'unknown token type "{t}"'.format(t=t))
+                f'unknown token type "{t}"')
         stack.append(r)
         return need
 
@@ -111,7 +110,7 @@ class Parser:
                 if t in OPERATORS:
                     break
             assert t in OPERATORS, (
-                'unknown operator "{t}"'.format(t=t))
+                f'unknown operator "{t}"')
             operator = t
             k = len(stack) - i
             if operator == '!':
@@ -120,7 +119,7 @@ class Parser:
                 n = 2
             else:
                 raise Exception(
-                    'unknown operator "{t}"'.format(t=t))
+                    f'unknown operator "{t}"')
             operands = stack[k:k + n]
             for i in range(n):
                 stack.pop(k)

@@ -124,7 +124,7 @@ def test_flatten_quantifiers():
     s = r'\E y: x = y'
     r = parser.parse(s).flatten(t=t)
     eq = parser.parse('x = y').flatten(t=t)
-    r_ = r' \E & & y0 y1 y2 {eq}'.format(eq=eq)
+    r_ = rf' \E & & y0 y1 y2 {eq}'
     assert r == r_, (r, r_)
     # multiple qvars
     s = r'\E a, b:  TRUE'
@@ -133,12 +133,12 @@ def test_flatten_quantifiers():
     s = r'\E a, x: x - a > 0'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('x - a > 0').flatten(t=t)
-    r_ = r' \E & & & a0 a1 x@0.0.3 x@1 {h}'.format(h=h)
+    r_ = rf' \E & & & a0 a1 x@0.0.3 x@1 {h}'
     assert r == r_, (r, r_)
     s = r'\A r: r | ! q'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('r | ! q').flatten(t=t)
-    r_ = r' \A r {h}'.format(h=h)
+    r_ = rf' \A r {h}'
     assert r == r_, (r, r_)
 
 
@@ -153,7 +153,7 @@ def test_flatten_substitution():
     s = r'\S b / x: x - y <= 0'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('x - y <= 0').flatten(t=t)
-    r_ = r' \S $4 b0 x@0.0.3 b1 x@1 {h}'.format(h=h)
+    r_ = rf' \S $4 b0 x@0.0.3 b1 x@1 {h}'
     assert r == r_, r
     # multiple pairs
     s = r'\S a / b,  q / r:  FALSE'
@@ -169,7 +169,7 @@ def test_flatten_substitution():
     s = r'\S a / b, q / r:  r | ! (a != b)'
     r = parser.parse(s).flatten(t=t)
     h = parser.parse('r | ! (a != b)').flatten(t=t)
-    r_ = r' \S $6 a0 b0 a1 b1 q r {h}'.format(h=h)
+    r_ = rf' \S $6 a0 b0 a1 b1 q r {h}'
     assert r == r_, r
     # invalid input
     c = [
@@ -319,7 +319,7 @@ def _evaluate_result(result, memory):
     mem = ' '.join(memory)
     bits = list()
     for bit in result:
-        s = '$ {n} {mem} {bit}'.format(n=n, mem=mem, bit=bit)
+        s = f'$ {n} {mem} {bit}'
         u = bddizer.add_expr(s, bdd)
         bits.append(u)
     bits = [b == 1 for b in bits]
@@ -378,8 +378,8 @@ def test_barrel_shifter():
     assert mem == m
     # fun: (2**n)-bit x
     # n = 5
-    # x = ['x{i}'.format(i=i) for i in xrange(2**n)]
-    # y = ['y{i}'.format(i=i) for i in xrange(n)]
+    # x = [f'x{i}' for i in xrange(2**n)]
+    # y = [f'y{i}' for i in xrange(n)]
     # z, mem = sl.barrel_shifter(x, y)
     # print(z)
     # print(sl._format_mem(mem))
@@ -585,7 +585,7 @@ def test_mixed_fol_bitblasted():
     tree_1 = parser.parse(q)
     f0 = tree_0.flatten(t=t)
     f1 = tree_1.flatten(t=t)
-    assert f0 == ' |  & x y_0  {f1} '.format(f1=f1), (f0, f1)
+    assert f0 == f' |  & x y_0  {f1} ', (f0, f1)
 
 
 def test_type_invariants():

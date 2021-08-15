@@ -126,7 +126,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     to_next_goal = aut.false
     for i, goal in enumerate(goals):
         ip = (i + 1) % len(goals)
-        s = r"({c} = {i}) /\ ({c}' = {ip})".format(c=c, i=i, ip=ip)
+        s = rf"({c} = {i}) /\ ({c}' = {ip})"
         u = aut.add_expr(s)
         u &= goal
         to_next_goal |= u
@@ -135,7 +135,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_2: descent in basin
     rho_2 = aut.false
     for i, yj in enumerate(yij):
-        s = r"({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
+        s = rf"({c} = {i}) /\ ({c}' = {i})"
         count = aut.add_expr(s)
         rho_2j = aut.false
         basin = yj[0]
@@ -151,7 +151,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     # \rho_3: persistence holds
     rho_3 = aut.false
     for i, xjk in enumerate(xijk):
-        s = r"({c} = {i}) /\ ({c}' = {i})".format(c=c, i=i)
+        s = rf"({c} = {i}) /\ ({c}' = {i})"
         count = aut.add_expr(s)
         rho_3j = aut.false
         used = aut.false
@@ -171,7 +171,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     u = rho_1 | rho_2
     u |= rho_3
     # counter `c` limits
-    s = r'{c} \in 0..{n}'.format(c=c, n=c_max)
+    s = rf'{c} \in 0..{c_max}'
     u &= aut.add_expr(s)
     # `sys_action` is already in the `\rho`
     # next is "useful" only if `env_action` depends on `y'`
@@ -186,7 +186,7 @@ def make_streett_transducer(z, yij, xijk, aut):
     aut.prime_varlists()
     # initial condition for counter
     # (no closure taken for counter)
-    s = '{c} = 0'.format(c=c)
+    s = f'{c} = 0'
     count = aut.add_expr(s)
     _make_init(count, winning, aut)
     return aut.action['impl']
@@ -270,6 +270,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     dvars = dict(aut.vars)
     n_holds = len(aut.win['<>[]'])
     n_goals = len(aut.win['[]<>'])
+    none = n_holds
     # add transducer memory as two indices:
     # - `w`: persistence hold index
     # - `c`: recurrence goal index
@@ -288,8 +289,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     goals = aut.win['[]<>']
     # compute strategy from iterates
     # \rho_1: descent in persistence basin
-    s = r"({c}' = {c}) /\ ({w}' = {none})".format(
-        c=c, w=w, none=n_holds)
+    s = rf"({c}' = {c}) /\ ({w}' = {none})"
     count = aut.add_expr(s)
     rho_1 = aut.false
     basin = zk[0]
@@ -310,13 +310,12 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rim = z & ~ basin
         rim &= ~ cox_basin
         # rho_2: pick persistence set
-        s = r"({c}' = {c}) /\ ({w} = {none})".format(
-            c=c, w=w, none=n_holds)
+        s = rf"({c}' = {c}) /\ ({w} = {none})"
         count = aut.add_expr(s)
         u = rim & count
         v = aut.false
         for i, y in enumerate(yi):
-            s = "{w}' = {i}".format(w=w, i=i)
+            s = f"{w}' = {i}"
             count = aut.add_expr(s)
             ystar = _controllable_action(y, aut)
             q = count & ystar
@@ -325,18 +324,17 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         rho_2 |= u
         # rho_3: descent in recurrence basin
         s = (
-            r"({c}' = {c}) /\ "
-            r"({w} /= {none}) /\ "
-            "({w}' = {w})").format(
-                c=c, w=w, none=n_holds)
+            rf"({c}' = {c}) /\ "
+            rf"({w} /= {none}) /\ "
+            f"({w}' = {w})")
         count = aut.add_expr(s)
         u = rim & count
         v = aut.false
         for i, xjr in enumerate(xijr):
             for j, (xr, goal) in enumerate(zip(xjr, goals)):
                 s = (
-                    r"({c} = {j}) /\ "
-                    " ({w} = {i})").format(c=c, w=w, i=i, j=j)
+                    rf"({c} = {j}) /\ "
+                    f" ({w} = {i})")
                 count = aut.add_expr(s)
                 x_basin = xr[0]
                 p = aut.false
@@ -355,15 +353,13 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         u = aut.false
         for j, goal in enumerate(goals):
             jp = (j + 1) % len(goals)
-            s = r"({c} = {j}) /\ ({c}' = {jp})".format(
-                c=c, j=j, jp=jp)
+            s = rf"({c} = {j}) /\ ({c}' = {jp})"
             count = aut.add_expr(s)
             p = count & goal
             u |= p
         s = (
-            r"({w} /= {none}) /\ "
-            "({w}' = {w})").format(
-                c=c, w=w, none=n_holds)
+            rf"({w} /= {none}) /\ "
+            f"({w}' = {w})")
         count = aut.add_expr(s)
         u &= count
         u &= rim
@@ -371,7 +367,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             aut.true, aut, extra_action=u)
         v = aut.false
         for i, y in enumerate(yi):
-            s = "{w} = {i}".format(w=w, i=i)
+            s = f"{w} = {i}"
             count = aut.add_expr(s)
             ystar = _controllable_action(y, aut)
             q = count & ystar
@@ -385,8 +381,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     u |= rho_3
     u |= rho_4
     # counter limits
-    s = r'({w} \in 0..{n_w}) /\ ({c} \in 0..{n_c})'.format(
-        w=w, n_w=n_w, c=c, n_c=n_c)
+    s = rf'({w} \in 0..{n_w}) /\ ({c} \in 0..{n_c})'
     u &= aut.add_expr(s)
     if not aut.plus_one:
         u |= ~ env_action
@@ -398,8 +393,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
     aut.varlist['impl'] = list(aut.varlist['sys']) + [w, c]
     aut.prime_varlists()
     # initial condition for counter
-    s = r'({c} = 0) /\ ({w} = {none})'.format(
-        c=c, w=w, none=n_holds)
+    s = rf'({c} = 0) /\ ({w} = {none})'
     count = aut.add_expr(s)
     _make_init(count, winning, aut)
     return aut.action['impl']
@@ -446,26 +440,23 @@ def is_realizable(win, aut):
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\\A x:  \\E y:  {form}\n'
+            f'\\A x:  \\E y:  {form}\n'
             'does not hold, so for some `EnvInit` states, '
             'the component cannot pick an initial `SysInit` state \n'
-            'that is also winning.'
-            ).format(form=form)
+            'that is also winning.')
     elif qinit == r'\E \A':
         u = aut.forall(env_vars, init)
         u = aut.exist(sys_vars, u)
         r = (u == aut.true)
         msg = (
             'The initial condition requirement:\n'
-            '\\E y:  \\A x:  {form}\n'
+            f'\\E y:  \\A x:  {form}\n'
             'does not hold, so the component cannot pick '
             'a single `SysInit` state such that for any \n'
-            '`EnvInit` state, the initial state be winning.'
-            ).format(form=form)
+            '`EnvInit` state, the initial state be winning.')
     else:
         raise ValueError(
-            'unknown `qinit` value "{q}"'.format(
-                q=qinit))
+            f'unknown `qinit` value "{qinit}"')
     if not r:
         print(msg)
     return r
@@ -568,7 +559,7 @@ def _make_init(internal_init, win, aut):
         init = aut.forall(env_vars, form)
     else:
         raise ValueError(
-            'unknown `qinit` value "{q}"'.format(q=qinit))
+            f'unknown `qinit` value "{qinit}"')
     assert init != aut.false
     assert is_state_predicate(init)
     aut.init['impl'] = init & internal_init
@@ -590,24 +581,21 @@ def _warn_moore_mealy(aut):
         r = False
         print(
             'WARNING: Moore sys, but sys depends on '
-            'primed env vars:\n {r}'.format(
-                r=sys_depends_on_primed_env))
+            f'primed env vars:\n {sys_depends_on_primed_env}')
     if not moore and env_depends_on_primed_sys:
         r = False
-        print((
+        print(
             'WARNING: Mealy sys, and assumption depends on '
             'primed sys vars.\n'
             'If env has to be Mealy too, '
             'then you can get cyclic dependencies.\n'
-            'Primed sys vars:\n {r}').format(
-                r=env_depends_on_primed_sys))
+            f'Primed sys vars:\n {env_depends_on_primed_sys}')
     if env_depends_on_primed_sys:
         r = False
-        print((
+        print(
             'ATTENTION: assumption depends on primed sys vars:\n'
-            '{r}\n'
-            'Is a Mealy env realistic for your problem ?').format(
-                r=env_depends_on_primed_sys))
+            f'{env_depends_on_primed_sys}\n'
+            'Is a Mealy env realistic for your problem ?')
     return r
 
 

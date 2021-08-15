@@ -63,8 +63,7 @@ def synthesize_some_controller(aut):
 
 
 def print_info(g):
-    print('Enumerated strategy has {n} nodes.'.format(
-        n=len(g)))
+    print(f'Enumerated strategy has {len(g)} nodes.')
     print('The nodes are:')
     print(g.nodes(data=True))
     print('The edges (transitions) are:')

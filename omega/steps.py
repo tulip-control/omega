@@ -150,10 +150,9 @@ class AutomatonStepper:
 
     def _assert_unblocked(self, state):
         if state is None:
-            raise ValueError((
+            raise ValueError(
                 'action is not enabled '
-                'at state: {state}').format(
-                    state=state))
+                f'at state: {state}')
 
 
 class EnumStrategyStepper:

@@ -50,11 +50,9 @@ def semi_symbolic():
     h, _ = sym_enum._format_nx(g)
     pd = nx.drawing.nx_pydot.to_pydot(h)
     pd.write_pdf('game_states.pdf')
-    print('Enumerated strategy has {n} nodes.'.format(
-        n=len(g)))
+    print(f'Enumerated strategy has {len(g)} nodes.')
     print(('Winning set:', aut.bdd.to_expr(z)))
-    print('{n} BDD nodes in total'.format(
-        n=len(aut.bdd)))
+    print(f'{len(aut.bdd)} BDD nodes in total')
 
 
 def enumerate_controller(aut):

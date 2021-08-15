@@ -172,13 +172,13 @@ class Automaton(_fol.Context):
             e = self._fetch_expr(v)
             if e is None:
                 e = v
-            s = 'init[{k}] = {e}'.format(k=k, e=e)
+            s = f'init[{k}] = {e}'
             c.append(s)
         for k, v in self.action.items():
             e = self._fetch_expr(v)
             if e is None:
                 e = v
-            s = 'action[{k}] = {e}'.format(k=k, e=e)
+            s = f'action[{k}] = {e}'
             c.append(s)
         c.append('win =')
         c.append(str(self.win))
@@ -234,7 +234,7 @@ class Automaton(_fol.Context):
     def prime_varlists(self, keys=None):
         """Map primed `keys` to lists of primed variables.
 
-        For each `k in keys`, add `"{k}'".format(k=k)` to
+        For each `k in keys`, add `f"{k}'"` to
         `self.varlist`, with value the `list` that results
         from priming the variables in `self.varlist[k]`.
 
@@ -344,13 +344,12 @@ class Automaton(_fol.Context):
                 continue
             assert hints['type'] == 'int', hints
             a, b = hints['dom']
-            s = r'({a} <= {var}) /\ ({var}  <= {b})'
-            type_inv = s.format(a=a, b=b, var=var)
+            s = rf'({a} <= {{var}}) /\ ({{var}}  <= {b})'
+            type_inv = s.format(var=var)
             r.append(type_inv)
             if not action:
                 continue
-            type_inv_primed = s.format(
-                a=a, b=b, var=stx.prime(var))
+            type_inv_primed = s.format(var=stx.prime(var))
             r.append(type_inv_primed)
         return stx.conj(r)
 
@@ -383,10 +382,9 @@ class Automaton(_fol.Context):
         # overwritten ?
         old_expr = self._bdd_to_expr.get(uid)
         if old_expr is not None:
-            log.info((
-                'BDD cache entry for expression "{old}" '
-                'overwritten by expression "{new}"'
-                ).format(old=old_expr, new=expr))
+            log.info(
+                f'BDD cache entry for expression "{old_expr}" '
+                f'overwritten by expression "{expr}"')
         self._bdd_to_expr[uid] = expr
         return u
 

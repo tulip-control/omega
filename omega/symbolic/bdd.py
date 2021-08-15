@@ -55,7 +55,7 @@ class Lexer:
         self.lexer = ply.lex.lex(module=self, debug=True, debuglog=log)
 
     def t_error(self, t):
-        raise Exception('Illegal character "{t}"'.format(t=t.value[0]))
+        raise Exception(f'Illegal character "{t.value[0]}"')
 
 
 class Parser:
@@ -86,8 +86,7 @@ class Parser:
                 break
             s += tok.value
         raise Exception(
-            'syntax error: remaining characters: {s}'.format(
-                s=s))
+            f'syntax error: remaining characters: {s}')
 
     def _recurse(self):
         tok = self.lexer.lexer.token()
@@ -119,7 +118,7 @@ class Parser:
         elif t == 'NUMBER':
             return self.nodes.Num(tok.value)
         else:
-            raise Exception('Unknown token "{t}"'.format(t=tok))
+            raise Exception(f'Unknown token "{tok}"')
 
 
 class Nodes(_Nodes):
@@ -135,8 +134,8 @@ class Nodes(_Nodes):
             self.type = 'buffer'
 
         def __repr__(self):
-            return 'Memory({c})'.format(
-                c=', '.join(repr(u) for u in self.memory))
+            c = ', '.join(repr(u) for u in self.memory)
+            return f'Memory({c})'
 
         def flatten(self, mem=None, same_mem=False, *arg, **kw):
             if not same_mem:
@@ -185,19 +184,20 @@ class DebugNodes(Nodes):
     class Buffer(Nodes.Buffer):
         def flatten(self, indent=0, *arg, **kw):
             indent += 1
-            sep = ',\n{s}'.format(s=' ' * indent)
+            blank = ' ' * indent
+            sep = f',\n{blank}'
             mem = sep.join(
                 u.flatten(indent=indent)
                 for u in self.memory)
-            return '\n{s}buffer[{i}](\n{s1}{mem})'.format(
-                i=len(self.memory),
-                mem=mem,
-                s=' ' * (indent - 1),
-                s1=' ' * indent)
+            i = len(self.memory)
+            s = ' ' * (indent - 1)
+            s1 = ' ' * indent
+            return f'\n{s}buffer[{i}](\n{s1}{mem})'
+
 
     class Register(Nodes.Register):
         def flatten(self, *arg, **kw):
-            return 'reg[{i}]'.format(i=self.value)
+            return f'reg[{self.value}]'
 
 
 class BDDNodes(Nodes):

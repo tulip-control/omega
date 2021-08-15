@@ -111,10 +111,10 @@ def collect_functions(functions, r=None):
 def report_function_statistics(outputs, memory):
     """Print BDD sizes for output and memory BDDs."""
     care = next(outputs.values())['care_set']
-    print('care set nodes: {n}'.format(n=len(care)))
+    print(f'care set nodes: {len(care)}')
     # collect all flip-flops
     functions = list()
     functions.extend(d['function'] for d in outputs.values())
     functions.extend(d['function'] for d in memory.values())
     n = _bdd.count_nodes(functions)
-    print('total nodes (shared) in functions: {n}'.format(n=n))
+    print(f'total nodes (shared) in functions: {n}')

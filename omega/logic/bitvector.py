@@ -882,7 +882,7 @@ def _multiplier(x, y, s=None, start=0):
 
 
 def adder_subtractor(x, y, add=True, start=0, extend_by=1):
-    """Return sum of `p` and `q`, w/o truncation.
+    """Return sum of `p` and `q`, without truncation.
 
     Implements a ripple-carry adder-subtractor.
     The control signal is `add`.
@@ -1196,7 +1196,7 @@ def int_to_twos_complement(s):
 def twos_complement_to_int(bits):
     """Return `int` equal to value of two's complement in `bits`."""
     n = len(bits)  # width including sign bit
-    n = n - 1  # width w/o sign bit
+    n = n - 1  # width without sign bit
     r = [int(b) for b in bits]
     return -r[-1] * 2**n + sum(
         b * 2**i

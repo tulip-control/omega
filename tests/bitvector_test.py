@@ -309,7 +309,7 @@ def test_multiplier():
 
 
 def _evaluate_result(result, memory):
-    """Return integer, given a result and memory w/o variables.
+    """Return integer, given a result and memory without variables.
 
     @type result: `list`
     @type memory: `list`

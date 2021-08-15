@@ -312,19 +312,20 @@ class Context(object):
         """Return `list` of BDDs for the `expressions`."""
         return [self.to_bdd(e) for e in expressions]
 
-    def add_expr(self, e, with_ops=False):
+    def add_expr(self, expr, with_ops=False):
         """Add first-order predicate.
 
         A predicate is a Boolean-valued formula.
         """
-        assert stx.isinstance_str(e), e
+        assert stx.isinstance_str(expr), expr
         # optional because current implementation is slow
         if with_ops:
             defs = self.op
         else:
             defs = None
-        s = bv.bitblast(e, vrs=self.vars, defs=defs)
-        assert stx.isinstance_str(s), s  # was `e` a predicate ?
+        s = bv.bitblast(expr, vrs=self.vars, defs=defs)
+        # was `expr` a predicate ?
+        assert stx.isinstance_str(s), s
         return sym_bdd.add_expr(s, self.bdd)
 
     def to_expr(self, u, care=None, **kw):

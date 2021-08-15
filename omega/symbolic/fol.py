@@ -176,7 +176,8 @@ class Context(object):
         @param vars_to_new: `dict` that maps each var name to
             a var (as `str`), or to a value (as `bool` or `int`).
         """
-        if len(vars_to_new) == 0:  # must be mapping, not `None`
+        # `vars_to_new` must be mapping, not `None`
+        if len(vars_to_new) == 0:
             return u
         assert vars_to_new, vars_to_new
         for k in vars_to_new:
@@ -220,7 +221,8 @@ class Context(object):
         support = self.support(u)
         if care_vars is None:
             care_vars = support
-        assert set(care_vars) >= support, (care_vars, support)
+        assert set(care_vars) >= support, (
+            care_vars, support)
         bits = _refine_vars(care_vars, self.vars)
         n = len(bits)
         c = self.bdd.count(u, n)
@@ -237,7 +239,8 @@ class Context(object):
         if care_vars is None:
             care_bits = None
         elif care_vars:
-            care_bits = bv.bit_table(care_vars, self.vars)
+            care_bits = bv.bit_table(
+                care_vars, self.vars)
         else:
             care_bits = set()
         vrs = self.support(u)
@@ -351,7 +354,8 @@ class Context(object):
         @param assignment: `dict` that maps each variable to
             a value (`int` or `bool`) in accord with `self.vars`.
         """
-        bit_values = _refine_assignment(assignment, self.vars)
+        bit_values = _refine_assignment(
+            assignment, self.vars)
         return self.bdd.cube(bit_values)
 
     def apply(self, op, u, v=None, w=None):
@@ -457,7 +461,8 @@ def _assignment_to_bdd(dvars, fol):
 
     Handles only assignments of integer values.
     """
-    raise DeprecationWarning('use `_refine_assignment` instead')
+    raise DeprecationWarning(
+        'use `_refine_assignment` instead')
     conj = stx.conj(
         '{var} = {value}'.format(var=var, value=value)
         for var, value in dvars.items())

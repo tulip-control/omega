@@ -802,8 +802,9 @@ def _restoring_divider(x, y, s=None, start=0):
     # this stage
     # diff
     shifted_p = fixed_shift(p, 1, left=True)
-    r, sum_mem, carry = adder_subtractor(shifted_p, y, add=False,
-                                         start=j, extend_by=0)
+    r, sum_mem, carry = adder_subtractor(
+        shifted_p, y,
+        add=False, start=j, extend_by=0)
     j = _extend_memory(mem, sum_mem, j)
     # quotient
     sgn = sign(r)

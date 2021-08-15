@@ -5,7 +5,13 @@ from omega.symbolic import temporal as trl
 
 def example_usage_of_ordinary_context():
     ctx = _fol.Context()
-    ctx.declare(x=(1, 3), y='bool')
+    ctx.declare(
+        x=(1, 3),
+        y='bool',
+        z=(1, 3))
+    u = ctx.add_expr(r' x = 1 /\ ~ y ')
+    defs = dict(x='z')
+    u = ctx.let(defs, u)
 
 
 def example_uage_of_modal_context():

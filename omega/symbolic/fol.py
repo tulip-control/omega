@@ -251,7 +251,7 @@ class Context(object):
                     d, vrs, bit_assignment)
                 yield d
 
-    def define(self, e):
+    def define(self, definitions):
         r"""Register operator definitions.
 
         The string `e` must contain definitions. Example:
@@ -266,9 +266,10 @@ class Context(object):
 
         In the future, this method may merge with `add_expr`.
         """
-        assert stx.isinstance_str(e), e
-        bv_defs = bv._parser.parse(e)
-        defs = _parser.parse(e)
+        assert stx.isinstance_str(
+            definitions), definitions
+        bv_defs = bv._parser.parse(definitions)
+        defs = _parser.parse(definitions)
         for opdef, bv_opdef in zip(defs, bv_defs):
             assert opdef.operator == '==', opdef
             name_ast, expr_ast = opdef.operands

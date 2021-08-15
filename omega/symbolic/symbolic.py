@@ -33,7 +33,7 @@ except ImportError:
         'Will use `dd.autoref`.')
 
 
-class Automaton(object):
+class Automaton:
     r"""Transition relation, initial condition, and hidden variables.
 
     User-defined attributes

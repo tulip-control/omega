@@ -45,7 +45,7 @@ _parser = lexyacc.Parser()
 TYPE_HINTS = {'int', 'saturating', 'modwrap'}
 
 
-class Context(object):
+class Context:
     """First-order interface to a binary decision diagram.
 
     All operations assume that integer-valued variables

@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 slugs_log = logging.getLogger(__name__ + '.slugs')
 
 
-class Lexer(object):
+class Lexer:
     """Token rules for slugsin lexer."""
 
     operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION',
@@ -58,7 +58,7 @@ class Lexer(object):
         raise Exception('Illegal character "{t}"'.format(t=t.value[0]))
 
 
-class Parser(object):
+class Parser:
     """Parser for prefix syntax with buffers."""
     # Context-sensitive grammar, so cannot use PLY
 
@@ -129,7 +129,7 @@ class Nodes(_Nodes):
     # cyclic references are possible, but assumed absent
     # any cyclic reference would introduce infinite recursion,
     # so a new variable
-    class Buffer(object):
+    class Buffer:
         def __init__(self, memory):
             self.memory = memory
             self.type = 'buffer'

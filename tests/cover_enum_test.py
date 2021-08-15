@@ -163,7 +163,7 @@ def subsets(c):
     return sets
 
 
-class Parameters(object):
+class Parameters:
     """Stores parameter values and lattice definition."""
 
     def __init__(self):

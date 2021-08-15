@@ -5,7 +5,7 @@
 import astutils
 
 
-class Nodes(object):
+class Nodes:
     """Container of AST node classes for logic."""
 
     Terminal = astutils.Terminal

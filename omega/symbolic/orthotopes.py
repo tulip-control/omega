@@ -522,7 +522,7 @@ def _renaming_between_parameters(px, qx):
     return d
 
 
-class Parameters(object):
+class Parameters:
     """Stores parameters values and lattice definition."""
 
     def __init__(self):

@@ -94,7 +94,7 @@ def test_counterexample_to_strong_reduction():
         assert p in primes, (p, primes)
 
 
-class Parameters(object):
+class Parameters:
     """Stores parameters values and lattice definition."""
 
     def __init__(self):

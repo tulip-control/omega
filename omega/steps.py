@@ -7,7 +7,7 @@ from omega.logic import syntax as stx
 from omega.symbolic import prime as prm
 
 
-class History(object):
+class History:
     """Record current and past values of variables.
 
     To initialize:
@@ -107,7 +107,7 @@ class Assembly(History):
         state.update(partial)
 
 
-class AutomatonStepper(object):
+class AutomatonStepper:
     """Initialize and step a symbolic `Automaton`."""
 
     def __init__(self, aut):
@@ -156,7 +156,7 @@ class AutomatonStepper(object):
                     state=state))
 
 
-class EnumStrategyStepper(object):
+class EnumStrategyStepper:
     """Initialize and step an enumerated strategy."""
 
     def __init__(self, graph):
@@ -181,7 +181,7 @@ class EnumStrategyStepper(object):
         return slice_dict(d, self.graph.outputs)
 
 
-class Component(object):
+class Component:
     """Behave as a Moore state machine.
 
     When given "inputs", it updates its state
@@ -235,7 +235,7 @@ class Component(object):
         self.state = state
 
 
-class Scheduler(object):
+class Scheduler:
     """A non-interleaving binary clock.
 
     Each step increments the variable "turn".

@@ -22,7 +22,7 @@ BINARY_OPERATORS = {'&', '|', '^', r'\A', r'\E', r'\S'}
 BINARY = {'AND', 'OR', 'XOR', 'FORALL', 'EXISTS', 'RENAME'}
 
 
-class Parser(object):
+class Parser:
     """Parser for prefix syntax with buffers.
 
     Avoids recursion by using a stack.

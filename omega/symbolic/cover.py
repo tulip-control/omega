@@ -980,7 +980,7 @@ def _comma_sorted(c):
     return ', '.join(natsort.natsorted(c))
 
 
-class _BranchAndBound(object):
+class _BranchAndBound:
     """A data structure that stores useful values.
 
     It helps avoid passing 10 arguments in each

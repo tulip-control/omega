@@ -150,7 +150,7 @@ def _orthotope_singleton(px, fol):
     s = stx.conj(
         '({a} = {b})'.format(
             a=d['a'], b=d['b'])
-        for x, d in px.items())
+        for _, d in px.items())
     r = fol.add_expr(s)
     return r
 
@@ -160,7 +160,7 @@ def _orthotope_nonempty(abx, fol):
     s = stx.conj(
         '({a} <= {b})'.format(
             a=d['a'], b=d['b'])
-        for x, d in abx.items())
+        for _, d in abx.items())
     r = fol.add_expr(s)
     return r
 

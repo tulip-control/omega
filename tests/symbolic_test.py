@@ -313,8 +313,8 @@ def test_logicizer_env():
         ignore_initial=True,
         self_loops=True)
     s = stx.conj(env_act)
-    e1 = "(((((k = 0)) => (((x <=> True)) /\\ ((k' = 1)))) \n"
-    e2 = "(((((k = 0)) => (((k' = 1)) /\\ ((x <=> True)))) \n"
+    e1 = "(((((k = 0)) => (((x <=> TRUE)) /\\ ((k' = 1)))) \n"
+    e2 = "(((((k = 0)) => (((k' = 1)) /\\ ((x <=> TRUE)))) \n"
     assert s.startswith(e1) or s.startswith(e2), s
     e3 = (
         "/\\ (((k = 1)) => ((x') /\\ ((k' = 2))))) \n"

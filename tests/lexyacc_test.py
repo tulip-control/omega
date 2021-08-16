@@ -5,38 +5,53 @@ from omega.logic import lexyacc
 parser = lexyacc.Parser()
 
 
-def test_quantifiers():
-    s = r'\E x:  True'
-    t = parser.parse(s)
-    assert hasattr(t, 'operator'), t
-    assert t.type == 'operator', t
-    assert t.operator == r'\E', t.operator
-    assert len(t.operands) == 2, t.operands
-    qvars, e = t.operands
+def test_existential_quantifier():
+    # with one quantified constant
+    _check_quantifier_1_decl(r'\E x:  True', 'True')
+    _check_quantifier_1_decl(r'\E x:  TRUE', 'TRUE')
+    _check_quantifier_1_decl(r'\E x:  False', 'False')
+    _check_quantifier_1_decl(r'\E x:  FALSE', 'FALSE')
+    # with two quantified constants
+    _check_quantifier_2_decl(r'\E x, y:  True', 'True')
+    _check_quantifier_2_decl(r'\E x, y:  TRUE', 'TRUE')
+    _check_quantifier_2_decl(r'\E x, y:  False', 'False')
+    _check_quantifier_2_decl(r'\E x, y:  FALSE', 'FALSE')
+
+
+def _check_quantifier_1_decl(expr, literal):
+    tree = parser.parse(expr)
+    assert hasattr(tree, 'operator'), tree
+    assert tree.type == 'operator', tree
+    assert tree.operator == r'\E', tree.operator
+    assert len(tree.operands) == 2, tree.operands
+    qvars, predicate = tree.operands
     assert hasattr(qvars, 'operator'), qvars
     assert qvars.operator == 'params', qvars.operator
     x, = qvars.operands
     _assert_is_var_node(x, 'x')
-    assert hasattr(e, 'type'), e
-    assert e.type == 'bool', e.type
-    assert e.value == 'True', e.value
-    #
-    s = r'\E x, y:  False'
-    t = parser.parse(s)
-    assert hasattr(t, 'type'), t
-    assert t.type == 'operator', t.type
-    assert t.operator == r'\E', t.operator
-    assert len(t.operands) == 2, t.operands
-    qvars, e = t.operands
+    assert hasattr(predicate, 'type'), predicate
+    assert predicate.type == 'bool', predicate.type
+    assert predicate.value == literal, predicate.value
+
+
+def _check_quantifier_2_decl(expr, literal):
+    tree = parser.parse(expr)
+    assert hasattr(tree, 'type'), t
+    assert tree.type == 'operator', tree.type
+    assert tree.operator == r'\E', tree.operator
+    assert len(tree.operands) == 2, tree.operands
+    qvars, predicate = tree.operands
     assert hasattr(qvars, 'operator'), qvars
     assert qvars.operator == 'params', qvars.operator
     x, y = qvars.operands
     _assert_is_var_node(x, 'x')
     _assert_is_var_node(y, 'y')
-    assert hasattr(e, 'type'), e
-    assert e.type == 'bool', e.type
-    assert e.value == 'False', e.value
-    #
+    assert hasattr(predicate, 'type'), predicate
+    assert predicate.type == 'bool', predicate.type
+    assert predicate.value == literal, predicate.value
+
+
+def test_universal_quantifier():
     s = r'\A y:  True'
     t = parser.parse(s)
     assert t.operator == r'\A', t.operator

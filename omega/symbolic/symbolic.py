@@ -313,16 +313,17 @@ class Automaton(object):
 
 
 def fill_blanks(aut, as_bdd=False, rabin=False):
-    """Add `"True"` to empty attributes `init`, `action`, `win`.
+    """Add `"TRUE"` to empty attributes `init`, `action`, `win`.
 
-    @param as_bdd: if `True`, then represent `"True"` as `1`
+    @param as_bdd: if `True`, then represent
+        the Boolean constants as a BDD
     """
     if as_bdd:
         true = aut.bdd.true
         false = aut.bdd.false
     else:
-        true = 'True'
-        false = 'False'
+        true = 'TRUE'
+        false = 'FALSE'
     for d in (aut.init, aut.action):
         for k, v in d.items():
             if not v:

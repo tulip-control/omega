@@ -127,7 +127,7 @@ def _node_var_trans(g, nodevar, dvars):
     for u, d in g.nodes(data=True):
         pre = _assign(nodevar, u, dvars)
         r = _to_action(d, dvars)
-        if r == 'True':
+        if r == 'TRUE':
             continue
         # initial node vars
         init.append(r'~ ({pre}) \/ ({r})'.format(pre=pre, r=r))
@@ -266,7 +266,10 @@ def _assign(k, v, dvars):
     """
     typ = dvars[k]
     if typ == 'bool':
-        s = '{k} <=> {v}'.format(k=k, v=v)
+        value = str(v).upper()
+        if value != 'FALSE' and value != 'TRUE':
+            raise ValueError(v)
+        s = '{k} <=> {v}'.format(k=k, v=value)
     elif isinstance(typ, tuple) and len(typ) == 2:  # integer
         s = '{k} = {v}'.format(k=k, v=v)
     elif isinstance(typ, list):  # string enumeration

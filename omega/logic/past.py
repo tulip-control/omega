@@ -73,22 +73,22 @@ class Nodes(_Nodes):
             if op != 'X':
                 assert c == 'bool', (c, op)
             if op == '-[]':
-                x = Nodes.Bool('True')
+                x = Nodes.Bool('TRUE')
                 y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_since(a, *arg, **kw)
                 return '(~ {r})'.format(r=r)
             elif op == '-<>':
-                a = (Nodes.Bool('True'), self.operands[0])
+                a = (Nodes.Bool('TRUE'), self.operands[0])
                 return _flatten_since(a, *arg, **kw)
             elif op == '[]' and until:
-                x = Nodes.Bool('True')
+                x = Nodes.Bool('TRUE')
                 y = Nodes.Unary('~', self.operands[0])
                 a = (x, y)
                 r = _flatten_until(a, *arg, **kw)
                 return '(~ {r})'.format(r=r)
             elif op == '<>' and until:
-                a = (Nodes.Bool('True'), self.operands[0])
+                a = (Nodes.Bool('TRUE'), self.operands[0])
                 return _flatten_until(a, *arg, **kw)
             return super(Nodes.Unary, self).flatten(*arg, **kw)
 
@@ -239,7 +239,7 @@ def _flatten_until(operands, testers, context, *arg, **kw):
     win = r'(({q}) \/ ~ {var})'.format(var=var, q=q)
     testers[var] = dict(
         type='bool',
-        init='True', trans=trans, win=win)
+        init='TRUE', trans=trans, win=win)
     return var
 
 

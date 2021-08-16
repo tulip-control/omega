@@ -63,7 +63,7 @@ def test_declare():
 def test_support():
     fol = _fol.Context()
     bdd = fol.bdd
-    s = 'True'
+    s = 'TRUE'
     u = fol.add_expr(s)
     r = fol.support(u)
     assert r == set(), r
@@ -200,7 +200,7 @@ def test_pick():
     for i in range(10):
         q = fol.pick(u, care_vars=['x'])
         assert p == q, (p, q)
-    u = fol.add_expr('False')
+    u = fol.add_expr('FALSE')
     p = fol.pick(u, care_vars=['x'])
     assert p is None, p
 
@@ -208,11 +208,11 @@ def test_pick():
 def test_pick_iter():
     fol = _fol.Context()
     fol.declare(x='bool', y=(0, 2))
-    u = fol.add_expr('True')
+    u = fol.add_expr('TRUE')
     gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
     assert len(r) == 2, r
-    u = fol.add_expr('False')
+    u = fol.add_expr('FALSE')
     gen = fol.pick_iter(u, care_vars=['x'])
     r = list(gen)
     assert len(r) == 0, r
@@ -278,7 +278,7 @@ def test_define_non_boolean_operator():
 def test_add_expr():
     fol = _fol.Context()
     bdd = fol.bdd
-    u = fol.add_expr('False')
+    u = fol.add_expr('FALSE')
     assert u == bdd.false, bdd.to_expr(u)
     fol.declare(x=(0, 100), y=(5, 23))
     u = fol.add_expr('x < y + 5')

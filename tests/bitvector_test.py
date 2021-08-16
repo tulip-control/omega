@@ -115,10 +115,10 @@ def test_flatten_arithmetic():
 
 def test_flatten_quantifiers():
     # single qvar
-    s = r'\A a: True'
+    s = r'\A a:  TRUE'
     r = parser.parse(s).flatten(t=t)
     assert r == r' \A & a0 a1 1', r
-    s = r'\E y: False'
+    s = r'\E y:  FALSE'
     r = parser.parse(s).flatten(t=t)
     assert r == r' \E & & y0 y1 y2 0', r
     s = r'\E y: x = y'
@@ -127,7 +127,7 @@ def test_flatten_quantifiers():
     r_ = r' \E & & y0 y1 y2 {eq}'.format(eq=eq)
     assert r == r_, (r, r_)
     # multiple qvars
-    s = r'\E a, b: True'
+    s = r'\E a, b:  TRUE'
     r = parser.parse(s).flatten(t=t)
     assert r == r' \E & & & a0 a1 b0 b1 1', r
     s = r'\E a, x: x - a > 0'
@@ -144,10 +144,10 @@ def test_flatten_quantifiers():
 
 def test_flatten_substitution():
     # single pair
-    s = r'\S a / b: True'
+    s = r'\S a / b:  TRUE'
     r = parser.parse(s).flatten(t=t)
     assert r == r' \S $4 a0 b0 a1 b1 1', r
-    s = r'\S q / r: False'
+    s = r'\S q / r:  FALSE'
     r = parser.parse(s).flatten(t=t)
     assert r == r' \S $2 q r 0', r
     s = r'\S b / x: x - y <= 0'
@@ -156,12 +156,12 @@ def test_flatten_substitution():
     r_ = r' \S $4 b0 x@0.0.3 b1 x@1 {h}'.format(h=h)
     assert r == r_, r
     # multiple pairs
-    s = r'\S a / b,  q / r:  False'
+    s = r'\S a / b,  q / r:  FALSE'
     r = parser.parse(s).flatten(t=t)
     r_ = r' \S $6 a0 b0 a1 b1 q r 0'
     assert r == r_, r
     # swap: order of substitutions should be preserved
-    s = r'\S q / r, a / b:  False'
+    s = r'\S q / r, a / b:  FALSE'
     r = parser.parse(s).flatten(t=t)
     r_ = r' \S $6 q r a0 b0 a1 b1 0'
     assert r == r_, r
@@ -173,9 +173,9 @@ def test_flatten_substitution():
     assert r == r_, r
     # invalid input
     c = [
-        r'\S a / q: True',
-        r'\S q / a: True',
-        r'\S a / y: True']
+        r'\S a / q:  TRUE',
+        r'\S q / a:  TRUE',
+        r'\S a / y:  TRUE']
     for s in c:
         print(s)
         with pytest.raises(AssertionError):
@@ -547,9 +547,9 @@ def test_ite():
 
 def test_init_to_logic():
     # bool
-    d = dict(type='bool', init='False')
+    d = dict(type='bool', init='FALSE')
     c = bv._init_to_logic('x', d)
-    assert c == 'x <=> False', c
+    assert c == 'x <=> FALSE', c
     # number
     d = dict(type='other', init=5)
     c = bv._init_to_logic('y', d)

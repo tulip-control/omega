@@ -460,7 +460,7 @@ class Nodes(_Nodes):
                     for u in self.operands]
                 return stx.disj_prefix(ops)
             if self.operator != 'ite':
-                return super(Nodes.Operator, self).flatten(
+                return super().flatten(
                     mem=mem, *arg, **kw)
             # ternary conditional
             assert self.operator == 'ite', self.operator

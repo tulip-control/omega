@@ -57,7 +57,7 @@ class Nodes(_Nodes):
             if self.operator == '@':
                 x, = self.operands
                 return '@' + x.flatten(context=context, *arg, **kw)
-            return super(Nodes.Operator, self).flatten(
+            return super().flatten(
                 context=context, *arg, **kw)
 
     class Unary(_Nodes.Unary):
@@ -90,7 +90,7 @@ class Nodes(_Nodes):
             elif op == '<>' and until:
                 a = (Nodes.Bool('TRUE'), self.operands[0])
                 return _flatten_until(a, *arg, **kw)
-            return super(Nodes.Unary, self).flatten(*arg, **kw)
+            return super().flatten(*arg, **kw)
 
     class Binary(_Nodes.Binary):
         def flatten(self, *arg, **kw):
@@ -106,7 +106,7 @@ class Nodes(_Nodes):
             elif op == 'U' and until:
                 return _flatten_until(
                     self.operands, *arg, **kw)
-            return super(Nodes.Binary, self).flatten(*arg, **kw)
+            return super().flatten(*arg, **kw)
 
     class Comparator(_Nodes.Comparator):
         def flatten(self, *arg, **kw):
@@ -116,7 +116,7 @@ class Nodes(_Nodes):
             # change context
             kw['context'] = 'arithmetic'
             # recurse
-            return super(Nodes.Comparator, self).flatten(*arg, **kw)
+            return super().flatten(*arg, **kw)
 
     class Arithmetic(_Nodes.Arithmetic):
         def flatten(self, *arg, **kw):
@@ -126,7 +126,7 @@ class Nodes(_Nodes):
             # change context
             kw['context'] = 'arithmetic'
             # recurse
-            return super(Nodes.Arithmetic, self).flatten(*arg, **kw)
+            return super().flatten(*arg, **kw)
 
     class Var(_Nodes.Var):
         def flatten(self, testers=None, context=None,

@@ -19,7 +19,7 @@ class _SystemGraph(nx.MultiDiGraph):
     """
 
     def __init__(self):
-        super(_SystemGraph, self).__init__()
+        super().__init__()
         self.initial_nodes = set()
 
     def assert_consistent(self):
@@ -156,7 +156,7 @@ class Automaton(_SystemGraph):
 
     def __init__(self, acceptance='Buchi', dvars=None,
                  universal_nodes=None, guards='bool'):
-        super(Automaton, self).__init__()
+        super().__init__()
         if universal_nodes is None:
             universal_nodes = set()
         # init attributes
@@ -235,7 +235,7 @@ class Automaton(_SystemGraph):
 
     def assert_consistent(self):
         """Return `True` if conformant to conventions."""
-        super(Automaton, self).asert_consistent()
+        super().asert_consistent()
         a = self.acceptance
         s = self.accepting_sets
 
@@ -295,7 +295,7 @@ class TransitionSystem(_SystemGraph):
     """
 
     def __init__(self):
-        super(TransitionSystem, self).__init__()
+        super().__init__()
         self.owner = 'sys'
         self.vars = dict()
         self.env_vars = set()
@@ -344,7 +344,7 @@ class TransitionSystem(_SystemGraph):
     def assert_consistent(self):
         """Return `True` if attributes are conformant."""
         # TODO: check type consistency of formulas
-        super(TransitionSystem, self).assert_consistent()
+        super().assert_consistent()
         assert self.owner in {'env', 'sys'}
         assert set(self.env_vars).issubset(self.vars)
         for u, d in self.nodes(data=True):

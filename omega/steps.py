@@ -49,7 +49,7 @@ class Assembly(History):
 
     def __init__(self):
         self.machines = dict()
-        super(Assembly, self).__init__()
+        super().__init__()
         self.state = None  # to call `init` first
 
     def init(self):

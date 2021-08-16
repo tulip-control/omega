@@ -1240,7 +1240,7 @@ class Operator(_bdd.Function):
 
     def __init__(self, *arg, **kw):
         self.fol = kw.pop('fol')
-        super(Operator, self).__init__(*arg, **kw)
+        super().__init__(*arg, **kw)
 
     @property
     def support(self):

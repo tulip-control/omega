@@ -149,7 +149,7 @@ class Nodes(_Nodes):
 
     class Register(_Nodes.Terminal):
         def __init__(self, value):
-            super(Nodes.Register, self).__init__(value)
+            super().__init__(value)
             self.type = 'register'
 
         def flatten(self, mem, *arg, **kw):

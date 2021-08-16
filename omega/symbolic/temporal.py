@@ -136,7 +136,7 @@ class Automaton(_fol.Context):
     # and `action['env']` as `EnvNext`.
 
     def __init__(self):
-        super(Automaton, self).__init__()
+        super().__init__()
         # `varlist` says which variables represent each component
         # essentially, `varlist` is Lamport's `\mu`
         self.varlist = dict()
@@ -217,7 +217,7 @@ class Automaton(_fol.Context):
         assert isinstance(flexible, bool), flexible  # catch kw conflict
         if flexible:
             vrs = _sym.add_primed_too(vrs)
-        super(Automaton, self).add_vars(vrs)
+        super().add_vars(vrs)
 
     @property
     def vars_of_all_players(self):
@@ -515,7 +515,7 @@ class ExprDict(dict):
     """
 
     def __init__(self, context, *arg, **kw):
-        super(ExprDict, self).__init__(*arg, **kw)
+        super().__init__(*arg, **kw)
         self._context = weakref.proxy(context)
 
     def __setitem__(self, k, v):
@@ -528,13 +528,13 @@ class ExprDict(dict):
         try:
             v + ''
         except TypeError:
-            super(ExprDict, self).__setitem__(k, v)
+            super().__setitem__(k, v)
             return
         if v in self._context.op_bdd:
             u = self._context.op_bdd[v]
         else:
             u = self._context._cache_expr(v)
-        super(ExprDict, self).__setitem__(k, u)
+        super().__setitem__(k, u)
 
     def update(self, *arg, **kw):
         if arg:

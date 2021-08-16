@@ -14,26 +14,26 @@ class Nodes:
         """Variable identifier."""
 
         def __init__(self, value, dtype='var'):
-            super(Nodes.Var, self).__init__(value, dtype)
+            super().__init__(value, dtype)
 
     class Bool(astutils.Terminal):
         """Boolean constant."""
 
         def __init__(self, value, dtype='bool'):
-            super(Nodes.Bool, self).__init__(value, dtype)
+            super().__init__(value, dtype)
 
     class Num(astutils.Terminal):
         """Numerical costant."""
 
         def __init__(self, value, dtype='num'):
-            super(Nodes.Num, self).__init__(value, dtype)
+            super().__init__(value, dtype)
 
     class Str(astutils.Terminal):
         """String constant."""
 
         def __init__(self, value, dtype='str'):
             # the parser removes quotes around `value`
-            super(Nodes.Str, self).__init__(value, dtype)
+            super().__init__(value, dtype)
 
     class Operator(astutils.Operator):
         def flatten(self, *arg, **kw):

@@ -98,11 +98,18 @@ def _attractor_under_assumptions(goal, aut):
 
 
 def make_streett_transducer(z, yij, xijk, aut):
-    """Return I/O `temporal.Automaton` implementing strategy.
+    """Return action that implements strategy for Streett(1) game.
 
-    An auxiliary variable `_goal` is declared,
-    to represent the counter of recurrence goals.
-    The variable `_goal` is appended to `varlist['impl']`.
+    This function modifies:
+    - `aut.action['impl']` to store the BDD of the returned action
+      (which is the synthesized action)
+    - `aut.varlist['impl']` to store the implementation variables,
+      which include a new integer-valued variable named:
+      - `'_goal'`, which represents the counter of recurrence goals,
+      together with the variables of the system.
+    The key `'impl'` is an abbreviation of "implementation".
+
+    @rtype: `dd.autoref.Function` or `dd.cudd.Function`
     """
     winning = z
     assert is_realizable(winning, aut)
@@ -263,7 +270,20 @@ def _attractor_inside(inside, goal, aut):
 
 
 def make_rabin_transducer(zk, yki, xkijr, aut):
-    """Return O/I transducer for Rabin(1) game."""
+    """Return action that implements strategy for Rabin(1) game.
+
+    This function modifies:
+    - `aut.action['impl']` to store the BDD of the returned action
+      (which is the synthesized action)
+    - `aut.varlist['impl']` to store the implementation variables,
+      which include two new integer-valued variables named:
+      - `'_hold'`
+      - `'_goal'`
+      together with the variables of the system.
+    The key `'impl'` is an abbreviation of "implementation".
+
+    @rtype: `dd.autoref.Function` or `dd.cudd.Function`
+    """
     winning = zk[-1]
     assert is_realizable(winning, aut)
     _warn_moore_mealy(aut)

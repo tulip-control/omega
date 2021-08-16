@@ -185,7 +185,23 @@ def pick(c):
 
 
 def rename_variables(let, u, aut):
-    """Rename primed and unprimed occurrences of variables.
+    """Rename both primed and unprimed occurrences of variables.
+
+    Return the BDD that results from BDD `u` by renaming:
+    - all unprimed variables that are keys of `let` (which is a `dict`)
+      to their corresponding values in `let`
+    - all primed variables that occur unprimed as keys of `let`
+      to their corresponding values in `let`, primed
+
+    For example, the code
+
+    ```python
+    let = {'x': 'y'}
+    v = rename_variables(let, u, aut)
+    ```
+
+    will rename all occurrences of variable `x` in BDD `u` to `y`,
+    and all occurrences of `x'` in BDD `u` to `y'`.
 
     @param let: `dict` that renames unprimed variable identifiers
     """

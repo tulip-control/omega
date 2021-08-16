@@ -424,7 +424,7 @@ def test_streett_with_liveness_assumption():
     sys_action = gr1._copy_bdd(sys_action, aut.bdd, aut.bdd)
     u = aut.apply('=>', action, sys_action)
     assert u == aut.bdd.true, u
-    assert action == action_, (action, action_, pprint.pprint(sat))
+    assert action == action_, (action, action_, pprint.pformat(sat))
     #
     # test complement
     b = trl.default_rabin_automaton()

@@ -1,14 +1,14 @@
 # python
 .pytest_cache/
 .coverage
-htmlcov/*
-omega/_version.py
+htmlcov/
+/omega/_version.py
 *parsetab.py
-tests/generated_foo.py
-build/*
-dist/*
-*.egg-info/*
-__pycache__
+/tests/generated_foo.py
+/build/
+/dist/
+*.egg-info/
+__pycache__/
 *.pyc
 *.egg
 *.lprof

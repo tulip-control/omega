@@ -83,6 +83,7 @@ def test_flatten_comparator():
     log.setLevel(logging.ERROR)
     # (in)equality
     assert parser.parse('a = 1').flatten(t=t) == '$ 1 ! | ^ a0 1 | ^ a1 0 0'
+    assert parser.parse('a # 1').flatten(t=t) == '$ 1 | ^ a0 1 | ^ a1 0 0'
     assert parser.parse('a != 1').flatten(t=t) == '$ 1 | ^ a0 1 | ^ a1 0 0'
     # '<' comparator
     f = parser.parse('a < 1').flatten(t=t)

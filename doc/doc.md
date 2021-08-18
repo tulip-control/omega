@@ -729,7 +729,7 @@ aut.action['sys'] = r'''
     /\ y' = x - 3
     '''
 aut.win['<>[]'] = aut.bdds_from('x = 2')
-aut.win['[]<>'] = aut.bdds_from('y != -1')
+aut.win['[]<>'] = aut.bdds_from('y # -1')
 aut.qinit = r'\A \A'  # should work from all states that
                      # satisfy `aut.init['env']`
 aut.moore = True

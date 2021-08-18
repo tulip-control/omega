@@ -345,7 +345,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
         # rho_3: descent in recurrence basin
         s = (
             rf"({c}' = {c}) /\ "
-            rf"({w} /= {none}) /\ "
+            rf"({w} # {none}) /\ "
             f"({w}' = {w})")
         count = aut.add_expr(s)
         u = rim & count
@@ -378,7 +378,7 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
             p = count & goal
             u |= p
         s = (
-            rf"({w} /= {none}) /\ "
+            rf"({w} # {none}) /\ "
             f"({w}' = {w})")
         count = aut.add_expr(s)
         u &= count

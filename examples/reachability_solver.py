@@ -15,7 +15,7 @@ def do_it_yourself():
     primed_vrs = stx.prime_vars(vrs)
     r = aut.false
     rold = None
-    # for sure != r, thus at least one iteration
+    # for sure `r != rold`, thus at least one iteration
     assert r != rold
     while r != rold:
         rold = r  # memo
@@ -56,7 +56,7 @@ def spec():
         (* allowed changes *)
         /\ (x' = x + 1)
         /\ (y' = y - 2)
-        /\ (z' <=> ~ z)
+        /\ (z' # z)
         ''')
     return aut, goal, action
 

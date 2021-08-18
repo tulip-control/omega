@@ -676,7 +676,7 @@ def flatten_comparator(operator, x, y, mem):
 
 
 def inequality(p, q, mem):
-    """Return bitvector propositional formula for '/='."""
+    """Return bitvector propositional formula for '#'."""
     assert len(p) == len(q), (p, q)
     return ' '.join(f'| ^ {a} {b}'
                     for a, b in zip(p, q)) + ' 0'

@@ -20,9 +20,9 @@ def test_action_to_steps():
     aut.init[env] = aut.add_expr(r'x /\ (y = 1)')
     aut.init[sys] = aut.true
     aut.action[env] = aut.true
-    aut.action[sys] = aut.add_expr("y' /= y")
+    aut.action[sys] = aut.add_expr("y' # y")
     aut.win['<>[]'] = aut.bdds_from('x')
-    aut.win['[]<>'] = aut.bdds_from('y != 1')
+    aut.win['[]<>'] = aut.bdds_from('y # 1')
     aut.qinit = r'\A \A'
     aut.moore = True
     aut.prime_varlists()

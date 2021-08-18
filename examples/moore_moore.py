@@ -48,13 +48,13 @@ def specify_component_foo():
     FooNext ==
         /\ ((x = 1) \/ (y = 1))
         /\ (x \in 0..1  /\  x' \in 0..1)
-        /\ ((turn != 0) => (x' = x))
+        /\ ((turn # 0) => (x' = x))
     BarNext ==
         /\ ((x = 1) \/ (y = 1))
         /\ ((x = 0) => (y' = 1))
         /\ (y \in 0..1) /\ (y' \in 0..1)
         /\ ((turn = 0) => (y' = y))
-        /\ (turn' != turn)
+        /\ (turn' # turn)
     '''
     aut.define(spec)
     aut.init.update(
@@ -89,11 +89,11 @@ def specify_component_bar():
         /\ ((y = 0) => (x' = 1))
         /\ (x \in 0..1) /\ (x' \in 0..1)
         /\ ((turn = 1) => (x' = x))
-        /\ (turn' != turn)
+        /\ (turn' # turn)
     BarNext ==
         /\ ((x = 1) \/ (y = 1))
         /\ (y \in 0..1  /\  y' \in 0..1)
-        /\ ((turn != 1) => (y' = y))
+        /\ ((turn # 1) => (y' = y))
     '''
     aut.define(spec)
     aut.init.update(

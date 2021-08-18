@@ -42,7 +42,7 @@ def gr1_specification():
         /\ y' = x - 3
         '''
     aut.win['<>[]'] = aut.bdds_from('x = 2')
-    aut.win['[]<>'] = aut.bdds_from('y != -1')
+    aut.win['[]<>'] = aut.bdds_from('y # -1')
     aut.qinit = r'\E \A'
     aut.moore = True
     aut.plus_one = True

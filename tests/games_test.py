@@ -482,7 +482,7 @@ def test_streett_with_liveness_assumption():
         r"( (y = 0) => ite(x, (y' = 1), (y' = 0)) ) /\ "
         r"( (y = 1) => (y' = 0) ) /\ "
         r"( (_goal = 0) /\ (_goal' = 0) ) /\ "
-        r"( (y /= 2) /\ (y /= 3) )")
+        r"( (y # 2) /\ (y # 3) )")
     action_ = aut.add_expr(s)
     sat = list(aut.bdd.pick_iter(action))
     sys_action = aut.action['sys']
@@ -497,7 +497,7 @@ def test_streett_with_liveness_assumption():
     b.declare_variables(x='bool', y=(0, 2))
     b.varlist = dict(env=['y'], sys=['x'])
     b.action['env'] = gr1._copy_bdd(aut.action['sys'], aut.bdd, b.bdd)
-    b.win['<>[]'] = [b.add_expr('y /= 1')]
+    b.win['<>[]'] = [b.add_expr('y # 1')]
     b.win['[]<>'] = [b.add_expr('x')]
     zk, yki, xkijr = gr1.solve_rabin_game(b)
     rabin_win_set = zk[-1]

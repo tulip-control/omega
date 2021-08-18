@@ -378,7 +378,7 @@ class Nodes(_Nodes):
         r'\A': r'\A', r'\E': r'\E', r'\S': r'\S',
         'X': '',
         # 'G': '[]', 'F': '<>',
-        '<': '<', '<=': '<=', '=': '=',
+        '<': '<', '<=': '<=', '=<': '<=', '=': '=',
         '>=': '>=', '>': '>', '#': '!=', '/=': '!=', '!=': '!=',
         '+': '+', '-': '-'}
 
@@ -649,14 +649,14 @@ def flatten_comparator(operator, x, y, mem):
             assert (operator == '#'
                 or operator == '/='
                 or operator == '!='), operator
-    elif operator in {'<', '<=', '>=', '>'}:
+    elif operator in {'<', '<=', '=<', '>=', '>'}:
         swap = False
         if operator == '<=':
             negate = True
             swap = True
         elif operator == '>':
             swap = True
-        elif operator == '>=':
+        elif operator == '>=' or operator == '=<':
             negate = True
         else:
             assert operator == '<', operator

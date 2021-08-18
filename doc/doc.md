@@ -1115,6 +1115,7 @@ expr ::= expr '*' expr
        | expr '!=' expr  # not equal
        | expr '/=' expr  # not equal
        | expr '<=' expr
+       | expr '=<' expr  # <=
        | expr '>=' expr
 
        # quantifiers
@@ -1197,7 +1198,7 @@ The token precedence (lowest to highest) and associativity
 - `[]`, `<>`, `-[]`, `-<>` (l)
 - `U`, `W`, `R`, `S`, `T` (l)
 - `=`, `#`, `/=`, `!=` (l)
-- `<=`, `>=`, `>` (l)
+- `<=`, `=<`, `>=`, `>` (l)
 - `+`, `-` (l)
 - `*`, `/`, `%` (l)
 - `~`, `!` (r)

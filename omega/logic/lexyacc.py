@@ -89,6 +89,10 @@ class Lexer(astutils.Lexer):
         t.value = '<=>'
         return t
 
+    def t_LE(self, t):
+        r'\=\<|\<\='
+        return t
+
     t_DEF = r'\=\='
     # quantifiers
     t_FORALL = r'\\A'
@@ -103,7 +107,6 @@ class Lexer(astutils.Lexer):
     # comparators
     t_EQUALS = r'\='
     t_LT = r'\<'
-    t_LE = r'\<\='
     t_GT = r'>\='
     t_GE = r'>'
     # delimiters

@@ -71,69 +71,69 @@ class Lexer(astutils.Lexer):
         return t
 
     def t_NEQUALS(self, t):
-        r'\!\=|/\=|\#'
+        r'!=|/=|\#'
         return t
 
     def t_NOT(self, t):
-        r'~|\!'
+        r'\~|!'
         t.value = '~'
         return t
 
     def t_IMPLIES(self, t):
-        r'\=>|->'
+        r'=>|\->'
         t.value = '=>'
         return t
 
     def t_EQUIV(self, t):
-        r'\<\=>|\<->'
+        r'<=>|<\->'
         t.value = '<=>'
         return t
 
     def t_LE(self, t):
-        r'\=\<|\<\='
+        r'=<|<='
         return t
 
-    t_DEF = r'\=\='
+    t_DEF = r'=='
     # quantifiers
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'
     t_RENAME = r'\\S'  # for arbitrary substitution (compose)
     # conjoin and quantify existentially
-    t_COLON = r'\:'
+    t_COLON = r':'
     # set theory
     t_IN = r'\\in'
     # Boolean
     t_XOR = r'\^'
     # comparators
-    t_EQUALS = r'\='
-    t_LT = r'\<'
-    t_GT = r'>\='
+    t_EQUALS = r'='
+    t_LT = r'<'
+    t_GT = r'>='
     t_GE = r'>'
     # delimiters
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
     t_COMMA = r','
-    t_DQUOTES = r'\"'
+    t_DQUOTES = r'"'
     # arithmetic
     t_PLUS = r'\+'
-    t_MINUS = r'-'
+    t_MINUS = r'\-'
     t_TIMES = r'\*'
     t_DIV = r'/'
-    t_MOD = r'\%'
+    t_MOD = r'%'
     t_TRUNCATE = r'<<>>'
     # temporal
-    t_PREVIOUS = r'--X'
-    t_WEAK_PREVIOUS = r'-X'
-    t_HISTORICALLY = r'-\[\]'
-    t_ONCE = r'-\<\>'
+    t_PREVIOUS = r'\-\-X'
+    t_WEAK_PREVIOUS = r'\-X'
+    t_HISTORICALLY = r'\-\[\]'
+    t_ONCE = r'\-<>'
     t_ALWAYS = r'\[\]'
-    t_EVENTUALLY = r'\<\>'
+    t_EVENTUALLY = r'<>'
     t_DOTS = r'\.\.'
-    t_PRIME = r"\'"
+    t_PRIME = r"'"
     # other
     t_AT = r'@'
     t_NUMBER = r'\d+'
-    t_ignore = " \t"
+    t_ignore = ' \t'
 
     def t_comment(self, t):
         r' \\ \* [^\n]* \n '
@@ -145,7 +145,7 @@ class Lexer(astutils.Lexer):
 
     def t_newline(self, t):
         r'\n+'
-        t.lexer.lineno += t.value.count("\n")
+        t.lexer.lineno += t.value.count('\n')
 
 
 class Parser(astutils.Parser):

@@ -38,7 +38,7 @@ class Lexer:
     t_EXISTS = r'\\E'
     t_RENAME = r'\\S'
     t_DIV = r'/'
-    t_NOT = r'\!'
+    t_NOT = r'!'
     t_AND = r'\&'
     t_OR = r'\|'
     t_XOR = r'\^'

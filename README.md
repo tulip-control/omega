@@ -91,6 +91,27 @@ Documentation
 In  [`doc/doc.md`][doc].
 
 
+Examples
+========
+
+```python
+import omega.symbolic.fol as _fol
+
+ctx = _fol.Context()
+ctx.declare(
+    x=(0, 10),
+    y=(-2, 5),
+    z='bool')
+u = ctx.add_expr(
+    r'(x <= 2) /\ (y >= -1)')
+v = ctx.add_expr(
+    r'(y <= 3) => (x > 7)')
+r = u & ~ v
+expr = ctx.to_expr(r)
+print(expr)
+```
+
+
 Installation
 ============
 

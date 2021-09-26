@@ -64,11 +64,10 @@ jobs:
                 pip uninstall --yes dd
                 # obtain `dd` source, even if a suitable
                 # wheel file is available from PyPI
-                pip download --no-dependencies \
-                    dd==${DD_VERSION} --no-binary dd
-                tar xzf dd-*.tar.gz
-                cd dd-*/
-                python setup.py install --fetch --cudd
+                pip install --verbose --no-binary dd -r \
+                    <(echo 'dd==${DD_VERSION} \
+                            --install-option="--fetch" \
+                            --install-option="--cudd"')
                 # ensure that `dd.cudd` is importable,
                 # so that `omega` tests below that
                 # require `dd.cudd` will work

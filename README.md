@@ -119,12 +119,6 @@ Installation
 pip install omega
 ```
 
-or
-
-```
-python setup.py install
-```
-
 The package and its dependencies are pure Python.
 
 For solving demanding games, install the [Cython][cython] module `dd.cudd`

@@ -711,7 +711,6 @@ this implementation.
 from omega.games import gr1
 from omega.games import enumeration as enum
 from omega.symbolic import temporal as trl
-from omega.games.enumeration import action_to_steps
 from omega.symbolic.enumeration import _dump_graph_as_figure
 
 

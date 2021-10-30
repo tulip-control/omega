@@ -15,7 +15,6 @@ import networkx as nx
 from omega.logic import bitvector as bv
 from omega.logic import syntax as stx
 from omega.symbolic import prime as scope
-from omega.symbolic import symbolic
 
 
 logger = logging.getLogger(__name__)

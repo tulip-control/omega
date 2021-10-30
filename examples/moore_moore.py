@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """Synthesize two Moore implementations, and simulate their assembly."""
-from matplotlib import pyplot as plt
-from omega.games import gr1
-from omega.logic import syntax as stx
-from omega import steps
-from omega.symbolic import temporal as trl
+import matplotlib.pyplot as plt
+import omega.games.gr1 as gr1
+import omega.logic.syntax as stx
+import omega.steps as steps
+import omega.symbolic.temporal as trl
 
 
 def main():

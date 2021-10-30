@@ -1,5 +1,5 @@
 """Test `omega.symbolic.temporal`."""
-from omega.symbolic import temporal as trl
+import omega.symbolic.temporal as trl
 
 
 def test_declare_variables():

@@ -165,10 +165,10 @@ of the [TLA+ manual](https://lamport.azurewebsites.net/tla/book-02-08-08.pdf)).
 
 
 ```python
-from omega.symbolic.temporal import Automaton
+import omega.symbolic.temporal as trl
 
 # declaration of context
-aut = Automaton()
+aut = trl.Automaton()
 aut.declare_variables(x='bool', y=(0, 5))
 aut.varlist = dict(env=['x'], sys=['y'])
 aut.prime_varlists()
@@ -311,9 +311,9 @@ that need an understanding of minimal covering and untyped logic to
 configure conveniently, but basic usage is simple:
 
 ```python
-from omega.symbolic import fol
+import omega.symbolic.fol as _fol
 
-ctx = fol.Context()
+ctx = _fol.Context()
 ctx.declare(x=(0, 3), y=(0, 7))
 u = ctx.to_bdd(r'x \in 1..3  /\  y \in 4..6')
 v = ctx.to_bdd(r'x \in 2..3 /\ y \in 2..5')
@@ -349,9 +349,9 @@ satisfying assignments of integer and Boolean values to variables of
 a `fol.Context`, from a BDD. For example:
 
 ```python
-from omega.symbolic import fol
+import omega.symbolic.fol as _fol
 
-ctx = fol.Context()
+ctx = _fol.Context()
 ctx.declare(x=(1, 5), y='bool')
 u = ctx.to_bdd(r'x = 2  /\  ~ y')
 # select a single satisfying assignment, if any
@@ -446,9 +446,9 @@ For convenience, there are two flavors:
 Let's create a small transition system:
 
 ```python
-from omega import automata
+import omega.automata as _automata
 
-g = automata.TransitionSystem()
+g = _automata.TransitionSystem()
 g.owner = 'env'
 g.vars = dict(x='bool', y=(0, 5))
 g.env_vars.add('x')
@@ -488,9 +488,9 @@ Optional:
 Using the transition system `g` defined earlier:
 
 ```python
-from omega.symbolic import logicizer
+import omega.symbolic.logicizer as _lgc
 
-aut = logicizer.graph_to_logic(g, 'nd', ignore_initial=False)
+aut = _lgc.graph_to_logic(g, 'nd', ignore_initial=False)
 ```
 
 
@@ -533,8 +533,8 @@ handles conjunctions of recurrence formulas in these operators.
 As an example:
 
 ```python
-from omega.games import gr1
-from omega.symbolic import temporal as trl
+import omega.games.gr1 as _gr1
+import omega.symbolic.temporal as trl
 
 
 aut = trl.Automaton()
@@ -567,8 +567,8 @@ aut.plus_one = True  # strictly causal stepwise implication
 aut.moore = True  # implementation reads current state; not foo'
 aut.qinit = r'\E \A'  # disjoint-state throughout
 
-fixpoint_iterates = gr1.solve_streett_game(aut)
-gr1.make_streett_transducer(*fixpoint_iterates, aut)
+fixpoint_iterates = _gr1.solve_streett_game(aut)
+_gr1.make_streett_transducer(*fixpoint_iterates, aut)
 ```
 
 The above example shows how to:
@@ -648,8 +648,8 @@ for each bit of `y'`, namely the bits `y_0'`, `y_1'`, and `y_2'`.
 
 
 ```python
-from omega.symbolic import functions as fcn
-from omega.symbolic import temporal as trl
+import omega.symbolic.functions as fcn
+import omega.symbolic.temporal as trl
 
 aut = trl.Automaton()
 aut.declare_variables(x=(1, 6), y=(1, 6))
@@ -679,9 +679,9 @@ enumerate this representation, creating a `networkx.DiGraph`.
 
 
 ```python
-from omega.symbolic import temporal as trl
-from omega.games.enumeration import action_to_steps
-from omega.symbolic.enumeration import _dump_graph_as_figure
+import omega.symbolic.temporal as trl
+import omega.games.enumeration as enum
+import omega.symbolic.enumeration as sym_enum
 
 
 # declarations
@@ -697,8 +697,8 @@ aut.init['sys'] = aut.true
 aut.action['sys'] = r" x < 5 /\ y' = IF x = 4 THEN 1 ELSE x "
 aut.action['env'] = r" x \in 1..4 /\ x' \in 1..4 "
 # enumerate and plot
-g = action_to_steps(aut, 'env', 'sys', qinit=r'\A \A')
-_dump_graph_as_figure(g, 'foo.pdf')
+g = enum.action_to_steps(aut, 'env', 'sys', qinit=r'\A \A')
+sym_enum._dump_graph_as_figure(g, 'foo.pdf')
 ```
 
 
@@ -708,10 +708,10 @@ this implementation.
 
 
 ```python
-from omega.games import gr1
-from omega.games import enumeration as enum
-from omega.symbolic import temporal as trl
-from omega.symbolic.enumeration import _dump_graph_as_figure
+import omega.games.gr1 as _gr1
+import omega.games.enumeration as enum
+import omega.symbolic.temporal as trl
+import omega.symbolic.enumeration as sym_enum
 
 
 aut = trl.Automaton()
@@ -735,13 +735,13 @@ aut.moore = True
 aut.plus_one = True
 #
 # synthesize
-z, yij, xijk = gr1.solve_streett_game(aut)
-gr1.make_streett_transducer(z, yij, xijk, aut)
+z, yij, xijk = _gr1.solve_streett_game(aut)
+_gr1.make_streett_transducer(z, yij, xijk, aut)
 #
 # enumerate
 g = enum.action_to_steps(aut, 'env', 'impl', qinit=aut.qinit)
 # plot
-_dump_graph_as_figure(g, 'foo.pdf')
+sym_enum._dump_graph_as_figure(g, 'foo.pdf')
 ```
 
 
@@ -786,7 +786,7 @@ system, for debugging, and for filling in simple components, with the
 The following example demonstrates how to use these facilities:
 
 ```python
-from omega import steps as simu
+import omega.steps as simu
 import foobar
 
 
@@ -843,8 +843,8 @@ a state predicate, meaning that the BDD doesn't depend on any primed
 variables:
 
 ```python
-from omega.symbolic import prime as prm
-from omega.symbolic import temporal as trl
+import omega.symbolic.prime as prm
+import omega.symbolic.temporal as trl
 
 
 aut = trl.Automaton()
@@ -944,7 +944,7 @@ The bitblaster can also compute safety constraints, using the function
 For example:
 
 ```python
-from omega.logic import bitvector as bv
+import omega.logic.bitvector as bv
 
 
 t = dict(

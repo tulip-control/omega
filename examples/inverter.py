@@ -1,6 +1,6 @@
 """Synthesis of an inverter with thresholds."""
-from omega.games import gr1
-from omega.symbolic import temporal as trl
+import omega.games.gr1 as _gr1
+import omega.symbolic.temporal as trl
 
 
 aut = trl.Automaton()
@@ -33,8 +33,8 @@ aut.plus_one = True  # strictly causal stepwise implication
 aut.moore = True  # implementation reads current state; not x'
 aut.qinit = r'\E \A'  # disjoint-state throughout
 
-fixpoint_iterates = gr1.solve_streett_game(aut)
-gr1.make_streett_transducer(*fixpoint_iterates, aut)
+fixpoint_iterates = _gr1.solve_streett_game(aut)
+_gr1.make_streett_transducer(*fixpoint_iterates, aut)
 
 synthesized_action = aut.action['impl']
 care = aut.type_hint_for([

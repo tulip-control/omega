@@ -1,6 +1,6 @@
 """Tests for `omega.logic`."""
-from omega.logic import past
-from omega.logic import syntax as stx
+import omega.logic.past as past
+import omega.logic.syntax as stx
 import pytest
 
 

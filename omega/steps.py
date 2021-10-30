@@ -2,9 +2,9 @@
 # Copyright 2017 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
-from omega.games import enumeration as enum
-from omega.logic import syntax as stx
-from omega.symbolic import prime as prm
+import omega.games.enumeration as enum
+import omega.logic.syntax as stx
+import omega.symbolic.prime as prm
 
 
 class History:

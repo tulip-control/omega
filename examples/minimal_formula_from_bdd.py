@@ -3,7 +3,7 @@
 Use this to read what BDDs your algorithms are computing,
 including the synthesized controllers and contract specifications.
 """
-from omega.symbolic import fol as _fol
+import omega.symbolic.fol as _fol
 
 
 def print_minimal_formula():

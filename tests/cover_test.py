@@ -10,12 +10,12 @@ import time
 # mpl.use('Agg')
 # from matplotlib import pyplot as plt
 plt = None  # uncomment if you want to plot
-from omega.logic import syntax as stx
+import omega.logic.syntax as stx
 from omega.symbolic.prime import support_issubset
-from omega.symbolic import fol as _fol
-from omega.symbolic import cover as cov
-from omega.symbolic import orthotopes as lat
-from omega.symbolic import _type_hints as tyh
+import omega.symbolic.fol as _fol
+import omega.symbolic.cover as cov
+import omega.symbolic.orthotopes as lat
+import omega.symbolic._type_hints as tyh
 import pytest
 
 

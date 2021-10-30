@@ -14,7 +14,7 @@ Slugsin syntax:
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
-from omega.symbolic.bdd import Lexer
+import omega.symbolic.bdd as sym_bdd
 
 
 OPERATORS = {'!', '&', '|', '^', r'\A', r'\E', r'\S'}
@@ -30,7 +30,7 @@ class Parser:
     # Context-sensitive grammar, so cannot use PLY
 
     def __init__(self):
-        self.lexer = Lexer()
+        self.lexer = sym_bdd.Lexer()
         self.tokens = self.lexer.tokens
         self._binary = {'AND', 'OR', 'XOR'}
 

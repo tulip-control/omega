@@ -2,8 +2,8 @@
 # Copyright 2015-2017 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
-from omega.logic import syntax as stx
-from omega.symbolic import bdd as sym_bdd
+import omega.logic.syntax as stx
+import omega.symbolic.bdd as sym_bdd
 
 
 def is_state_predicate(u):

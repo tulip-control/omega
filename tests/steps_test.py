@@ -1,6 +1,6 @@
 """Test the module `omega.steps`."""
-from omega import steps
-from omega.symbolic import temporal as trl
+import omega.steps as steps
+import omega.symbolic.temporal as trl
 import pytest
 
 

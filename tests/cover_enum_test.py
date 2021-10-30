@@ -2,10 +2,10 @@
 import itertools
 import pprint
 
-from omega.symbolic import cover as cov
-from omega.symbolic import cover_enum as cov_enum
-from omega.symbolic import fol as _fol
-from omega.symbolic import orthotopes as lat
+import omega.symbolic.cover as cov
+import omega.symbolic.cover_enum as cov_enum
+import omega.symbolic.fol as _fol
+import omega.symbolic.orthotopes as lat
 import pytest
 
 

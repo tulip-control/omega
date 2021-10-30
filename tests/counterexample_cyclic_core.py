@@ -1,6 +1,6 @@
 """Demonstrate counterexample to strong reduction of original algorithm."""
-from omega.symbolic import fol as _fol
-from omega.symbolic import cover as cov
+import omega.symbolic.fol as _fol
+import omega.symbolic.cover as cov
 
 
 def test_counterexample_to_strong_reduction():

@@ -7,10 +7,10 @@ program that does it. The generated program is described by a graph.
 import logging
 
 import networkx as nx
-from omega.games import gr1
-from omega.games import enumeration as enum
-from omega.symbolic import enumeration as sym_enum
-from omega.symbolic import temporal as trl
+import omega.games.gr1 as gr1
+import omega.games.enumeration as enum
+import omega.symbolic.enumeration as sym_enum
+import omega.symbolic.temporal as trl
 
 
 log = logging.getLogger('omega.games.enumeration')

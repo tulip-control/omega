@@ -8,9 +8,9 @@
 # All rights reserved. Licensed under BSD-3.
 #
 import logging
-from dd import bdd as _bdd
+import dd.bdd as _bdd
 from omega.symbolic.prime import is_state_predicate
-from omega.symbolic import prime as prm
+import omega.symbolic.prime as prm
 
 
 SYS = 'sys'  # default player for existential image

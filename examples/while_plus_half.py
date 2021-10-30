@@ -24,8 +24,8 @@ pass to the synthesizer.
 # Copyright 2017 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
-from omega.games import gr1
-from omega.symbolic import temporal as trl
+import omega.games.gr1 as _gr1
+import omega.symbolic.temporal as trl
 
 
 aut = trl.Automaton()
@@ -83,5 +83,5 @@ aut.win['<>[]'] = [~ env_live]
 aut.win['[]<>'] = [sys_live]
 
 
-fx_iterates = gr1.solve_streett_game(aut)
-gr1.make_streett_transducer(*fx_iterates, aut)
+fx_iterates = _gr1.solve_streett_game(aut)
+_gr1.make_streett_transducer(*fx_iterates, aut)

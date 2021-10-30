@@ -17,9 +17,9 @@ import warnings
 
 import natsort
 
-from omega.logic import bitvector as bv
-from omega.logic import syntax as stx
-from omega.symbolic import bdd as sym_bdd
+import omega.logic.bitvector as bv
+import omega.logic.syntax as stx
+import omega.symbolic.bdd as sym_bdd
 
 
 logger = logging.getLogger(__name__)

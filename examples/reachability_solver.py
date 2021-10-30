@@ -1,8 +1,8 @@
 """How to compute from where Alice can reach her destination."""
-from omega.logic import syntax as stx
-from omega.symbolic import fixpoint as fx
-from omega.symbolic import prime as prm
-from omega.symbolic import temporal as trl
+import omega.logic.syntax as stx
+import omega.symbolic.fixpoint as fx
+import omega.symbolic.prime as prm
+import omega.symbolic.temporal as trl
 
 
 def do_it_yourself():

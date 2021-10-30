@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from omega.symbolic import codegen as dump
-from omega.symbolic import fol as _fol
-from omega.symbolic import functions as fcn
-from omega.symbolic import temporal as trl
+import omega.symbolic.codegen as dump
+import omega.symbolic.fol as _fol
+import omega.symbolic.functions as fcn
+import omega.symbolic.temporal as trl
 
 
 def test_functional_synthesis():

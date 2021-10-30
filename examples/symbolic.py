@@ -2,11 +2,11 @@
 import logging
 
 import networkx as nx
-from omega.symbolic import logicizer
-from omega.symbolic import enumeration as sym_enum
-from omega.games import gr1
-from omega.games import enumeration as enum
-from omega.automata import TransitionSystem
+import omega.symbolic.logicizer as _logicizer
+import omega.symbolic.enumeration as sym_enum
+import omega.games.gr1 as _gr1
+import omega.games.enumeration as enum
+import omega.automata as _automata
 
 
 log = logging.getLogger('omega.games.enumeration')
@@ -23,7 +23,7 @@ def semi_symbolic():
     - `self_loops = True`
     - `aut.moore = False`
     """
-    g = TransitionSystem()
+    g = _automata.TransitionSystem()
     g.owner = 'sys'
     g.vars = dict(x='bool')
     g.env_vars.add('x')
@@ -31,7 +31,7 @@ def semi_symbolic():
     g.add_edge(10, 10)
     g.add_edge(10, 0, formula="x")
     # symbolic
-    aut = logicizer.graph_to_logic(
+    aut = _logicizer.graph_to_logic(
         g, 'nd', ignore_initial=True, self_loops=False)
     aut.init['env'] = 'nd = 1'
     aut.win['<>[]'] = aut.bdds_from(' ~ x')
@@ -41,8 +41,8 @@ def semi_symbolic():
     aut.plus_one = True
     print(aut)
     # compile to BDD
-    z, yij, xijk = gr1.solve_streett_game(aut)
-    gr1.make_streett_transducer(z, yij, xijk, aut)
+    z, yij, xijk = _gr1.solve_streett_game(aut)
+    _gr1.make_streett_transducer(z, yij, xijk, aut)
     # print t.bdd.to_expr(t.action['sys'][0])
     r = aut.action['sys']
     # aut.bdd.dump('bdd.pdf', roots=[r])

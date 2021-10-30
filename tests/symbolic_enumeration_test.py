@@ -3,8 +3,8 @@ import logging
 
 import networkx as nx
 
-from omega.symbolic import enumeration as enum
-from omega.symbolic import temporal as trl
+import omega.symbolic.enumeration as enum
+import omega.symbolic.temporal as trl
 
 
 logging.getLogger('astutils').setLevel('ERROR')

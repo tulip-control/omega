@@ -3,7 +3,7 @@
 import logging
 import pprint
 
-from omega.symbolic import fol as _fol
+import omega.symbolic.fol as _fol
 import pytest
 
 

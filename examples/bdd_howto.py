@@ -1,6 +1,6 @@
 """Manipulating first-order formulas using binary decision diagrams."""
-from omega.symbolic import fol as _fol
-from omega.symbolic import temporal as trl
+import omega.symbolic.fol as _fol
+import omega.symbolic.temporal as trl
 
 
 def example_usage_of_ordinary_context():

@@ -12,9 +12,9 @@ import math
 import natsort
 import networkx as nx
 
-from omega.logic import bitvector as bv
-from omega.logic import syntax as stx
-from omega.symbolic import prime as scope
+import omega.logic.bitvector as bv
+import omega.logic.syntax as stx
+import omega.symbolic.prime as scope
 
 
 logger = logging.getLogger(__name__)

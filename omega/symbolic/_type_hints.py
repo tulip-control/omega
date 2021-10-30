@@ -9,7 +9,7 @@ import logging
 
 import natsort
 
-from omega.logic import syntax as stx
+import omega.logic.syntax as stx
 
 
 log = logging.getLogger(__name__)

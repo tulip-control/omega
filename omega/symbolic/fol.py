@@ -27,21 +27,21 @@ import logging
 import pprint
 
 try:
-    from dd import cudd as _bdd
+    import dd.cudd as _bdd
 except ImportError:
-    from dd import autoref as _bdd
+    import dd.autoref as _bdd
 
-from omega.logic import bitvector as bv
-from omega.logic import lexyacc
-from omega.logic import syntax as stx
-from omega.symbolic import bdd as sym_bdd
-from omega.symbolic import cover as cov
-from omega.symbolic import enumeration as enum
-from omega.symbolic import orthotopes as lat
+import omega.logic.bitvector as bv
+import omega.logic.lexyacc as _lexyacc
+import omega.logic.syntax as stx
+import omega.symbolic.bdd as sym_bdd
+import omega.symbolic.cover as cov
+import omega.symbolic.enumeration as enum
+import omega.symbolic.orthotopes as lat
 
 
 log = logging.getLogger(__name__)
-_parser = lexyacc.Parser()
+_parser = _lexyacc.Parser()
 TYPE_HINTS = {'int', 'saturating', 'modwrap'}
 
 

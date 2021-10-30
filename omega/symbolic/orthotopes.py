@@ -6,10 +6,10 @@ import logging
 
 import natsort
 
-from omega.logic import syntax as stx
+import omega.logic.syntax as stx
 from omega.symbolic.prime import support_issubset
 from omega.symbolic.prime import joint_support
-from omega.symbolic import _type_hints as tyh
+import omega.symbolic._type_hints as tyh
 
 
 log = logging.getLogger(__name__)

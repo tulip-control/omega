@@ -5,7 +5,7 @@ import pprint
 from dd import mdd
 from omega.symbolic import enumeration
 from omega.symbolic import symbolic
-from omega.symbolic import temporal as trl
+import omega.symbolic.temporal as trl
 from omega.games import gr1
 import pytest
 

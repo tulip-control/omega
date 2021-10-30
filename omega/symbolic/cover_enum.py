@@ -6,9 +6,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 import logging
 
-from omega.symbolic import cover as cov
+import omega.symbolic.cover as cov
 from omega.symbolic.prime import support_issubset
-from omega.symbolic import orthotopes as lat
+import omega.symbolic.orthotopes as lat
 
 
 log = logging.getLogger(__name__)

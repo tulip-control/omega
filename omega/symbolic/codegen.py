@@ -7,8 +7,8 @@ import inspect
 import pprint
 import time
 
-from omega.logic import bitvector as bv
-from omega.symbolic import functions as fcn
+import omega.logic.bitvector as bv
+import omega.symbolic.functions as fcn
 
 
 def dumps_bdds_as_code(u, out_vars, aut, lang='python'):

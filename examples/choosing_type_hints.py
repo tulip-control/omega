@@ -8,10 +8,10 @@ In TLA+, the formula:
 
 is not valid.
 """
-from omega.symbolic import fol
+import omega.symbolic.fol as _fol
 
 
-ctx = fol.Context()
+ctx = _fol.Context()
 ctx.declare(x=(0, 3))
 u = ctx.add_expr(r'x \in 0..3')
 v = ctx.add_expr(r'x \in 0..4')

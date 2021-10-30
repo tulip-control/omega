@@ -22,12 +22,12 @@ import logging
 import pprint
 import weakref
 
-from omega.logic import bitvector as bv
-from omega.logic import syntax as stx
-from omega.symbolic import fol as _fol
-from omega.symbolic import prime as prm
-from omega.symbolic import symbolic as _sym
-from omega.symbolic import _type_hints as tyh
+import omega.logic.bitvector as bv
+import omega.logic.syntax as stx
+import omega.symbolic.fol as _fol
+import omega.symbolic.prime as prm
+import omega.symbolic.symbolic as _sym
+import omega.symbolic._type_hints as tyh
 
 
 log = logging.getLogger(__name__)

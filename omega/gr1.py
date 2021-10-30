@@ -4,14 +4,14 @@
 #
 from __future__ import absolute_import
 
-from omega.logic import lexyacc
-from omega.logic.ast import Nodes
-from omega.symbolic import bdd as sym_bdd
-from omega.symbolic import temporal as trl
+import omega.logic.lexyacc as _lexyacc
+import omega.logic.ast as _ast
+import omega.symbolic.bdd as sym_bdd
+import omega.symbolic.temporal as trl
 
 
 TEMPORAL_OPERATORS = {'[]', '<>'}
-parser = lexyacc.Parser()
+parser = _lexyacc.Parser()
 
 
 def closed_system_to_automaton(formula):
@@ -32,7 +32,7 @@ def closed_system_to_automaton(formula):
 
 
 def _to_bdd(conjuncts, aut):
-    u = Nodes.Operator('/\\', conjuncts)
+    u = _ast.Nodes.Operator('/\\', conjuncts)
     flat_expr = u.flatten(t=aut.vars)  # with defs ?
     return sym_bdd.add_expr(flat_expr, aut.bdd)
 
@@ -127,7 +127,7 @@ def flatten_op(u, op):
     """Return n-ary conjunction, from nested one."""
     operands = list()
     _flatten_op(u, op, operands)
-    return Nodes.Operator(op, *operands)
+    return _ast.Nodes.Operator(op, *operands)
 
 
 def _flatten_op(u, op, operands):

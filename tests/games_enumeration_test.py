@@ -4,9 +4,9 @@ logging.getLogger('omega').setLevel(logging.WARNING)
 
 import networkx as nx
 
-from omega.games import enumeration as enum
-from omega.symbolic import fol as _fol
-from omega.symbolic import temporal as symbolic
+import omega.games.enumeration as enum
+import omega.symbolic.fol as _fol
+import omega.symbolic.temporal as symbolic
 
 
 def test_action_to_steps():

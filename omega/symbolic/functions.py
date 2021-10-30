@@ -27,7 +27,7 @@ Amir Pnueli, Yaniv Sa'ar
 # All rights reserved. Licensed under 3-clause BSD.
 #
 try:
-    from dd import cudd as _bdd
+    import dd.cudd as _bdd
 except ImportError:
     _bdd = None
 

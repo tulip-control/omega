@@ -2,14 +2,14 @@ import logging
 
 import dd.bdd
 from omega.automata import TransitionSystem
-from omega.logic import bitvector as bv
-from omega.logic import syntax as stx
-from omega.symbolic import bdd as sym_bdd
-from omega.symbolic import bdd_iterative as bdd_trs
-from omega.symbolic import fol as _fol
-from omega.symbolic import logicizer
-from omega.symbolic import prime as prm
-from omega.symbolic import symbolic
+import omega.logic.bitvector as bv
+import omega.logic.syntax as stx
+import omega.symbolic.bdd as sym_bdd
+import omega.symbolic.bdd_iterative as bdd_trs
+import omega.symbolic.fol as _fol
+import omega.symbolic.logicizer as logicizer
+import omega.symbolic.prime as prm
+import omega.symbolic.symbolic as symbolic
 import pytest
 
 

@@ -6,10 +6,10 @@ import networkx as nx
 logging.getLogger('omega').setLevel(logging.WARNING)
 
 from omega.automata import TransitionSystem
-from omega.symbolic import fixpoint as fx
-from omega.symbolic import fol as _fol
-from omega.symbolic import logicizer
-from omega.symbolic import temporal as symbolic
+import omega.symbolic.fixpoint as fx
+import omega.symbolic.fol as _fol
+import omega.symbolic.logicizer as logicizer
+import omega.symbolic.temporal as symbolic
 
 
 def test_attractor():

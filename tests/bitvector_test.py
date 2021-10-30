@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import logging
 
-from dd import bdd as _bdd
+import dd.bdd as _bdd
 import networkx as nx
-from omega.logic import bitvector as bv
-from omega.symbolic import bdd as bddizer
+import omega.logic.bitvector as bv
+import omega.symbolic.bdd as bddizer
 import pytest
 
 

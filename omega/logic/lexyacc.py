@@ -228,7 +228,7 @@ class Parser(astutils.Parser):
         p[0] = [p[1]]
 
     def p_operator_definition(self, p):
-        """def : NAME DEF expr """
+        """def : NAME DEF expr"""
         name = p[1]
         u = self.nodes.Terminal(name, dtype='opname')
         p[0] = self.nodes.Binary('==', u, p[3])

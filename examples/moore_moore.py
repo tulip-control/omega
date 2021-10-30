@@ -7,7 +7,7 @@ import omega.steps as steps
 import omega.symbolic.temporal as trl
 
 
-def main():
+def synthesize_and_simulate():
     """Synthesize two Moore components, assemble, and simulate them."""
     # synthesize
     foo_spec = specify_component_foo()
@@ -161,4 +161,4 @@ def plot_machines(asm):
 
 
 if __name__ == '__main__':
-    main()
+    synthesize_and_simulate()

@@ -83,8 +83,6 @@ def step(env_action, sys_action, target, aut):
                       /\ target
     """
     # TODO: use efficient substitution
-    yp = aut.varlist["sys'"]
-    xp = aut.varlist["env'"]
     u = prm.prime(target, aut)
     if aut.plus_one:
         # sys_action /\ (env_action => target')
@@ -94,6 +92,8 @@ def step(env_action, sys_action, target, aut):
         # env_action => (sys_action /\ target')
         u &= sys_action
         u |= ~ env_action
+    yp = aut.varlist["sys'"]
+    xp = aut.varlist["env'"]
     if aut.moore:
         # \E y':  \A x'
         u = aut.forall(xp, u)

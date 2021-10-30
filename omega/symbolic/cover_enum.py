@@ -2,8 +2,6 @@
 # Copyright 2016-2020 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
-from __future__ import absolute_import
-from __future__ import print_function
 import logging
 
 import omega.symbolic.cover as cov

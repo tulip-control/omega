@@ -12,8 +12,6 @@ Olivier Coudert
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
-from __future__ import absolute_import
-from __future__ import print_function
 from itertools import cycle
 import logging
 import time

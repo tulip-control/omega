@@ -1,6 +1,4 @@
 """Test `omega.symbolic.cover`."""
-from __future__ import absolute_import
-from __future__ import print_function
 from itertools import cycle
 import logging
 import pprint

@@ -2,8 +2,6 @@
 # Copyright 2015-2020 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
-from __future__ import absolute_import
-
 import omega.logic.lexyacc as _lexyacc
 import omega.logic.ast as _ast
 import omega.symbolic.bdd as sym_bdd

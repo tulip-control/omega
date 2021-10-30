@@ -14,7 +14,6 @@ Decision Procedures, Springer
 # Copyright 2015 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
-from __future__ import absolute_import
 import logging
 import math
 

@@ -18,6 +18,7 @@ import time
 
 import humanize
 import natsort
+
 import omega.logic.syntax as stx
 from omega.symbolic.prime import support_issubset
 from omega.symbolic.prime import joint_support

@@ -7,8 +7,9 @@ The syntax is based on that of SPIN.
 # All rights reserved. Licensed under BSD-3.
 #
 # the parser is based on that of `tulip`
-from omega.logic.ast import Nodes
 import astutils
+
+from omega.logic.ast import Nodes
 
 
 TABMODULE = 'omega.logic.ltl_parsetab'

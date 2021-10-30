@@ -15,7 +15,9 @@ Slugsin syntax:
 # All rights reserved. Licensed under BSD-3.
 #
 import logging
+
 import ply.lex
+
 from omega.logic.ast import Nodes as _Nodes
 
 

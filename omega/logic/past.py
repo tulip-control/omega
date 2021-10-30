@@ -30,6 +30,7 @@ Roderick Bloem, Barbara Jobstmann, Nir Piterman,
 # All rights reserved. Licensed under BSD-3.
 #
 import logging
+
 from omega.logic.ast import Nodes as _Nodes
 from omega.logic import lexyacc
 from omega.logic.syntax import conj

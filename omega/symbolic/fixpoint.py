@@ -8,7 +8,9 @@
 # All rights reserved. Licensed under BSD-3.
 #
 import logging
+
 import dd.bdd as _bdd
+
 from omega.symbolic.prime import is_state_predicate
 import omega.symbolic.prime as prm
 

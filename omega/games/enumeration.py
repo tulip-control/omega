@@ -12,10 +12,7 @@ Leslie Lamport
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
-try:
-    from collections.abc import Sequence
-except ImportError:
-    from collections import Sequence
+from collections.abc import Sequence
 import copy
 from itertools import chain
 import logging

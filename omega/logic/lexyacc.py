@@ -181,8 +181,11 @@ class Lexer(astutils.Lexer):
 
 
 class Parser(astutils.Parser):
-    """Production rules to build LTL parser."""
+    """Production rules to build parser.
 
+    The language recognized by the
+    parser includes logic and arithmetic.
+    """
 
     def __init__(self, *arg, **kw):
         self.tabmodule = TABMODULE

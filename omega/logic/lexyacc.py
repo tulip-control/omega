@@ -18,41 +18,72 @@ TABMODULE = 'omega.logic.ltl_parsetab'
 class Lexer(astutils.Lexer):
     """Token rules to build LTL lexer."""
 
-    reserved = {
-        'VARIABLE': 'VARIABLE',
-        'VARIABLES': 'VARIABLES',
-        'CONSTANT': 'CONSTANT',
-        'CONSTANTS': 'CONSTANTS',
-        'ite': 'ITE',
-        'X': 'NEXT',
-        'FALSE': 'FALSE',
-        'False': 'FALSE',
-        'false': 'FALSE',
-        'TRUE': 'TRUE',
-        'True': 'TRUE',
-        'true': 'TRUE',
-        'LET': 'LET',
-        'IN': 'IN_EXPR',
-        'IF': 'IF',
-        'THEN': 'THEN',
-        'ELSE': 'ELSE',
-        'U': 'UNTIL',
-        'W': 'WEAK_UNTIL',
-        'V': 'RELEASE',
-        'S': 'SINCE',  # as in NuSMV
-        'T': 'TRIGGER'}
-    values = {'next': 'X'}
-    delimiters = ['LPAREN', 'RPAREN', 'DQUOTES', 'COMMA']
-    operators = [
-        'NOT', 'AND', 'OR', 'XOR', 'IMPLIES', 'EQUIV',
-        'EQUALS', 'NEQUALS', 'LT', 'LE', 'GT', 'GE',
-        'PLUS', 'MINUS', 'TIMES', 'DIV', 'MOD', 'TRUNCATE',
-        'PREVIOUS', 'WEAK_PREVIOUS', 'HISTORICALLY',
-        'ALWAYS', 'EVENTUALLY',
-        'ONCE', 'PRIME', 'DOTS', 'AT',
-        'FORALL', 'EXISTS', 'RENAME', 'IN',
-        'COLON', 'DEF']
-    misc = ['NAME', 'NUMBER']
+    def __init__(self):
+        self.reserved = {
+            'VARIABLE': 'VARIABLE',
+            'VARIABLES': 'VARIABLES',
+            'CONSTANT': 'CONSTANT',
+            'CONSTANTS': 'CONSTANTS',
+            'ite': 'ITE',
+            'X': 'NEXT',
+            'FALSE': 'FALSE',
+            'False': 'FALSE',
+            'false': 'FALSE',
+            'TRUE': 'TRUE',
+            'True': 'TRUE',
+            'true': 'TRUE',
+            'LET': 'LET',
+            'IN': 'IN_EXPR',
+            'IF': 'IF',
+            'THEN': 'THEN',
+            'ELSE': 'ELSE',
+            'U': 'UNTIL',
+            'W': 'WEAK_UNTIL',
+            'V': 'RELEASE',
+            'S': 'SINCE',  # as in NuSMV
+            'T': 'TRIGGER'}
+        self.values = {'next': 'X'}
+        self.delimiters = [
+            'LPAREN',
+            'RPAREN',
+            'DQUOTES',
+            'COMMA']
+        self.operators = [
+            'NOT',
+            'AND',
+            'OR',
+            'XOR',
+            'IMPLIES',
+            'EQUIV',
+            'EQUALS',
+            'NEQUALS',
+            'LT',
+            'LE',
+            'GT',
+            'GE',
+            'PLUS',
+            'MINUS',
+            'TIMES',
+            'DIV',
+            'MOD',
+            'TRUNCATE',
+            'PREVIOUS',
+            'WEAK_PREVIOUS',
+            'HISTORICALLY',
+            'ALWAYS',
+            'EVENTUALLY',
+            'ONCE',
+            'PRIME',
+            'DOTS',
+            'AT',
+            'FORALL',
+            'EXISTS',
+            'RENAME',
+            'IN',
+            'COLON',
+            'DEF']
+        self.misc = ['NAME', 'NUMBER']
+        super().__init__()
 
     def t_NAME(self, t):
         r'[A-Za-z_][A-Za-z0-9_]*'
@@ -152,34 +183,80 @@ class Lexer(astutils.Lexer):
 class Parser(astutils.Parser):
     """Production rules to build LTL parser."""
 
-    tabmodule = TABMODULE
-    start = 'start'
-    # lowest to highest
-    # based on precedence in `spin.y`
-    precedence = (
-        ('nonassoc', 'REDUCE_LIST'),
-        ('nonassoc', 'DEF'),
-        ('nonassoc', 'LET_IN', 'IF_THEN_ELSE', 'CONJ_LIST'),
-        ('left', 'COLON'),
-        ('left', 'EQUIV'),
-        ('left', 'IMPLIES'),
-        ('left', 'XOR'),
-        ('left', 'OR'),
-        ('left', 'AND'),
-        ('left', 'ALWAYS', 'EVENTUALLY', 'HISTORICALLY', 'ONCE'),
-        ('left', 'UNTIL', 'WEAK_UNTIL', 'RELEASE', 'SINCE', 'TRIGGER'),
-        ('left', 'EQUALS', 'NEQUALS'),
-        ('left', 'LT', 'LE', 'GT', 'GE', 'IN'),
-        ('left', 'PLUS', 'MINUS'),
-        ('left', 'TIMES', 'DIV', 'MOD'),
-        ('right', 'NOT', 'UMINUS'),
-        ('left', 'RENAME'),
-        ('left', 'FORALL', 'EXISTS'),
-        ('right', 'NEXT', 'WEAK_PREVIOUS', 'PREVIOUS'),
-        ('nonassoc', 'DOTS'),
-        ('left', 'PRIME'))
-    Lexer = Lexer
-    nodes = Nodes
+
+    def __init__(self, *arg, **kw):
+        self.tabmodule = TABMODULE
+        self.start = 'start'
+        # lowest to highest
+        # based on precedence in `spin.y`
+        self.precedence = (
+            ('nonassoc',
+                'REDUCE_LIST'),
+            ('nonassoc',
+                'DEF'),
+            ('nonassoc',
+                'LET_IN',
+                'IF_THEN_ELSE',
+                'CONJ_LIST'),
+            ('left',
+                'COLON'),
+            ('left',
+                'EQUIV'),
+            ('left',
+                'IMPLIES'),
+            ('left',
+                'XOR'),
+            ('left',
+                'OR'),
+            ('left',
+                'AND'),
+            ('left',
+                'ALWAYS',
+                'EVENTUALLY',
+                'HISTORICALLY',
+                'ONCE'),
+            ('left',
+                'UNTIL',
+                'WEAK_UNTIL',
+                'RELEASE',
+                'SINCE',
+                'TRIGGER'),
+            ('left',
+                'EQUALS',
+                'NEQUALS'),
+            ('left',
+                'LT',
+                'LE',
+                'GT',
+                'GE',
+                'IN'),
+            ('left',
+                'PLUS',
+                'MINUS'),
+            ('left',
+                'TIMES',
+                'DIV',
+                'MOD'),
+            ('right',
+                'NOT',
+                'UMINUS'),
+            ('left',
+                'RENAME'),
+            ('left',
+                'FORALL',
+                'EXISTS'),
+            ('right',
+                'NEXT',
+                'WEAK_PREVIOUS',
+                'PREVIOUS'),
+            ('nonassoc',
+                'DOTS'),
+            ('left',
+                'PRIME'))
+        self.Lexer = Lexer
+        self.nodes = Nodes
+        super().__init__(
+            *arg, **kw)
 
     def p_start(self, p):
         """start : module

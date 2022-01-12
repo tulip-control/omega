@@ -28,10 +28,6 @@ slugs_log = logging.getLogger(__name__ + '.slugs')
 class Lexer:
     """Token rules for slugsin lexer."""
 
-    operators = ['NOT', 'AND', 'OR', 'XOR', 'DOLLAR', 'QUESTION',
-                 'FORALL', 'EXISTS', 'RENAME', 'DIV', 'AT']
-    identifiers = ['NAME', 'NUMBER']
-
     t_AT = r'@'
     t_NUMBER = r'[-]*\d+'
     t_NAME = r"[A-Za-z_][A-Za-z0-9_']*"
@@ -48,6 +44,12 @@ class Lexer:
     t_ignore = ' \t'
 
     def __init__(self):
+        self.operators = [
+            'NOT', 'AND', 'OR', 'XOR',
+            'DOLLAR', 'QUESTION',
+            'FORALL', 'EXISTS',
+            'RENAME', 'DIV', 'AT']
+        self.identifiers = ['NAME', 'NUMBER']
         self.tokens = self.operators + self.identifiers
         self.build()
 

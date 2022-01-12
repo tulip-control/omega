@@ -397,7 +397,8 @@ class Parser(astutils.Parser):
 
 
 def _rewrite_tables(outputdir='./'):
-    astutils.rewrite_tables(Parser, TABMODULE, outputdir)
+    astutils.rewrite_tables(
+        Parser, TABMODULE, outputdir)
 
 
 if __name__ == '__main__':

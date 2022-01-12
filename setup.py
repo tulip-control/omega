@@ -102,13 +102,7 @@ def run_setup():
     s = VERSION_FILE_TEXT.format(version=version)
     with open(VERSION_FILE, 'w') as f:
         f.write(s)
-    # build parser
-    try:
-        from omega.logic import lexyacc
-        lexyacc._rewrite_tables(outputdir='./omega/logic/')
-    except ImportError:
-        print('WARNING: `omega` could not cache parser tables '
-              '(ignore this if running only for "egg_info").')
+    _build_parser()
     with open(README) as fd:
         long_description = fd.read()
     setuptools.setup(
@@ -130,6 +124,23 @@ def run_setup():
         package_dir={PACKAGE_NAME: PACKAGE_NAME},
         classifiers=CLASSIFIERS,
         keywords=KEYWORDS)
+
+
+def _build_parser():
+    """Cache the parser's LALR(1) state machine."""
+    try:
+        import astutils
+        import ply
+    except ImportError:
+        print(
+            'WARNING: `omega` could not cache '
+            'parser tables (this message can '
+            'be ignored if running only for '
+            '"egg_info").')
+        return
+    from omega.logic import lexyacc
+    lexyacc._rewrite_tables(
+        outputdir='./omega/logic/')
 
 
 if __name__ == '__main__':

@@ -97,7 +97,8 @@ class Lexer(astutils.Lexer):
     # quantifiers
     t_FORALL = r'\\A'
     t_EXISTS = r'\\E'
-    t_RENAME = r'\\S'  # for arbitrary substitution (compose)
+    t_RENAME = r'\\S'  # for arbitrary
+        # substitution (compose)
     # conjoin and quantify existentially
     t_COLON = r':'
     # set theory
@@ -315,12 +316,19 @@ class Parser(astutils.Parser):
         p[0] = self.nodes.Arithmetic(p[2], p[1], p[3])
 
     def p_if_then_else(self, p):
-        """expr : IF expr THEN expr ELSE expr %prec IF_THEN_ELSE"""
-        p[0] = self.nodes.Operator('ite', p[2], p[4], p[6])
+        ("""expr : IF expr """
+         """           THEN expr """
+         """           ELSE expr """
+         """    %prec IF_THEN_ELSE""")
+        p[0] = self.nodes.Operator(
+            'ite', p[2], p[4], p[6])
 
     def p_ternary_conditional(self, p):
-        """expr : ITE LPAREN expr COMMA expr COMMA expr RPAREN"""
-        p[0] = self.nodes.Operator(p[1], p[3], p[5], p[7])
+        ("""expr : ITE LPAREN expr """
+         """           COMMA expr """
+         """           COMMA expr RPAREN""")
+        p[0] = self.nodes.Operator(
+            p[1], p[3], p[5], p[7])
 
     def p_quantifier(self, p):
         """expr : FORALL list COLON expr

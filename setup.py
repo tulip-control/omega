@@ -1,6 +1,6 @@
 """Installation script."""
-from setuptools import setup
-from pkg_resources import parse_version
+import setuptools
+import pkg_resources as _pkg
 # inline:
 # from omega.logic import lexyacc
 # import git
@@ -72,7 +72,9 @@ def git_version(version):
     # assert versions are increasing
     latest_tag = repo.git.describe(
         match='v[0-9]*', tags=True, abbrev=0)
-    assert parse_version(latest_tag) <= parse_version(version), (
+    latest_version = _pkg.parse_version(latest_tag)
+    given_version = _pkg.parse_version(version)
+    assert latest_version <= given_version, (
         latest_tag, version)
     sha = repo.head.commit.hexsha
     if repo.is_dirty():
@@ -109,7 +111,7 @@ def run_setup():
               '(ignore this if running only for "egg_info").')
     with open(README) as fd:
         long_description = fd.read()
-    setup(
+    setuptools.setup(
         name=PACKAGE_NAME,
         version=version,
         description=DESCRIPTION,

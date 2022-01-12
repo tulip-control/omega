@@ -253,9 +253,10 @@ class Parser(astutils.Parser):
                 'DOTS'),
             ('left',
                 'PRIME'))
-        self.Lexer = Lexer
         self.nodes = Nodes
+        lexer = Lexer()
         super().__init__(
+            lexer=lexer,
             *arg, **kw)
 
     def p_start(self, p):

@@ -29,7 +29,7 @@ VERSION_FILE_TEXT = (
     "version = '{version}'\n")
 PYTHON_REQUIRES = '>=3.6'
 INSTALL_REQUIRES = [
-    'astutils >= 0.0.3',
+    'astutils >= 0.0.5',
     'dd >= 0.5.5',
     'humanize >= 0.5.1',
     'natsort >= 3.5.3',

@@ -1087,102 +1087,177 @@ Integer division has C99 semantics ([6.5.5, p.82](
 The parser BNF is given below. The parser admits modules or expressions
 as input, to make it easier to work at both levels of granularity.
 
-```
-module ::= units
-units ::= unit [units]
-unit ::= variable_declaration
-       | constant_declaration
-       | operator_def
+```tla
+-------- MODULE omega_parser_grammar -------
+(* Grammar of expressions and definitions parsed by
+the function `omega.logic.lexyacc.Parser.parse()`.
+*)
+EXTENDS
+    BNFGrammars
 
-variable_declaration ::=
-    | 'VARIABLE' names
-    | 'VARIABLES' names
 
-constant_declaration ::=
-    | 'CONSTANT' names
-    | 'CONSTANTS' names
+maybe(x) ==
+    | Nil
+    | x
 
-       # first-order
-expr ::= expr '*' expr
-       | expr '/' expr  # quotient of C99 integer division
-       | expr '%' expr  # remainder of C99 integer division
-       | expr '+' expr
-       | expr '-' expr
 
-       | expr '=' expr
-       | expr '#' expr  # not equal
-       | expr '!=' expr  # not equal
-       | expr '/=' expr  # not equal
-       | expr '<=' expr
-       | expr '=<' expr  # <=
-       | expr '>=' expr
+is_lexer_grammar(L) ==
+    /\ L.LETTER =
+        | OneOf("abcdefghijklmnopqrstuvwxyz")
+        | OneOf("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    /\ L.UNDERSCORE = tok("_")
+    /\ L.NUMERAL = OneOf("0123456789")
+    /\ L.NAME =
+        LET
+            start ==
+                | L.LETTER
+                | L.UNDERSCORE
+            COLON == tok(":")
+            symbol ==
+                | start
+                | COLON
+                | L.NUMERAL
+            tail == symbol^*
+        IN
+            start & tail
+    /\ L.NUMBER = L.NUMERAL^+
+        (* integer *)
 
-       # quantifiers
-       | '\A' qvars `:` expr  # forall
-       | '\E' qvars `:` expr  # exists
 
-       # substitution
-       | 'LET' defs 'IN' expr
+(* first-order expressions *)
+is_parser_grammar(L, G) ==
+    /\ \A symbol \in DOMAIN L:
+        G[symbol] = L[symbol]
+    /\ G.module = G.unit^+
+    /\ G.unit =
+        | G.variable_declaration
+        | G.constant_declaration
+        | G.operator_def
+    /\ G.variable_declaration =
+        | tok("VARIABLE") & G.names
+        | tok("VARIABLES") & G.names
+    /\ G.constant_declaration =
+        | tok("CONSTANT") & G.names
+        | tok("CONSTANTS") & G.names
+    /\ G.expr =
+        | G.expr & tok("*") & G.expr
+        | G.expr & tok("/") & G.expr
+            (* quotient of C99 integer division *)
+        | G.expr & tok("%") & G.expr
+            (* remainder of C99 integer division *)
+        | G.expr & tok("+") & G.expr
+        | G.expr & tok("-") & G.expr
+        (* predicates of arithmetic *)
+        | G.expr & tok("=") & G.expr
+        | G.expr & tok("#") & G.expr
+            (* different *)
+        | G.expr & tok("!=") & G.expr
+            (* different *)
+        | G.expr & tok("/=") & G.expr
+            (* different *)
+        | G.expr & tok("<=") & G.expr
+        | G.expr & tok("=<") & G.expr
+            (* same meaning as `<=` *)
+        | G.expr & tok(">=") & G.expr
+        (* quantifiers *)
+        | tok("\\A") & G.qvars & tok(":") & G.expr
+            (* "forall" *)
+        | tok("\\E") & G.qvars & tok(":") & G.expr
+            (* "exists" *)
+        (* substitution *)
+        | tok("LET") & G.defs & tok("IN") & G.expr
+        (* a little set theory *)
+        | LET
+            expr == G.expr
+            in == tok("\\in")
+            DOUBLE_COLON == tok("..")
+            num == G.number
+            range == num & DOUBLE_COLON & num
+          IN
+            expr & in & range
+            (* in range of integers *)
+        (* propositional *)
+        (* TLA+ syntax *)
+        | tok("~") & G.expr
+        | G.expr & tok("/\\") & G.expr
+        | G.expr & tok("\\/") & G.expr
+        | G.expr & tok("=>") & G.expr
+        | G.expr & tok("<=>") & G.expr
+        (* Promela syntax *)
+        | tok("!") & G.expr
+        | G.expr & tok("&") & G.expr
+        | G.expr & tok("&&") & G.expr
+        | G.expr & tok("|") & G.expr
+        | G.expr & tok("||") & G.expr
+        | G.expr & tok("->") & G.expr
+        | G.expr & tok("<->") & G.expr
+        (* other *)
+        | G.expr & tok("^") & G.expr  (* xor *)
+        | tok("IF") & G.expr &
+            tok("THEN") & G.expr &
+            tok("ELSE") & G.expr
+            (* TLA+ ternary conditional *)
+        | tok("ite") & tok("(") &
+                G.expr & tok(",") &
+                G.expr & tok(",") &
+                G.expr &
+            tok(")")
+            (* ternary conditional *)
+        (* temporal modal *)
+        | tok("X") & G.expr
+            (* "next" *)
+        | G.expr & tok("'")
+            (* "next" *)
+        | tok("[]") & G.expr
+            (* "always" *)
+        | tok("<>") & G.expr
+            (* "eventually" *)
+        | tok("-X") & G.expr
+            (* weak "previous" *)
+        | tok("--X") & G.expr
+            (* strong "previous" *)
+        | tok("-[]") & G.expr
+            (* "historically" (dual of `[]`) *)
+        | tok("-<>") & G.expr
+            (* "once" (dual of `<>`) *)
+        | G.expr & tok("U") & G.expr
+            (* strong "until" *)
+        | G.expr & tok("W") & G.expr
+            (* weak "until" *)
+        | G.expr & tok("R") & G.expr
+            (* "release" *)
+        | G.expr & tok("S") & G.expr
+            (* "since" *)
+        | G.expr & tok("T") & G.expr
+            (* "trigger" *)
+        (* constants / misc *)
+        | tok("(") & G.expr & tok(")")
+        | tok("True")
+        | tok("False")
+        | G.number
+        | G.variable
+        | G.string
+    /\ G.defs =
+        G.operator_def & maybe(G.defs)
+    /\ G.operator_def =
+        L.NAME & tok("==") & G.expr
+            (* operator definition *)
+    /\ G.qvars =
+        L.NAME & maybe(tok("'")) &
+            maybe(tok(",") & G.qvars)
+            (* list of quantified variables *)
+    /\ G.names =
+        L.NAME &
+            maybe(tok(",") & G.names)
+            (* list of variable or constant names *)
+    /\ G.variable =
+        L.NAME
+    /\ G.string =
+        tok("\"") & L.NAME & tok("\"")
+    /\ G.number =
+        maybe(tok("-")) & L.NUMBER
 
-       # a little set theory
-       | expr '\in' number '..' number  # in range of integers
-
-       # propositional
-
-       # TLA+ syntax
-       | '~' expr
-       | expr '/\' expr
-       | expr '\/' expr
-       | expr '=>' expr
-       | expr '<=>' expr
-
-       # Promela syntax
-       | '!' expr
-       | expr '&' expr
-       | expr '&&' expr
-       | expr '|' expr
-       | expr '||' expr
-       | expr '->' expr
-       | expr '<->' expr
-
-       # other
-       | expr '^' expr  # xor
-       | 'IF' expr 'THEN' expr 'ELSE' expr  # TLA+ ternary conditional
-       | 'ite' '(' expr ',' expr ',' expr ')'  # ternary conditional
-
-       # temporal modal
-       | 'X' expr  # next
-       | expr "'"  # next
-       | '[]' expr  # always
-       | '<>' expr  # eventually
-       | '-X' expr  # weak previous
-       | '--X' expr  # strong previous
-       | '-[]' expr  # historically (dual of [])
-       | '-<>' expr  # once (dual of <>)
-       | expr 'U' expr  # strong until
-       | expr 'W' expr  # weak until
-       | expr 'R' expr  # release
-       | expr 'S' expr  # since
-       | expr 'T' expr  # trigger
-
-       # constants / misc
-       | '(' expr ')'
-       | 'True'
-       | 'False'
-       | number
-       | variable
-       | string
-
-defs ::= operator_def [defs]
-operator_def ::= NAME '==' expr  # operator definition
-qvars ::= NAME ["'"] [',' qvars]  # list of quantified variables
-names ::= NAME [',' names]  # list of variable or constant names
-variable ::= NAME
-string ::= '"' NAME '"'
-number ::= [-] NUMBER
-
-NAME ::= [A-Za-z_][A-za-z0-9_:]*
-NUMBER ::= \d+  # integer
+============================================
 ```
 
 The token precedence (lowest to highest) and associativity

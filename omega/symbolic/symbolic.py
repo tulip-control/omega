@@ -296,7 +296,7 @@ class Automaton:
     def conjoin(self, as_what):
         """Conjoin attributes.
 
-        @param as_what: `'bdd' or 'prefix' or 'infix'`
+        @param as_what: `'bdd'` or `'prefix'` or `'infix'`
         """
         _conj_owner(self, 'env', as_what)
         _conj_owner(self, 'sys', as_what)
@@ -379,7 +379,7 @@ def _bitblast(aut):
 def _conj_owner(aut, owner, as_what):
     """Conjoin the lists in the attributes of `owner`.
 
-    @param as_what: `'bdd' or 'prefix' or 'infix'`
+    @param as_what: `'bdd'` or `'prefix'` or `'infix'`
     """
     # get
     init = aut.init[owner]

@@ -1149,7 +1149,8 @@ def _assert_var_in_table(name, t):
 def int_to_twos_complement(s):
     """Return two's complement of `s` as `list` of `str`.
 
-    @type s: such that `int(s)` is well-defined
+    @type s:
+        such that `int(s)` be well-defined
     """
     logger.info(
         f'++ convert integer "{s}" to 2s complement')

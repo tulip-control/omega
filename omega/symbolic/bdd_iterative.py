@@ -8,8 +8,8 @@ Reference
 =========
 
 Slugsin syntax:
-    https://github.com/VerifiableRobotics/
-    slugs/blob/master/doc/input_formats.md
+    <https://github.com/VerifiableRobotics/
+    slugs/blob/master/doc/input_formats.md>
 """
 # Copyright 2016 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.

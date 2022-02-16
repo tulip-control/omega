@@ -925,8 +925,8 @@ def adder_subtractor(x, y, add=True, start=0, extend_by=1):
 
     Reference
     =========
-    https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor
-    https://en.wikipedia.org/wiki/Adder_%28electronics%29
+    <https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor>
+    <https://en.wikipedia.org/wiki/Adder_%28electronics%29>
 
     @param x, y:
         summands (in two's complement)
@@ -1333,7 +1333,7 @@ def sign_extension(x, n):
 
     Reference
     =========
-    https://en.wikipedia.org/wiki/Sign_extension
+    <https://en.wikipedia.org/wiki/Sign_extension>
 
     @type x:
         `list` of `str`

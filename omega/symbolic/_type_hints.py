@@ -86,7 +86,8 @@ def _list_limits(vrs, table):
 
     Each limit has the form `x \in a .. b`
 
-    @param table: must be bitblasted
+    @param table:
+        must be bitblasted
     """
     assert vrs, vrs
     r = list()

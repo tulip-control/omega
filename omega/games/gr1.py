@@ -46,8 +46,10 @@ def solve_streett_game(aut, rank=1):
       - `aut.varlist["env'"]`
       - `aut.varlist["sys'"]`
 
-    @param aut: compiled game with <>[] \/ []<> winning
-    @type aut: `temporal.Automaton`
+    @param aut:
+        compiled game with <>[] \/ []<> winning
+    @type aut:
+        `temporal.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
@@ -109,7 +111,9 @@ def make_streett_transducer(z, yij, xijk, aut):
       together with the variables of the system.
     The key `'impl'` is an abbreviation of "implementation".
 
-    @rtype: `dd.autoref.Function` or `dd.cudd.Function`
+    @rtype:
+        `dd.autoref.Function` or
+        `dd.cudd.Function`
     """
     winning = z
     assert is_realizable(winning, aut)
@@ -202,8 +206,10 @@ def make_streett_transducer(z, yij, xijk, aut):
 def solve_rabin_game(aut, rank=1):
     """Return winning set and iterants for Rabin(1) game.
 
-    @param aut: compiled game with <>[] & []<> winning
-    @type aut: `temporal.Automaton`
+    @param aut:
+        compiled game with <>[] & []<> winning
+    @type aut:
+        `temporal.Automaton`
     """
     assert rank == 1, 'only rank 1 supported for now'
     assert aut.bdd.vars or not aut.vars, (
@@ -282,7 +288,9 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
       together with the variables of the system.
     The key `'impl'` is an abbreviation of "implementation".
 
-    @rtype: `dd.autoref.Function` or `dd.cudd.Function`
+    @rtype:
+        `dd.autoref.Function` or
+        `dd.cudd.Function`
     """
     winning = zk[-1]
     assert is_realizable(winning, aut)
@@ -422,8 +430,10 @@ def make_rabin_transducer(zk, yki, xkijr, aut):
 def is_realizable(win, aut):
     """Return `True` if, and only if, `aut` wins from `z`.
 
-    @param win: bdd node
-    @param aut: `temporal.Automaton`
+    @param win:
+        bdd node
+    @param aut:
+        `temporal.Automaton`
     """
     sys_init = aut.init['sys']
     env_init = aut.init['env']
@@ -547,7 +557,8 @@ def _make_init(internal_init, win, aut):
 
     where `InternalInit` is the initial condition for internal variables.
 
-    @param internal_init: initial condition for
+    @param internal_init:
+        initial condition for
         internal variables.
     """
     sys_init = aut.init['sys']
@@ -622,7 +633,8 @@ def _warn_moore_mealy(aut):
 def trivial_winning_set(aut_streett):
     """Return set of trivially winning nodes for Streett(1).
 
-    @return: `(trivial, aut_streett)` where:
+    @return:
+        `(trivial, aut_streett)` where:
         - `trivial`: node in `aut_streett.bdd`
         - `aut_streett`: `temporal.Automaton`
     """

@@ -16,13 +16,18 @@ log = logging.getLogger(__name__)
 def minimize(f, care, fol):
     """Compute minimal DNF of predicate `f` over integers.
 
-    @param f: predicate over integer-valued variables
-    @param care: care set as predicate over same variables
-    @type f, care: BDD node
-    @type fol: `omega.symbolic.fol.Context`
-
-    @return: minimal covers as BDDs over parameters
-    @rtype: set of BDD nodes
+    @param f:
+        predicate over integer-valued variables
+    @param care:
+        care set as predicate over same variables
+    @type f, care:
+        BDD node
+    @type fol:
+        `omega.symbolic.fol.Context`
+    @return:
+        minimal covers as BDDs over parameters
+    @rtype:
+        set of BDD nodes
     """
     # reasons for permisiveness here:
     #
@@ -292,7 +297,8 @@ def _enumerate_mincovers_unfloor(
     minimal cover from `Floors(y, x)`.
     All enumerated sets are covers and minimal, because of their cardinality.
 
-    @rtype: `set` of BDD nodes
+    @rtype:
+        `set` of BDD nodes
     """
     lm = list(_pick_iter_as_bdd(cover_from_floors, fol))
     n = len(lm)
@@ -340,7 +346,8 @@ def _enumerate_mincovers_below_set_based(
         cover_from_max, x, y, prm, fol):
     """Return covers from `y` that refine `cover_from_max`.
 
-    @rtype: `set` of BDD nodes
+    @rtype:
+        `set` of BDD nodes
     """
     # cover_from_max => y
     assert y | ~ cover_from_max == fol.true
@@ -382,7 +389,8 @@ def _enumerate_mincovers_below(
         cover_from_max, x, y, prm, fol):
     """Return covers from `y` that refine `cover_from_max`.
 
-    @rtype: `set` of BDD nodes
+    @rtype:
+        `set` of BDD nodes
     """
     # cover_from_max => y
     assert y | ~ cover_from_max == fol.true
@@ -423,9 +431,12 @@ def _enumerate_mincovers_below(
 def _pick_iter_as_bdd(u, fol):
     """Return generator of BDDs from `pick_iter(u)`.
 
-    @param u: BDD node
-    @param fol: `fol.Context`
-    @rtype: generator of BDD nodes
+    @param u:
+        BDD node
+    @param fol:
+        `fol.Context`
+    @rtype:
+        generator of BDD nodes
     """
     for d in fol.pick_iter(u):
         yield fol.assign_from(d)
@@ -490,8 +501,10 @@ def to_expr(fol, u, care=None, **kw):
     For now, this method requires that all variables in
     `support(u)` be integers.
 
-    @param care: BDD of care set
-    @param kw: keyword args are passed to
+    @param care:
+        BDD of care set
+    @param kw:
+        keyword args are passed to
         function `cover.dumps_cover`.
     """
     if care is None:

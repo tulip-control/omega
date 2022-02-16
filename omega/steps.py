@@ -62,7 +62,8 @@ class Assembly(History):
     def _init(self, machine, name):
         """Return partial state from `machine`.
 
-        @param name: used to mangle hidden var names
+        @param name:
+            used to mangle hidden var names
         """
         partial = machine.init()
         return self._to_global_state(partial, name)
@@ -80,7 +81,8 @@ class Assembly(History):
     def _step(self, machine, state, name):
         """Return partial state update from `machine`.
 
-        @param name: used to unmangle and mangle hidden
+        @param name:
+            used to unmangle and mangle hidden
             var names
         """
         local = self._to_local_state(state, name, machine)
@@ -124,7 +126,8 @@ class AutomatonStepper:
     def step(self, state):
         """Return next values of variables or `None`.
 
-        @param state: `dict` that maps identifiers to values.
+        @param state:
+            `dict` that maps identifiers to values.
 
             If any unprimed identifiers in `support(action)` are
             missing from `state`, raise `ValueError`.
@@ -273,8 +276,10 @@ class Scheduler:
 def visible_vars(vrs):
     """Slice dictionary `vrs`, omitting keys matching `_*`.
 
-    @type vrs: `dict`
-    @rtype: `dict`
+    @type vrs:
+        `dict`
+    @rtype:
+        `dict`
     """
     return {k: v for k, v in vrs.items()
             if not k.startswith('_')}
@@ -289,8 +294,10 @@ def hidden_vars(vrs):
 def add_prefix(vrs, prefix):
     """Prepend `prefix` to hidden variables in `vrs`.
 
-    @type vrs: `dict`
-    @type prefix: `str`
+    @type vrs:
+        `dict`
+    @type prefix:
+        `str`
     """
     d = dict()
     for k, v in vrs.items():
@@ -306,8 +313,10 @@ def add_prefix(vrs, prefix):
 def omit_prefix(vrs, prefix):
     """Omit `prefix` from hidden variables in `vrs`.
 
-    @type vrs: `dict`
-    @type prefix: `str`
+    @type vrs:
+        `dict`
+    @type prefix:
+        `str`
     """
     d = dict()
     for k, v in vrs.items():
@@ -331,8 +340,10 @@ def _unprime_state(primed_state):
 def slice_dict(d, keys):
     """Return restriction of `d` to `keys`.
 
-    @type d: `dict`
-    @type keys: `set`
+    @type d:
+        `dict`
+    @type keys:
+        `set`
     """
     return {k: v for k, v in d.items()
             if k in keys}

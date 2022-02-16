@@ -708,7 +708,8 @@ def test_warn_moore_mealy():
 def action_refined(aut):
     """Return `True` if action of `'impl'` refines `'sys'`.
 
-    @type aut_a, aut_b: `temporal.Automaton`
+    @type aut_a, aut_b:
+        `temporal.Automaton`
     """
     a = aut.action['sys']
     b = aut.action['impl']

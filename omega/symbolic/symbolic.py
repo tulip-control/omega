@@ -258,8 +258,9 @@ class Automaton:
     def assert_consistent(self, built=False):
         """Raise `AssertionError` if not well-formed.
 
-        @param built: if `True`,
-        then assert `build` has been called.
+        @param built:
+            if `True`,
+            then assert `build` has been called.
         """
         # check attributes
         for d in (self.init, self.action, self.win):
@@ -296,7 +297,10 @@ class Automaton:
     def conjoin(self, as_what):
         """Conjoin attributes.
 
-        @param as_what: `'bdd'` or `'prefix'` or `'infix'`
+        @param as_what:
+            `'bdd'` or
+            `'prefix'` or
+            `'infix'`
         """
         _conj_owner(self, 'env', as_what)
         _conj_owner(self, 'sys', as_what)
@@ -315,7 +319,8 @@ class Automaton:
 def fill_blanks(aut, as_bdd=False, rabin=False):
     """Add `"TRUE"` to empty attributes `init`, `action`, `win`.
 
-    @param as_bdd: if `True`, then represent
+    @param as_bdd:
+        if `True`, then represent
         the Boolean constants as a BDD
     """
     if as_bdd:
@@ -347,7 +352,8 @@ def _bitblast(aut):
     For each integer, the corresponding list of
     bitnames is added to the symbol table (attr `vars`).
 
-    @type aut: `Automaton`
+    @type aut:
+        `Automaton`
     """
     players = dict(aut.players)
     aut = copy.copy(aut)
@@ -379,7 +385,10 @@ def _bitblast(aut):
 def _conj_owner(aut, owner, as_what):
     """Conjoin the lists in the attributes of `owner`.
 
-    @param as_what: `'bdd'` or `'prefix'` or `'infix'`
+    @param as_what:
+        `'bdd'` or
+        `'prefix'` or
+        `'infix'`
     """
     # get
     init = aut.init[owner]
@@ -421,7 +430,8 @@ def _bitblast_owner(aut, a, owner, t):
 def _bitvector_to_bdd(aut):
     """Return `Automaton` with BDD formulas.
 
-    @type aut: `Automaton`
+    @type aut:
+        `Automaton`
     """
     players = dict(aut.players)
     table = aut.vars
@@ -547,11 +557,14 @@ def _add_primed_bits(unprimed_bits):
 def _partition_vars(bits, ubits, ebits):
     """Return primed and unprimed variable names.
 
-    @param bits: `list` of variable names as `str`
-    @param ubits: universally quantified variables
-    @param ebits: existentially quantified variables
-
-    @return: (prime, partition)
+    @param bits:
+        `list` of variable names as `str`
+    @param ubits:
+        universally quantified variables
+    @param ebits:
+        existentially quantified variables
+    @return:
+        (prime, partition)
         - prime:
           `dict` that maps unprimed to
           primed variable names
@@ -602,10 +615,12 @@ def _prime_and_order_table(t):
       - level: index among ordered prime and unprimed integers
       - len: number of values the variable can take
 
-    @param t: table of unprimed variables as `str`
-    @type t: `dict`
-
-    @rtype: `dict` from `str` to `dict`
+    @param t:
+        table of unprimed variables as `str`
+    @type t:
+        `dict`
+    @rtype:
+        `dict` from `str` to `dict`
     """
     ordvars = natsort.natsorted(t)
     dvars = dict()
@@ -633,9 +648,12 @@ def _prime_and_order_table(t):
 def assert_primed_adjacent(prime, bdd):
     """Raise `AssertionError` if not neighbors.
 
-    @param prime: map each unprimed to a primed var.
-    @type prime: `dict(str: str)`
-    @type bdd: `BDD`
+    @param prime:
+        map each unprimed to a primed var.
+    @type prime:
+        `dict(str: str)`
+    @type bdd:
+        `BDD`
     """
     # check adjacency of unprimed-primed pairs
     for x, y in prime.items():

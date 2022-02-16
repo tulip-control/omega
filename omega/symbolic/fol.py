@@ -123,14 +123,16 @@ class Context:
 
         Wrapper of `Context.add_vars()`.
 
-        @param vrs: `dict` that maps each variable name
+        @param vrs:
+            `dict` that maps each variable name
             to a type hint. A type hint is either:
             - the string `'bool'`, or
             - a pair of `int` (intended min and max values
               to represent: the actual range can be larger,
               because the representation of integer values
               is in two's complement
-        @type vrs: `dict` with `str` keys,
+        @type vrs:
+            `dict` with `str` keys,
             read above for value types
         """
         d = bv.make_symbol_table(vrs)
@@ -240,12 +242,16 @@ class Context:
         Compare with `self.bdd.support()`,
         which returns bits.
 
-        @param u: reference to root of BDD,
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to root of BDD,
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @return: set of variable names
-        @type: `set` of `str`
+        @return:
+            set of variable names
+        @type:
+            `set` of `str`
         """
         supp = self.bdd.support(u)
         bit2int = bv.map_bits_to_integers(self.vars)
@@ -331,17 +337,23 @@ class Context:
         assert v == ctx.add_expr('y >= 2')
         ```
 
-        @param defs: `dict` that maps variable names to
+        @param defs:
+            `dict` that maps variable names to
             BDDs or values
-        @type defs: one of:
+        @type defs:
+            one of:
             - `dict[str, str]`
             - `dict[str, bool | int]`
-        @param u: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @return: result of substitution
-        @rtype: same as the type of `u`
+        @return:
+            result of substitution
+        @rtype:
+            same as the type of `u`
         """
         return self.replace(u, defs)
 
@@ -351,16 +363,21 @@ class Context:
         This method is considered internal.
         The interface is `Context.let()`.
 
-        @param u: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @param vars_to_new: `dict` that maps
+        @param vars_to_new:
+            `dict` that maps
             each variable name to:
             - a variable name (as `str`), or
             - a value (as `bool` or `int`).
-        @return: result of substitution
-        @rtype: same as the type of `u`
+        @return:
+            result of substitution
+        @rtype:
+            same as the type of `u`
         """
         # `vars_to_new` must be mapping, not `None`
         if len(vars_to_new) == 0:
@@ -423,12 +440,16 @@ class Context:
         or Python values for variable names,
         use `Context.let()`.
 
-        @param u: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @return: result of substitution
-        @rtype: same as the type of `u`
+        @return:
+            result of substitution
+        @rtype:
+            same as the type of `u`
         """
         # this method is for now distinct from
         # `Context.replace()` due to the restriction
@@ -501,13 +522,18 @@ class Context:
         For existential quantification,
         use `Context.exist()`.
 
-        @param qvars: set of variable names
-        @type qvars: `set[str]`
-        @param u: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param qvars:
+            set of variable names
+        @type qvars:
+            `set[str]`
+        @param u:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @rtype: same as the type of `u`
+        @rtype:
+            same as the type of `u`
         """
         r = self.apply('not', u)
         r = self.exist(qvars, r)
@@ -582,18 +608,24 @@ class Context:
         satisfying assignments (each assignment
         is a `dict`).
 
-        @param u: reference to root of BDD
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to root of BDD
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @param care_vars: variables that
+        @param care_vars:
+            variables that
             the assignments should contain.
             Should be `support(u) <= care_vars`
             If `care_vars is None`,
             then uses `support(u)`.
-        @type care_vars: `set` of `str`
-        @return: integer >= 0
-        @rtype: `int`
+        @type care_vars:
+            `set` of `str`
+        @return:
+            integer >= 0
+        @rtype:
+            `int`
         """
         # We could allow `support(u) > care_vars`.
         # But that needs a dedicated BDD traversal
@@ -656,19 +688,25 @@ class Context:
         Use the method `Context.count()` to find
         the number of all satisfying assignments.
 
-        @param u: reference to root of BDD
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to root of BDD
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @param care_vars: variables that the
+        @param care_vars:
+            variables that the
             assignments should contain;
             the assignment can contain more variables
             than these, depending on the support of `u`
-        @type care_vars: `set[str]`
-        @return: assignment of values to variables,
+        @type care_vars:
+            `set[str]`
+        @return:
+            assignment of values to variables,
             i.e., `dict` that maps each variable name to
             a Python value
-        @rtype: `dict | None`,
+        @rtype:
+            `dict | None`,
             if `dict` then:
             - `str` keys
             - each value is `int` or `bool`,
@@ -717,8 +755,10 @@ class Context:
 
         Read the docstring of `Context.pick()`.
 
-        @return: iterator over satisfying assignments
-        @rtype: `collections.abc.Generator[dict]`,
+        @return:
+            iterator over satisfying assignments
+        @rtype:
+            `collections.abc.Generator[dict]`,
             an empty generator if `u == self.false`
         """
         if care_vars is None:
@@ -769,8 +809,11 @@ class Context:
             r' (x + y <= 3) \/ (z > x) ')
         ```
 
-        @param definitions: TLA+ definitions
-        @type definitions: `str`
+
+        @param definitions:
+            TLA+ definitions
+        @type definitions:
+            `str`
         """
         assert stx.isinstance_str(
             definitions), definitions
@@ -820,10 +863,14 @@ class Context:
 
         Read the docstring of `Context.add_expr()`.
 
-        @param expr: expression that is Boolean-valued
-        @type expr: `str`
-        @return: reference to root of BDD
-        @rtype: `dd.autoref.Function` or
+        @param expr:
+            expression that is Boolean-valued
+        @type expr:
+            `str`
+        @return:
+            reference to root of BDD
+        @rtype:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             is the root of a BDD in `self.bdd`
         """
@@ -849,10 +896,14 @@ class Context:
         assert v == ctx.add_expr('x > 7')
         ```
 
-        @param expressions: `list` of formulas
-        @type expressions: `list` of `str`
-        @return: `list` of references to BDD roots
-        @rtype: either:
+        @param expressions:
+            `list` of formulas
+        @type expressions:
+            `list` of `str`
+        @return:
+            `list` of references to BDD roots
+        @rtype:
+            either:
             - `list` of `dd.autoref.Function`, or
             - `list` of `dd.cudd.Function`,
             depending on the type of `self.bdd`
@@ -886,11 +937,15 @@ class Context:
         Use `Context.to_expr()` to convert
         BDD references to expressions.
 
-        @param expr: Boolean-valued expression
-        @type expr: `str`
-        @return: reference to root of BDD that
+        @param expr:
+            Boolean-valued expression
+        @type expr:
+            `str`
+        @return:
+            reference to root of BDD that
             represents expression `expr`
-        @rtype: `dd.autoref.Function` or
+        @rtype:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             is the root of a BDD in `self.bdd`
         """
@@ -931,18 +986,25 @@ class Context:
         Use `Context.add_expr()` to
         create BDDs from expressions.
 
-        @param u: reference to root of BDD
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to root of BDD
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @param care: BDD of care set,
+        @param care:
+            BDD of care set,
             specifically reference to
             root of BDD of care set
-        @type care: same as the type of `u`
-        @param kw: keyword args are passed to
+        @type care:
+            same as the type of `u`
+        @param kw:
+            keyword args are passed to
             function `cover.dumps_cover`.
-        @return: expression
-        @rtype: `str`
+        @return:
+            expression
+        @rtype:
+            `str`
         """
         if care is None:
             care = self.bdd.true
@@ -970,12 +1032,15 @@ class Context:
         assert u == v
         ```
 
-        @param assignment: `dict` that maps
+        @param assignment:
+            `dict` that maps
             each variable to a value (`int` or `bool`)
             in accord with `self.vars`.
-        @return: reference to root of BDD that
+        @return:
+            reference to root of BDD that
             represents the given `assignment`
-        @rtype: `dd.autoref.Function` or
+        @rtype:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             is the root of a BDD in `self.bdd`
         """
@@ -1001,19 +1066,30 @@ class Context:
         assert w == ctx.add_expr('x = y')
         ```
 
-        @param op: name of operator,
-            read the docstring of `self.bdd.apply()`
-        @type op: `str`
-        @param u: reference to BDD root
-        @param v: reference to BDD root
-        @param w: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param op:
+            name of operator,
+            read the docstring of
+            `self.bdd.apply()`
+        @type op:
+            `str`
+        @param u:
+            reference to BDD root
+        @param v:
+            reference to BDD root
+        @param w:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`
-        @type v: same as the type of `u`
-        @type w: same as the type of `u`
-        @return: result of applying the operation
+        @type v:
+            same as the type of `u`
+        @type w:
+            same as the type of `u`
+        @return:
+            result of applying the operation
             specified by `op`
-        @rtype: same as the type of `u`
+        @rtype:
+            same as the type of `u`
         """
         return self.bdd.apply(op, u, v, w)
 
@@ -1055,13 +1131,18 @@ class Context:
         assert u == u_
         ```
 
-        @param u: reference to BDD root
-        @type u: `dd.autoref.Function` or
+        @param u:
+            reference to BDD root
+        @type u:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             must be the root of a BDD in `self.bdd`
-        @type other: `Context`
-        @return: reference to BDD root
-        @rtype: `dd.autoref.Function` or
+        @type other:
+            `Context`
+        @return:
+            reference to BDD root
+        @rtype:
+            `dd.autoref.Function` or
             `dd.cudd.Function`,
             is the root of a BDD in `other.bdd`
         """
@@ -1282,8 +1363,10 @@ def array_to_logic(a, counter, aut):
     then select `a[-1]`.
     Therefore, array bounds *must* be added separately.
 
-    @param a: `list` of elements
-    @param counter: name of index variable
+    @param a:
+        `list` of elements
+    @param counter:
+        name of index variable
     """
     bdd = aut.bdd
     r = a[-1]

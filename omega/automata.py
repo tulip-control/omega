@@ -37,9 +37,11 @@ class _SystemGraph(nx.MultiDiGraph):
     def dump(self, filename='out.pdf', rankdir='LR', prog='dot'):
         """Write to file using GraphViz via `pydot`.
 
-        @param filename: path with exrension,
+        @param filename:
+            path with exrension,
             for example: `"out.pdf"`.
-        @param rankdir, prog: see `pydot.Dot.write`
+        @param rankdir, prog:
+            see `pydot.Dot.write`
         """
         name, ext = os.path.splitext(filename)
         pd = self._to_pydot()

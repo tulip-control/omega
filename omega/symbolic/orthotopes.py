@@ -224,7 +224,8 @@ def implicants_intersect(prm, fol):
 def plot_orthotopes(u, abx, axvars, fol, ax):
     """Plot a polytope for each orthotope in `u`.
 
-    @param axvars: `list` that defines which variable
+    @param axvars:
+        `list` that defines which variable
         spans each dimension of the plot.
     """
     try:
@@ -265,9 +266,11 @@ def list_expr(
         use_dom=False, latex=False):
     """Return `list` of `str`, each an orthotope in `cover`.
 
-    @param simple: if `True`, then return expression
+    @param simple:
+        if `True`, then return expression
         that can be parsed by `fol.add_expr`.
-    @param use_dom: omit conjuncts that contain dom of var
+    @param use_dom:
+        omit conjuncts that contain dom of var
         assumes that `|= care => type_hints`
     """
     px = prm._px
@@ -365,7 +368,8 @@ def setup_aux_vars(f, care, fol):
         a_y='u_y', b_y='v_y')
     ```
 
-    @return: x_vars, px, qx, p_to_q
+    @return:
+        x_vars, px, qx, p_to_q
     """
     assert f != fol.false
     assert care != fol.false

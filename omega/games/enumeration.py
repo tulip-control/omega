@@ -67,7 +67,8 @@ def action_to_steps(aut, env, sys, qinit=r'\A \A'):
 def enumerate_state_machine(init, action, aut):
     """Return graph of `action` steps enumerated from `init`.
 
-    @rtype: `networkx.DiGraph`
+    @rtype:
+        `networkx.DiGraph`
     """
     assert init != aut.false
     assert action != aut.false
@@ -185,7 +186,8 @@ def _select_candidate_nodes(
 def _primed_vars_per_quantifier(varlist):
     """Return `dict` that maps each player to set of primed vars.
 
-    @return: `dict` that maps
+    @return:
+        `dict` that maps
           player name -> set of primed vars
     """
     assert 'env' in varlist, varlist
@@ -355,7 +357,9 @@ def _add_to_visited(values, visited, aut):
 def _node_tuple(d, keys):
     """Return `tuple` of `d` values ordered by `keys`.
 
-    @type d: `dict`
-    @type keys: `tuple`
+    @type d:
+        `dict`
+    @type keys:
+        `tuple`
     """
     return tuple(d[k] for k in keys)

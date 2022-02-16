@@ -35,13 +35,16 @@ except ImportError:
 def make_functions(r, vrs, bdd):
     """Extract functions for `vrs` from relation `r`.
 
-    @param r: relation
-    @param vrs: variables to extract functions for.
+    @param r:
+        relation
+    @param vrs:
+        variables to extract functions for.
         These variables should be Boolean-valued, and
         declared in the manager `bdd`.
-    @type bdd: `BDD`
-
-    @return: `dict(function=g, care_set=care)` where
+    @type bdd:
+        `BDD`
+    @return:
+        `dict(function=g, care_set=care)` where
         `g` and `care` are BDD nodes.
     """
     supp = bdd.support(r)
@@ -98,7 +101,8 @@ def extract_function(f, yp, outputs, bdd):
 def collect_functions(functions, r=None):
     """Return functions for next values of latches.
 
-    @param functions: `dict` as returned by `make_functions`
+    @param functions:
+        `dict` as returned by `make_functions`
     """
     if r is None:
         r = dict()

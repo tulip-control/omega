@@ -209,7 +209,8 @@ class Automaton(_fol.Context):
         Boolean-valued variables, and create maps for
         concrete variables (bits).
 
-        @param flexible: if `True`, then add also variables
+        @param flexible:
+            if `True`, then add also variables
             with primed names. Assumes that `vrs` contains
             unprimed names.
         """
@@ -326,7 +327,8 @@ class Automaton(_fol.Context):
         We omit the type action for Boolean variables,
         because we use BDDs underneath.
 
-        @return: formula as `str`
+        @return:
+            formula as `str`
         """
         # to obtain a BDD, pass the result to the method `to_bdd`
         return self._type_hints_to_formulas(vrs, action=True)

@@ -15,9 +15,11 @@ parser = _lexyacc.Parser()
 def closed_system_to_automaton(formula):
     """Return `Automaton` from temporal formula `f`.
 
-    @type formula: `str` describing a closed system with
+    @type formula:
+        `str` describing a closed system with
         GR(1) liveness
-    @rtype: `temporal.Automaton`
+    @rtype:
+        `temporal.Automaton`
     """
     aut = trl.Automaton()
     d = split_gr1(formula)
@@ -44,10 +46,12 @@ def split_gr1(formula):
     - `[] ACTION`
     - one generalized Streett pair
 
-    @param formula: temporal-level formula
-    @type formula: `str`
-
-    @return: `dict(init=list, action=list,
+    @param formula:
+        temporal-level formula
+    @type formula:
+        `str`
+    @return:
+        `dict(init=list, action=list,
         recurrence=list, persistence=list)`
         where each `list` contains abstract syntax trees.
     """
@@ -58,7 +62,8 @@ def split_gr1(formula):
 def _temporal_to_canonical(u):
     """Return state predicates of temporal formula.
 
-    @param u: syntax tree
+    @param u:
+        syntax tree
     """
     flat_conj = flatten_op(u, '/\\')
     init = list()

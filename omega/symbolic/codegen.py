@@ -49,7 +49,9 @@ def dumps_bdds_as_code(u, out_vars, aut, lang='python'):
 def step(state):
     """Return next values of controlled variables.
 
-    @param state: `dict` that maps unprimed variable
+    @param state:
+        `dict` that maps
+        unprimed variable
         identifiers to values.
     """
     bitvectors = assign_bitvectors(state, vrs)
@@ -185,13 +187,19 @@ def dumps_bdd_as_code(
         renaming=None):
     """Return code that computes root values from bits.
 
-    @param roots: `dict` that maps each "output" bit to
+    @param roots:
+        `dict` that maps
+        each "output" bit to
         a BDD that depends on "input" bits
-    @param bdd: BDD manager
-    @param renaming: `dict` that maps each non-output
-        bit in the support (unprimed bits for a Moore action)
+    @param bdd:
+        BDD manager
+    @param renaming:
+        `dict` that maps
+        each non-output bit in the support
+            (unprimed bits for a Moore action)
         to an expression as `str`
-    @return: code that computes the value of each output
+    @return:
+        code that computes the value of each output
         bit and stores it in a `dict` named `out_bits`,
         given the values of unprimed bits, as expressions
         defined in `renaming`.

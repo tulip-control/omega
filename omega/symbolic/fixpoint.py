@@ -25,7 +25,8 @@ def attractor(env_action, sys_action, target, aut,
 
     Keyword args as `step`.
 
-    @param inside: remain in this set
+    @param inside:
+        remain in this set
     """
     logger.info('++ attractor')
     assert is_state_predicate(target), aut.support(target)
@@ -47,9 +48,11 @@ def trap(env_action, sys_action, safe, aut,
          unless=None):
     """Return subset of `safe` with contolled exit.
 
-    @param unless: if `None`, then returned controlled invariant
+    @param unless:
+        if `None`, then returned controlled invariant
         subset of `safe`. Otherwise, this defines an allowed set.
-    @rtype: BDD node
+    @rtype:
+        BDD node
     """
     logger.info('++ cinv')
     assert is_state_predicate(safe), aut.support(safe)
@@ -117,7 +120,8 @@ def preimage(trans, target, qvars, automaton, forall):
 def descendants(source, constrain, aut, future=True):
     """Existential descendants of `source` in `constrain`.
 
-    @param future: if `True`, then apply an image operation
+    @param future:
+        if `True`, then apply an image operation
         before starting the least fixpoint computation
     """
     if future:

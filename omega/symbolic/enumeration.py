@@ -40,11 +40,16 @@ def relation_to_graph(
         care_bits=None):
     """Return enumerated graph from relation.
 
-    @param u: relation as BDD node
-    @param care_source: care set for source nodes
-    @param care_target: care set for target nodes
-    @type u, care_source, care_target: node in `aut.bdd`
-    @rtype: `networkx.DiGraph`
+    @param u:
+        relation as BDD node
+    @param care_source:
+        care set for source nodes
+    @param care_target:
+        care set for target nodes
+    @type u, care_source, care_target:
+        node in `aut.bdd`
+    @rtype:
+        `networkx.DiGraph`
     """
     assert u != aut.bdd.false
     t, care_relation = _make_table(u, aut, care_source,
@@ -84,8 +89,10 @@ def print_nodes(
 
     A set of nodes is defined over unprimed variables.
 
-    @param dvars: table of unprimed variables
-    @type bdd: `BDD`
+    @param dvars:
+        table of unprimed variables
+    @type bdd:
+        `BDD`
     """
     assert scope.is_state_predicate(u), u.support
     if u == bdd.false:
@@ -106,8 +113,10 @@ def print_edges(
     A relation is defined over both primed and
     unprimed variables.
 
-    @param `aut.vars`: table of unprimed variables
-    @type `aut.bdd`: `BDD`
+    @param `aut.vars`:
+        table of unprimed variables
+    @type `aut.bdd`:
+        `BDD`
     """
     source = care_set
     target = care_set
@@ -163,9 +172,12 @@ def _make_table(
 def _care_relation(source, target, bdd):
     """Return product `source` with primed `target`.
 
-    @param source: care set for source nodes
-    @param target: care set for target nodes
-    @type source, target: BDD over unprimed variables
+    @param source:
+        care set for source nodes
+    @param target:
+        care set for target nodes
+    @type source, target:
+        BDD over unprimed variables
     """
     # Cartesian product of `care_set`
     if source is None or target is None:
@@ -184,7 +196,9 @@ def _prime_bits(u):
     the latter works with variables of
     `omega.symbolic.fol.Context.vars`.
 
-    @param u: `dd.autoref.Function` or `dd.cudd.Function`
+    @param u:
+        `dd.autoref.Function` or
+        `dd.cudd.Function`
     """
     support = u.support  # bits
     assert not any(stx.isprimed(name) for name in support), support
@@ -200,8 +214,10 @@ def _enumerate_bdd(
         care_bits=None):
     """Enumerate first-order models of BDD `u`.
 
-    @param care_set: enumerate only models in this set
-    @param care_bits: enumerate over at least these bits
+    @param care_set:
+        enumerate only models in this set
+    @param care_bits:
+        enumerate over at least these bits
     """
     if u == bdd.false:
         return
@@ -220,10 +236,15 @@ def _enumerate_bdd(
 def _bitfields_to_int_iter(bits, t):
     """Enumerate set of integers (and Booleans).
 
-    @param bits: partial assignment that maps bits to values
-    @type bits: `dict`
-    @param t: symbol table (with bitnames)
-    @type t: `dict`
+    @param bits:
+        partial assignment that maps
+        bits to values
+    @type bits:
+        `dict`
+    @param t:
+        symbol table (with bitnames)
+    @type t:
+        `dict`
     """
     # any bits missing ?
     t_bits = set()
@@ -269,9 +290,12 @@ def _bitfields_to_int_iter(bits, t):
 def _enumerate_int(bitvalues, j=0):
     """Enumerate from a partial bitvector assignment.
 
-    @param bitvalues: partial assignment to bits
-    @type bitvalues: `list` of `str` or `None`
-    @param j: index of current bit
+    @param bitvalues:
+        partial assignment to bits
+    @type bitvalues:
+        `list` of `str` or `None`
+    @param j:
+        index of current bit
     """
     n = len(bitvalues)
     assert j < n, (j, n)
@@ -301,10 +325,15 @@ def _take_product_iter(sets, model):
     The resulting combinations of values are
     used to complete the `model`.
 
-    @param sets: map from variables to sets of values
-    @type sets: `dict` of `set`
-    @param model: partial assignment to Boolean variables
-    @type model: `dict`
+    @param sets:
+        map from variables to
+        sets of values
+    @type sets:
+        `dict` of `set`
+    @param model:
+        partial assignment to Boolean variables
+    @type model:
+        `dict`
     """
     if not sets:
         yield model
@@ -333,8 +362,10 @@ def _find_or_add_model(model, umap, keys):
 
     If absent, then a fresh node is created.
 
-    @type model: `dict`
-    @type umap: `dict`
+    @type model:
+        `dict`
+    @type umap:
+        `dict`
     """
     u = tuple(model[k] for k in keys)
     u = umap.setdefault(u, len(umap))
@@ -354,12 +385,15 @@ def _format_nx(g, keys=None):
     Nodes with same label over `keys` are identified.
     Edge attributes are copied.
 
-    @type g: `networkx.DiGraph`
-    @param keys: `list` of keys in node attributes `dict` to
+    @type g:
+        `networkx.DiGraph`
+    @param keys:
+        `list` of keys in node attributes `dict` to
         show as label, in the given order.
         Attributes outside `keys` remain attributes.
         By default all keys are shown.
-    @rtype: `pydot.Graph`
+    @rtype:
+        `pydot.Graph`
     """
     h = nx.DiGraph()
     umap = dict()
@@ -389,8 +423,10 @@ def _square_conj(p, n=None, op=r'&and;'):
     closer to a square.
     The formatting characters are for `dot`.
 
-    @param p: iterable of conjuncts
-    @param n: number of items in `p`
+    @param p:
+        iterable of conjuncts
+    @param n:
+        number of items in `p`
         (useful when `p` is a generator)
     """
     if n is None:

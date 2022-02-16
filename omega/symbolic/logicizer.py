@@ -21,25 +21,33 @@ def graph_to_logic(
         aut=None):
     """Flatten labeled graph to temporal logic formulas.
 
-    @param g: `TransitionSystem`
-
-    The attribute `g.owner` defines who selects the next node.
-    The attribute `g.env_vars` determines who controls each variable.
-
-    @param g: `TransitionSystem`
-    @param nodevar: variable that stores current node
-    @type nodevar: `str`
-    @param ignore_initial: if `False`, then add initial condition
+    @param g:
+        `TransitionSystem`
+        The attribute `g.owner` defines who selects the next node.
+        The attribute `g.env_vars` determines who controls each variable.
+    @param g:
+        `TransitionSystem`
+    @param nodevar:
+        variable that stores current node
+    @type nodevar:
+        `str`
+    @param ignore_initial:
+        if `False`, then add initial condition
         using `g.initia_nodes`.
-    @type ignore_initial: `bool`
-    @param receptive: if `True`, then add assumptions to
+    @type ignore_initial:
+        `bool`
+    @param receptive:
+        if `True`, then add assumptions to
         ensure receptiveness at each node.
-    @param self_loops: if `True`, then add all self-loops
-    @param aut: define in this automaton.
+    @param self_loops:
+        if `True`, then add all self-loops
+    @param aut:
+        define in this automaton.
         If `None`, return fresh `temporal.Automaton`
-
-    @return: temporal formulas representing `g`.
-    @rtype: `temporal.Automaton`
+    @return:
+        temporal formulas representing `g`.
+    @rtype:
+        `temporal.Automaton`
     """
     (env_init, env_tran,
      sys_init, sys_tran) = _graph_to_formulas(
@@ -195,10 +203,14 @@ def _env_trans_from_sys_ts(g, nodevar, dvars):
 def _env_trans(g, nodevar, dvars, self_loops):
     """Convert environment transitions to safety formula.
 
-    @type g: `networkx.MultiDigraph`
-    @param nodevar: name of variable representing current node
-    @type nodevar: `str`
-    @type dvars: `dict`
+    @type g:
+        `networkx.MultiDigraph`
+    @param nodevar:
+        name of variable representing current node
+    @type nodevar:
+        `str`
+    @type dvars:
+        `dict`
     """
     env_trans = list()
     for u in g:
@@ -236,10 +248,14 @@ def _env_trans(g, nodevar, dvars, self_loops):
 def _to_action(d, dvars):
     """Return `str` conjoining assignments and `"formula"` in `d`.
 
-    @param d: (partial) mapping from variables in `dvars`
-        to values in their range, defined by `dvars`
-    @type d: `dict`
-    @type dvars: `dict`
+    @param d:
+        (partial) mapping from
+        variables in `dvars` to
+        values in their range, defined by `dvars`
+    @type d:
+        `dict`
+    @type dvars:
+        `dict`
     """
     c = list()
     if 'formula' in d:
@@ -255,9 +271,13 @@ def _to_action(d, dvars):
 def _assign(k, v, dvars):
     """Return `str` of equality of variable `k` to value `v`.
 
-    @type k: `str`
-    @type v: `str` or `int`
-    @type dvars: `dict`
+    @type k:
+        `str`
+    @type v:
+        `str` or
+        `int`
+    @type dvars:
+        `dict`
     """
     typ = dvars[k]
     if typ == 'bool':

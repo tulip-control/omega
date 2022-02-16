@@ -36,13 +36,18 @@ VAR_OWNER = 'other'
 def minimize(f, care, fol):
     """Compute minimal DNF of predicate `f` over integers.
 
-    @param f: predicate over integer-valued variables
-    @param care: care set as predicate over same variables
-    @type f, care: BDD node
-    @type fol: `omega.symbolic.fol.Context`
-
-    @return: minimal cover as BDD over parameters
-    @rtype: BDD node
+    @param f:
+        predicate over integer-valued variables
+    @param care:
+        care set as predicate over same variables
+    @type f, care:
+        BDD node
+    @type fol:
+        `omega.symbolic.fol.Context`
+    @return:
+        minimal cover as BDD over parameters
+    @rtype:
+        BDD node
     """
     # reasons for permisiveness here:
     #
@@ -334,7 +339,8 @@ def _no_duplicate(u_p, prm, fol):
 def _equality_of_pairs(pairs, fol):
     """Return `<< a1, a2, ... >> = << b1, b2, ... >>`.
 
-    @param pairs: iterable of 2-tuples of identifiers
+    @param pairs:
+        iterable of 2-tuples of identifiers
     """
     s = stx.conj(
         f'({a} = {b})'
@@ -467,7 +473,8 @@ def _max_transpose(p_is_signature, p_is_prime,
 
     (max tau_Y(X) or max tau_X(Y))
 
-    @param signatures: if `True`, then transpose signatures,
+    @param signatures:
+        if `True`, then transpose signatures,
         otherwise primes.
 
     Requires that `p, p', q` be in `fol.vars` and
@@ -493,9 +500,12 @@ def _floor(p_is_signature, p_is_prime,
     Floor(S) = Join(S)
     Ceil(S) = Meet(S)
 
-    @param p_is_prime: some primes, function of `p`
-    @param p_is_signature: function of `p`
-    @param signatures: if `True`, then transpose signatures,
+    @param p_is_prime:
+        some primes, function of `p`
+    @param p_is_signature:
+        function of `p`
+    @param signatures:
+        if `True`, then transpose signatures,
         otherwise primes.
     """
     log.info('---- tranpose ----')
@@ -550,7 +560,8 @@ def _contains_covered(u_is_signature, u_leq_p, bab, fol):
     In the proof, this operator is equivalent to:
         `IsAbove(p, ThoseUnder(u_is_signature, q, Leq))`
 
-    @param signatures: function of `u`
+    @param signatures:
+        function of `u`
     """
     log.info('---- contains covered ----')
     # assert
@@ -583,7 +594,8 @@ def _contains_covered(u_is_signature, u_leq_p, bab, fol):
 def _maxima(u, bab, fol):
     """Return maximal elements of `u` wrt `bab.p_leq_q`.
 
-    @param u: function of `bab.p_vars`
+    @param u:
+        function of `bab.p_vars`
     """
     assert support_issubset(u, bab.p_vars, fol)
     v = fol.let(bab.p_to_q, u)
@@ -673,7 +685,8 @@ def _independent_set(
     Requires that each implicant in `x` be covered
     by at least one implicant in `y`.
 
-    @param only_size: Do not return the independent set.
+    @param only_size:
+        Do not return the independent set.
         This avoids creating the BDD of a sparse set.
     """
     log.debug('---- independent set ----')
@@ -824,8 +837,10 @@ def _covers(
     This is the operator `IsACover` defined in the
     module `spec/MinCover.tla`.
 
-    @param cover_p: primes, repr as `p`
-    @param f: elements to cover, repr as `x`
+    @param cover_p:
+        primes, repr as `p`
+    @param f:
+        elements to cover, repr as `x`
     """
     fp = lat.embed_as_implicants(f, prm, fol)
     cover_q = fol.let(prm.p_to_q, cover_p)
@@ -882,12 +897,15 @@ def dumps_cover(
         comment=True):
     """Return disjunction of orthotopes in `cover`, one per line.
 
-    @param latex: use `pf.sty` commands
-    @param show_dom: if `care` implies type hints,
+    @param latex:
+        use `pf.sty` commands
+    @param show_dom:
+        if `care` implies type hints,
         then conjoin type hints (`fol.vars[var]['dom']`)
-    @param show_limits: conjoin limits of  bitfield values
-    @param comment: if `True`, then list support of `f`, `cover`
-
+    @param show_limits:
+        conjoin limits of  bitfield values
+    @param comment:
+        if `True`, then list support of `f`, `cover`
     @rtype: `str`
     """
     prm = lat.setup_aux_vars(f, care, fol)

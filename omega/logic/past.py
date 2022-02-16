@@ -262,12 +262,17 @@ def translate(s, debug=False, until=False):
     then a fresh variable will be used for each one.
     The only exception are variables, for example "-X p".
 
-    @type s: `str`
-    @param debug: ensures repeatable ordering
+    @type s:
+        `str`
+    @param debug:
+        ensures repeatable ordering
         of new subformulas, to enable testing.
-    @param until: add prophecy variables for "until" too
-    @return: `(dvars, translated, init, action)`
-    @rtype: `tuple`
+    @param until:
+        add prophecy variables for "until" too
+    @return:
+        `(dvars, translated, init, action)`
+    @rtype:
+        `tuple`
     """
     tree = parser.parse(s)
     testers = dict()

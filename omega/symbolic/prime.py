@@ -163,7 +163,8 @@ def support_issubset(u, vrs, fol):
     If `fol` is a `dd.cudd.BDD`, then variable names
     will be bits instead of first-order.
 
-    @param vrs: `set` of variable names as `str`
+    @param vrs:
+        `set` of variable names as `str`
     """
     support = fol.support(u)
     return support.issubset(vrs)
@@ -203,7 +204,8 @@ def rename_variables(let, u, aut):
     will rename all occurrences of variable `x` in BDD `u` to `y`,
     and all occurrences of `x'` in BDD `u` to `y'`.
 
-    @param let: `dict` that renames unprimed variable identifiers
+    @param let:
+        `dict` that renames unprimed variable identifiers
     """
     let_primed = {stx.prime(k): stx.prime(v) for k, v in let.items()}
     let.update(let_primed)

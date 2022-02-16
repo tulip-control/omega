@@ -14,12 +14,18 @@ SUPPORTED_OPERATORS = {'&', '|', '/\\', r'\/'}
 def conj(iterable, sep='', op='/\\'):
     """Conjoin by applying infix conjunction operator.
 
-    @param iterable: container of formulas to conjoin
-    @type iterable: `list` of `str`
-    @param sep: separator
-    @type sep: `str`
-    @param op: infix operator to apply
-    @type op: `str`
+    @param iterable:
+        container of formulas to conjoin
+    @type iterable:
+        `list` of `str`
+    @param sep:
+        separator
+    @type sep:
+        `str`
+    @param op:
+        infix operator to apply
+    @type op:
+        `str`
     """
     return _associative_op(iterable, op, sep)
 
@@ -27,12 +33,18 @@ def conj(iterable, sep='', op='/\\'):
 def disj(iterable, sep='', op=r'\/'):
     """Disjoin by applying infix disjunction operator.
 
-    @param iterable: container of formulas to disjoin
-    @type iterable: `list` of `str`
-    @param sep: separator
-    @type sep: `str`
-    @param op: infix operator to apply
-    @type op: `str`
+    @param iterable:
+        container of formulas to disjoin
+    @type iterable:
+        `list` of `str`
+    @param sep:
+        separator
+    @type sep:
+        `str`
+    @param op:
+        infix operator to apply
+    @type op:
+        `str`
     """
     return _associative_op(iterable, op, sep)
 
@@ -40,7 +52,8 @@ def disj(iterable, sep='', op=r'\/'):
 def _associative_op(iterable, op, sep):
     """Apply associative binary operator `op`.
 
-    @param sep: separator
+    @param sep:
+        separator
     """
     if op not in SUPPORTED_OPERATORS:
         raise Exception(
@@ -58,13 +71,20 @@ def _associative_op(iterable, op, sep):
 def _recurse_op(a, b, h, true, false, glue):
     """Apply binary operator recursively.
 
-    @param a: start of sublist
-    @type a: int in [0, len(h)]
-    @param b: end of sublist
-    @type b: int in [0, len(h)]
-    @param h: `list`
-    @param true, false: permutation of 'TRUE', 'FALSE'
-    @param glue: used to concatenate a, b
+    @param a:
+        start of sublist
+    @type a:
+        int in [0, len(h)]
+    @param b:
+        end of sublist
+    @type b:
+        int in [0, len(h)]
+    @param h:
+        `list`
+    @param true, false:
+        permutation of 'TRUE', 'FALSE'
+    @param glue:
+        used to concatenate a, b
     """
     n = b - a
     # empty ?
@@ -122,9 +142,12 @@ def conj_prefix(iterable, op='&', false='0', true='1'):
 def _prefix_linear(s, op, false, true):
     """Apply associative binary operator linearly.
 
-    @param s: container
-    @param op: operator
-    @param false, true: values if treating `op` as disjunction
+    @param s:
+        container
+    @param op:
+        operator
+    @param false, true:
+        values if treating `op` as disjunction
     """
     if not s:
         return false
@@ -365,8 +388,10 @@ def _add_prime_like_too(table):
 
     All variables in `table` should be unprimed.
 
-    @type table: `dict`
-    @rtype: `dict`
+    @type table:
+        `dict`
+    @rtype:
+        `dict`
     """
     t = dict()
     for var, dom in table.items():

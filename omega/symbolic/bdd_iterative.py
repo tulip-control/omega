@@ -138,14 +138,20 @@ parser = Parser()
 def add_expr(e, bdd):
     """Add to `bdd` a node for Boolean expression `e`.
 
-    @param e: expression in SLUGSIN syntax
-    @type e: `str`
-    @param t: symbol table
-    @type t: `dict`
-    @type bdd: `BDD`
-
-    @return: node in `bdd` corresponding to `e`
-    @rtype: `int`
+    @param e:
+        expression in SLUGSIN syntax
+    @type e:
+        `str`
+    @param t:
+        symbol table
+    @type t:
+        `dict`
+    @type bdd:
+        `BDD`
+    @return:
+        node in `bdd` corresponding to `e`
+    @rtype:
+        `int`
     """
     u = parser.parse(e, bdd)
     return u

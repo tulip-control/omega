@@ -33,12 +33,20 @@ logger = logging.getLogger(__name__)
 def bitblast(f, vrs, defs=None):
     """Flatten formula `f` to bitvector logic.
 
-    @param f: quantified first-order action formula
-    @type f: `str`
-    @param vrs: symbol table of variables as returned by `bitblast_table`
-    @type vrs: `dict`
-    @param defs: operator definitions
-    @type defs: `dict` that maps names (`str`) to expressions (`str`)
+    @param f:
+        quantified first-order action formula
+    @type f:
+        `str`
+    @param vrs:
+        symbol table of variables as returned by `bitblast_table`
+    @type vrs:
+        `dict`
+    @param defs:
+        operator definitions
+    @type defs:
+        `dict` that maps
+        names (`str`) to
+        expressions (`str`)
     """
     if defs is None:
         defs = dict()
@@ -91,9 +99,12 @@ def bitblast_table(table):
 def type_invariants(table):
     """Return type invariants for variables.
 
-    @param table: bitblasted table of integers and Booleans
-    @return: `(init, safety)`
-    @rtype: `tuple` of `dict`,
+    @param table:
+        bitblasted table of integers and Booleans
+    @return:
+        `(init, safety)`
+    @rtype:
+        `tuple` of `dict`,
         each `dict` maps variables to `list` of `str`.
     """
     init = dict()
@@ -151,8 +162,10 @@ def _init_to_logic(var, d):
 def dom_to_width(dom):
     """Return whether integer variable is signed and its bit width.
 
-    @param dom: the variable's range
-    @type dom: `(MIN, MAX)` where `MIN, MAX` are integers
+    @param dom:
+        the variable's range
+    @type dom:
+        `(MIN, MAX)` where `MIN, MAX` are integers
     """
     minval, maxval = dom
     logger.debug(f'int in ({minval}, {maxval})')
@@ -204,12 +217,18 @@ def bit_table(variables, table):
 
     For symbol table definition, see `bitblast_table`.
 
-    @param variables: include only these variables
-    @type variables: `set`
-    @param table: symbol table of integer and Boolean variables
-    @type table: `dict` of `dict`
-    @return: symbol table of bits
-    @rtype: `dict` of `dict`
+    @param variables:
+        include only these variables
+    @type variables:
+        `set`
+    @param table:
+        symbol table of integer and Boolean variables
+    @type table:
+        `dict` of `dict`
+    @return:
+        symbol table of bits
+    @rtype:
+        `dict` of `dict`
     """
     dout = dict()
     keys = {'type', 'dom', 'signed',
@@ -269,10 +288,12 @@ def map_bits_to_integers(table):
 def bitfield_to_int_states(g, t):
     """Convert bitfields to integers for "state" at each node.
 
-    @type g: `networkx.DiGraph`
-    @type t: `VariablesTable`
-
-    @rtype: `networkx.Digraph`
+    @type g:
+        `networkx.DiGraph`
+    @type t:
+        `VariablesTable`
+    @rtype:
+        `networkx.Digraph`
     """
     h = nx.DiGraph()
     for u, d in g.nodes(data=True):
@@ -300,9 +321,12 @@ def bitfield_to_int_states(g, t):
 def bitfields_to_ints(bit_state, t):
     """Convert bits to integer for state `dict`.
 
-    @param bit_state: assignment to all bits
-    @type bit_state: `dict`
-    @type t: `VariablesTable`
+    @param bit_state:
+        assignment to all bits
+    @type bit_state:
+        `dict`
+    @type t:
+        `VariablesTable`
     """
     int_state = dict()
     for flatname, d in t.items():
@@ -320,7 +344,8 @@ def bitfields_to_ints(bit_state, t):
 def make_table(d, env_vars=None):
     """Return symbol table from "simple" `dict`.
 
-    @param env_vars: assign `owner` attribute to
+    @param env_vars:
+        assign `owner` attribute to
         `'env'` if in this set, otherwise to `'sys'`.
     """
     if env_vars is None:
@@ -717,14 +742,20 @@ def flatten_arithmetic(operator, p, q, mem):
 def restoring_divider(x, y, start=0):
     """Return divider for bitvectors `x`, `y`.
 
-    @param x: dividend
-    @param y: divisor
-    @type x, y: `list`
-    @param start: memory address to start indexing from
-    @type start: `int` >= 0
-
-    @return: (quotient, remainder, memory)
-    @rtype: `tuple(list, list, list)`
+    @param x:
+        dividend
+    @param y:
+        divisor
+    @type x, y:
+        `list`
+    @param start:
+        memory address to start indexing from
+    @type start:
+        `int` >= 0
+    @return:
+        (quotient, remainder, memory)
+    @rtype:
+        `tuple(list, list, list)`
     """
     # TODO: propagate to propositional context
     # constraint that detects zero divisor
@@ -755,14 +786,22 @@ def restoring_divider(x, y, start=0):
 def _restoring_divider(x, y, s=None, start=0):
     """Return stage `s` of divider (positive).
 
-    @param x: dividend
-    @param y: divider
-    @type x, y: positive numbers in two's complement
+    @param x:
+        dividend
+    @param y:
+        divider
+    @type x, y:
+        positive numbers in two's complement
         `list`
-    @param s: desired stage of divider
-    @type s: `int` with: `-1 <= s <= len(x)`
-    @param start: memory address to start indexing from
-    @type start: `int` >= 0
+    @param s:
+        desired stage of divider
+    @type s:
+        `int` with:
+        `-1 <= s <= len(x)`
+    @param start:
+        memory address to start indexing from
+    @type start:
+        `int` >= 0
     """
     assert start >= 0, start
     assert isinstance(x, list), x
@@ -809,11 +848,14 @@ def _restoring_divider(x, y, s=None, start=0):
 def multiplier(x, y, start=0):
     """Return the signed product of `x` and `y`.
 
-    @param x, y: multiplicands
-    @type x, y: `list`
-
-    @return: (result, memory)
-    @rtype: `tuple(list, list)`
+    @param x, y:
+        multiplicands
+    @type x, y:
+        `list`
+    @return:
+        (result, memory)
+    @rtype:
+        `tuple(list, list)`
     """
     assert isinstance(x, list), x
     assert isinstance(y, list), y
@@ -833,14 +875,21 @@ def multiplier(x, y, start=0):
 def _multiplier(x, y, s=None, start=0):
     """Return stage `s` of multiplier.
 
-    @param x, y: multiplicands (in two's complement)
-    @param s: desired stage of multiplier
-    @type s: `int` with: `-1 <= s < len(y)`
-    @param start: memory address to start indexing from
-    @type start: `int` >= 0
-
-    @return: (result, memory)
-    @rtype: `tuple(list, list)`
+    @param x, y:
+        multiplicands (in two's complement)
+    @param s:
+        desired stage of multiplier
+    @type s:
+        `int` with:
+        `-1 <= s < len(y)`
+    @param start:
+        memory address to start indexing from
+    @type start:
+        `int` >= 0
+    @return:
+        (result, memory)
+    @rtype:
+        `tuple(list, list)`
     """
     assert start >= 0, start
     assert len(x) == len(y), (x, y)
@@ -879,18 +928,27 @@ def adder_subtractor(x, y, add=True, start=0, extend_by=1):
     https://en.wikipedia.org/wiki/Adder%E2%80%93subtractor
     https://en.wikipedia.org/wiki/Adder_%28electronics%29
 
-    @param x, y: summands (in two's complement)
-    @type x, y: `list` of bits
-    @param add: if `True` then add, otherwise subtract
-    @type add: `bool`
-    @param start: insert first element at
+    @param x, y:
+        summands (in two's complement)
+    @type x, y:
+        `list` of bits
+    @param add:
+        if `True` then add, otherwise subtract
+    @type add:
+        `bool`
+    @param start:
+        insert first element at
         this index in memory structure
-    @type start: `int` >= 0
-    @param extend_by: extra sign-extension by so many bits
-    @type extend_by: `int` >= 0
-
-    @return: (result, memory, carry)
-    @type: `tuple(list, list, str)`
+    @type start:
+        `int` >= 0
+    @param extend_by:
+        extra sign-extension by so many bits
+    @type extend_by:
+        `int` >= 0
+    @return:
+        (result, memory, carry)
+    @type:
+        `tuple(list, list, str)`
     """
     assert start >= 0, start
     assert extend_by >= 0, extend_by
@@ -936,19 +994,30 @@ def barrel_shifter(x, y, s=None, start=0):
     Recursive implementatin of barrel shifter.
     Note that the shift distance must be represented as unsigned.
 
-    @param x: shift (vector that is to be shifted)
-    @type x: `list` of `str`
-    @param y: shift distance
-    @type y: `list` of `str` with `len(y) == math.log(len(x), 2)`
-    @param s: desired stage of barrel shifter
-    @type s: `int` with: `-1 <= s < len(y)`
-    @param start: memory address to start indexing from
-    @type start: `int` >= 0
-
-    @return: 2-tuple:
-      1. elements of composition of first `s` stages
-      2. memory contents from stage 0 to stage `s`
-    @rtype: `tuple([list, list])`
+    @param x:
+        shift (vector that is to be shifted)
+    @type x:
+        `list` of `str`
+    @param y:
+        shift distance
+    @type y:
+        `list` of `str` with
+        `len(y) == math.log(len(x), 2)`
+    @param s:
+        desired stage of barrel shifter
+    @type s:
+        `int` with:
+        `-1 <= s < len(y)`
+    @param start:
+        memory address to start indexing from
+    @type start:
+        `int` >= 0
+    @return:
+        2-tuple:
+        1. elements of composition of first `s` stages
+        2. memory contents from stage 0 to stage `s`
+    @rtype:
+        `tuple([list, list])`
     """
     assert len(y) == math.log(len(x), 2), (x, y)
     if s is None:
@@ -980,17 +1049,27 @@ def barrel_shifter(x, y, s=None, start=0):
 def fixed_shift(x, c, left, logical=False, truncate=True):
     """Shift `x` by fixed distance `s`.
 
-    @param x: shift (vector to be shifted)
-    @type x: `list` of `str`
-    @param c: shift distance
-    @type c: `int` with: `0 <= c <= len(x)`
-    @param left: if `True` shift left, else right
-    @param logical: if `True` insert zeros,
+    @param x:
+        shift (vector to be shifted)
+    @type x:
+        `list` of `str`
+    @param c:
+        shift distance
+    @type c:
+        `int` with:
+        `0 <= c <= len(x)`
+    @param left:
+        if `True` shift left,
+        else right
+    @param logical:
+        if `True` insert zeros,
         else replicate sign bit of `x`.
-    @param truncate: if `True`, result has same width as `x`
-
-    @return: shifted `x`
-    @rtype: `list` of `str`
+    @param truncate:
+        if `True`, result has same width as `x`
+    @return:
+        shifted `x`
+    @rtype:
+        `list` of `str`
     """
     n = len(x)
     assert 0 <= c <= n, (c, n, x)
@@ -1011,10 +1090,12 @@ def fixed_shift(x, c, left, logical=False, truncate=True):
 def truncate(x, n):
     """Return first `n` bits of bitvector `x`.
 
-    @type x: `list`
-    @type n: `int` >= 0
-
-    @rtype: `list`
+    @type x:
+        `list`
+    @type n:
+        `int` >= 0
+    @rtype:
+        `list`
     """
     assert n >= 0, n
     return x[:n]
@@ -1023,14 +1104,20 @@ def truncate(x, n):
 def ite_function(a, b, c, start):
     """Return memory buffer elements for ite between integers.
 
-    @param a: propositinal formula
-    @type a: `str`
-    @param b, c: arithmetic formula
-    @type b, c: `list`
-    @param start: continue indexing buffer cells from this value
-    @type start: `int`
-
-    @rtype: `list`
+    @param a:
+        propositinal formula
+    @type a:
+        `str`
+    @param b, c:
+        arithmetic formula
+    @type b, c:
+        `list`
+    @param start:
+        continue indexing buffer cells from this value
+    @type start:
+        `int`
+    @rtype:
+        `list`
     """
     assert isinstance(a, str), a
     assert isinstance(b, list), b
@@ -1053,7 +1140,8 @@ def ite_connective(a, b, c):
     be variables of type bit, or Boolean constants,
     or the result of expressions as a memory buffer.
 
-    @rtype: `str`
+    @rtype:
+        `str`
     """
     assert isinstance(a, str), a
     assert isinstance(b, str), b
@@ -1093,9 +1181,12 @@ def _append_sign_bit(bits, var, d):
     stores the two's complement
     with omitted sign bit, because it is constant.
 
-    @type bits: `list`
-    @param d: attributes of integer
-    @type d: `dict`
+    @type bits:
+        `list`
+    @param d:
+        attributes of integer
+    @type d:
+        `dict`
     """
     logger.debug(f'bits of "{var}": {bits}"')
     # variable sign ?
@@ -1188,8 +1279,10 @@ def twos_complement_to_int(bits):
 def abs_(x, start=0):
     """Return absolute value of `x`.
 
-    @param start: memory address to start indexing from
-    @type start: `int` >= 0
+    @param start:
+        memory address to start indexing from
+    @type start:
+        `int` >= 0
     """
     return _negate_if(sign(x), x, start)
 
@@ -1197,8 +1290,10 @@ def abs_(x, start=0):
 def _negate_if(guard, x, start=0):
     """Return conditional negation of `x`.
 
-    @param guard: if `True`, then negate
-    @type guard: `str`
+    @param guard:
+        if `True`, then negate
+    @type guard:
+        `str`
     """
     assert isinstance(x, list), x
     assert start >= 0, start
@@ -1240,8 +1335,11 @@ def sign_extension(x, n):
     =========
     https://en.wikipedia.org/wiki/Sign_extension
 
-    @type x: `list` of `str`
-    @type n: `int` with: `len(x) <= n < 32`
+    @type x:
+        `list` of `str`
+    @type n:
+        `int` with:
+        `len(x) <= n < 32`
     """
     logger.debug(
         f'++ sign extension to {n} bits of: {x}')
@@ -1263,8 +1361,10 @@ def sign_extension(x, n):
 def pad(x, n):
     """Return `x` left-padded with zeros to width `n`.
 
-    @type x: `list`
-    @type n: `int` > 0
+    @type x:
+        `list`
+    @type n:
+        `int` > 0
     """
     m = n - len(x)
     assert m > 0, (n, m, x)
@@ -1274,8 +1374,10 @@ def pad(x, n):
 def sign(x):
     """Return sign bit (MSB) of `x` in two's complement.
 
-    @type x: `list` of `str`
-    @return: `str` ('0' or '1')
+    @type x:
+        `list` of `str`
+    @return:
+        `str` ('0' or '1')
     """
     return x[-1]
 
@@ -1283,11 +1385,17 @@ def sign(x):
 def _extend_memory(mem, more_mem, start):
     """Return new start address after appending memory.
 
-    @param mem: memory to be extended
-    @param more_mem: memory elements to append
-    @type mem, more_mem: `list`
-    @param start: last `mem` element has address `start - 1`
-    @type start: `int` with `start >= len(mem)`
+    @param mem:
+        memory to be extended
+    @param more_mem:
+        memory elements to append
+    @type mem, more_mem:
+        `list`
+    @param start:
+        last `mem` element has address `start - 1`
+    @type start:
+        `int` with
+        `start >= len(mem)`
     """
     assert start >= len(mem), (start, len(mem))
     mem.extend(more_mem)

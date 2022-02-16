@@ -365,7 +365,7 @@ def setup_aux_vars(f, care, fol):
         a_y='u_y', b_y='v_y')
     ```
 
-    @return x_vars, px, qx, p_to_q
+    @return: x_vars, px, qx, p_to_q
     """
     assert f != fol.false
     assert care != fol.false

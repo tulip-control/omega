@@ -84,7 +84,8 @@ def prime_implicants(f, prm, fol):
 def _implicant_orthotopes(f, prm, fol):
     """Return orthotopes that imply `f`.
 
-    Caution: `fol` type hints are ignored.
+    Caution:
+        `fol` type hints are ignored.
     """
     log.info('---- implicant orthotopes ----')
     x_vars = prm.x_vars
@@ -339,11 +340,15 @@ def setup_aux_vars(f, care, fol):
 
     Returns:
 
-    - `x_vars`: set of variable names in
-        `support(f) \/ support(care)`
-    - `px`: map var name to `dict` of indexed parameters
-    - `qx`: similar for var copies
-    - `p_to_q`: `dict` that maps parameters to their copies
+    - `x_vars`:
+      set of variable names in
+      `support(f) \/ support(care)`
+    - `px`:
+      map var name to `dict` of indexed parameters
+    - `qx`:
+      similar for var copies
+    - `p_to_q`:
+      `dict` that maps parameters to their copies
 
     For example:
 

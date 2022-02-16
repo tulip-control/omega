@@ -552,9 +552,17 @@ def _partition_vars(bits, ubits, ebits):
     @param ebits: existentially quantified variables
 
     @return: (prime, partition)
-      - prime: `dict` that maps unprimed to primed variable names
-      - partition: `dict(uvars=set, upvars=set,
-                         evars=set, epvars=set)`
+        - prime:
+          `dict` that maps unprimed to
+          primed variable names
+        - partition:
+          ```python
+          dict(
+              uvars=set,
+              upvars=set,
+              evars=set,
+              epvars=set)
+          ```
     """
     prime = {b: stx.prime(b) for b in bits}
     partition = dict(

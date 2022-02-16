@@ -983,12 +983,18 @@ class _BranchAndBound:
     function call during the recursion.
     Attributes:
 
-    - `lower_bound`: global lower bound
-    - `upper_bound`: global upper bound (feasible)
-    - `p_leq_q`: partial order `p <= q`
-        (anti-symmetry required: a quasi-order does not work.)
-    - `p_to_q`: mapping from `p` to `q`
-    - `u_leq_p`: partial order `u <= p`
+    - `lower_bound`:
+       global lower bound
+    - `upper_bound`:
+      global upper bound (feasible)
+    - `p_leq_q`:
+      partial order `p <= q`
+      (anti-symmetry required:
+       a quasi-order does not work.)
+    - `p_to_q`:
+      mapping from `p` to `q`
+    - `u_leq_p`:
+      partial order `u <= p`
     """
 
     def __init__(self, prm, fol):

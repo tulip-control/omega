@@ -32,16 +32,20 @@ def action_to_steps(aut, env, sys, qinit=r'\A \A'):
 
     Enumeration is done based on `qinit`:
 
-    - `'\A \A'`: pick all states that satisfy `aut.init[env] /\ aut.init[sys]`,
+    - `'\A \A'`:
+      pick all states that satisfy `aut.init[env] /\ aut.init[sys]`,
       where the conjunct `aut.init[sys]` is included for the internal variables
 
-    - `'\E \E'`: pick one state that satisfies `aut.init[sys]`
+    - `'\E \E'`:
+      pick one state that satisfies `aut.init[sys]`
 
-    - `'\A \E'`: for each environment state `x` that satisfies
+    - `'\A \E'`:
+      for each environment state `x` that satisfies
       `\E y:  aut.init[env]`,
       pick a system state `y` that satisfies `aut.init[sys]`
 
-    - `'\E \A'`: pick a system state `y` that satisfies
+    - `'\E \A'`:
+      pick a system state `y` that satisfies
       `\A x:  aut.init[sys]`,
       and enumerate all environment states `x` that satisfy `aut.init['env']`.
     """

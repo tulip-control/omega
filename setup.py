@@ -119,8 +119,11 @@ def run_setup():
         python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
-        packages=[PACKAGE_NAME, 'omega.games',
-                  'omega.logic', 'omega.symbolic'],
+        packages=[
+            PACKAGE_NAME,
+            'omega.games',
+            'omega.logic',
+            'omega.symbolic'],
         package_dir={PACKAGE_NAME: PACKAGE_NAME},
         classifiers=CLASSIFIERS,
         keywords=KEYWORDS)

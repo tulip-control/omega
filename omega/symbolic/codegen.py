@@ -1,5 +1,5 @@
 """Translate symbolic representation to Python code."""
-# Copyright 2017-2018 by California Institute of Technology
+# Copyright 2017-2022 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 #
 from collections import defaultdict
@@ -79,7 +79,7 @@ def compute_bdds(bitvectors):
 
 # The code below is from `omega`, and:
 #
-# Copyright 2017-2018 by California Institute of Technology
+# Copyright 2017-2022 by California Institute of Technology
 # All rights reserved. Licensed under 3-clause BSD.
 
 '''

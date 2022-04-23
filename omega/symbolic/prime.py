@@ -170,10 +170,14 @@ def support_issubset(u, vrs, fol):
     return support.issubset(vrs)
 
 
-def pairwise_disjoint(c):
-    """Return whether elements in `c` are pairwise disjoint."""
-    union = set().union(*c)
-    n = sum(len(u) for u in c)
+def pairwise_disjoint(sets):
+    """Return `True` if no items intersect.
+    
+    Checks that no items of the
+    iterable `sets` intersect.
+    """
+    union = set().union(*sets)
+    n = sum(len(u) for u in sets)
     return n == len(union)
 
 

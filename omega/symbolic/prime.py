@@ -177,8 +177,7 @@ def pairwise_disjoint(sets):
     iterable `sets` intersect.
     """
     union = set().union(*sets)
-    n = sum(len(u) for u in sets)
-    return n == len(union)
+    return len(union) == sum(map(len, sets))
 
 
 def pick(c):

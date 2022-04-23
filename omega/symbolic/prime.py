@@ -2,6 +2,8 @@
 # Copyright 2015-2017 by California Institute of Technology
 # All rights reserved. Licensed under BSD-3.
 #
+import itertools as _itr
+
 import omega.logic.syntax as stx
 import omega.symbolic.bdd as sym_bdd
 
@@ -176,8 +178,9 @@ def pairwise_disjoint(sets):
     Checks that no items of the
     iterable `sets` intersect.
     """
+    sets, sets_ = _itr.tee(sets)
     union = set().union(*sets)
-    return len(union) == sum(map(len, sets))
+    return len(union) == sum(map(len, sets_))
 
 
 def pick(c):

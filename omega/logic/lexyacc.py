@@ -192,7 +192,7 @@ class Lexer(astutils.Lexer):
     # other
     t_AT = r' @ '
     t_NUMBER = r' \d+ '
-    t_ignore = ' \t'
+    t_ignore = ''.join(['\x20', '\t'])
 
     def t_comment(self, t):
         r' \\ \* [^\n]* \n '

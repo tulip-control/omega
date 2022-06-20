@@ -44,7 +44,7 @@ class Lexer:
     t_XOR = r' \^ '
     t_DOLLAR = r' \$ '
     t_QUESTION = r' \? '
-    t_ignore = ' \t'
+    t_ignore = ''.join(['\x20', '\t'])
 
     def __init__(self):
         self.operators = [

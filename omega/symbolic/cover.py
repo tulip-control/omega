@@ -183,7 +183,7 @@ def unfloors(cover, y, fol, bab):
 def _traverse(x, y, path_cost, bab, fol):
     """Compute cyclic core and terminate, prune, or recurse."""
     log.info('\n\n---- traverse ----')
-    t0 = time.time()
+    t0 = time.perf_counter()
     xcore, ycore, essential = _cyclic_core_fixpoint(
         x, y, bab, fol)
     _print_cyclic_core(
@@ -352,7 +352,7 @@ def _equality_of_pairs(pairs, fol):
 def cyclic_core(f, care, fol):
     """Shallow minimal cover, only up to cyclic core."""
     log.info('cyclic core computation')
-    t0 = time.time()
+    t0 = time.perf_counter()
     # assert
     assert f in fol.bdd, f
     assert care in fol.bdd, care
@@ -415,7 +415,7 @@ def _print_cyclic_core(
     n = fol.count(essential)
     log.info('{n} primes are essential'.format(
         n=humanize.intcomma(n)))
-    t1 = time.time()
+    t1 = time.perf_counter()
     dt = t1 - t0
     log.info('cyclic core took {dt}'.format(
         dt=humanize.naturaldelta(dt)))
@@ -434,7 +434,7 @@ def _cyclic_core_fixpoint(x, y, bab, fol):
     i = 0
     while x != xold or y != yold:
         log.debug(f'starting iteration {i}')
-        t0 = time.time()
+        t0 = time.perf_counter()
         xold, yold = x, y
         x = _max_transpose(x, y, bab, fol, signatures=True)
         e = x & y
@@ -442,7 +442,7 @@ def _cyclic_core_fixpoint(x, y, bab, fol):
         y = y & ~ e
         essential |= e
         y = _max_transpose(x, y, bab, fol)
-        t1 = time.time()
+        t1 = time.perf_counter()
         dt = t1 - t0
         log.debug(f'iteration {i} took {dt:1.2f} sec')
         i += 1

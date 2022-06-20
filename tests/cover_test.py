@@ -442,9 +442,9 @@ def test_maxima():
     r = stx.conj(f'{pj} = {qj}'
                       for pj, qj in prm.p_to_q.items())
     prm.p_eq_q = fol.add_expr(r)
-    t0 = time.time()
+    t0 = time.perf_counter()
     m = cov._maxima(u, prm, fol)
-    t1 = time.time()
+    t1 = time.perf_counter()
     dt = t1 - t0
     log.info(f'`maxima` time (sec): {dt:1.2f}')
     # print result

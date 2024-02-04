@@ -56,13 +56,14 @@ jobs:
                     --ignore-glob="cover*" .
             - name: Install `dd.cudd`
               run: |
+                pip install cython wheel
                 pip uninstall --yes dd
                 # obtain `dd` source, even if a suitable
                 # wheel file is available from PyPI
-                pip install --verbose --no-binary dd -r \
-                    <(echo 'dd==${DD_VERSION} \
-                            --install-option="--fetch" \
-                            --install-option="--cudd"')
+                export DD_FETCH=1 DD_CUDD=1
+                pip install --verbose dd \
+                    --no-binary dd --no-cache-dir \
+                    --use-pep517 --no-build-isolation
                 # ensure that `dd.cudd` is importable,
                 # so that `omega` tests below that
                 # require `dd.cudd` will work

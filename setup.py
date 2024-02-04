@@ -31,7 +31,6 @@ PYTHON_REQUIRES = '>=3.6'
 INSTALL_REQUIRES = [
     'astutils >= 0.0.5',
     'dd >= 0.5.5',
-    'humanize >= 0.5.1',
     'natsort >= 3.5.3',
     'networkx >= 2.0',
     'ply >= 3.6, <= 3.10',

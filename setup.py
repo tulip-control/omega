@@ -27,7 +27,7 @@ VERSION = f'{MAJOR}.{MINOR}.{MICRO}'
 VERSION_FILE_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
-PYTHON_REQUIRES = '>=3.6'
+PYTHON_REQUIRES = '>=3.11'
 INSTALL_REQUIRES = [
     'astutils >= 0.0.5',
     'dd >= 0.5.5',
@@ -43,10 +43,6 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
     'Topic :: Scientific/Engineering']
 KEYWORDS = [
     'first-order', 'propositional', 'logic',

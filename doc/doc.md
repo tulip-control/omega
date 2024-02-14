@@ -1112,10 +1112,8 @@ is_lexer_grammar(L) ==
             start ==
                 | L.LETTER
                 | L.UNDERSCORE
-            COLON == tok(":")
             symbol ==
                 | start
-                | COLON
                 | L.NUMERAL
             tail == symbol^*
         IN
@@ -1232,8 +1230,8 @@ is_parser_grammar(L, G) ==
             (* "trigger" *)
         (* constants / misc *)
         | tok("(") & G.expr & tok(")")
-        | tok("True")
-        | tok("False")
+        | tok("TRUE")
+        | tok("FALSE")
         | G.number
         | G.variable
         | G.string

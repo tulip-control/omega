@@ -19,10 +19,7 @@ PROJECT_URLS = {
         'https://github.com/tulip-control/omega'}
 README = 'README.md'
 VERSION_FILE = f'{PACKAGE_NAME}/_version.py'
-MAJOR = 0
-MINOR = 4
-MICRO = 0
-VERSION = f'{MAJOR}.{MINOR}.{MICRO}'
+VERSION = '0.4.1'
 VERSION_FILE_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")

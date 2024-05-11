@@ -84,8 +84,8 @@ def extract_function(f, yp, outputs, bdd):
     supp_u = bdd.support(n)
     inputs = supp_p | supp_u
     for z in inputs:
-        pz = bdd.exist(inputs, p)
-        nz = bdd.exist(inputs, n)
+        pz = bdd.exist([z], p)
+        nz = bdd.exist([z], n)
         disjoint = ((pz & nz) == bdd.false)
         if disjoint:
             p, n = pz, nz

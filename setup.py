@@ -122,7 +122,6 @@ def run_setup():
         license='BSD',
         python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
-        tests_require=TESTS_REQUIRE,
         packages=[
             PACKAGE_NAME,
             'omega.games',
